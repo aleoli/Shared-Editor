@@ -6,7 +6,8 @@
 ### Threads
 *  Listener -> a ogni nuova connessione istanzia il socket e un nuovo thread detached per la gestione di quel client
 > **NB** bisogna tenere una lista dei client attivi, su quale documento stanno lavorando e su quale socket bisogna parlargli
-*  Gestore Messaggi -> si deve occupare di inviare i messaggi ricevuti da un client agli altri client attivi su quel documento
+>
+> *  Gestore Messaggi -> si deve occupare di inviare i messaggi ricevuti da un client agli altri client attivi su quel documento
 
 #### Proposta
 Il socket creato viene assegnato ad un thread che a sua volta si sgancia 2 thread, uno in `entrata` e l'altro in `uscita` che rispettivamente leggono e scrivono sempre sullo stesso socket
@@ -45,6 +46,14 @@ Durante la **modifica** di un file
 -> ci deve essere un thread che si occupa di mandare i messaggi da una coda
 
 -> un altro thread sta in ascolto dal server per messaggi in entrata
+
+
+
+## Esempio grafico
+
+La seguente immagine schematizza l'interazione tra il server e due client, e i loro threads.
+
+![model_threads](images/model_threads.png)
 
 ## API
 ```
