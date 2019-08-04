@@ -2,22 +2,39 @@
 
 ## Classi in comune
 
-![UML Class Diagram](http://www.plantuml.com/plantuml/png/SoWkIImgAStDuU9ApaaiBbO8hinDoizHgERYgeK9-QOM5oUcfwA81PQcbe95449kcJbm4OVKl1IWeG00)
+![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZO-_QiCm4CPtFSMD3iOl84B8LEZGeTHxKAMB8z0VLtSoDQNlNibMyPhjlk_G_Nww4gl4sJkXdIA2ZzL_HWS_Oe2RDRBbLrEpVYG9-g5I3NCa2SH6oWKrntIsWIz2z11dJAeK-v8usJ1r9z0n48jVqJZ_Tmkf1-qi1jvuDh3eDqYBsvjcDGo7JxlpXaHgmbtOqoH1XRNElCue0KFspqkzPynu7Y_xjRkzn_R5hxhO2AsW8eZcvZFZT-trqXPwARG9kJj96CiuP-x6CY_HcWFqObrLBiKLWydU_G40)
 
 <details>
 <summary> Codice PlantUML </summary>
 @startuml
 class Symbol {
+- _id: SymbolId
+- _chr: char
+- _pos: std::vector<int>
 
++ operator std::string() const
 }
+
+class SymbolId {
++ client_id: int
++ char_id: int
+}
+
+Symbol -- SymbolId
 
 class Message {
+- _msg: any
+- _type: enum
 
++ operator std::string() const
 }
 
-class Queue {
-
-
+class Queue<T> {
+- _fifo: std::queue
+- _m: std::shared_mutex
+- _cv: std::cv
++ get(): T
++ put(T): void
 }
 
 class File {
@@ -29,8 +46,11 @@ class File {
 ### Spiegazione classi:
 
 - Symbol: classe che modella un carattere. Contiene il carattere più altre informazioni quali il suo id univoco e la posizione nel file
+  - fa l'override della conversione in stringa in cui restituisce il carattere contenuto
 - Message: messaggio che viene scambiato tra client e server. Contiene un attributo che indica il tipo del messaggio (login, modifica, nuovo file, etc..), più altri campi che contengono i dati
+  - fa l'override della conversione in stringa in cui restituisce il JSON del suo contenuto
 - Queue: coda thread safe per la gestione dei messaggi. L'inserimento/prelievo di oggetti da questa coda deve essere gestito tramite attesa passiva (no busy waiting) se la coda è rispettivamente piena/vuota
+  - FIFO thread safe, accesso multiplo in lettura, esclusivo in scrittura, la condition variable serve a svegliare il tutto se il lettore è in attesa che ci sia qualcosa da leggere
 - File: Classe che modella un file. Contiene una serie di informazioni (nome, id..) oltre a un elenco di oggetti Symbol
 
 ## Server
