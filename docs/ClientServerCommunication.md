@@ -28,7 +28,7 @@
 
 ## new_file
 
-![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/ls_files.png?raw=true)
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/new_file.png?raw=true)
 
 
 
