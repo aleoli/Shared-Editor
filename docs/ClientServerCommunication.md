@@ -56,6 +56,32 @@ Indica al server che non si sta più lavorando su quel file
 
 
 
+## chg_nickname
+
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/chg_nickname.png?raw=true)
+
+
+
+## chg_icon
+
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/chg_icon.png?raw=true)
+
+L'icona (PNG o JPEG) deve avere dimensioni ridotte e va inviata all'interno del JSON come stringa in base64, quando arriva sul server viene salvata
+
+Quando serve rimanda indietro la stringa e il client la decodifica e la visualizza
+
+[esempio](https://stackoverflow.com/questions/27854979/how-to-load-base64-image-data-from-json-in-qt)
+
+
+
+## chg_pass
+
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/chg_pass.png?raw=true)
+
+
+
+
+
 
 
 ***to be continued...***
