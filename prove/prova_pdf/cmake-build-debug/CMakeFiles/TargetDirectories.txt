@@ -1,0 +1,4 @@
+/home/ale/Scrivania/prova_pdf/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ale/Scrivania/prova_pdf/cmake-build-debug/CMakeFiles/prova_pdf.dir
+/home/ale/Scrivania/prova_pdf/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ale/Scrivania/prova_pdf/cmake-build-debug/CMakeFiles/prova_pdf_autogen.dir
