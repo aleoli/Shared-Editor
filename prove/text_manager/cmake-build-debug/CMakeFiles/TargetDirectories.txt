@@ -1,0 +1,4 @@
+/home/aleoli/Scrivania/Polito/Shared-Editor/prove/text_manager/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/aleoli/Scrivania/Polito/Shared-Editor/prove/text_manager/cmake-build-debug/CMakeFiles/text_manager.dir
+/home/aleoli/Scrivania/Polito/Shared-Editor/prove/text_manager/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/aleoli/Scrivania/Polito/Shared-Editor/prove/text_manager/cmake-build-debug/CMakeFiles/text_manager_autogen.dir
