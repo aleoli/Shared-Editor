@@ -1,0 +1,4 @@
+F:/Desktop/prova_qtextedit/cmake-build-debug/CMakeFiles/prova_qtextedit.dir
+F:/Desktop/prova_qtextedit/cmake-build-debug/CMakeFiles/edit_cache.dir
+F:/Desktop/prova_qtextedit/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+F:/Desktop/prova_qtextedit/cmake-build-debug/CMakeFiles/prova_qtextedit_autogen.dir

@@ -1,0 +1,1 @@
+-IF:/Desktop/Shared-Editor/prove/QtSQL/cmake-build-debug/QtSQL_autogen/include -isystem F:/Winprograms/qt/5.12.4/mingw73_64/include -isystem F:/Winprograms/qt/5.12.4/mingw73_64/include/QtCore -isystem F:/Winprograms/qt/5.12.4/mingw73_64/./mkspecs/win32-g++ -isystem F:/Winprograms/qt/5.12.4/mingw73_64/include/QtSql 

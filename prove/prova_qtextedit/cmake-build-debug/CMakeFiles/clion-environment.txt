@@ -1,0 +1,4 @@
+ToolSet: w64 5.0 (local)@C:\MinGW
+Options: 
+
+Options:-DCMAKE_PREFIX_PATH=F:\Winprograms\qt\5.12.4\mingw73_64\lib\cmake
