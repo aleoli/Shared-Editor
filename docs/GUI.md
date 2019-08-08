@@ -6,34 +6,6 @@
 4) text editor
 -5) (optional) some animation to show when loading
 
-------------------------------------------------
-1) LOGIN FORM
-------------------------------------------------
-------------------------------------------------
-                    TOP
--Horizontal bar
-  -Button resize
-  -Button hide
-  -Button close
-------------------------------------------------
-                   CENTER
--Form
-  -InString id
-  -InString password (not visible (?) ******* )
-  -Button LogIn
-  -label need to register?
-  -Button SignUp
-------------------------------------------------
-                   BOTTOM
-
-------------------------------------------------
-actions (gui switch):
-
-  +logIn()
-  +signUp()
-  -close()
-  -hide()
-   
 reqs and checks:
 
     id: 8-20 char lenght alphanum
@@ -74,7 +46,7 @@ Document_browser "1" *-- "1" NewDocument : contains
 ```
     
     
-## Classi in comune
+## finestre principali
 
 <details>
 <summary> Codice PlantUML </summary>
@@ -83,6 +55,7 @@ class mainWindow {
 - _closeBtn: button
 - _hideBtn: button
 - _resizeBtn: button
+- _logOut_logIn_Btn: button
 }
 
 class loginForm {
@@ -108,4 +81,15 @@ class signupForm {
 - _loginFormBtn: button
 - _alreadyRegistered: QLabel
 }
-</details>
+
+class textEditor {
+- _mainText: QTextDocumentLayout
+- _copyBtn: button
+- _cutBtn: button
+- _pasteBtn: button
+- _boldBtn: button
+- _newDocBtn: button
+- _closeDocBtn: button
+}
+
+
