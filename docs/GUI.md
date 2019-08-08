@@ -19,7 +19,10 @@ reqs and checks:
 3) DOCUMENT BROWSER
 ------------------------------------------------
 ------------------------------------------------
-```plantuml
+![UML Class Diagram](http://www.plantuml.com/plantuml/png/VP2_IiSm4CVtUueZqw_53gvE5RkurCLTpkIm1-sb95U3YEzkYgs8Y5EEVFBza-kpKR9jcS7Fb3CEqMyBgpqzfrWo9pZkHoudWdSOQM7uEDaFS3zyiO6CyNANc4oYNc5zPyX1x1ZZoYhwqi2jDtaL4yvuALF4807BH8Qa-y3QmEFRMWsb9bIh30z5EUtXlwkYktROTXswrdrtmXlqKOr4yt-AUjOV_YNgMKDTpoS0)
+
+<details>
+<summary> Codice PlantUML </summary>
 @startuml
 class Document_browser
 
@@ -43,7 +46,7 @@ Document_browser "1" *-- "*" Document : contains
 
 Document_browser "1" *-- "1" NewDocument : contains
 @enduml
-```
+</details>
     
     
 ## finestre principali
