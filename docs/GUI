@@ -43,3 +43,33 @@ reqs and checks:
     pwd should not be empty
     pwd should correspond to id
     
+------------------------------------------------
+3) DOCUMENT BROWSER
+------------------------------------------------
+------------------------------------------------
+```plantuml
+@startuml
+class Document_browser
+
+class NewDocument
+{
+Name
+}
+
+class Document
+{
+ID
+Name
+Date (Creation, last edit, last opening)
+Activities (who did what and when)
+Type
+Dimenions
+Owner
+}
+
+Document_browser "1" *-- "*" Document : contains
+
+Document_browser "1" *-- "1" NewDocument : contains
+@enduml
+```
+    
