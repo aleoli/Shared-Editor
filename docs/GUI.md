@@ -1,22 +1,25 @@
-1 main window, 4 different main appearance
+# Composition
 
-1) login form
-2) register form
-3) document browser
-4) text editor
--5) (optional) some animation to show when loading
+<u>1 main window, 4 different main pages:</u>
 
-reqs and checks:
+**1)** login form
+**2)** register form
+**3)** document browser
+**4)** text editor
+**5)** (optional) some animation to show when loading
 
-    id: 8-20 char lenght alphanum
-    id text area should not be empty
-    id should exist
-    pwd: 8-20 char lenght alphanum
-    pwd should not be empty
-    pwd should correspond to id
-    
+**reqs and checks:**
+
+```
+id: 8-20 char lenght alphanum
+id text area should not be empty
+id should exist
+pwd: 8-20 char lenght alphanum
+pwd should not be empty
+pwd should correspond to id
+```
 ------------------------------------------------
-3) DOCUMENT BROWSER
+# 3) DOCUMENT BROWSER
 ------------------------------------------------
 ------------------------------------------------
 ![UML Class Diagram](http://www.plantuml.com/plantuml/png/VP2_IiSm4CVtUueZqw_53gvE5RkurCLTpkIm1-sb95U3YEzkYgs8Y5EEVFBza-kpKR9jcS7Fb3CEqMyBgpqzfrWo9pZkHoudWdSOQM7uEDaFS3zyiO6CyNANc4oYNc5zPyX1x1ZZoYhwqi2jDtaL4yvuALF4807BH8Qa-y3QmEFRMWsb9bIh30z5EUtXlwkYktROTXswrdrtmXlqKOr4yt-AUjOV_YNgMKDTpoS0)
@@ -50,6 +53,7 @@ Document_browser "1" *-- "1" NewDocument : contains
     
     
 ## finestre principali
+![UML Class Diagram](http://www.plantuml.com/plantuml/png/XP9FQm8n4CNlVeh5e-2XLqzYjL1Gsef5UfAucMu7afabVrXjwNTlujeb3DBk9V1xBxp9svdxe5o8rengexolh4BQ8sdkgg_Hj3hKXZqi0isgOmo1ARCFr18vyFWfeU7cAOPyFDAXrBv7rxGa8JsmitqOwbdriaQ2bSQGGTj9ShaXSWX0xtWB3Ve0BbzGHp1PyTZGQvi3HFmrF-kn_MC0i0gDO3NJEpgxAYKvhpG_fxIEdLH9MH38HtU3gWRUqhVPB9T9kLS6I2ktHzr0VmjEYM-LHbuClVIl4sKDbGkkZ0EbpxyjWXvw7FvMW5F80x7hsygxiaiiEVEnv3fQeB1MPuxNnxTd4LF784YhKfvWHpPQ888k1GXusKw1qxZ54e_lnjLaEirdiMspgcOAoULlUYVZSZF-DnV55EOva8xM_000)
 
 <details>
 <summary> Codice PlantUML </summary>
@@ -95,4 +99,7 @@ class textEditor {
 - _closeDocBtn: button
 }
 
-
+mainWindow "1" *-- "1" loginForm : contains
+mainWindow "1" *-- "*" signupForm : contains
+mainWindow "1" *-- "*" textEditor : contains
+@enduml
