@@ -19,41 +19,9 @@ pwd should not be empty
 pwd should correspond to id
 ```
 ------------------------------------------------
-# 3) DOCUMENT BROWSER
-------------------------------------------------
-------------------------------------------------
-![UML Class Diagram](http://www.plantuml.com/plantuml/png/VP2_IiSm4CVtUueZqw_53gvE5RkurCLTpkIm1-sb95U3YEzkYgs8Y5EEVFBza-kpKR9jcS7Fb3CEqMyBgpqzfrWo9pZkHoudWdSOQM7uEDaFS3zyiO6CyNANc4oYNc5zPyX1x1ZZoYhwqi2jDtaL4yvuALF4807BH8Qa-y3QmEFRMWsb9bIh30z5EUtXlwkYktROTXswrdrtmXlqKOr4yt-AUjOV_YNgMKDTpoS0)
 
-<details>
-<summary> PlantUML code </summary>
-@startuml
-class Document_browser
-
-class NewDocument
-{
-Name
-}
-
-class Document
-{
-ID
-Name
-Date (Creation, last edit, last opening)
-Activities (who did what and when)
-Type
-Dimenions
-Owner
-}
-
-Document_browser "1" *-- "*" Document : contains
-
-Document_browser "1" *-- "1" NewDocument : contains
-@enduml
-</details>
-    
-    
 # Main Windows
-![UML Class Diagram](http://www.plantuml.com/plantuml/png/XP9FQm8n4CNlVeh5e-2XLqzYjL1Gsef5UfAucMu7afabVrXjwNTlujeb3DBk9V1xBxp9svdxe5o8rengexolh4BQ8sdkgg_Hj3hKXZqi0isgOmo1ARCFr18vyFWfeU7cAOPyFDAXrBv7rxGa8JsmitqOwbdriaQ2bSQGGTj9ShaXSWX0xtWB3Ve0BbzGHp1PyTZGQvi3HFmrF-kn_MC0i0gDO3NJEpgxAYKvhpG_fxIEdLH9MH38HtU3gWRUqhVPB9T9kLS6I2ktHzr0VmjEYM-LHbuClVIl4sKDbGkkZ0EbpxyjWXvw7FvMW5F80x7hsygxiaiiEVEnv3fQeB1MPuxNnxTd4LF784YhKfvWHpPQ888k1GXusKw1qxZ54e_lnjLaEirdiMspgcOAoULlUYVZSZF-DnV55EOva8xM_000)
+![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZPD1Qnin48Nl-ok4Jst0WLnzIbEdK4YQDhY4deoycgu7jAD56bLnG_zx9UmLOZ19V97vtfjzipFQwy3QSnnjrriTWXerqXEISKczT4krxQqBSCEqKhl8xAYmFHg9F0JyAw5rmqFaSdobRQlzwqvfMKBwulnu34EpKZ_kaE3M81Sm9KbA1OaS0Z0RzmW31WPV2lGER5423lHpAW4Y_fHVz3YzqW2C6grWlQFVwCTRASb-M_Ftd9QSbohf4GGAqP-XUe1V-NT_lrvdvREsG4Rx9pG37AlWEVD7RT3TrBaStquCguvSS6qzQ7EOfmYcph5kY-6PIqFE7wTLxieci-minzhrSGJYEtrmyVJoqq74z945cNJE4spdh1688EM01jRRAN1jT-vdk_Ck1V0p_mPfbhgNCriGJwWsVCVsZEPN5lMfP_o3Z13KXxHtog1HQQzPQIf_W3vscyC4tHfpQa17eNj81Bvqr7oOYwk5kbWkozbyGIlLE-Bi2cUz5ulsjhzjRfRzXldgyZBxvRJRAgcrGRNmNGNvhFiJDTT09exsFm00)
 
 <details>
 <summary> PlantUML code </summary>
@@ -99,7 +67,28 @@ class textEditor {
 - _closeDocBtn: button
 }
 
+class Document_browser
+
+class NewDocument
+{
+- _name: QLineEdit
+}
+
+class Document
+{
+- _id: QLineEdit
+- _name: QLineEdit
+- _dateYYYYMMDD: QCalendarWidget
+Activities (who did what and when)
+Type
+Dimensions
+Owner
+}
+
 mainWindow "1" *-- "1" loginForm : contains
 mainWindow "1" *-- "*" signupForm : contains
 mainWindow "1" *-- "*" textEditor : contains
+mainWindow "1" *-- "1..*" Document_browser : contains
+Document_browser "1" *-- "*" Document : contains
+Document_browser "1" *-- "1" NewDocument : contains
 @enduml
