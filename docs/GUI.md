@@ -76,8 +76,6 @@ Document_browser "1" *-- "1" NewDocument : contains
     
 ## Classi in comune
 
-![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZO-_QiCm4CPtFSMD3iOl84B8LEZGeTHxKAMB8z0VLtSoDQNlNibMyPhjlk_G_Nww4gl4sJkXdIA2ZzL_HWS_Oe2RDRBbLrEpVYG9-g5I3NCa2SH6oWKrntIsWIz2z11dJAeK-v8usJ1r9z0n48jVqJZ_Tmkf1-qi1jvuDh3eDqYBsvjcDGo7JxlpXaHgmbtOqoH1XRNElCue0KFspqkzPynu7Y_xjRkzn_R5hxhO2AsW8eZcvZFZT-trqXPwARG9kJj96CiuP-x6CY_HcWFqObrLBiKLWydU_G40)
-
 <details>
 <summary> Codice PlantUML </summary>
 @startuml
