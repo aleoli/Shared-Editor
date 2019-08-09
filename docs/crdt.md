@@ -24,6 +24,62 @@ L'inserimento di un carattere nel testo è eseguito in una posizione assoluta `p
 - Devo costruirmi l'oggetto Symbol da inserire nel vettore di simboli
   - Devo costruire il vettore `position` del simbolo, partendo dai simboli immediatamente precedente e successivo alla posizione in cui sto inserendo
 
+#### Esempio
+Questa era quella che avevo fatto nel laboratorio e mi sembra funzionasse abbastanza bene, divide in 3 sottocasi:
+1. sto inserendo all'inizio
+2. sto inserendo in mezzo
+3. sto inserendo alla fine
+
+```cpp
+void SharedEditor::localInsert(int index, char value) {
+    SymbolId s_id;
+    s_id.client_id = this->_siteId;
+    s_id.char_id = this->_counter;
+    this->_counter++;
+    vector<int> pos;
+    if(index == 0) {
+        // sta all'inizio
+        if(!this->_symbols.empty()) {
+            // c'è già qualcosa nel documento
+            pos = this->_symbols.begin()->getPos();
+        }
+        pos.push_back(1);
+        Symbol s{s_id, value, pos};
+        this->_symbols.push_front(s);
+        this->_server.send(Message{s, INSERT, this->_siteId});
+    } else if(index == this->_symbols.size()) {
+        // sta alla fine
+        pos = (--this->_symbols.end())->getPos();
+        pos[pos.size()-1]++;
+        Symbol s{s_id, value, pos};
+        this->_symbols.push_back(s);
+        this->_server.send(Message{s, INSERT, this->_siteId});
+    } else if(index > 0 && index < this->_symbols.size()) {
+        // sta in mezzo
+        auto it = std::next(this->_symbols.begin(), index-1);
+        pos = it->getPos();
+        auto pos_next = (++it)->getPos();
+        if(pos.size() > pos_next.size()) {
+            // sto già inserendo
+            pos[pos.size()-1]++;
+        } else {
+            // devo inseririlo nel mezzo
+            pos = pos_next;
+            pos[pos.size()-1]--;
+            pos.push_back(1);
+        }
+        Symbol s{s_id, value, pos};
+        this->_symbols.insert(it, s);
+        this->_server.send(Message{s, INSERT, this->_siteId});
+    } else {
+        // è fuori dal range
+        std::stringstream ss;
+        ss << std::endl << index << " è fuori dal range" << std::endl << "Numero attuale di elementi: " << this->_symbols.size() << std::endl << std::endl;
+        throw IndexOutException{ss.str()};
+    }
+}
+```
+
 ### Remoto
 
 ```cpp
