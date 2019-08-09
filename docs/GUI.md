@@ -57,17 +57,34 @@ class signupForm {
 - _alreadyRegistered: QLabel
 }
 
+class Account 
+
+class Modified {
+  - _userId: String
+  - _docId: String
+  - _dateTime: String
+}
+
 class textEditor {
 - _mainText: QTextDocumentLayout
+- _mainTextScrollGraphWrapper: QScrollArea
 - _copyBtn: button
 - _cutBtn: button
 - _pasteBtn: button
 - _boldBtn: button
+- _italicBtn: button
+- _ulineBtn: button
 - _newDocBtn: button
 - _closeDocBtn: button
 }
 
-class Document_browser
+class Document_browser{
+  - _searchBar: QLineEdit
+  - _newDocBtn: button
+  - _addDocName: QLineEdit
+  - _addDocBtn: button
+  - _scrollDocs: QScrollArea
+}
 
 class NewDocument
 {
@@ -91,4 +108,9 @@ mainWindow "1" *-- "*" textEditor : contains
 mainWindow "1" *-- "1..*" Document_browser : contains
 Document_browser "1" *-- "*" Document : contains
 Document_browser "1" *-- "1" NewDocument : contains
+Account "1" --- "1" signupForm
+Account "1" --- "*" Modified
+Modified "*" --- "1" Document
 @enduml
+
+P.S. button could be a different type but probably will be QPushButton
