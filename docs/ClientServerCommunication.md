@@ -46,6 +46,8 @@ Ci sono 2 tipi di comunicazione, quella del client verso il server e quella del 
 
 Da vedere se si vuole utilizzare o no un messaggio di `ACK`
 
+> Si può fare che venga sempre inviato un array di Symbol, in questo modo si possono anche inserire più simboli contemporaneamente con lo stesso messaggio
+
 
 
 ## close_file
