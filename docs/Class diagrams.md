@@ -61,7 +61,7 @@ File -- Modify
   - fa l'override della conversione in stringa in cui restituisce il JSON del suo contenuto
 - Queue: coda thread safe per la gestione dei messaggi. L'inserimento/prelievo di oggetti da questa coda deve essere gestito tramite attesa passiva (no busy waiting) se la coda è rispettivamente piena/vuota
   - FIFO thread safe, accesso multiplo in lettura, esclusivo in scrittura, la condition variable serve a svegliare il tutto se il lettore è in attesa che ci sia qualcosa da leggere
-- File: Classe che modella un file. Contiene una serie di informazioni (nome, id..) oltre a un elenco di oggetti Symbol
+- File: Classe che modella un file. Contiene una serie di informazioni (nome, id..) oltre a un elenco di oggetti Symbol. Contiene inoltre l'elenco degli utenti che hanno avuto accesso a quel file in scrittura, la struttura dati contine l'id dell'utente, la posizione del cursore e lo stato attuale (viene visualizzato solo se attivo, altrimenti serve solo per rimettere l'utente nel punto di modifica in cui era quando il file viene aperto nuovamente)
 
 ## Server
 
