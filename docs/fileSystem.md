@@ -5,6 +5,7 @@
 - Utenti: tutte le varie info di ogni utente (id, nickname, password, nome, cognome, ...)
 - Files: sia elenco di caratteri (simboli) che informazioni quali nome del file e via dicendo
 - Relazione Utenti - Files: Per ogni file, devo sapere chi ha il diritto di fare cosa.
+- Sessioni: Quando un utente fa il login viene creato un nuovo token di sessione che viene inviato in ogni messaggio per l'autenticazione, se il token non viene usato per un certo intervallo la sessione termina
 
 - Altro.. ?
 
