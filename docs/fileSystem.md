@@ -13,7 +13,8 @@
 
 Le informazioni di ogni utente possono tranquillamente essere salvate in una tabella del database. La gestione degli utenti non è un'operazione critica per la nostra applicazione.
 
-Le icone possono essere salvate tutte insieme in una determinata cartella del file system, oppure dentro la cartella dedicata all'utente (in cui ci sono anche i files)
+Le icone vengono salvate come stringhe nel DB (in base64) e rimandate indietro al client che le decodifica e le visualizza
+[esempio](https://stackoverflow.com/questions/27854979/how-to-load-base64-image-data-from-json-in-qt)
 
 #### Tabella DB
 
