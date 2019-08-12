@@ -2,7 +2,7 @@
 
 ## Classi in comune
 
-![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZO-_QiCm4CPtFSMD3iOl84B8LEZGeTHxKAMB8z0VLtSoDQNlNibMyPhjlk_G_Nww4gl4sJkXdIA2ZzL_HWS_Oe2RDRBbLrEpVYG9-g5I3NCa2SH6oWKrntIsWIz2z11dJAeK-v8usJ1r9z0n48jVqJZ_Tmkf1-qi1jvuDh3eDqYBsvjcDGo7JxlpXaHgmbtOqoH1XRNElCue0KFspqkzPynu7Y_xjRkzn_R5hxhO2AsW8eZcvZFZT-trqXPwARG9kJj96CiuP-x6CY_HcWFqObrLBiKLWydU_G40)
+![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZP6zRW8n48HxFuLBK4GUm4A8Ab8AYYZqoDZBOSa_5-_wb1FAksUNCo9bkfrPUUQplKUobLgAoaMBg3_dT2vHtzH6du8tNRzxqUvQZNPNMqMC1Or6yiPCuAZKRSYqK-f5bn6gPMDP8jMGXzLQkvAHr8zwzFHSVUCZBWR8TE_Z53Qav27bJAVQR9uyFUS0Y7Q01JZXOBJDiymqZs0qv9R-3_NHeC7sk5lIBk5I-XM_P75lw0Oo8FXJQWJVuhkfBzp4RGFGQctqaSUnqUh8yrI2VnQzXTYH-oLbp3OnyS8c-cfpBgTKVBW4PubP-aiVn9ftpxZ5M08RGlsRwbh5KXyV-SehSQsZC77RkPGeEGB4pzkJr1woRod-0W00)
 
 <details>
 <summary> Codice PlantUML </summary>
@@ -38,8 +38,18 @@ class Queue<T> {
 }
 
 class File {
-
+- _id: int
+- _name: string
+- _hanno_modificato: vector<Modify>
 }
+
+class Modify {
+- _user_id: int
+- _cursor: Symbol._id
+- _active: bool
+}
+
+File -- Modify
 @enduml
 </details>
 
