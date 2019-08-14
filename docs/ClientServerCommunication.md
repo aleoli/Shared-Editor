@@ -115,6 +115,14 @@ Indica al server che l'utente vuole modificare il nome del file
 
 
 
+## share_file
+
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/share_file.png?raw=true)
+
+Bisogna valutare la durata del link e se renderlo pubblico a chiunque riceva il link o collegarlo a dei nomi utente
+
+
+
 ## chg_nickname
 
 ![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/chg_nickname.png?raw=true)
