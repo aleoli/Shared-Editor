@@ -20,6 +20,12 @@
 
 
 
+## new_dir
+
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/new_dir.png?raw=true)
+
+
+
 ## list_files
 
 ![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/ls_files.png?raw=true)
