@@ -121,6 +121,14 @@ Indica al server che l'utente vuole modificare il nome del file
 
 Bisogna valutare la durata del link e se renderlo pubblico a chiunque riceva il link o collegarlo a dei nomi utente
 
+> In base a questo c'è da costruire un messaggio per collegarsi ad un file condiviso
+
+
+
+## link_file
+
+Dipende dalle scelte fatte nel `share_file`
+
 
 
 ## chg_nickname
