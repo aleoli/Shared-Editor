@@ -58,6 +58,14 @@ Indica al server che non si sta più lavorando su quel file
 
 
 
+## rename_file
+
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/rename_file.png?raw=true)
+
+Indica al server che l'utente vuole modificare il nome del file
+
+
+
 ## chg_nickname
 
 ![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/chg_nickname.png?raw=true)
