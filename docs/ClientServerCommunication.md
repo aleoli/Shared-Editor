@@ -42,6 +42,25 @@
 
 ![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/ls_files.png?raw=true)
 
+> Se dir_id è `NULL` allora restituisco la root dell'utente
+
+> La `FileList` contiene sia file che directory, si deve fare una classe da cui entrambi derivano (es. `FS_Item`), o anche solo inviare JSON del tipo
+```json
+[
+ {
+  "id": 1,
+  "is_dir": false,
+  "name": "file1",
+  ...
+ },
+ {
+  "id": 1,
+  "is_dir": true,
+  "name": "dir1"
+ }
+]
+```
+
 
 
 ## new_file
