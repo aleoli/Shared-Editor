@@ -60,25 +60,36 @@ Quando devo applicare una modifica a un file, cerco nel vettore se questo è pre
 
 _Valutare anche se ha senso utilizzare un thread a parte per gestire le scritture su disco, in modo da velocizzare il Manager. In alternativa, utilizzare scritture su disco non bloccanti_
 
-### Organizzazione del file system
+## Organizzazione del file system
 
-Il file system può essere organizzato come segue:
+- Tutti i file sono all'interno di una singola cartella all'interno del file system del server
+  - ad esempio `/var/shared-editor/` e si chiamano ognuno con l'id del file così si è sicuri che siano univoci
+- Le tabelle nel database sono:
+  - File (id, owner, ...)
+  - Directory (id, parent, owner, name)
+  - F_in_Dir (file_id, dir_id, name)
 
-- Una cartella "root" principale
-- X sottocartelle principali per i vari utenti
-- Per ogni utente, un elenco di file e cartelle a libera composizione dell'utente
+> **NB:** il nome del file può essere messo sia in File e quindi è unico tra tutti gli utenti che l'hanno condiviso, sia in F_in_Dir e quindi ogni utente può rinominare il file in maniera differente
 
-#### Esempio
+> Ogni utente può spostare liberamente il file nelle sue cartelle dove vuole, per lui è come se fosse suo il file
 
-`<main_path>/root/gianlu33/documenti vari/file_system.sed`
+> Il file fisico è sempre lo stesso e non viene mai spostato, il che facilita la gestione in cache e in accesso multiplo
 
-L'utente `gianlu33` ha creato una subdirectory chiamata `documenti vari`, in cui ha creato un file di nome `file_system`
+#### Richiesta del client
 
-#### QT - client, visualizzare files e cartelle di un utente
+Tutti i file sono trattati alla stessa maniera
 
-Vedere bene le librerie QT perchè probabilmente è presente qualche classe per la visualizzazione dei files e cartelle da file system in maniera molto semplice.
+Alla prima richiesta mando la lista di tutte le cartelle dell'utente
 
-Guardare anche il laboratorio 5 di Malnati.
+> quindi con parent == NULL e owner='pippo'
+
+Da questo punto in poi quando richiedo una cartella mi manda la lista delle cartelle e dei file contenuti all'interno, che siano suoi o di altri non cambia più niente
+
+In sostanza è molto più intergata la gestione dei file di altri e non vi è nessuna sostanziale differenza con i propri file e visto che lo scopo e fare un editor condiviso penso che la parte più importante sia proprio quella dei file condivisi
+
+#### Improvements
+
+Se si vuole poter avere già dei file nella root e non dentro qualche cartella è sufficiente creare una cartella insieme all'utente che è quella di default che è anche la prima che viene aperta quando si naviga nei file e sarà questa l'unica per l'utente ad avere parent==NULL
 
 ## Invito a collaborare
 

@@ -87,6 +87,16 @@ Da vedere se si vuole utilizzare o no un messaggio di `ACK`
 
 
 
+## move_cursor
+
+_inserire grafico_
+
+Da vedere se mandare un messaggio per lo spostamento del cursore ogni volta. Nel senso, quando aggiungo un carattere è ovvio che il cursore si sposta: questo lo posso dedurre anche senza che venga mandato il messaggio. 
+
+- Posso dedurre la posizione del cursore ogni volta che aggiungo/rimuovo caratteri? (penso di si)
+  Nel caso affermativo, devo distinguere quando muovo il cursore a seguito di una modifica oppure a seguito di uno spostamento (più difficile da gestire)
+- Devo gestire la selezione? cioè se il client remoto seleziona un insieme di caratteri, lo devo mostrare?
+
 ## close_file
 
 ![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/close_file.png?raw=true)

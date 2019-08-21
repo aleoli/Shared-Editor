@@ -24,58 +24,93 @@ L'inserimento di un carattere nel testo è eseguito in una posizione assoluta `p
 - Devo costruirmi l'oggetto Symbol da inserire nel vettore di simboli
   - Devo costruire il vettore `position` del simbolo, partendo dai simboli immediatamente precedente e successivo alla posizione in cui sto inserendo
 
-#### Esempio
-Questa era quella che avevo fatto nel laboratorio e mi sembra funzionasse abbastanza bene, divide in 3 sottocasi:
-1. sto inserendo all'inizio
-2. sto inserendo in mezzo
-3. sto inserendo alla fine
-
+#### Funzione tratta dall'algoritmo CRDT di Conclave (usata nel LAB3 malnati)
 ```cpp
 void SharedEditor::localInsert(int index, char value) {
-    SymbolId s_id;
-    s_id.client_id = this->_siteId;
-    s_id.char_id = this->_counter;
-    this->_counter++;
-    vector<int> pos;
-    if(index == 0) {
-        // sta all'inizio
-        if(!this->_symbols.empty()) {
-            // c'è già qualcosa nel documento
-            pos = this->_symbols.begin()->getPos();
-        }
-        pos.push_back(1);
-        Symbol s{s_id, value, pos};
-        this->_symbols.push_front(s);
-        this->_server.send(Message{s, INSERT, this->_siteId});
-    } else if(index == this->_symbols.size()) {
-        // sta alla fine
-        pos = (--this->_symbols.end())->getPos();
-        pos[pos.size()-1]++;
-        Symbol s{s_id, value, pos};
-        this->_symbols.push_back(s);
-        this->_server.send(Message{s, INSERT, this->_siteId});
-    } else if(index > 0 && index < this->_symbols.size()) {
-        // sta in mezzo
-        auto it = std::next(this->_symbols.begin(), index-1);
-        pos = it->getPos();
-        auto pos_next = (++it)->getPos();
-        if(pos.size() > pos_next.size()) {
-            // sto già inserendo
-            pos[pos.size()-1]++;
+    std::string uid = std::to_string(this->_siteId) + ":" + std::to_string(this->_counter++);
+    auto size = this->_symbols.size();
+
+    //TODO what to do if index is >= size of vector symbols?
+    if(index > size) index = size;
+
+    //create array position
+    int previous = index > 0 ? index - 1 : -1;
+    int next = index == size ? -1 : index;
+
+    std::vector<int> v1, v2;
+    int siteId1, siteId2;
+    siteId1 = siteId2 = this->_siteId;
+
+    if(previous != -1) {
+        auto sym = this->_symbols.at(previous);
+        v1 = sym.getPosition();
+        siteId1 = sym.getSiteId();
+    }
+    if(next != -1) {
+        auto sym = this->_symbols.at(next);
+        v2 = sym.getPosition();
+        siteId2 = sym.getSiteId();
+    }
+
+    std::vector<int> position;
+
+    findPosition(v1, v2, position, siteId1, siteId2);
+
+    auto sym = Symbol(this->_siteId, value, uid, position);
+    this->_symbols.emplace(this->_symbols.begin()+index, sym);
+
+    //prepare Message
+    auto m = Message(MessageType::INSERT, sym, this->_siteId);
+    this->_server.send(m);
+}
+
+void SharedEditor::findPosition(std::vector<int> v1, std::vector<int> v2, std::vector<int> &position, int siteId1, int siteId2, int level) {
+    int pos1, pos2;
+
+    if(!v1.empty()) pos1 = v1.at(0);
+    else pos1 = 0;
+
+    if(!v2.empty()) pos2 = v2.at(0);
+    else pos2 = static_cast<int>(pow(2, level) * 32);
+
+    if(pos2 - pos1 > 1){
+        //finished, found the position
+        int pos = (pos2 + pos1) / 2; //TODO cambiare se vuoi
+        position.push_back(pos);
+        return;
+    }
+
+    else if(pos2 - pos1 == 1){
+        //must go deeper
+        position.push_back(pos1);
+
+        if(!v1.empty()) v1.erase(v1.begin());
+        v2.clear();
+
+        findPosition(v1, v2, position, siteId1, siteId2, level + 1);
+    }
+
+    else if(pos2 == pos1) {
+        //must go deeper
+
+        if (siteId1 < siteId2) {
+            position.push_back(pos1);
+
+            if (!v1.empty()) v1.erase(v1.begin());
+            v2.clear();
+
+            findPosition(v1, v2, position, siteId1, siteId2, level + 1);
+        } else if (siteId1 == siteId2) {
+            position.push_back(pos1);
+
+            if (!v1.empty()) v1.erase(v1.begin());
+            if (!v2.empty()) v2.erase(v2.begin());
+
+            findPosition(v1, v2, position, siteId1, siteId2, level + 1);
         } else {
-            // devo inseririlo nel mezzo
-            pos = pos_next;
-            pos[pos.size()-1]--;
-            pos.push_back(1);
+            throw std::runtime_error("Error!!");
         }
-        Symbol s{s_id, value, pos};
-        this->_symbols.insert(it, s);
-        this->_server.send(Message{s, INSERT, this->_siteId});
-    } else {
-        // è fuori dal range
-        std::stringstream ss;
-        ss << std::endl << index << " è fuori dal range" << std::endl << "Numero attuale di elementi: " << this->_symbols.size() << std::endl << std::endl;
-        throw IndexOutException{ss.str()};
+
     }
 }
 ```
