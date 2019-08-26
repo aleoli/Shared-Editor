@@ -2,54 +2,50 @@
 
 ## Classi in comune
 
-![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZP6zRW8n48HxFuLBK4GUm4A8Ab8AYYZqoDZBOSa_5-_wb1FAksUNCo9bkfrPUUQplKUobLgAoaMBg3_dT2vHtzH6du8tNRzxqUvQZNPNMqMC1Or6yiPCuAZKRSYqK-f5bn6gPMDP8jMGXzLQkvAHr8zwzFHSVUCZBWR8TE_Z53Qav27bJAVQR9uyFUS0Y7Q01JZXOBJDiymqZs0qv9R-3_NHeC7sk5lIBk5I-XM_P75lw0Oo8FXJQWJVuhkfBzp4RGFGQctqaSUnqUh8yrI2VnQzXTYH-oLbp3OnyS8c-cfpBgTKVBW4PubP-aiVn9ftpxZ5M08RGlsRwbh5KXyV-SehSQsZC77RkPGeEGB4pzkJr1woRod-0W00)
+![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZLB1IWCn4BtdAuQUjfKMpq6a7XGKH8gzBscIjf5DicOcYsNflvka6zoZbsNUUvFtPeRT8eb0qNPCTW8HFY_su3iOWQsXDOfFnAigX3m73l8iGa6zHmv8YlD1I_A1CT_h859rOv62SQTc2T8x961NLaEgvvW8ensL9EE8PUyAoeDfdlKQwgDgyguHnKd3c4UXIw-1LswVqBEBDYj2al7kJtigkAfAa00-7_VVI-oYZZczFPgZdoo-CyTQMntJDbgrDfB-OQqS9beExAIfMNBOipvIiq_Lu8sQcR-ORjgiNYQL4NL86873xU0FINXaTp0Y2JBo2iVWxHjwr-poz-FmbTgMm8jTwYDVnCpC6d9goODLElFYVhDPBUf_mE4ia6srKz5slm00)
 
 <details>
 <summary> Codice PlantUML </summary>
 @startuml
-class Symbol {
-- _id: SymbolId
-- _chr: char
-- _pos: std::vector<int>
+class Symbol { 
+- _id: SymbolId 
+- _chr: char 
+- _pos: std::vector
 
-+ operator std::string() const
+operator std::string() const 
 }
 
 class SymbolId {
-+ client_id: int
-+ char_id: int
+client_id: int
+char_id: int 
 }
 
 Symbol -- SymbolId
 
 class Message {
-- _msg: any
-- _type: enum
+- _type : MessageTypeEnum
+- _action : MessageActionEnum
+- _data : std::string
 
-+ operator std::string() const
+operator std::string() const 
 }
 
-class Queue<T> {
-- _fifo: std::queue
-- _m: std::shared_mutex
-- _cv: std::cv
-+ get(): T
-+ put(T): void
+class Queue {
+_fifo: std::queue
+_m: std::shared_mutex
+_cv: std::cv
+get(): T
+put(T): void 
 }
 
 class File {
 - _id: int
-- _name: string
-- _hanno_modificato: vector<Modify>
+- _user_ids : vector<int>
++ {static} fromJson(QJsonObject) : File
++ toJson() : QJsonObject
 }
 
-class Modify {
-- _user_id: int
-- _cursor: Symbol._id
-- _active: bool
-}
-
-File -- Modify
+File  *-- "0..*" Symbol : has
 @enduml
 </details>
 
