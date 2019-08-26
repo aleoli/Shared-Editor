@@ -1,26 +1,21 @@
 # Esempio di ricezione/processamento di un messaggio
 
-## Ipotesi
+## Formato JSON
 
-- Classe parent Message, più sottoclassi per il tipo di messaggio (MessageFile, MessageUser, ...)
-
-- Nelle sottoclassi vi è un campo "action" che indica qual è l'azione da eseguire
-- Ipotizziamo di essere nel server, nell'IN thread per un certo client
 - Il json ha il formato seguente
 
 ```json
 {
   "type": "FILE",
-  "message": {
-    "action": "CREATE",
+  "action": "CREATE",
+  "error" : false,
+  "data": {
 	"name": "file1"
   }
 }
 ```
 
-Nell'oggetto esterno vi è un campo type, che discrimina la sottoclasse di Message, mentre vi è un campo message che contiene il messaggio vero e proprio. 
-
-
+I campi `type` e `action` servono a individuare il corretto tipo del messaggio, mentre il campo `data` è un oggetto json che contiene tutti i campi utili per quel messaggio. Ogni messaggio avrà chiaramente campi diversi.
 
 ## Codice
 
@@ -35,29 +30,23 @@ while(1) {
     QJsonObject json = QJsonDocument::fromJson(data).object();
     
     // ricavo oggetto Message
-    Message m = jsonParse(json);
+    Message m = Message::fromJson(json);
     
     // processo il messaggio
     processMessage(m);
 }
 ```
 
-### jsonParse
+### Message::fromJson
 
 ```cpp
-Message jsonParse(QJsonObject json) {
+Message Message::fromJson(QJsonObject json) {
     MessageTypeEnum type = Message::convertTypeEnum(json["type"]);
-    QJsonObject message = json["message"].object();
+    MessageActionEnum action = Message::convertActionEnum(json["action"]);
+    bool error = json["error"].toBool();
+    QJsonObject data = json["data"].toObject();
     
-    // a seconda del tipo, costruisco un oggetto della sottoclasse adatta
-    switch(type) {
-        case M_TYPE_FILE:
-            Message m = MessageFile::fromJson(message); // oppure MessageFile(message);
-            return m;
-            
-        // altri casi..
-         ...
-    }
+    return Message(type, action, error, data);
 }
 ```
 
@@ -65,10 +54,10 @@ Message jsonParse(QJsonObject json) {
 
 ```cpp
 void processMessage(Message &m const) {
-    // a seconda del tipo, faccio cast del messaggio e chiamo metodo adatto
+    // a seconda del tipo, chiamo metodo adatto in cui verrà verificata l'azione
     switch(m.type) {
         case M_TYPE_FILE:
-            processMessageFile(std::dynamic_cast<MessageFile>(m));
+            processMessageFile(m);
             break;
 
             // altri casi..
@@ -80,16 +69,27 @@ void processMessage(Message &m const) {
 ### processMessageFile
 
 ```cpp
-void processMessageFile(MessageFile &m const) {
-    // a seconda dell'azione, faccio cose diverse/chiamo metodi diversi
+void processMessageFile(Message &m const) {
+    // a seconda dell'azione, chiamo callback adatta
     switch(m.action) {
         case M_ACTION_CREATE:
-            // chiama callback/fai cose ...
+            createFile(m);
             break;
             
             //altri casi..
             ...
     }
+}
+```
+
+### createFile
+
+```cpp
+void createFile(Message &m const) {
+    QJsonObject data = m.getData();
+    auto name = data["name"].toString();
+    
+    // crea file etc...
 }
 ```
 
