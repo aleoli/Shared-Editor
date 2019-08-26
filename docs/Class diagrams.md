@@ -2,10 +2,11 @@
 
 ## Classi in comune
 
-![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZLB1IWCn4BtdAuQUjfKMpq6a7XGKH8gzBscIjf5DicOcYsNflvka6zoZbsNUUvFtPeRT8eb0qNPCTW8HFY_su3iOWQsXDOfFnAigX3m73l8iGa6zHmv8YlD1I_A1CT_h859rOv62SQTc2T8x961NLaEgvvW8ensL9EE8PUyAoeDfdlKQwgDgyguHnKd3c4UXIw-1LswVqBEBDYj2al7kJtigkAfAa00-7_VVI-oYZZczFPgZdoo-CyTQMntJDbgrDfB-OQqS9beExAIfMNBOipvIiq_Lu8sQcR-ORjgiNYQL4NL86873xU0FINXaTp0Y2JBo2iVWxHjwr-poz-FmbTgMm8jTwYDVnCpC6d9goODLElFYVhDPBUf_mE4ia6srKz5slm00)
+![UML Class Diagram](http://www.plantuml.com/plantuml/png/ZLB1Qkim4BphAvQSd3mItbcKaXvQQA6KqDoD8Yk9YgrrjIlJOFBlbHIBv1HwCJipqkxio6jYvJbqhT2j8eBFKxV35aOGIwXj8oVYjSc4Fde9-gXyHZsI1E96oi5eHYy4ziQhM5rOOc_TePg3HaSCuYpAaD9pZ8GrZlCawrYatWNa2vEVvHBAfTBatH2fWu4nMU5JRq0MRXlHimjTKfHcY-wgFMLSLECz-YZk4Dk46yKAvArz8Vx1tRMYFX8hjleCUu_T6w6hDkdxiViockVNsV4eOzOJUNFc6iqcc91sglTsZvEHxyI9kYk-OaQcgRl0vaVKUfXeFOY3uMekOIlwmDKsLWFQvYRt5zjEUPMyOnd8-8W995oUyI4AZt_PAhQxlrAU1uluUBF_gzLYLluk2KT5OcrS4xhs5m00)
 
 <details>
 <summary> Codice PlantUML </summary>
+@startuml
 @startuml
 class Symbol { 
 - _id: SymbolId 
@@ -25,9 +26,12 @@ Symbol -- SymbolId
 class Message {
 - _type : MessageTypeEnum
 - _action : MessageActionEnum
+- _error : bool
 - _data : std::string
 
-operator std::string() const 
++ operator std::string() const 
++ {static} fromJson(QJsonObject) : Message
++ toJson() : QJsonObject
 }
 
 class Queue {

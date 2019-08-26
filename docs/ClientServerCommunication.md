@@ -89,7 +89,7 @@ Da vedere se si vuole utilizzare o no un messaggio di `ACK`
 
 ## move_cursor
 
-_inserire grafico_
+![](https://github.com/aleoli/Shared-Editor/blob/master/docs/images/cs_comm/move_cursor.png?raw=true)
 
 Da vedere se mandare un messaggio per lo spostamento del cursore ogni volta. Nel senso, quando aggiungo un carattere è ovvio che il cursore si sposta: questo lo posso dedurre anche senza che venga mandato il messaggio. 
 
