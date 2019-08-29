@@ -34,3 +34,4 @@
 # build and bin folders
 build/
 bin/
+src/server/.db
