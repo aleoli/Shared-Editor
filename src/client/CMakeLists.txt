@@ -16,4 +16,4 @@ file(GLOB src_files
 
 add_executable(client ${src_files})
 
-target_link_libraries(client ${LIBRARIES})
+target_link_libraries(client ${LIBRARIES} pthread)
