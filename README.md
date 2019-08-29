@@ -4,9 +4,9 @@
 
 - [Overview del progetto](docs/Progetto.md)
 
-- [Class Diagrams](docs/classDiagrams.md)
+- [Class Diagrams](docs/ClassDiagrams.md)
 
-- [Comunicazioni tra client e server](docs/clientServerCommunication.md)
+- [Comunicazioni tra client e server](docs/ClientServerCommunication.md)
 
 - [Esempio di processamento di un messaggio](docs/esempioProcessamentoMsg.md)
 
