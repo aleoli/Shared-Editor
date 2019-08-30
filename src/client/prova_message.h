@@ -14,7 +14,8 @@ Message createMessage() {
   data["name"] = "newfile.txt";
   data["id_user"] = 5;
 
-  return Message(MessageTypeEnum::USER, MessageActionEnum::CLOSE, false, data);
+  return Message(MessageTypeEnum::FILE, static_cast<int>(MessageFileActionEnum::CLOSE_FILE),
+    false, MessageStatusEnum::RESPONSE, data);
 }
 
 void saveToFile(QString path, Message &m) {
@@ -72,9 +73,10 @@ void prova_message() {
   Message m3 = Message::fromJsonObject(json);
 
   // stampe varie
-  std::cout << static_cast<int>(m.getType()) << std::endl;
-  std::cout << static_cast<int>(m.getAction()) << std::endl;
-  std::cout << m.getError() << std::endl;
+  std::cout << "type: " << static_cast<int>(m.getType()) << std::endl;
+  std::cout << "action: " << static_cast<int>(m.getAction()) << std::endl;
+  std::cout << "error: " << m.getError() << std::endl;
+  std::cout << "status: " << static_cast<int>(m.getStatus()) << std::endl;
 
   auto data = m.getData();
 

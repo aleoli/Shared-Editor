@@ -2,41 +2,47 @@
 
 #include <QJsonValue>
 
-Message::Message(MessageTypeEnum type, MessageActionEnum action, bool error, QJsonObject data)
-  : _type(type), _action(action), _error(error), _data(data) {}
+Message::Message(MessageTypeEnum type, int action, bool error, MessageStatusEnum status, QJsonObject data)
+  : _type(type), _action(action), _error(error), _status(status), _data(data) {}
 
 Message Message::fromJsonObject(QJsonObject &json) {
   MessageTypeEnum type = static_cast<MessageTypeEnum>(json["type"].toInt());
-  MessageActionEnum action = static_cast<MessageActionEnum>(json["action"].toInt());
+  int action = json["action"].toInt();
   bool error = json["error"].toBool();
+  MessageStatusEnum status = static_cast<MessageStatusEnum>(json["status"].toInt());
   QJsonObject data = json["data"].toObject();
 
-  return Message(type, action, error, data);
+  return Message(type, action, error, status, data);
 }
 
 QJsonObject Message::toJsonObject() {
   QJsonObject json;
 
   json["type"] = QJsonValue(static_cast<int>(_type));
-  json["action"] = QJsonValue(static_cast<int>(_action));
+  json["action"] = QJsonValue(_action);
   json["error"] = QJsonValue(_error);
+  json["status"] = QJsonValue(static_cast<int>(_status));
   json["data"] = QJsonValue(_data);
 
   return json;
 }
 
-MessageTypeEnum Message::getType(){
+MessageTypeEnum Message::getType() {
   return _type;
 }
 
-MessageActionEnum Message::getAction(){
+int Message::getAction() {
   return _action;
 }
 
-bool Message::getError(){
+bool Message::getError() {
   return _error;
 }
 
-QJsonObject Message::getData(){
+MessageStatusEnum Message::getStatus() {
+  return _status;
+}
+
+QJsonObject Message::getData() {
   return _data;
 }
