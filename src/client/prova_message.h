@@ -7,6 +7,8 @@
 #include "FifoMap.h"
 #include "Message.h"
 
+#define SAVE_BINARY 0
+
 Message createMessage() {
   QJsonObject data;
   data["name"] = "newfile.txt";
@@ -18,7 +20,12 @@ Message createMessage() {
 void saveToFile(QString path, Message &m) {
   // trasformo in QByteArray
   QJsonDocument doc(m.toJsonObject());
+
+#if SAVE_BINARY
+  auto array = doc.toBinaryData();
+#else
   auto array = doc.toJson();
+#endif
 
   // scrivo su file
   QFile file(path);
@@ -43,7 +50,12 @@ Message readFile(QString path) {
   file.close();
 
   // trasformo in oggetto Message
+#if SAVE_BINARY
+  auto doc = QJsonDocument::fromBinaryData(data);
+#else
   auto doc = QJsonDocument::fromJson(data);
+#endif
+
   auto jsonObject = doc.object();
   return Message::fromJsonObject(jsonObject);
 }
@@ -70,5 +82,5 @@ void prova_message() {
   std::cout << data["id_user"].toInt() << std::endl;
 
   // scrivo su file (su socket è molto simile)
-  //saveToFile("prova.shed", m2);
+  saveToFile("prova.shed", m2);
 }

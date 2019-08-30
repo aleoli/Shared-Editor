@@ -5,7 +5,7 @@
 Message::Message(MessageTypeEnum type, MessageActionEnum action, bool error, QJsonObject data)
   : _type(type), _action(action), _error(error), _data(data) {}
 
-Message Message::fromJsonObject(QJsonObject json) {
+Message Message::fromJsonObject(QJsonObject &json) {
   MessageTypeEnum type = static_cast<MessageTypeEnum>(json["type"].toInt());
   MessageActionEnum action = static_cast<MessageActionEnum>(json["action"].toInt());
   bool error = json["error"].toBool();
