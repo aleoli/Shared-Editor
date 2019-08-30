@@ -24,14 +24,19 @@ public:
         return db;
     }
 
-    static void create_db_if_not_exists(QString path) {
+    static void create_db_if_not_exists(QString path = "") {
       QSqlQuery query;
-      QFile f(path);
-      if(!f.open(QIODevice::ReadOnly)) {
-        std::cerr << "ERRORE: non trovo il file per la creazione del database" << std::endl;
-        exit(1);
+      QStringList strs;
+      if(path != "") {
+        QFile f(path);
+        if(!f.open(QIODevice::ReadOnly)) {
+          std::cerr << "ERRORE: non trovo il file per la creazione del database" << std::endl;
+          exit(1);
+        }
+        strs = QTextStream(&f).readAll().split(";");
       }
-      QStringList strs = QTextStream(&f).readAll().split(";");
+
+      strs = DB::get()->create_db;
       for(QString str: strs) {
         if(str.trimmed().isEmpty()) {
           continue;
@@ -101,6 +106,10 @@ private:
     }
 
     QSqlDatabase db;
+    QStringList create_db = {
+      "CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY, name TEXT);",
+      "CREATE TABLE IF NOT EXISTS people2 (id INTEGER PRIMARY KEY, name TEXT);"
+    };
 };
 
 #endif // DB_H

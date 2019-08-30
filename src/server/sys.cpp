@@ -20,6 +20,6 @@ void initiate_system() {
   (void) db;
 
   if(!dir_exists || !file_exists) {
-    DB::create_db_if_not_exists("src/files/db.sql");
+    DB::create_db_if_not_exists();
   }
 }
