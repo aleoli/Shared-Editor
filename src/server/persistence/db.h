@@ -7,6 +7,10 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QSqlQuery>
+
+#include <QFile>
+#include <QTextStream>
 
 #include "persistence.h"
 
@@ -17,6 +21,26 @@ public:
     static DB* get() {
         static DB* db = new DB{};
         return db;
+    }
+
+    static void create_db_if_not_exists(std::string path) {
+      QSqlQuery query;
+      QFile f(path.c_str());
+      if(!f.open(QIODevice::ReadOnly)) {
+        std::cerr << "ERRORE: non trovo il file per la creazione del database" << std::endl;
+        exit(1);
+      }
+      QStringList strs = QTextStream(&f).readAll().split(";");
+      for(QString str: strs) {
+        if(str.trimmed().isEmpty()) {
+          continue;
+        }
+        if(!query.exec(str)) {
+          std::cerr << "ERRORE: " << query.lastError().text().toStdString() << std::endl;
+          exit(1);
+        }
+        query.finish();
+      }
     }
 
     template<typename T> static std::vector<T> getAll() {
@@ -60,11 +84,11 @@ private:
           std::cerr << "ERRORE: No Driver" << std::endl;
           exit(1);    // se non ha i driver del DB posso anche interrompere il programma, tanto non può funzionare
         }
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+        db = QSqlDatabase::addDatabase("QSQLITE");
 #if IN_MEMORY
         db.setDatabaseName(":memory:");
 #else
-        db.setDatabaseName("shared-editor.db");
+        db.setDatabaseName(".db/shared-editor.db");
 #endif
 
         if(!db.open()) {
@@ -74,6 +98,8 @@ private:
 
         std::cout << "DB connesso" << std::endl;
     }
+
+    QSqlDatabase db;
 };
 
 #endif // DB_H
