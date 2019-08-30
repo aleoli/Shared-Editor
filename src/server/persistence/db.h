@@ -34,9 +34,10 @@ public:
           exit(1);
         }
         strs = QTextStream(&f).readAll().split(";");
+      } else {
+        strs = DB::get()->create_db;
       }
 
-      strs = DB::get()->create_db;
       for(QString str: strs) {
         if(str.trimmed().isEmpty()) {
           continue;
