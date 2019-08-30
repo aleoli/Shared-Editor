@@ -9,6 +9,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
+#include <QDir>
 #include <QFile>
 #include <QTextStream>
 
@@ -23,9 +24,9 @@ public:
         return db;
     }
 
-    static void create_db_if_not_exists(std::string path) {
+    static void create_db_if_not_exists(QString path) {
       QSqlQuery query;
-      QFile f(path.c_str());
+      QFile f(path);
       if(!f.open(QIODevice::ReadOnly)) {
         std::cerr << "ERRORE: non trovo il file per la creazione del database" << std::endl;
         exit(1);
@@ -88,7 +89,7 @@ private:
 #if IN_MEMORY
         db.setDatabaseName(":memory:");
 #else
-        db.setDatabaseName(".db/shared-editor.db");
+        db.setDatabaseName(QDir::homePath()+"/.shared_editor/shared-editor.db");
 #endif
 
         if(!db.open()) {
