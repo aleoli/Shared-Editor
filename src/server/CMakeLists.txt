@@ -11,6 +11,8 @@ include_directories(persistence)
 file(GLOB src_files
     "*.h"
     "*.cpp"
+    "../*.h"
+    "../*.cpp"
 )
 
 add_executable(server ${src_files})
