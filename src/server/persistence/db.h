@@ -108,8 +108,7 @@ private:
 
     QSqlDatabase db;
     QStringList create_db = {
-      "CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY, name TEXT);",
-      "CREATE TABLE IF NOT EXISTS people2 (id INTEGER PRIMARY KEY, name TEXT);"
+      "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, nickname VARCHAR(255) UNIQUE, email VARCHAR(255) UNIQUE, password VARCHAR(255));"
     };
 };
 
