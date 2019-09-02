@@ -4,6 +4,8 @@
 
 #include "persistence_global.h"
 
+#include "dependencies.h"
+
 using persistence::Persistent;
 
 class User: public Persistent {
@@ -18,7 +20,7 @@ public:
   virtual User& operator=(const User& u);
 
   static User registra(QString nickname, QString email, QString password);
-  static User login(QString username, QString password);
+  static Session login(QString username, QString password);
 
   virtual void save();
   virtual void save_record(QSqlRecord &r);

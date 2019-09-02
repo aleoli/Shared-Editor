@@ -108,7 +108,8 @@ private:
 
     QSqlDatabase db;
     QStringList create_db = {
-      "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, nickname VARCHAR(255) UNIQUE, email VARCHAR(255) UNIQUE, password VARCHAR(255));"
+      "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, nickname VARCHAR(255) UNIQUE, email VARCHAR(255) UNIQUE, password VARCHAR(255));",
+      "CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY AUTOINCREMENT, token VARCHAR(255) UNIQUE, user_id INT, FOREIGN KEY(user_id) REFERENCES user(id));"
     };
 };
 
