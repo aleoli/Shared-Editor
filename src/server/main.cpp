@@ -21,19 +21,55 @@ int main(int argc, char *argv[]) {
     User u = User::registra("aleoli", "aleoli96@gmail.com", "ciao");
     users = DB::getAll<User>();
   }
+  std::cout << "LISTA UTENTI" << std::endl;
   for(auto& u: users) {
-    std::cout << u.getNickname().toStdString() << std::endl;
+    std::cout << "\t" << u.getNickname().toStdString() << std::endl;
   }
   std::cout << std::endl << std::endl;
 
 
+  QString token;
+  std::cout << "LOGIN" << std::endl;
   try {
     //auto s = User::login("' OR 1 OR '", "ciao");
     auto s = User::login("aleoli", "ciao");
-    std::cout << s.getUser().getNickname().toStdString() << std::endl;
+    std::cout << "\t" << s.getUser().getNickname().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
+    token = s.getToken();
   } catch(persistence::SQLException e) {
     std::cout << "EXCEPTION: " << e.what() << std::endl;
-    //throw e;
+    throw e;
+  }
+
+  std::cout << std::endl << std::endl;
+
+  std::cout << "VERIFICA LOGIN" << std::endl;
+  try {
+    auto s = Session::get(token);
+    std::cout << "\t" << s.getUser().getNickname().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
+  } catch(persistence::SQLException e) {
+    std::cout << "EXCEPTION: " << e.what() << std::endl;
+    throw e;
+  }
+
+  std::cout << std::endl << std::endl;
+
+  std::cout << "CHIUDO SESSIONE" << std::endl;
+  {
+    auto s = Session::get(token);
+    try {
+      s.close();
+
+      // verifico che non riesca più a trovare la sessione
+      try {
+        auto s2 = Session::get(token);
+        std::cerr << "ERRORE: riesco ancora a trovare la sessione" << std::endl;
+      } catch(persistence::SQLException e2) {
+        std::cout << "\tGiustamente non trovo più la sessione" << std::endl;
+      }
+    } catch(persistence::SQLException e) {
+      std::cout << "EXCEPTION: " << e.what() << std::endl;
+      throw e;
+    }
   }
 #endif
 
