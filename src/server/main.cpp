@@ -8,6 +8,7 @@
 #if TEST_USER
 #include <vector>
 #include "user.h"
+#include "session.h"
 #endif
 
 int main(int argc, char *argv[]) {
@@ -27,12 +28,12 @@ int main(int argc, char *argv[]) {
 
 
   try {
-    //auto u = User::login("' OR 1 OR '", "ciao");
-    auto u = User::login("aleoli", "ciao");
-    std::cout << u.getNickname().toStdString() << std::endl;
-  } catch(std::exception e) {
+    //auto s = User::login("' OR 1 OR '", "ciao");
+    auto s = User::login("aleoli", "ciao");
+    std::cout << s.getUser().getNickname().toStdString() << std::endl;
+  } catch(persistence::SQLException e) {
     std::cout << "EXCEPTION: " << e.what() << std::endl;
-    throw e;
+    //throw e;
   }
 #endif
 

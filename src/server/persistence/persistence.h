@@ -1,7 +1,7 @@
 #ifndef PERSISTENCE_H
 #define PERSISTENCE_H
 
-#define IN_MEMORY 0
+#define IN_MEMORY 1
 
 namespace persistence {
 

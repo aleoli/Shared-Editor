@@ -3,6 +3,7 @@
 #include <QCryptographicHash>
 
 #include "utils.h"
+#include "session.h"
 
 #define RND_LENGTH 16
 
@@ -71,7 +72,7 @@ QString User::encrypt(QString str) {
   return encr+rnd;
 }
 
-User User::login(QString username, QString password) {
+Session User::login(QString username, QString password) {
   QSqlQuery query("SELECT id, password FROM "+User::table_name+" WHERE nickname=? OR email=?");
   query.addBindValue(username);
   query.addBindValue(username);
@@ -79,7 +80,8 @@ User User::login(QString username, QString password) {
     while(query.next()) {
       auto r = query.record();
       if(User::check_pass(password, r.value("password").toString())) {
-        return DB::getOne<User>(r.value("id").toInt());
+        //return DB::getOne<User>(r.value("id").toInt());
+        return Session::start(r.value("id").toInt());
       }
     }
     throw persistence::SQLNoElementSelectException{"No element found in table '"+User::table_name+"' for username "+username+" and password "+password};
