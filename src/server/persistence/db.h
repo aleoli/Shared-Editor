@@ -38,7 +38,7 @@ public:
         strs = DB::get()->create_db;
       }
 
-      for(QString str: strs) {
+      for(QString& str: strs) {
         if(str.trimmed().isEmpty()) {
           continue;
         }
