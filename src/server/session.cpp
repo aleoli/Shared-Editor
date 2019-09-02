@@ -61,6 +61,24 @@ Session Session::start(int user_id) {
   return s;
 }
 
+Session Session::get(const QString& token) {
+  QSqlQuery query("SELECT * FROM "+Session::table_name+" WHERE token=? AND active=1");
+  query.addBindValue(token);
+  if(query.exec()) {
+    if(query.next()) {
+      return Session{query.record()};
+    }
+    throw persistence::SQLNoElementSelectException{"No element found in table '"+Session::table_name+"' for token "+token};
+  } else {
+    throw persistence::SQLException{"No query exec on '"+Session::table_name+"'"};
+  }
+}
+
+void Session::close() {
+  this->_active = false;
+  this->save();
+}
+
 QString Session::new_token() {
   // TODO: controlla che non ci sia già nel db
   return rndString(128);
@@ -72,4 +90,8 @@ int Session::getUserId() const {
 
 User Session::getUser() {
   return this->_user.getValue();
+}
+
+QString Session::getToken() const {
+  return this->_token;
 }

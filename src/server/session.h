@@ -21,7 +21,8 @@ public:
   virtual Session& operator=(const Session &s);
 
   static Session start(int user_id);
-  static Session get(QString token);    // TODO
+  static Session get(const QString& token);
+  void close();
 
   virtual void save();
   virtual void save_record(QSqlRecord &r);
@@ -31,6 +32,7 @@ public:
 
   int getUserId() const;
   User getUser();
+  QString getToken() const;
 
 private:
   static QString new_token();
