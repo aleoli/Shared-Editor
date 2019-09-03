@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <QDir>
+#include <QTime>
 
 #include "persistence_global.h"
 
@@ -22,4 +23,7 @@ void initiate_system() {
   if(!dir_exists || !file_exists) {
     DB::create_db_if_not_exists();
   }
+
+  // seed for random generator
+  qsrand(static_cast<quint64>(QTime::currentTime().msecsSinceStartOfDay()));
 }

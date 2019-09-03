@@ -7,14 +7,27 @@
 
 class persistence::SQLException: public std::exception {
 public:
-    SQLException(QString str): std::exception(), str(str) {}
+    SQLException(QString str): std::exception(), str(str) {
+      this->c_str = new char[str.length()+1];
+      int i=0;
+      for(auto& c: str.toStdString()) {
+        this->c_str[i++] = c;
+      }
+      this->c_str[i] = '\0';
+    }
+
+    virtual ~SQLException() {
+      delete[] this->c_str;
+      this->c_str = nullptr;
+    }
 
     virtual const char* what() const noexcept {
-        return this->str.toStdString().c_str();
+        return this->c_str;
     }
 
 private:
     QString str;
+    char *c_str;
 };
 
 
