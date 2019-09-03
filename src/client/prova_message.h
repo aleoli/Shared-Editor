@@ -14,8 +14,8 @@ Message createMessage() {
   data["name"] = "newfile.txt";
   data["id_user"] = 5;
 
-  return Message(MessageTypeEnum::FILE, static_cast<int>(MessageFileActionEnum::CLOSE_FILE),
-    false, MessageStatusEnum::RESPONSE, data);
+  return Message(Message::Type::FILE, static_cast<int>(Message::FileAction::CLOSE_FILE),
+    false, Message::Status::RESPONSE, data);
 }
 
 void saveToFile(QString path, Message &m) {

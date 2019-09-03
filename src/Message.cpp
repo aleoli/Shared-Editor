@@ -2,14 +2,14 @@
 
 #include <QJsonValue>
 
-Message::Message(MessageTypeEnum type, int action, bool error, MessageStatusEnum status, QJsonObject data)
+Message::Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data)
   : _type(type), _action(action), _error(error), _status(status), _data(data) {}
 
 Message Message::fromJsonObject(QJsonObject &json) {
-  MessageTypeEnum type = static_cast<MessageTypeEnum>(json["type"].toInt());
+  Message::Type type = static_cast<Message::Type>(json["type"].toInt());
   int action = json["action"].toInt();
   bool error = json["error"].toBool();
-  MessageStatusEnum status = static_cast<MessageStatusEnum>(json["status"].toInt());
+  Message::Status status = static_cast<Message::Status>(json["status"].toInt());
   QJsonObject data = json["data"].toObject();
 
   return Message(type, action, error, status, data);
@@ -27,7 +27,7 @@ QJsonObject Message::toJsonObject() {
   return json;
 }
 
-MessageTypeEnum Message::getType() {
+Message::Type Message::getType() {
   return _type;
 }
 
@@ -39,7 +39,7 @@ bool Message::getError() {
   return _error;
 }
 
-MessageStatusEnum Message::getStatus() {
+Message::Status Message::getStatus() {
   return _status;
 }
 
