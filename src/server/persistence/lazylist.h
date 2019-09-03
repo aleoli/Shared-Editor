@@ -6,7 +6,9 @@
 #include <vector>
 
 #include "db.h"
-#include "sqlexception.h"
+#include "exceptions.h"
+
+using namespace se_exceptions;
 
 using persistence::DB;
 
