@@ -10,6 +10,8 @@ include_directories(..)
 file(GLOB src_files
     "*.h"
     "*.cpp"
+    "../*.h"
+    "../*.cpp"
 )
 
 add_executable(client ${src_files})
