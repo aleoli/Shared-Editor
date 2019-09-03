@@ -27,22 +27,22 @@ QJsonObject Message::toJsonObject() {
   return json;
 }
 
-Message::Type Message::getType() {
+Message::Type Message::getType() const {
   return _type;
 }
 
-int Message::getAction() {
+int Message::getAction() const {
   return _action;
 }
 
-bool Message::getError() {
+bool Message::getError() const {
   return _error;
 }
 
-Message::Status Message::getStatus() {
+Message::Status Message::getStatus() const {
   return _status;
 }
 
-QJsonObject Message::getData() {
+QJsonObject Message::getData() const {
   return _data;
 }

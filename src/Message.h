@@ -47,11 +47,11 @@ public:
   static Message fromJsonObject(QJsonObject &json);
   QJsonObject toJsonObject();
 
-  Message::Type getType();
-  int getAction();
-  bool getError();
-  Message::Status getStatus();
-  QJsonObject getData();
+  Message::Type getType() const;
+  int getAction() const;
+  bool getError() const;
+  Message::Status getStatus() const;
+  QJsonObject getData() const;
 
 private:
   Message::Type _type;
