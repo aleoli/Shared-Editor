@@ -1,16 +1,44 @@
 #include "Message.h"
 
+#include "exceptions.h"
 #include <QJsonValue>
+
+using namespace se_exceptions;
 
 Message::Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data)
   : _type(type), _action(action), _error(error), _status(status), _data(data) {}
 
 Message Message::fromJsonObject(QJsonObject &json) {
-  Message::Type type = static_cast<Message::Type>(json["type"].toInt());
-  int action = json["action"].toInt();
-  bool error = json["error"].toBool();
-  Message::Status status = static_cast<Message::Status>(json["status"].toInt());
-  QJsonObject data = json["data"].toObject();
+  auto typeValue = json["type"];
+  auto actionValue = json["action"];
+  auto errorValue = json["error"];
+  auto statusValue = json["status"];
+  auto dataValue = json["data"];
+
+  if(typeValue.isUndefined() || actionValue.isUndefined() || errorValue.isUndefined()
+        || statusValue.isUndefined() || dataValue.isUndefined()) {
+          throw MessageFromJsonException{"The QJsonObject has some fields missing"};
+        }
+
+  auto type = static_cast<Message::Type>(typeValue.toInt(-1));
+  auto status = static_cast<Message::Status>(statusValue.toInt(-1));
+
+  if(type < Message::Type::FILE || type > Message::Type::FILESYSTEM
+      || status < Message::Status::QUERY || status > Message::Status::RESPONSE) {
+        throw MessageFromJsonException{"One or more fields are not valid"};
+      }
+
+  auto action = actionValue.toInt(-1);
+  if(action == -1) {
+    throw MessageFromJsonException{"One or more fields are not valid"};
+  }
+
+  if(!errorValue.isBool() || !dataValue.isObject()) {
+    throw MessageFromJsonException{"One or more fields are not valid"};
+  }
+
+  auto error = errorValue.toBool();
+  auto data = dataValue.toObject();
 
   return Message(type, action, error, status, data);
 }

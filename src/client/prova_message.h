@@ -66,23 +66,23 @@ void prova_message() {
   Message m = createMessage();
 
   // leggo messaggio da file (da socket è molto simile il procedimento)
-  Message m2 = readFile("prova.shed");
+  //Message m2 = readFile("prova.shed");
 
   // passaggio a QJsonObject e viceversa
   auto json = m.toJsonObject();
   Message m3 = Message::fromJsonObject(json);
 
   // stampe varie
-  std::cout << "type: " << static_cast<int>(m.getType()) << std::endl;
-  std::cout << "action: " << static_cast<int>(m.getAction()) << std::endl;
-  std::cout << "error: " << m.getError() << std::endl;
-  std::cout << "status: " << static_cast<int>(m.getStatus()) << std::endl;
+  std::cout << "type: " << static_cast<int>(m3.getType()) << std::endl;
+  std::cout << "action: " << static_cast<int>(m3.getAction()) << std::endl;
+  std::cout << "error: " << m3.getError() << std::endl;
+  std::cout << "status: " << static_cast<int>(m3.getStatus()) << std::endl;
 
-  auto data = m.getData();
+  auto data = m3.getData();
 
   std::cout << data["name"].toString().toStdString() << std::endl;
   std::cout << data["id_user"].toInt() << std::endl;
 
   // scrivo su file (su socket è molto simile)
-  saveToFile("prova.shed", m2);
+  //saveToFile("prova.shed", m2);
 }
