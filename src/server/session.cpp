@@ -53,12 +53,26 @@ void Session::remove() {
 }
 
 Session Session::start(int user_id) {
-  Session s{};
-  s._token = Session::new_token();
-  s._user = Lazy<User>{user_id};
-  s._active = true;
-  s.save();     // lancia un'eccezione se non ci riesce
-  return s;
+  int retry = 10;     // lancia l'eccezione se esiste già il token che vuole inserire
+                      // quindi riprovo l'inserimento per 10 volte con token diverse
+                      // c'è una probabilità su 10 * 62^(128) che non ci riesca,
+                      // è sostanzialmente impossibile
+  while(retry > 0) {
+    try {
+      Session s{};
+      s._token = Session::new_token();
+      s._user = Lazy<User>{user_id};
+      s._active = true;
+      s.save();     // lancia un'eccezione se non ci riesce
+      return s;
+    } catch(persistence::SQLException e) {
+      retry--;
+      if(retry == 0) {
+        throw e;
+      }
+      continue;
+    }
+  }
 }
 
 Session Session::get(const QString& token) {
@@ -80,7 +94,6 @@ void Session::close() {
 }
 
 QString Session::new_token() {
-  // TODO: controlla che non ci sia già nel db
   return rndString(128);
 }
 
