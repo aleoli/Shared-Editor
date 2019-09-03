@@ -6,6 +6,4 @@
 #include "lazylist.h"
 #include "persistent.h"
 
-#include "sqlexception.h"
-
 #endif // PERSISTENCE_GLOBAL_H
