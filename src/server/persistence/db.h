@@ -15,9 +15,7 @@
 
 #include "persistence.h"
 
-#include "exceptions.h"
-
-using namespace se_exceptions;
+#include "sqlexception.h"
 
 class persistence::DB {
 public:

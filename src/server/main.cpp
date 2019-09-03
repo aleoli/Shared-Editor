@@ -11,10 +11,6 @@
 #include "session.h"
 #endif
 
-#include "exceptions.h"
-
-using namespace se_exceptions;
-
 int main(int argc, char *argv[]) {
   initiate_system();
 
@@ -39,7 +35,7 @@ int main(int argc, char *argv[]) {
     auto s = User::login("aleoli", "ciao");
     std::cout << "\t" << s.getUser().getNickname().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
     token = s.getToken();
-  } catch(SQLException e) {
+  } catch(persistence::SQLException e) {
     std::cout << "EXCEPTION: " << e.what() << std::endl;
     throw e;
   }
@@ -50,7 +46,7 @@ int main(int argc, char *argv[]) {
   try {
     auto s = Session::get(token);
     std::cout << "\t" << s.getUser().getNickname().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
-  } catch(SQLException e) {
+  } catch(persistence::SQLException e) {
     std::cout << "EXCEPTION: " << e.what() << std::endl;
     throw e;
   }
@@ -67,10 +63,10 @@ int main(int argc, char *argv[]) {
       try {
         auto s2 = Session::get(token);
         std::cerr << "ERRORE: riesco ancora a trovare la sessione" << std::endl;
-      } catch(SQLException e2) {
+      } catch(persistence::SQLException e2) {
         std::cout << "\tGiustamente non trovo più la sessione" << std::endl;
       }
-    } catch(SQLException e) {
+    } catch(persistence::SQLException e) {
       std::cout << "EXCEPTION: " << e.what() << std::endl;
       throw e;
     }

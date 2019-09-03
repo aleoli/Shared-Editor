@@ -5,10 +5,6 @@
 #include "utils.h"
 #include "session.h"
 
-#include "exceptions.h"
-
-using namespace se_exceptions;
-
 #define RND_LENGTH 16
 
 const QString User::table_name = "user";
@@ -88,9 +84,9 @@ Session User::login(QString username, QString password) {
         return Session::start(r.value("id").toInt());
       }
     }
-    throw SQLNoElementSelectException{"No element found in table '"+User::table_name+"' for username "+username+" and password "+password};
+    throw persistence::SQLNoElementSelectException{"No element found in table '"+User::table_name+"' for username "+username+" and password "+password};
   } else {
-    throw SQLException{"No query exec on '"+User::table_name+"'"};
+    throw persistence::SQLException{"No query exec on '"+User::table_name+"'"};
   }
 }
 
