@@ -3,7 +3,9 @@
 
 #include "persistence.h"
 
-#include "sqlexception.h"
+#include "exceptions.h"
+
+using namespace se_exceptions;
 
 #include <QSqlTableModel>
 #include <QSqlRecord>

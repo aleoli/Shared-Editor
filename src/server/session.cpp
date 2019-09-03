@@ -3,6 +3,10 @@
 #include "user.h"
 #include "utils.h"
 
+#include "exceptions.h"
+
+using namespace se_exceptions;
+
 const QString Session::table_name = "session";
 
 Session::Session(): Persistent(), _token(""), _active(false) {}
@@ -65,7 +69,7 @@ Session Session::start(int user_id) {
       s._active = true;
       s.save();     // lancia un'eccezione se non ci riesce
       return s;
-    } catch(persistence::SQLException e) {
+    } catch(SQLException e) {
       retry--;
       if(retry == 0) {
         throw e;
@@ -82,9 +86,9 @@ Session Session::get(const QString& token) {
     if(query.next()) {
       return Session{query.record()};
     }
-    throw persistence::SQLNoElementSelectException{"No element found in table '"+Session::table_name+"' for token "+token};
+    throw SQLNoElementSelectException{"No element found in table '"+Session::table_name+"' for token "+token};
   } else {
-    throw persistence::SQLException{"No query exec on '"+Session::table_name+"'"};
+    throw SQLException{"No query exec on '"+Session::table_name+"'"};
   }
 }
 
