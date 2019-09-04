@@ -8,7 +8,7 @@ using namespace se_exceptions;
 Message::Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data)
   : _type(type), _action(action), _error(error), _status(status), _data(data) {}
 
-Message Message::fromJsonObject(QJsonObject &json) {
+Message::Message(QJsonObject &json) {
   auto typeValue = json["type"];
   auto actionValue = json["action"];
   auto errorValue = json["error"];
@@ -40,7 +40,16 @@ Message Message::fromJsonObject(QJsonObject &json) {
   auto error = errorValue.toBool();
   auto data = dataValue.toObject();
 
-  return Message(type, action, error, status, data);
+  // setting parameters
+  _type = type;
+  _action = action;
+  _error = error;
+  _status = status;
+  _data = data;
+}
+
+Message Message::fromJsonObject(QJsonObject &json) {
+  return Message(json);
 }
 
 QJsonObject Message::toJsonObject() {

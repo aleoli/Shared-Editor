@@ -43,6 +43,7 @@ public:
   };
 
   Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data);
+  explicit Message(QJsonObject &json);
 
   static Message fromJsonObject(QJsonObject &json);
   QJsonObject toJsonObject();
