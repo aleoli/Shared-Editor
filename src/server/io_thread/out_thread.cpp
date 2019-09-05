@@ -2,14 +2,17 @@
 
 #include <iostream>
 
-OutThread::OutThread(std::atomic<bool>* _is_running) {
-  this->_is_running = _is_running;
+#include "socket.h"
+
+OutThread::OutThread(std::atomic<bool>* _is_running, Socket *s): IOThread(_is_running, s) {
 }
 
-OutThread::OutThread(OutThread &&out_t) {
-  this->_is_running = out_t._is_running;
+OutThread::OutThread(OutThread &&out_t): IOThread(out_t._is_running, nullptr) {
+  this->s = out_t.s;
+  out_t.s = nullptr;
 }
 
 void OutThread::action() {
-  std::cout << "ciao!! ";
+  // va fatta un lista non bloccante da cui legge ogni tot e se c'è qualcosa invia
+  std::cout << "";
 }

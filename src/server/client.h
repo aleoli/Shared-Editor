@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dependencies.h"
+#include "socket.h"
 
 #include <thread>
 #include <atomic>
@@ -9,7 +10,7 @@ class Client {
 public:
   Client(const Client &c) = delete;
   Client(Client &&c);
-  explicit Client();
+  explicit Client(Socket s);
 
   ~Client();
 
@@ -23,5 +24,7 @@ private:
   std::atomic<bool> _in_running;
   std::thread* out_thread = nullptr;
   std::atomic<bool> _out_running;
+
+  Socket socket;
 
 };

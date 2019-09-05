@@ -5,7 +5,7 @@
 class InThread: public IOThread {
 public:
   InThread(InThread &&in_t);
-  explicit InThread(std::atomic<bool>* _is_running);
+  explicit InThread(std::atomic<bool>* _is_running, Socket *s);
 
 protected:
   virtual void action();

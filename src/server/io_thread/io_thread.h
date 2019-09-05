@@ -8,8 +8,8 @@ class IOThread {
 public:
   IOThread(const IOThread &io_t) = delete;
   IOThread(IOThread &&io_t);
-  explicit IOThread() = default;
-  explicit IOThread(std::atomic<bool>* _is_running);
+  IOThread() = delete;
+  explicit IOThread(std::atomic<bool>* _is_running, Socket *s);
 
   virtual ~IOThread();
 
@@ -21,5 +21,6 @@ protected:
   virtual void action();
 
   std::atomic<bool>* _is_running;
+  Socket *s;
 
 };

@@ -5,7 +5,7 @@
 class OutThread: public IOThread {
 public:
   OutThread(OutThread &&out_t);
-  explicit OutThread(std::atomic<bool>* _is_running);
+  explicit OutThread(std::atomic<bool>* _is_running, Socket *s);
 
 protected:
   virtual void action();

@@ -2,14 +2,18 @@
 
 #include <iostream>
 
-InThread::InThread(std::atomic<bool>* _is_running) {
-  this->_is_running = _is_running;
+#include "socket.h"
+
+InThread::InThread(std::atomic<bool>* _is_running, Socket *s): IOThread(_is_running, s) {
 }
 
-InThread::InThread(InThread &&in_t) {
-  this->_is_running = in_t._is_running;
+InThread::InThread(InThread &&in_t): IOThread(in_t._is_running, nullptr) {
+  this->s = in_t.s;
+  in_t.s = nullptr;
 }
 
 void InThread::action() {
-  std::cout << "ciao!! ";
+  bool has_res = false;
+  auto str = this->s->_recv(has_res);
+  std::cout << str;
 }

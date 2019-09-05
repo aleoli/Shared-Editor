@@ -13,6 +13,7 @@
 
 #include "client.h"
 #include <unistd.h>
+#include "socket.h"
 
 #include "exceptions.h"
 
@@ -81,9 +82,44 @@ int main(int argc, char *argv[]) {
 #endif
 
   {
-    Client c{};
+    /*Client c{};
     c();
-    sleep(1);
+    sleep(1);*/
+    Socket s{};
+    if(s._bind(1234) != 0) {
+      exit(1);
+    }
+    s._listen();
+    while(true) {
+      auto s2 = s._accept();
+      Client c{std::move(s2)};
+      c();
+      sleep(10);
+      std::cout << "Chiudo client" << std::endl;
+    }
+    /*{
+      auto s2 = s._accept();
+      bool has_res = false;
+      while(!has_res) {
+        auto str = s2._recv(has_res);
+        if(has_res) {
+          s2._sendn(str);
+        }
+      }
+    }
+    {
+      auto s2 = s._accept();
+      bool has_res = false;
+      while(!has_res) {
+        auto str = s2._recv(has_res);
+        if(has_res) {
+          s2._sendn(str);
+        }
+      }
+    }*/
+    /*auto s2 = s._accept();
+    auto str = s2._recv();
+    s2._sendn("ciao!!");*/
   }
 
   return 0;
