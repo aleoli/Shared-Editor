@@ -11,6 +11,9 @@
 #include "session.h"
 #endif
 
+#include "client.h"
+#include <unistd.h>
+
 #include "exceptions.h"
 
 using namespace se_exceptions;
@@ -76,6 +79,12 @@ int main(int argc, char *argv[]) {
     }
   }
 #endif
+
+  {
+    Client c{};
+    c();
+    sleep(1);
+  }
 
   return 0;
 }
