@@ -5,8 +5,6 @@
 #include "socket.h"
 
 InThread::InThread(std::atomic<bool>* _is_running, Socket *s): IOThread(_is_running, s) {
-  // in questo modo leggerà in manira non bloccante finchè non trovarà una 'a'
-  this->s->setTerminator('a');
 }
 
 InThread::InThread(InThread &&in_t): IOThread(in_t._is_running, nullptr) {

@@ -8,6 +8,7 @@
 Client::Client(Socket s) {
   this->id = 0;
   this->socket = std::move(s);
+  this->socket.setTerminator(PKG_TERMINATOR);
 }
 
 Client::Client(Client &&c) {
@@ -42,6 +43,10 @@ void Client::operator()() {
   this->in_thread = new std::thread(std::move(in_t));
 
   this->_out_running.store(true);
-  OutThread out_t{&this->_out_running, &this->socket};
+  OutThread out_t{&this->_out_running, &this->socket, &this->out_queue};
   this->out_thread = new std::thread(std::move(out_t));
+}
+
+void Client::send(std::string msg) {
+  this->out_queue.push(msg + PKG_TERMINATOR);
 }

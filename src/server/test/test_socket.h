@@ -12,7 +12,7 @@ void test_socket() {
   while(true) {
     std::cout << "In attesa su localhost:1234, invia tutto quello che vuoi, il terminatore di pacchetto è 'a'" << std::endl;
     auto s2 = s._accept();
-    std::cout << "Tra 10 secondi chiudo il Client" << std::endl;
+    std::cout << "Tra 10 secondi chiudo il Client (e tra 5 ti mando un 'wei!!')" << std::endl;
     Client c{std::move(s2)};
     try {
       c();
@@ -20,7 +20,9 @@ void test_socket() {
       std::cout << e.what() << std::endl;
       throw e;
     }
-    sleep(10);
+    sleep(5);
+    c.send("wei!!");
+    sleep(5);
     std::cout << "Chiudo client" << std::endl;
   }
 }
