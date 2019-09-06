@@ -1,5 +1,8 @@
 #include "socket.h"
 
+#include <QString>
+#include "exceptions2.h"
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -72,9 +75,7 @@ int Socket::_bind(std::string ip, int port) {
   local.sin_port = htons(port);
   int r = inet_aton(ip.c_str(), &(local.sin_addr));
   if(r == 0) {
-    printf("%s is not a valid IP\n", ip.c_str());
-    // TODO
-    throw 0;
+    throw se_exceptions::NotIPException{QString{ip.c_str()}+" is not a valid IP"};
   }
   return bind(this->s, (struct sockaddr *) &local, sizeof(local));
 }
@@ -99,9 +100,7 @@ std::string Socket::_recv(bool& has_res) {
   tval.tv_usec = 100;
   int n = select(FD_SETSIZE, &cset, NULL, NULL, &tval);
   if(n<0) {
-    printf("Error during Select\n");
-    // TODO
-    throw 0;
+    throw se_exceptions::NetException{"Error during Select"};
   } else if(n==0) {
     return "";
   }
@@ -115,9 +114,7 @@ void Socket::_connect(std::string ip, int port) {
   int old_fl = fcntl(this->s, F_SETFL, O_NONBLOCK);
   struct hostent *he = gethostbyname(ip.c_str());
   if(!he) {
-    printf("%s was not resolved\n", ip.c_str());
-    // TODO
-    throw 0;
+    throw se_exceptions::DNSException{QString{ip.c_str()}+" was not resolved"};
   }
   local.sin_family = AF_INET;
   local.sin_port = htons(port);
@@ -132,9 +129,7 @@ void Socket::_connect(std::string ip, int port) {
   tval.tv_usec = 0;
   int n = select(FD_SETSIZE, NULL, &cset, NULL, &tval);
   if(n <= 0) {
-    printf("Error during connection\n");
-    // TODO
-    throw 0;
+    throw se_exceptions::NetException{"Error during connection"};
   }
   fcntl(this->s, F_SETFL, old_fl);
 }
@@ -155,11 +150,9 @@ int Socket::_sendn(std::string str) {
   	tval.tv_usec = 100;
   	int n = select(FD_SETSIZE, NULL, &cset, NULL, &tval);
   	if(n<0) {
-      printf("Error during Select\n");
-      exit(1);
+      throw se_exceptions::NetException{"Error during Select"};
   	} else if(n==0) {
-      printf("I can't send a message for 100 microseconds\n");
-      exit(1);
+      throw se_exceptions::SendTimeoutException{"I can't send a message for 100 microseconds"};
   	}
     nwritten = send(this->s, ptr, nleft, 0);
     if(nwritten <= 0) {
