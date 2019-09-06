@@ -33,7 +33,7 @@ private:
 
   QJsonArray symbolsToJsonArray() const;
   std::string symbolsToString() const;
-  std::vector<Symbol> jsonArrayToSymbols(QJsonArray &array);
+  static std::vector<Symbol> jsonArrayToSymbols(QJsonArray &array);
 
   int _id;
   std::vector<int> _user_ids;

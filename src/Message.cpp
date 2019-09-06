@@ -71,7 +71,7 @@ Message Message::fromJsonObject(QJsonObject &&json) {
   return Message(json);
 }
 
-QJsonObject Message::toJsonObject() {
+QJsonObject Message::toJsonObject() const {
   QJsonObject json;
 
   json["type"] = QJsonValue(static_cast<int>(_type));

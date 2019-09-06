@@ -49,7 +49,7 @@ public:
 
   static Message fromJsonObject(QJsonObject &json);
   static Message fromJsonObject(QJsonObject &&json);
-  QJsonObject toJsonObject();
+  QJsonObject toJsonObject() const;
 
   Message::Type getType() const;
   int getAction() const;
@@ -60,7 +60,7 @@ public:
 private:
   void checkAndAssign(QJsonValue typeValue, QJsonValue actionValue,
     QJsonValue errorValue, QJsonValue statusValue, QJsonValue dataValue);
-    
+
   Message::Type _type;
   int _action;
   bool _error;
