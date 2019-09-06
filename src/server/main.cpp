@@ -1,6 +1,8 @@
 #define TEST_USER 0
 #define TEST_SOCKET 1
 
+#include <QApplication>
+
 #include <iostream>
 
 #include "persistence_global.h"
@@ -11,7 +13,9 @@
 #endif
 
 #if TEST_SOCKET
-#include "test_socket.h"
+#include <QTcpServer>
+#include <QTcpSocket>
+#include "client_manager.h"
 #endif
 
 #include "exceptions.h"
@@ -19,6 +23,7 @@
 using namespace se_exceptions;
 
 int main(int argc, char *argv[]) {
+  QApplication app(argc, argv);
   initiate_system();
 
 #if TEST_USER
@@ -26,8 +31,8 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if TEST_SOCKET
-  test_socket();
+  ClientManager cm;
 #endif
 
-  return 0;
+  return app.exec();
 }
