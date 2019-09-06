@@ -30,6 +30,33 @@ Socket& Socket::operator=(Socket &&s) {
   return *this;
 }
 
+Socket& Socket::operator>>(std::string& str) {
+  bool has_res = false;
+  if(this->terminator == -1) {
+    str = this->_recv(has_res);
+  } else {
+    str = "";
+    auto tmp{this->_recv(has_res)};
+    if(has_res) {
+      auto pos = tmp.find(this->terminator);
+      if(pos == std::string::npos) {
+        this->str_buff += tmp;
+      } else {
+        tmp = tmp.substr(0, pos);
+        this->str_buff += tmp;
+        str = this->str_buff;
+        this->str_buff = "";
+      }
+    }
+  }
+  return *this;
+}
+
+Socket& Socket::operator<<(const std::string& str) {
+  this->_sendn(str);
+  return *this;
+}
+
 Socket::~Socket() {
   if(this->s >= 0) {
     close(this->s);
@@ -144,4 +171,9 @@ int Socket::_sendn(std::string str) {
     }
   }
   return (int) (nbytes-nleft);
+}
+
+void Socket::setTerminator(char term) {
+  this->terminator = term;
+  this->str_buff = "";
 }

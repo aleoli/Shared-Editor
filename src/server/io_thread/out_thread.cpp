@@ -15,4 +15,6 @@ OutThread::OutThread(OutThread &&out_t): IOThread(out_t._is_running, nullptr) {
 void OutThread::action() {
   // va fatta un lista non bloccante da cui legge ogni tot e se c'è qualcosa invia
   std::cout << "";
+  std::string str = "ciao!!";
+  //*this->s << str;    // NB commento altrimenti ti bombarda
 }
