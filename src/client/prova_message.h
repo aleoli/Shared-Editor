@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QJsonObject>
 #include <QString>
 #include <QJsonDocument>
@@ -18,7 +20,7 @@ Message createMessage() {
     false, Message::Status::RESPONSE, data);
 }
 
-void saveToFile(QString path, Message &m) {
+void writeMessage(QString path, Message &m) {
   // trasformo in QByteArray
   QJsonDocument doc(m.toJsonObject());
 
@@ -39,7 +41,7 @@ void saveToFile(QString path, Message &m) {
   file.close();
 }
 
-Message readFile(QString path) {
+Message readMessage(QString path) {
   // leggo da file
   QFile file(path);
 
@@ -66,7 +68,7 @@ void prova_message() {
   Message m = createMessage();
 
   // leggo messaggio da file (da socket è molto simile il procedimento)
-  //Message m2 = readFile("prova.shed");
+  //Message m2 = readMessage("prova.shed");
 
   // passaggio a QJsonObject e viceversa
   auto json = m.toJsonObject();
@@ -84,5 +86,5 @@ void prova_message() {
   std::cout << data["id_user"].toInt() << std::endl;
 
   // scrivo su file (su socket è molto simile)
-  //saveToFile("prova.shed", m2);
+  //writeMessage("prova.shed", m2);
 }
