@@ -15,6 +15,17 @@ SymbolId::SymbolId(QJsonObject &json) {
   auto clientIdValue = json["clientId"];
   auto charIdValue = json["charId"];
 
+  checkAndAssign(clientIdValue, charIdValue);
+}
+
+SymbolId::SymbolId(QJsonObject &&json) {
+  auto clientIdValue = json["clientId"];
+  auto charIdValue = json["charId"];
+
+  checkAndAssign(clientIdValue, charIdValue);
+}
+
+void SymbolId::checkAndAssign(QJsonValue clientIdValue, QJsonValue charIdValue) {
   if(clientIdValue.isUndefined() || charIdValue.isUndefined()) {
     throw SymbolIdFromJsonException{"The QJsonObject has some fields missing"};
   }
@@ -30,11 +41,12 @@ SymbolId::SymbolId(QJsonObject &json) {
   _charId = charId;
 }
 
+
 SymbolId SymbolId::fromJsonObject(QJsonObject &json) {
   return SymbolId(json);
 }
 
-QJsonObject SymbolId::toJsonObject() {
+QJsonObject SymbolId::toJsonObject() const {
   QJsonObject json;
 
   json["clientId"] = QJsonValue(_clientId);

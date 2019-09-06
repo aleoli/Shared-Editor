@@ -1,5 +1,7 @@
 #include "Symbol.h"
 
+#include <sstream>
+
 #include "exceptions.h"
 
 using namespace se_exceptions;
@@ -14,6 +16,18 @@ Symbol::Symbol(QJsonObject &json) {
   auto charValue = json["char"];
   auto posValue = json["pos"];
 
+  checkAndAssign(idValue, charValue, posValue);
+}
+
+Symbol::Symbol(QJsonObject &&json) {
+  auto idValue = json["id"];
+  auto charValue = json["char"];
+  auto posValue = json["pos"];
+
+  checkAndAssign(idValue, charValue, posValue);
+}
+
+void Symbol::checkAndAssign(QJsonValue idValue, QJsonValue charValue, QJsonValue posValue) {
   if(idValue.isUndefined() || charValue.isUndefined() || posValue.isUndefined()) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
@@ -40,7 +54,7 @@ Symbol Symbol::fromJsonObject(QJsonObject &json) {
   return Symbol(json);
 }
 
-QJsonObject Symbol::toJsonObject() {
+QJsonObject Symbol::toJsonObject() const {
   QJsonObject json;
 
   json["id"] = QJsonValue(_id.toJsonObject());
@@ -50,28 +64,60 @@ QJsonObject Symbol::toJsonObject() {
   return json;
 }
 
-QJsonArray Symbol::posToJsonArray() {
+QJsonArray Symbol::posToJsonArray() const {
   QJsonArray array;
 
-  for(int &el : _pos) {
+  for(int el : _pos) {
     array.append(el);
   }
 
   return array;
 }
 
+std::string Symbol::posToString() const {
+  std::stringstream ss;
+
+  for(int el : _pos) {
+    ss << el << ' ';
+  }
+
+  return ss.str();
+}
+
 std::vector<int> Symbol::jsonArrayToPos(QJsonArray &array) {
   std::vector<int> pos;
 
-  for(auto el : array) {
+  for(auto&& el : array) {
     auto val = el.toInt(-1);
 
     if(val == -1) {
-      throw SymbolIdFromJsonException{"One or more fields in pos array are not valid"};
+      throw SymbolFromJsonException{"One or more fields in pos array are not valid"};
     }
 
     pos.push_back(val);
   }
 
   return pos;
+}
+
+SymbolId Symbol::getSymbolId() const{
+  return _id;
+}
+
+QChar Symbol::getChar() const{
+  return _char;
+}
+
+std::vector<int> Symbol::getPos() const{
+  return _pos;
+}
+
+std::string Symbol::to_string() const{
+  std::stringstream ss;
+
+  ss << "ID: " << _id.to_string() << std::endl;
+  ss << "Char: " << _char.toLatin1() << std::endl;
+  ss << "Pos: " << posToString();
+
+  return ss.str();
 }
