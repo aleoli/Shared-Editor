@@ -15,5 +15,6 @@ InThread::InThread(InThread &&in_t): IOThread(in_t._is_running, nullptr) {
 void InThread::action() {
   bool has_res = false;
   auto str = this->s->_recv(has_res);
+  // TODO: in questo punto si inserisce il Messagge::fromJson
   std::cout << str;
 }

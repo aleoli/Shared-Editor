@@ -41,7 +41,7 @@ void Client::operator()() {
   InThread in_t{&this->_in_running, &this->socket};
   this->in_thread = new std::thread(std::move(in_t));
 
-  /*this->_out_running.store(true);
+  this->_out_running.store(true);
   OutThread out_t{&this->_out_running, &this->socket};
-  this->out_thread = new std::thread(std::move(out_t));*/
+  this->out_thread = new std::thread(std::move(out_t));
 }
