@@ -19,7 +19,6 @@ void IOThread::operator()() {
   while(this->is_running()) {
     this->action();
   }
-  std::cout << std::endl;
 }
 
 bool IOThread::is_running() {
