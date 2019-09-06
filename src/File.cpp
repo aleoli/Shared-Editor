@@ -55,6 +55,10 @@ File File::fromJsonObject(QJsonObject &json) {
   return File(json);
 }
 
+File File::fromJsonObject(QJsonObject &&json) {
+  return File(json);
+}
+
 QJsonObject File::toJsonObject() const {
   QJsonObject json;
 

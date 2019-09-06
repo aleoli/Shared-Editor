@@ -54,6 +54,10 @@ Symbol Symbol::fromJsonObject(QJsonObject &json) {
   return Symbol(json);
 }
 
+Symbol Symbol::fromJsonObject(QJsonObject &&json) {
+  return Symbol(json);
+}
+
 QJsonObject Symbol::toJsonObject() const {
   QJsonObject json;
 

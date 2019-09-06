@@ -15,6 +15,21 @@ Message::Message(QJsonObject &json) {
   auto statusValue = json["status"];
   auto dataValue = json["data"];
 
+  checkAndAssign(typeValue, actionValue, errorValue, statusValue, dataValue);
+}
+
+Message::Message(QJsonObject &&json) {
+  auto typeValue = json["type"];
+  auto actionValue = json["action"];
+  auto errorValue = json["error"];
+  auto statusValue = json["status"];
+  auto dataValue = json["data"];
+
+  checkAndAssign(typeValue, actionValue, errorValue, statusValue, dataValue);
+}
+
+void Message::checkAndAssign(QJsonValue typeValue, QJsonValue actionValue,
+  QJsonValue errorValue, QJsonValue statusValue, QJsonValue dataValue) {
   if(typeValue.isUndefined() || actionValue.isUndefined() || errorValue.isUndefined()
         || statusValue.isUndefined() || dataValue.isUndefined()) {
           throw MessageFromJsonException{"The QJsonObject has some fields missing"};
@@ -49,6 +64,10 @@ Message::Message(QJsonObject &json) {
 }
 
 Message Message::fromJsonObject(QJsonObject &json) {
+  return Message(json);
+}
+
+Message Message::fromJsonObject(QJsonObject &&json) {
   return Message(json);
 }
 

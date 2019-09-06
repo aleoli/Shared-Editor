@@ -19,6 +19,7 @@ public:
   //TODO altri costruttori..
 
   static Symbol fromJsonObject(QJsonObject &json);
+  static Symbol fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
   SymbolId getSymbolId() const;
@@ -32,7 +33,7 @@ public:
 
 private:
   void checkAndAssign(QJsonValue idValue, QJsonValue charValue, QJsonValue posValue);
-  
+
   QJsonArray posToJsonArray() const;
   std::string posToString() const;
   static std::vector<int> jsonArrayToPos(QJsonArray &array);

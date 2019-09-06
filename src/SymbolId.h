@@ -11,6 +11,7 @@ public:
   explicit SymbolId(QJsonObject &&json);
 
   static SymbolId fromJsonObject(QJsonObject &json);
+  static SymbolId fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
   int getClientId() const;

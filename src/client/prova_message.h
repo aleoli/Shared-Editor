@@ -71,8 +71,7 @@ void prova_message() {
   //Message m2 = readMessage("prova.shed");
 
   // passaggio a QJsonObject e viceversa
-  auto json = m.toJsonObject();
-  Message m3 = Message::fromJsonObject(json);
+  Message m3 = Message::fromJsonObject(m.toJsonObject());
 
   // stampe varie
   std::cout << "type: " << static_cast<int>(m3.getType()) << std::endl;
@@ -82,6 +81,7 @@ void prova_message() {
 
   auto data = m3.getData();
 
+  std::cout << "data:" << std::endl;
   std::cout << data["name"].toString().toStdString() << std::endl;
   std::cout << data["id_user"].toInt() << std::endl;
 

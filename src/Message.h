@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QJsonObject>
+#include <QJsonValue>
 
 class Message {
 public:
@@ -44,8 +45,10 @@ public:
 
   Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data);
   explicit Message(QJsonObject &json);
+  explicit Message(QJsonObject &&json);
 
   static Message fromJsonObject(QJsonObject &json);
+  static Message fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject();
 
   Message::Type getType() const;
@@ -55,6 +58,9 @@ public:
   QJsonObject getData() const;
 
 private:
+  void checkAndAssign(QJsonValue typeValue, QJsonValue actionValue,
+    QJsonValue errorValue, QJsonValue statusValue, QJsonValue dataValue);
+    
   Message::Type _type;
   int _action;
   bool _error;

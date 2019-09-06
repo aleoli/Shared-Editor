@@ -16,6 +16,7 @@ public:
   //TODO altri costruttori..
 
   static File fromJsonObject(QJsonObject &json);
+  static File fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
   int getId() const;
@@ -29,7 +30,7 @@ private:
   QJsonArray userIdsToJsonArray() const;
   std::string userIdsToString() const;
   static std::vector<int> jsonArrayToUserIds(QJsonArray &array);
-  
+
   QJsonArray symbolsToJsonArray() const;
   std::string symbolsToString() const;
   std::vector<Symbol> jsonArrayToSymbols(QJsonArray &array);

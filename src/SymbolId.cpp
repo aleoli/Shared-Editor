@@ -46,6 +46,10 @@ SymbolId SymbolId::fromJsonObject(QJsonObject &json) {
   return SymbolId(json);
 }
 
+SymbolId SymbolId::fromJsonObject(QJsonObject &&json) {
+  return SymbolId(json);
+}
+
 QJsonObject SymbolId::toJsonObject() const {
   QJsonObject json;
 
