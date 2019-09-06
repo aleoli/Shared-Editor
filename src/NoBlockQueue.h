@@ -19,6 +19,10 @@ public:
         return _queue.empty();
     }
 
+    bool empty_safe() {
+      return _queue.empty();
+    }
+
     void clear() {
       std::lock_guard<std::mutex> guard(_m);
 
@@ -31,6 +35,7 @@ public:
         std::lock_guard<std::mutex> guard(_m);
 
         _queue.push(elem);
+        _cv.notify_one();
     }
 
     T pop() {
@@ -46,7 +51,16 @@ public:
         return elem;
     }
 
+    std::mutex& getMutex() {
+      return this->_m;
+    }
+
+    std::condition_variable& getCv() {
+      return this->_cv;
+    }
+
 private:
     std::mutex _m;
+    std::condition_variable _cv;
     std::queue<T> _queue;
 };

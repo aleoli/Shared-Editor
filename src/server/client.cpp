@@ -31,6 +31,7 @@ Client::~Client() {
   }
   if(this->out_thread != nullptr) {
     this->_out_running.store(false);
+    this->out_queue.getCv().notify_one();     // sveglio l'out thread perchè è ora di chiudersi
     this->out_thread->join();
     delete this->out_thread;
     this->out_thread = nullptr;
