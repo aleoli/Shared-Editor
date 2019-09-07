@@ -80,8 +80,8 @@ void Client::send(QString msg) {
     uint32_t size = htonl(msg.size());
     QByteArray arr;
     QDataStream stream(&arr, QIODevice::WriteOnly);
-    stream << size << msg;
-    this->socket->write(arr);
+    stream << size;
+    this->socket->write(arr+msg.toUtf8());
     this->socket->waitForBytesWritten();
   }
 }
