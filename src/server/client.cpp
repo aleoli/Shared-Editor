@@ -76,7 +76,6 @@ void Client::readData() {
 }
 
 void Client::send(QString msg) {
-	std::cout << this->thread() << std::endl;
   if(this->socket->state() == QAbstractSocket::ConnectedState) {
     uint32_t size = htonl(msg.size());
     QByteArray arr;

@@ -21,7 +21,6 @@ ClientManager::~ClientManager() {
 void ClientManager::newConnection() {
   while(this->s.hasPendingConnections()) {
     auto cl = new Client{this->s.nextPendingConnection(), this->next_client_id};
-		std::cout << this->thread() << std::endl;
 		QThread *t = new QThread(cl);
 		cl->moveToThread(t);
     connect(cl, SIGNAL(disconnected(int)), SLOT(disconnected(int)));
