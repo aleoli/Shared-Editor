@@ -1,7 +1,7 @@
 #include "dependencies.h"
 
-#include <QtCore>
-#include <QtNetwork>
+#include <QTcpServer>
+#include <QThread>
 
 #include <map>
 
@@ -22,5 +22,6 @@ public slots:
 private:
   QTcpServer s;
   std::map<int, Client *> clients;
+	std::map<int, QThread *> threads;
   int next_client_id = 0;
 };
