@@ -11,7 +11,7 @@ Symbol::Symbol() {}
 Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos)
   : _id(id), _char(chr), _pos(pos) {}
 
-Symbol::Symbol(QJsonObject &json) {
+Symbol::Symbol(const QJsonObject &json) {
   auto idValue = json["id"];
   auto charValue = json["char"];
   auto posValue = json["pos"];
@@ -19,7 +19,7 @@ Symbol::Symbol(QJsonObject &json) {
   checkAndAssign(idValue, charValue, posValue);
 }
 
-Symbol::Symbol(QJsonObject &&json) {
+Symbol::Symbol(const QJsonObject &&json) {
   auto idValue = json["id"];
   auto charValue = json["char"];
   auto posValue = json["pos"];
@@ -27,7 +27,7 @@ Symbol::Symbol(QJsonObject &&json) {
   checkAndAssign(idValue, charValue, posValue);
 }
 
-void Symbol::checkAndAssign(QJsonValue idValue, QJsonValue charValue, QJsonValue posValue) {
+void Symbol::checkAndAssign (const QJsonValue &idValue, const QJsonValue &charValue, const QJsonValue &posValue) {
   if(idValue.isUndefined() || charValue.isUndefined() || posValue.isUndefined()) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
@@ -50,11 +50,11 @@ void Symbol::checkAndAssign(QJsonValue idValue, QJsonValue charValue, QJsonValue
   _pos = jsonArrayToPos(posArray);
 }
 
-Symbol Symbol::fromJsonObject(QJsonObject &json) {
+Symbol Symbol::fromJsonObject(const QJsonObject &json) {
   return Symbol(json);
 }
 
-Symbol Symbol::fromJsonObject(QJsonObject &&json) {
+Symbol Symbol::fromJsonObject(const QJsonObject &&json) {
   return Symbol(json);
 }
 
@@ -88,7 +88,7 @@ std::string Symbol::posToString() const {
   return ss.str();
 }
 
-std::vector<int> Symbol::jsonArrayToPos(QJsonArray &array) {
+std::vector<int> Symbol::jsonArrayToPos(const QJsonArray &array) {
   std::vector<int> pos;
 
   for(auto&& el : array) {

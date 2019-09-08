@@ -14,12 +14,12 @@ class Symbol {
 public:
   Symbol();
   Symbol(SymbolId id, QChar chr, std::vector<int> pos);
-  explicit Symbol(QJsonObject &json);
-  explicit Symbol(QJsonObject &&json);
+  explicit Symbol(const QJsonObject &json);
+  explicit Symbol(const QJsonObject &&json);
   //TODO altri costruttori..
 
-  static Symbol fromJsonObject(QJsonObject &json);
-  static Symbol fromJsonObject(QJsonObject &&json);
+  static Symbol fromJsonObject(const QJsonObject &json);
+  static Symbol fromJsonObject(const QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
   SymbolId getSymbolId() const;
@@ -32,11 +32,11 @@ public:
   //TODO metodo per determinare posizione ?
 
 private:
-  void checkAndAssign(QJsonValue idValue, QJsonValue charValue, QJsonValue posValue);
+  void checkAndAssign(const QJsonValue &idValue, const QJsonValue &charValue, const QJsonValue &posValue);
 
   QJsonArray posToJsonArray() const;
   std::string posToString() const;
-  static std::vector<int> jsonArrayToPos(QJsonArray &array);
+  static std::vector<int> jsonArrayToPos(const QJsonArray &array);
 
   SymbolId _id;
   QChar _char;

@@ -12,7 +12,7 @@ File::File() {}
 File::File(int id, std::vector<int> user_ids, std::vector<Symbol> symbols)
   : _id(id), _user_ids(user_ids), _symbols(symbols) {}
 
-File::File(QJsonObject &json){
+File::File(const QJsonObject &json){
   auto idValue = json["id"];
   auto userIdsValue = json["userIds"];
   auto symbolsValue = json["symbols"];
@@ -20,7 +20,7 @@ File::File(QJsonObject &json){
   checkAndAssign(idValue, userIdsValue, symbolsValue);
 }
 
-File::File(QJsonObject &&json){
+File::File(const QJsonObject &&json){
   auto idValue = json["id"];
   auto userIdsValue = json["userIds"];
   auto symbolsValue = json["symbols"];
@@ -28,7 +28,8 @@ File::File(QJsonObject &&json){
   checkAndAssign(idValue, userIdsValue, symbolsValue);
 }
 
-void File::checkAndAssign(QJsonValue idValue, QJsonValue userIdsValue, QJsonValue symbolsValue) {
+void File::checkAndAssign(const QJsonValue &idValue, const QJsonValue &userIdsValue,
+  const QJsonValue &symbolsValue) {
   if(idValue.isUndefined() || userIdsValue.isUndefined() || symbolsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
@@ -51,11 +52,11 @@ void File::checkAndAssign(QJsonValue idValue, QJsonValue userIdsValue, QJsonValu
   _symbols = jsonArrayToSymbols(symbols);
 }
 
-File File::fromJsonObject(QJsonObject &json) {
+File File::fromJsonObject(const QJsonObject &json) {
   return File(json);
 }
 
-File File::fromJsonObject(QJsonObject &&json) {
+File File::fromJsonObject(const QJsonObject &&json) {
   return File(json);
 }
 
@@ -89,7 +90,7 @@ std::string File::userIdsToString() const {
   return ss.str();
 }
 
-std::vector<int> File::jsonArrayToUserIds(QJsonArray &array) {
+std::vector<int> File::jsonArrayToUserIds(const QJsonArray &array) {
   std::vector<int> userIds;
 
   for(auto&& el : array) {
@@ -125,7 +126,7 @@ std::string File::symbolsToString() const {
   return ss.str();
 }
 
-std::vector<Symbol> File::jsonArrayToSymbols(QJsonArray &array) {
+std::vector<Symbol> File::jsonArrayToSymbols(const QJsonArray &array) {
   std::vector<Symbol> symbols;
 
   for(auto&& el : array) {
