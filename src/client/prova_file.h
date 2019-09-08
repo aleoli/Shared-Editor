@@ -13,7 +13,7 @@ void writeFile(QString path, File &f) {
 #if SAVE_BINARY
   auto array = doc.toBinaryData();
 #else
-  auto array = doc.toJson();
+  auto array = doc.toJson(QJsonDocument::Compact);
 #endif
 
   // scrivo su file
@@ -21,6 +21,7 @@ void writeFile(QString path, File &f) {
 
   if(!file.open(QIODevice::WriteOnly)){
     std::cout << "cannot open file" << std::endl;
+    exit(-1);
   }
 
   file.write(array);
@@ -33,6 +34,7 @@ File readFile(QString path) {
 
   if(!file.open(QIODevice::ReadOnly)){
     std::cout << "cannot open file" << std::endl;
+    exit(-1);
   }
 
   auto data = file.readAll();

@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#define PROVA_MESSAGE 0
+#define PROVA_MESSAGE 1
 #define PROVA_FILE 1
 
 int main(int argc, char **argv) {
