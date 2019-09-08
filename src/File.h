@@ -29,11 +29,11 @@ private:
     const QJsonValue &symbolsValue);
 
   QJsonArray userIdsToJsonArray() const;
-  std::string userIdsToString() const;
+  std::string userIdsToString() const; //TODO vedi se rimuovere
   static std::vector<int> jsonArrayToUserIds(const QJsonArray &array);
 
   QJsonArray symbolsToJsonArray() const;
-  std::string symbolsToString() const;
+  std::string symbolsToString() const; //TODO vedi se rimuovere
   static std::vector<Symbol> jsonArrayToSymbols(const QJsonArray &array);
 
   int _id;

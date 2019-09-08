@@ -35,7 +35,7 @@ private:
   void checkAndAssign(const QJsonValue &idValue, const QJsonValue &charValue, const QJsonValue &posValue);
 
   QJsonArray posToJsonArray() const;
-  std::string posToString() const;
+  std::string posToString() const; //TODO vedi se rimuovere
   static std::vector<int> jsonArrayToPos(const QJsonArray &array);
 
   SymbolId _id;
