@@ -6,32 +6,23 @@
 
 using namespace se_exceptions;
 
-Symbol::Symbol() {
-  _backgroundColor.setAlpha(0);
-}
+Symbol::Symbol()
+  : _backgroundColor("#00000000") {}
 
-Symbol::Symbol(QChar chr) : _char(chr) {
-  _backgroundColor.setAlpha(0);
-}
+Symbol::Symbol(QChar chr)
+  : _char(chr), _backgroundColor("#00000000") {}
 
-Symbol::Symbol(QChar chr, QFont font) : _char(chr), _font(font) {
-  _backgroundColor.setAlpha(0);
-}
+Symbol::Symbol(QChar chr, QFont font)
+  : _char(chr), _font(font), _backgroundColor("#00000000") {}
 
 Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos)
-  : _id(id), _char(chr), _pos(pos) {
-  _backgroundColor.setAlpha(0);
-}
+  : _id(id), _char(chr), _pos(pos), _backgroundColor("#00000000") {}
 
 Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font)
-  : _id(id), _char(chr), _pos(pos), _font(font) {
-  _backgroundColor.setAlpha(0);
-}
+  : _id(id), _char(chr), _pos(pos), _font(font), _backgroundColor("#00000000") {}
 
 Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font, QColor color)
-  : _id(id), _char(chr), _pos(pos), _font(font), _color(color) {
-  _backgroundColor.setAlpha(0);
-}
+  : _id(id), _char(chr), _pos(pos), _font(font), _color(color), _backgroundColor("#00000000") {}
 
 Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font,
   QColor color, QColor backgroundColor)

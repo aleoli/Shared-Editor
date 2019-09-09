@@ -137,7 +137,7 @@ void TextEdit::addLetter() {
   sym.setItalic(true);
   sym.setFamily("Helvetica");
   sym.setColor("red");
-  sym.setBackgroundColor(QRgb(0x6600ff00));
+  sym.setBackgroundColor("#6600ff00");
 
   QTextCharFormat fmt;
   fmt.setFont(sym.getFont());
