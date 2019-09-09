@@ -59,6 +59,7 @@ void prova_file() {
   sym.setUnderline(true);
   sym.setFamily("Helvetica");
   sym.setColor(QColor("red"));
+  sym.setBackgroundColor(QColor("black"));
 
   std::cout << "PROVA STAMPA SIMBOLO" << std::endl;
   std::cout << sym.to_string() << std::endl;

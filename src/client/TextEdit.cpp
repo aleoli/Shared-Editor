@@ -136,20 +136,24 @@ void TextEdit::addLetter() {
   sym.setUnderline(true);
   sym.setItalic(true);
   sym.setFamily("Helvetica");
+  sym.setColor("red");
+  sym.setBackgroundColor(QRgb(0x6600ff00));
 
   QTextCharFormat fmt;
   fmt.setFont(sym.getFont());
-  fmt.setForeground(QColor("red"));
-  
+  fmt.setForeground(sym.getColor());
+  fmt.setBackground(sym.getBackgroundColor());
   textEdit->textCursor().insertText(sym.getChar(), fmt);
 }
 
 void TextEdit::getCharInfo() {
-  QTextCursor cursor(textEdit->textCursor());
-
   /* per spostare il cursore alla posizione desiderata (esempio N):
   QTextCursor cursor(textEdit->document()); -> lo crea all'inizio del file
   cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, N); */
+
+  //prendo il cursore attuale
+  QTextCursor cursor(textEdit->textCursor());
+
   auto charFormat = cursor.charFormat();
   auto font = charFormat.font();
 
@@ -160,4 +164,6 @@ void TextEdit::getCharInfo() {
   std::cout << "Italic: " << font.italic() << std::endl;
   std::cout << "Family: " << font.family().toStdString() << std::endl;
   std::cout << "Color: " << charFormat.foreground().color().name(QColor::HexArgb).toStdString() << std::endl;
+  std::cout << "Background Color: "
+    << charFormat.background().color().name(QColor::HexArgb).toStdString() << std::endl;
 }

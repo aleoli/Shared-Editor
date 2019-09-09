@@ -17,9 +17,13 @@ public:
   Symbol();
   Symbol(QChar chr);
   Symbol(QChar chr, QFont font);
+  //TODO non servono tutti di sicuro.
   Symbol(SymbolId id, QChar chr, std::vector<int> pos);
   Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font);
   Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font, QColor color);
+  Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font,
+    QColor color, QColor backgroundColor);
+
   explicit Symbol(const QJsonObject &json);
   explicit Symbol(const QJsonObject &&json);
   //TODO altri costruttori..
@@ -50,10 +54,13 @@ public:
   QString getFamily() const;
   void setColor(const QColor &color);
   QColor getColor() const;
+  void setBackgroundColor(const QColor &color);
+  QColor getBackgroundColor() const;
 
 private:
   void checkAndAssign(const QJsonValue &idValue, const QJsonValue &charValue,
-    const QJsonValue &posValue, const QJsonValue &fontValue, const QJsonValue &colorValue);
+    const QJsonValue &posValue, const QJsonValue &fontValue,
+    const QJsonValue &colorValue, const QJsonValue &backgroundColorValue);
 
   QJsonArray posToJsonArray() const;
   std::string posToString() const; //TODO vedi se rimuovere
@@ -64,4 +71,5 @@ private:
   std::vector<int> _pos;
   QFont _font;
   QColor _color;
+  QColor _backgroundColor;
 };

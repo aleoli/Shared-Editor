@@ -6,20 +6,37 @@
 
 using namespace se_exceptions;
 
-Symbol::Symbol() {}
+Symbol::Symbol() {
+  _backgroundColor.setAlpha(0);
+}
 
-Symbol::Symbol(QChar chr) : _char(chr) {}
+Symbol::Symbol(QChar chr) : _char(chr) {
+  _backgroundColor.setAlpha(0);
+}
 
-Symbol::Symbol(QChar chr, QFont font) : _char(chr), _font(font) {}
+Symbol::Symbol(QChar chr, QFont font) : _char(chr), _font(font) {
+  _backgroundColor.setAlpha(0);
+}
 
 Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos)
-  : _id(id), _char(chr), _pos(pos) {}
+  : _id(id), _char(chr), _pos(pos) {
+  _backgroundColor.setAlpha(0);
+}
 
 Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font)
-  : _id(id), _char(chr), _pos(pos), _font(font) {}
+  : _id(id), _char(chr), _pos(pos), _font(font) {
+  _backgroundColor.setAlpha(0);
+}
 
-  Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font, QColor color)
-    : _id(id), _char(chr), _pos(pos), _font(font), _color(color) {}
+Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font, QColor color)
+  : _id(id), _char(chr), _pos(pos), _font(font), _color(color) {
+  _backgroundColor.setAlpha(0);
+}
+
+Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font,
+  QColor color, QColor backgroundColor)
+  : _id(id), _char(chr), _pos(pos), _font(font), _color(color),
+    _backgroundColor(backgroundColor) {}
 
 Symbol::Symbol(const QJsonObject &json) {
   auto idValue = json["id"];
@@ -27,8 +44,9 @@ Symbol::Symbol(const QJsonObject &json) {
   auto posValue = json["pos"];
   auto fontValue = json["font"];
   auto colorValue = json["color"];
+  auto backgroundColorValue = json["backgroundColor"];
 
-  checkAndAssign(idValue, charValue, posValue, fontValue, colorValue);
+  checkAndAssign(idValue, charValue, posValue, fontValue, colorValue, backgroundColorValue);
 }
 
 Symbol::Symbol(const QJsonObject &&json) {
@@ -37,18 +55,24 @@ Symbol::Symbol(const QJsonObject &&json) {
   auto posValue = json["pos"];
   auto fontValue = json["font"];
   auto colorValue = json["color"];
+  auto backgroundColorValue = json["backgroundColor"];
 
-  checkAndAssign(idValue, charValue, posValue, fontValue, colorValue);
+  checkAndAssign(idValue, charValue, posValue, fontValue, colorValue, backgroundColorValue);
 }
 
 void Symbol::checkAndAssign (const QJsonValue &idValue, const QJsonValue &charValue,
-  const QJsonValue &posValue, const QJsonValue &fontValue, const QJsonValue &colorValue) {
+  const QJsonValue &posValue, const QJsonValue &fontValue, const QJsonValue &colorValue,
+  const QJsonValue &backgroundColorValue) {
+
   if(idValue.isUndefined() || charValue.isUndefined() || posValue.isUndefined()
-      || fontValue.isUndefined() || colorValue.isUndefined()) {
+      || fontValue.isUndefined() || colorValue.isUndefined()
+      || backgroundColorValue.isUndefined()) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!idValue.isObject() || !posValue.isArray() || !fontValue.isString()) {
+  if(!idValue.isObject() || !posValue.isArray()
+      || !fontValue.isString() || !colorValue.isString()
+      || !backgroundColorValue.isString()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -67,19 +91,21 @@ void Symbol::checkAndAssign (const QJsonValue &idValue, const QJsonValue &charVa
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
-  int colorInt = colorValue.toInt(0);
-  if(!(colorInt & 0xFF000000)) {
-    //TODO vedi se c'è un modo migliore.. il colore è in formato RGBA
-    // salvato come unsigned int (0xAARRGGBB).. quindi non ho un valore che mi dica
-    // che il colore non è valido.. io ho ipotizzato che se AA è zero allora non vale
-    // AA sarebbe l'opacità
+  auto colorString = colorValue.toString();
+  if(!QColor::isValidColor(colorString)) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
+  _color.setNamedColor(colorString);
+
+  auto backgroundColorString = backgroundColorValue.toString();
+  if(!QColor::isValidColor(backgroundColorString)) {
+    throw SymbolFromJsonException{"One or more fields are not valid"};
+  }
+  _backgroundColor.setNamedColor(backgroundColorString);
 
   _id = SymbolId{idJson};
   _char = QChar(charUnicode);
   _pos = jsonArrayToPos(posArray);
-  _color = QColor::fromRgba(colorInt);
 }
 
 Symbol Symbol::fromJsonObject(const QJsonObject &json) {
@@ -97,7 +123,8 @@ QJsonObject Symbol::toJsonObject() const {
   json["char"] = QJsonValue(_char.unicode());
   json["pos"] = QJsonValue(posToJsonArray());
   json["font"] = QJsonValue(_font.toString());
-  json["color"] = QJsonValue(static_cast<int>(_color.rgba())); //TODO vedi se mettere rgb o rgba
+  json["color"] = QJsonValue(_color.name(QColor::HexArgb));
+  json["backgroundColor"] = QJsonValue(_backgroundColor.name(QColor::HexArgb));
 
   return json;
 }
@@ -207,7 +234,8 @@ std::string Symbol::getFontInfo() const {
   ss << "underline: " << isUnderline() << std::endl;
   ss << "italic: " << isItalic() << std::endl;
   ss << "family: " << getFamily().toStdString() << std::endl;
-  ss << "color: " << _color.name(QColor::HexArgb).toStdString();
+  ss << "color: " << _color.name(QColor::HexArgb).toStdString() << std::endl;
+  ss << "background color: " << _backgroundColor.name(QColor::HexArgb).toStdString();
 
   return ss.str();
 }
@@ -226,4 +254,12 @@ void Symbol::setColor(const QColor &color) {
 
 QColor Symbol::getColor() const {
   return _color;
+}
+
+void Symbol::setBackgroundColor(const QColor &color) {
+  _backgroundColor = color;
+}
+
+QColor Symbol::getBackgroundColor() const {
+  return _backgroundColor;
 }
