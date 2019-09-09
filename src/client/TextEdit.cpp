@@ -5,8 +5,12 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <iostream>
+#include <QTextDocument>
+#include <QTextBlock>
+#include <QFont>
 
 #include "TextEdit.h"
+#include "Symbol.h"
 
 TextEdit::TextEdit(QWidget *parent)
         : QMainWindow(parent)
@@ -41,7 +45,13 @@ void TextEdit::setupFileActions() {
     QAction *a = menu->addAction(newIcon,  tr("&New"), this, &TextEdit::fileNew);
     tb->addAction(a);
 
+    const QIcon addLetterIcon(":/buttons/letter.png");
+    QAction *add = menu->addAction(addLetterIcon,  tr("&Add"), this, &TextEdit::addLetter);
+    tb->addAction(add);
 
+    const QIcon getInfoIcon(":/buttons/info.png");
+    QAction *info = menu->addAction(getInfoIcon,  tr("&Add"), this, &TextEdit::getCharInfo);
+    tb->addAction(info);
 }
 
 void TextEdit::setupEditActions() {
@@ -117,4 +127,37 @@ void TextEdit::textBold() {
     //setto in grassetto
     cursor.mergeCharFormat(fmt);
     textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::addLetter() {
+  Symbol sym('a');
+  sym.setBold(true);
+  sym.setSize(20);
+  sym.setUnderline(true);
+  sym.setItalic(true);
+  sym.setFamily("Helvetica");
+
+  QTextCharFormat fmt;
+  fmt.setFont(sym.getFont());
+  fmt.setForeground(QColor("red"));
+  
+  textEdit->textCursor().insertText(sym.getChar(), fmt);
+}
+
+void TextEdit::getCharInfo() {
+  QTextCursor cursor(textEdit->textCursor());
+
+  /* per spostare il cursore alla posizione desiderata (esempio N):
+  QTextCursor cursor(textEdit->document()); -> lo crea all'inizio del file
+  cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, N); */
+  auto charFormat = cursor.charFormat();
+  auto font = charFormat.font();
+
+  std::cout << "INFOS" << std::endl;
+  std::cout << "Bold: " << font.bold() << std::endl;
+  std::cout << "Size: " << font.pointSize() << std::endl;
+  std::cout << "Underline: " << font.underline() << std::endl;
+  std::cout << "Italic: " << font.italic() << std::endl;
+  std::cout << "Family: " << font.family().toStdString() << std::endl;
+  std::cout << "Color: " << charFormat.foreground().color().name(QColor::HexArgb).toStdString() << std::endl;
 }

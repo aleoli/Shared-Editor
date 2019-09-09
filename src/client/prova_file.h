@@ -54,6 +54,12 @@ File readFile(QString path) {
 void prova_file() {
   // test Symbol
   Symbol sym({1,2}, 'y', {1,2,3});
+  sym.setBold(true);
+  sym.setSize(20);
+  sym.setUnderline(true);
+  sym.setFamily("Helvetica");
+  sym.setColor(QColor("red"));
+
   std::cout << "PROVA STAMPA SIMBOLO" << std::endl;
   std::cout << sym.to_string() << std::endl;
 

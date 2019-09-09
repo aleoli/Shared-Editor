@@ -20,6 +20,8 @@ protected:
 
 private slots:
     void textBold();
+    void addLetter();
+    void getCharInfo();
 
 private:
     void setupFileActions();
