@@ -21,14 +21,22 @@ ClientManager::~ClientManager() {
 void ClientManager::newConnection() {
   while(this->_s.hasPendingConnections()) {
     auto cl = new Client{this->_s.nextPendingConnection(), this->_next_client_id};
+		QThread *t = new QThread(cl);
+		cl->moveToThread(t);
     connect(cl, SIGNAL(disconnected(int)), SLOT(disconnected(int)));
-    this->_clients[this->_next_client_id++] = cl;
+    this->_clients[this->_next_client_id] = cl;
+		this->_threads[this->_next_client_id++] = t;
+		t->start();
     cl->send("Bella!!");
   }
 }
 
 void ClientManager::disconnected(int id) {
-  auto cl = this->_clients[id];
+	auto cl = this->_clients[id];
   this->_clients.erase(id);
-  delete cl;
+	auto t = this->_threads[id];
+	this->_threads.erase(id);
+	t->quit();
+	t->wait();
+  delete cl;		// viene distrutto anche il thread perchè client era il suo parent
 }
