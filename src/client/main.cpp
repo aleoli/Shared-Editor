@@ -8,10 +8,12 @@
 #include <vector>
 #include "TextEdit.h"
 #include "prova_textedit.h"
+#include "prova_crdt.h"
 
 #define PROVA_MESSAGE 1
 #define PROVA_FILE 1
 #define PROVA_TEXTEDIT 1
+#define PROVA_CRDT 1
 
 int main(int argc, char **argv) {
   std::cout << "hello world!" << std::endl;
@@ -26,6 +28,10 @@ int main(int argc, char **argv) {
 
 #if PROVA_TEXTEDIT
   prova_textedit(argc, argv);
+#endif
+
+#if PROVA_CRDT
+  prova_crdt();
 #endif
 
   return 0;

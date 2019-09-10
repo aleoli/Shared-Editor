@@ -3,6 +3,7 @@
 #include <iostream>
 #include "File.h"
 #include "Symbol.h"
+#include <QChar>
 
 #define SAVE_BINARY 0
 
@@ -54,7 +55,7 @@ File readFile(QString path) {
 void prova_file() {
   // test Symbol
   Symbol sym({1,2}, 'y');
-  sym.setPos({1,2,3});
+  sym.setPos({{1,1}, {2,1}, {3,1}});
   sym.setBold(true);
   sym.setSize(20);
   sym.setUnderline(true);
