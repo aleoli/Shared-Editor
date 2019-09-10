@@ -14,15 +14,8 @@
 class Symbol {
 public:
   Symbol();
-  Symbol(QChar chr);
-  Symbol(QChar chr, QFont font);
-  //TODO non servono tutti di sicuro.
-  Symbol(SymbolId id, QChar chr, std::vector<int> pos);
-  Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font);
-  Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font, QColor color);
-  Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font,
-    QColor color, QColor backgroundColor);
-
+  Symbol(SymbolId id, QChar chr);
+  Symbol(SymbolId id, QChar chr, QFont font, QColor color, QColor backgroundColor);
   explicit Symbol(const QJsonObject &json);
   explicit Symbol(QJsonObject &&json);
 
@@ -30,14 +23,17 @@ public:
   static Symbol fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
+  void setSymbolId(SymbolId id);
   SymbolId getSymbolId() const;
+  void setChar(QChar chr);
   QChar getChar() const;
+  void setPos(std::vector<int> pos);
   std::vector<int> getPos() const;
   std::string to_string() const;
   std::string getFontInfo() const;
 
   //TODO metodo per determinare posizione ?
-
+  void setFont(QFont font);
   const QFont &getFont() const;
   void setBold(bool enable);
   bool isBold() const;
@@ -66,5 +62,5 @@ private:
   std::vector<int> _pos;
   QFont _font;
   QColor _color;
-  QColor _backgroundColor;
+  QColor _backgroundColor = QColor("#00000000");
 };

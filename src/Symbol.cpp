@@ -6,28 +6,12 @@
 
 using namespace se_exceptions;
 
-Symbol::Symbol()
-  : _backgroundColor("#00000000") {}
+Symbol::Symbol() {}
 
-Symbol::Symbol(QChar chr)
-  : _char(chr), _backgroundColor("#00000000") {}
+Symbol::Symbol(SymbolId id, QChar chr) : _id(id), _char(chr) {}
 
-Symbol::Symbol(QChar chr, QFont font)
-  : _char(chr), _font(font), _backgroundColor("#00000000") {}
-
-Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos)
-  : _id(id), _char(chr), _pos(pos), _backgroundColor("#00000000") {}
-
-Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font)
-  : _id(id), _char(chr), _pos(pos), _font(font), _backgroundColor("#00000000") {}
-
-Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font, QColor color)
-  : _id(id), _char(chr), _pos(pos), _font(font), _color(color), _backgroundColor("#00000000") {}
-
-Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font,
-  QColor color, QColor backgroundColor)
-  : _id(id), _char(chr), _pos(pos), _font(font), _color(color),
-    _backgroundColor(backgroundColor) {}
+Symbol::Symbol(SymbolId id, QChar chr, QFont font, QColor color, QColor backgroundColor)
+  : _id(id), _char(chr), _font(font), _color(color), _backgroundColor(backgroundColor) {}
 
 Symbol::Symbol(const QJsonObject &json) {
   checkAndAssign(json);
@@ -146,12 +130,24 @@ std::vector<int> Symbol::jsonArrayToPos(const QJsonArray &array) {
   return pos;
 }
 
+void Symbol::setSymbolId(SymbolId id) {
+  _id = id;
+}
+
 SymbolId Symbol::getSymbolId() const{
   return _id;
 }
 
+void Symbol::setChar(QChar chr) {
+  _char = chr;
+}
+
 QChar Symbol::getChar() const{
   return _char;
+}
+
+void Symbol::setPos(std::vector<int> pos) {
+  _pos = pos;
 }
 
 std::vector<int> Symbol::getPos() const{
@@ -169,6 +165,10 @@ std::string Symbol::to_string() const{
   ss << "-------------------------------------";
 
   return ss.str();
+}
+
+void Symbol::setFont(QFont font) {
+  _font = font;
 }
 
 const QFont& Symbol::getFont() const {

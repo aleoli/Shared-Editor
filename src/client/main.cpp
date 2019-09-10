@@ -9,8 +9,8 @@
 #include "TextEdit.h"
 #include "prova_textedit.h"
 
-#define PROVA_MESSAGE 0
-#define PROVA_FILE 0
+#define PROVA_MESSAGE 1
+#define PROVA_FILE 1
 #define PROVA_TEXTEDIT 1
 
 int main(int argc, char **argv) {

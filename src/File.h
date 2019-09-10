@@ -13,7 +13,6 @@ public:
   File(int id, std::vector<int> user_ids, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
-  //TODO altri costruttori..
 
   static File fromJsonObject(const QJsonObject &json);
   static File fromJsonObject(QJsonObject &&json);

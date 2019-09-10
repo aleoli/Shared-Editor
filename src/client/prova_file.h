@@ -53,7 +53,8 @@ File readFile(QString path) {
 
 void prova_file() {
   // test Symbol
-  Symbol sym({1,2}, 'y', {1,2,3});
+  Symbol sym({1,2}, 'y');
+  sym.setPos({1,2,3});
   sym.setBold(true);
   sym.setSize(20);
   sym.setUnderline(true);
@@ -69,8 +70,8 @@ void prova_file() {
   std::cout << s2.to_string() << std::endl;
 
   // test File
-  Symbol s3({3,4}, 'x', {4,5,6});
-  Symbol s4({5,6}, 'w', {7,8,9});
+  Symbol s3({3,4}, 'x');
+  Symbol s4({5,6}, 'w');
 
   std::vector<Symbol> symbols{sym, s3, s4};
   std::vector<int> ids{1,2,3,4,5,6,7,8,9,0};

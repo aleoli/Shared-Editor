@@ -132,14 +132,12 @@ void TextEdit::textBold() {
 }
 
 void TextEdit::addLetter() {
-  Symbol sym('a');
+  Symbol sym(SymbolId(), 'a', QFont(), "red", "#6600ff00");
   sym.setBold(true);
   sym.setSize(20);
   sym.setUnderline(true);
   sym.setItalic(true);
   sym.setFamily("Helvetica");
-  sym.setColor("red");
-  sym.setBackgroundColor("#6600ff00");
 
   QTextCharFormat fmt;
   fmt.setFont(sym.getFont());
