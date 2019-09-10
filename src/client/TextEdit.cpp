@@ -12,6 +12,8 @@
 #include "TextEdit.h"
 #include "Symbol.h"
 
+//TODO: leggi in TextEdit.h
+
 TextEdit::TextEdit(QWidget *parent)
         : QMainWindow(parent)
 {

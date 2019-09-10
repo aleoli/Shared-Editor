@@ -12,7 +12,6 @@
 #include <QColor>
 
 class Symbol {
-  //TODO questione dei metadati (grassetto, corsivo...)
 public:
   Symbol();
   Symbol(QChar chr);
@@ -26,7 +25,6 @@ public:
 
   explicit Symbol(const QJsonObject &json);
   explicit Symbol(QJsonObject &&json);
-  //TODO altri costruttori..
 
   static Symbol fromJsonObject(const QJsonObject &json);
   static Symbol fromJsonObject(QJsonObject &&json);
@@ -38,7 +36,6 @@ public:
   std::string to_string() const;
   std::string getFontInfo() const;
 
-  //TODO altri metodi per settare i parametri
   //TODO metodo per determinare posizione ?
 
   const QFont &getFont() const;
