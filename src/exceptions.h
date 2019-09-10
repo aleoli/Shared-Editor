@@ -80,9 +80,23 @@ namespace se_exceptions {
       SymbolIdentifierFromJsonException(QString str): SymbolFromJsonException(str) {}
   };
 
-  class FileFromJsonException : public SE_Exception {
+  class FileException : public SE_Exception {
   public:
-      FileFromJsonException(QString str): SE_Exception(str) {}
+      FileException(QString str): SE_Exception(str) {}
   };
 
+  class FileFromJsonException : public FileException {
+  public:
+      FileFromJsonException(QString str): FileException(str) {}
+  };
+
+  class FileLocalInsertException : public FileException {
+  public:
+      FileLocalInsertException(QString str): FileException(str) {}
+  };
+
+  class FileSymbolsException : public FileException {
+  public:
+      FileSymbolsException(QString str): FileException(str) {}
+  };
 }

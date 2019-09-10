@@ -27,6 +27,10 @@ bool operator<(const SymbolId& lhs, const SymbolId& rhs) {
   return lhs._clientId < rhs._clientId;
 }
 
+bool operator==(const SymbolId& lhs, const SymbolId& rhs) {
+  return lhs._clientId == rhs._clientId && lhs._charId == rhs._charId;
+}
+
 void SymbolId::checkAndAssign(const QJsonObject &json) {
   auto clientIdValue = json["clientId"];
   auto charIdValue = json["charId"];

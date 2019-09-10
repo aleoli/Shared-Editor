@@ -22,13 +22,25 @@ public:
   int getId() const;
   std::vector<int> getUserIds() const;
   std::vector<Symbol> getSymbols() const;
+  const Symbol& symbolAt(int pos) const;
+  int numSymbols() const;
   std::string to_string() const;
+  std::string text() const;
 
   void addUserId(int id);
-  void addSymbol(const Symbol &sym, int pos);
+
+  //CRDT
+  void localInsert(Symbol &sym, int pos);
+  void remoteInsert(const Symbol &sym);
+  void localDelete(int pos);
+  void remoteDelete(SymbolId id);
 
 private:
   void checkAndAssign(const QJsonObject &json);
+
+  static void findPosition(int clientId, std::vector<Symbol::Identifier> v1,
+    std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
+    int level = 0);
 
   QJsonArray userIdsToJsonArray() const;
   std::string userIdsToString() const; //TODO vedi se rimuovere

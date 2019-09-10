@@ -6,6 +6,9 @@
 using namespace se_exceptions;
 
 #include <sstream>
+#include <cmath>
+#include <algorithm>
+#include <QChar>
 
 File::File() {}
 
@@ -151,6 +154,18 @@ std::vector<Symbol> File::getSymbols() const {
   return _symbols;
 }
 
+const Symbol& File::symbolAt(int pos) const {
+  if(_symbols.size() <= pos) {
+    throw FileSymbolsException{"Invalid position"};
+  }
+
+  return _symbols[pos];
+}
+
+int File::numSymbols() const {
+  return _symbols.size();
+}
+
 std::string File::to_string() const {
   std::stringstream ss;
 
@@ -161,12 +176,130 @@ std::string File::to_string() const {
   return ss.str();
 }
 
+std::string File::text() const {
+  std::stringstream ss;
+
+  for(auto &sym : _symbols) {
+    ss << sym.getChar().toLatin1();
+  }
+
+  return ss.str();
+}
+
 void File::addUserId(int id) {
   _userIds.push_back(id);
 }
 
-void File::addSymbol(const Symbol &sym, int pos) {
-  // due passi:
-  // 1. calcolare la posizione di sym
-  // 2. inserire nel vettore
+void File::localInsert(Symbol &sym, int pos) {
+  // (chi ha chiamato questo metodo poi si preoccuperà di mandare info al server)
+  auto size = _symbols.size();
+
+  if(pos < 0 || pos > size) {
+    throw FileSymbolsException{"Invalid insert position"};
+  }
+
+  //create array position
+  int previous = pos > 0 ? pos - 1 : -1;
+  int next = pos == size ? -1 : pos;
+
+  std::vector<Symbol::Identifier> v1, v2;
+
+  if(previous != -1) {
+      auto sym = _symbols.at(previous);
+      v1 = sym.getPos();
+  }
+  if(next != -1) {
+      auto sym = _symbols.at(next);
+      v2 = sym.getPos();
+  }
+
+  std::vector<Symbol::Identifier> position;
+
+  findPosition(sym.getSymbolId().getClientId(), v1, v2, position);
+
+  sym.setPos(position);
+  _symbols.emplace(_symbols.begin() + pos, sym);
+}
+
+void File::findPosition(int clientId, std::vector<Symbol::Identifier> v1,
+  std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
+  int level) {
+
+  Symbol::Identifier pos1, pos2;
+
+  if(!v1.empty()) pos1 = v1.at(0);
+  else pos1 = {0, clientId};
+
+  if(!v2.empty()) pos2 = v2.at(0);
+  else pos2 = {static_cast<int>(pow(2, level) * 32), clientId};
+
+  int digit1 = pos1.getDigit();
+  int digit2 = pos2.getDigit();
+
+  if(digit2 - digit1 > 1){
+    //finished, found the position
+    int digit = (digit2 + digit1) / 2;
+    position.emplace_back(digit, clientId);
+    return;
+  }
+
+  else if(digit2 - digit1 == 1){
+    //must go deeper
+    position.push_back(pos1);
+
+    if(!v1.empty()) v1.erase(v1.begin());
+    v2.clear();
+
+    findPosition(clientId, v1, v2, position, level + 1);
+  }
+
+  else if(digit2 == digit1) {
+    //must go deeper
+    int clientId1 = pos1.getClientId();
+    int clientId2 = pos2.getClientId();
+
+    if (clientId1 < clientId2) {
+      position.push_back(pos1);
+
+      if (!v1.empty()) v1.erase(v1.begin());
+      v2.clear();
+
+      findPosition(clientId, v1, v2, position, level + 1);
+    }
+    else if (clientId1 == clientId2) {
+      position.push_back(pos1);
+
+      if (!v1.empty()) v1.erase(v1.begin());
+      if (!v2.empty()) v2.erase(v2.begin());
+
+      findPosition(clientId, v1, v2, position, level + 1);
+    }
+    else {
+      throw FileLocalInsertException{"vector _pos is not sorted!"};
+    }
+  }
+}
+
+void File::remoteInsert(const Symbol &sym) {
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [sym](const Symbol &cmp) {
+        return sym < cmp;
+    });
+
+  _symbols.emplace(result, sym);
+}
+
+void File::localDelete(int pos) {
+  if(pos < 0 || _symbols.size() <= pos) {
+    throw FileSymbolsException{"Invalid delete position"};
+  }
+
+  _symbols.erase(_symbols.begin()+pos);
+}
+
+void File::remoteDelete(SymbolId id) {
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id](const Symbol &cmp) {
+        return id == cmp.getSymbolId();
+    });
+
+  _symbols.erase(result);
 }
