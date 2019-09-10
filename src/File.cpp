@@ -9,8 +9,10 @@ using namespace se_exceptions;
 
 File::File() {}
 
+File::File(int id) : _id(id) {}
+
 File::File(int id, std::vector<int> user_ids, std::vector<Symbol> symbols)
-  : _id(id), _user_ids(user_ids), _symbols(symbols) {}
+  : _id(id), _userIds(user_ids), _symbols(symbols) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -43,7 +45,7 @@ void File::checkAndAssign(const QJsonObject &json) {
   auto symbols = symbolsValue.toArray();
 
   _id = id;
-  _user_ids = jsonArrayToUserIds(userIds);
+  _userIds = jsonArrayToUserIds(userIds);
   _symbols = jsonArrayToSymbols(symbols);
 }
 
@@ -68,7 +70,7 @@ QJsonObject File::toJsonObject() const {
 QJsonArray File::userIdsToJsonArray() const {
   QJsonArray array;
 
-  for(int el : _user_ids) {
+  for(int el : _userIds) {
     array.append(el);
   }
 
@@ -78,7 +80,7 @@ QJsonArray File::userIdsToJsonArray() const {
 std::string File::userIdsToString() const {
   std::stringstream ss;
 
-  for(int el : _user_ids) {
+  for(int el : _userIds) {
     ss << el << ' ';
   }
 
@@ -142,7 +144,7 @@ int File::getId() const {
 }
 
 std::vector<int> File::getUserIds() const {
-  return _user_ids;
+  return _userIds;
 }
 
 std::vector<Symbol> File::getSymbols() const {
@@ -157,4 +159,14 @@ std::string File::to_string() const {
   ss << "Symbols:" << std::endl << symbolsToString();
 
   return ss.str();
+}
+
+void File::addUserId(int id) {
+  _userIds.push_back(id);
+}
+
+void File::addSymbol(const Symbol &sym, int pos) {
+  // due passi:
+  // 1. calcolare la posizione di sym
+  // 2. inserire nel vettore
 }

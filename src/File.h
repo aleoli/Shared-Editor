@@ -10,6 +10,7 @@
 class File {
 public:
   File();
+  explicit File(int id);
   File(int id, std::vector<int> user_ids, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
@@ -23,6 +24,9 @@ public:
   std::vector<Symbol> getSymbols() const;
   std::string to_string() const;
 
+  void addUserId(int id);
+  void addSymbol(const Symbol &sym, int pos);
+
 private:
   void checkAndAssign(const QJsonObject &json);
 
@@ -35,6 +39,6 @@ private:
   static std::vector<Symbol> jsonArrayToSymbols(const QJsonArray &array);
 
   int _id;
-  std::vector<int> _user_ids;
+  std::vector<int> _userIds;
   std::vector<Symbol> _symbols;
 };
