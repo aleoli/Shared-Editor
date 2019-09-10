@@ -21,6 +21,14 @@ Symbol::Symbol(QJsonObject &&json) {
   checkAndAssign(json);
 }
 
+bool operator<(const Symbol& lhs, const Symbol& rhs) {
+  if(lhs._pos == rhs._pos) {
+    return lhs._id < rhs._id;
+  }
+
+  return lhs._pos < rhs._pos;
+}
+
 void Symbol::checkAndAssign (const QJsonObject &json) {
   auto idValue = json["id"];
   auto charValue = json["char"];
@@ -97,8 +105,8 @@ QJsonObject Symbol::toJsonObject() const {
 QJsonArray Symbol::posToJsonArray() const {
   QJsonArray array;
 
-  for(int el : _pos) {
-    array.append(el);
+  for(auto& el : _pos) {
+    array.append(el.toJsonObject());
   }
 
   return array;
@@ -107,24 +115,24 @@ QJsonArray Symbol::posToJsonArray() const {
 std::string Symbol::posToString() const {
   std::stringstream ss;
 
-  for(int el : _pos) {
-    ss << el << ' ';
+  for(auto& el : _pos) {
+    ss << el.to_string() << " ";
   }
 
   return ss.str();
 }
 
-std::vector<int> Symbol::jsonArrayToPos(const QJsonArray &array) {
-  std::vector<int> pos;
+std::vector<Symbol::Identifier> Symbol::jsonArrayToPos(const QJsonArray &array) {
+  std::vector<Symbol::Identifier> pos;
 
   for(auto&& el : array) {
-    auto val = el.toInt(-1);
-
-    if(val == -1) {
-      throw SymbolFromJsonException{"One or more fields in pos array are not valid"};
+    if(!el.isObject()) {
+      throw SymbolFromJsonException{"One or more fields in symbols array are not valid"};
     }
 
-    pos.push_back(val);
+    auto val = el.toObject();
+
+    pos.emplace_back(val);
   }
 
   return pos;
@@ -146,11 +154,11 @@ QChar Symbol::getChar() const{
   return _char;
 }
 
-void Symbol::setPos(std::vector<int> pos) {
+void Symbol::setPos(std::vector<Symbol::Identifier> pos) {
   _pos = pos;
 }
 
-std::vector<int> Symbol::getPos() const{
+std::vector<Symbol::Identifier> Symbol::getPos() const{
   return _pos;
 }
 
@@ -243,4 +251,79 @@ void Symbol::setBackgroundColor(const QColor &color) {
 
 QColor Symbol::getBackgroundColor() const {
   return _backgroundColor;
+}
+
+//IDENTIFIER
+Symbol::Identifier::Identifier() : _digit(-1), _clientId(-1) {}
+
+Symbol::Identifier::Identifier(int digit, int clientId)
+  : _digit(digit), _clientId(clientId) {}
+
+Symbol::Identifier::Identifier(const QJsonObject &json) {
+  checkAndAssign(json);
+}
+
+Symbol::Identifier::Identifier(QJsonObject &&json) {
+  checkAndAssign(json);
+}
+
+void Symbol::Identifier::checkAndAssign(const QJsonObject &json) {
+  auto digitValue = json["digit"];
+  auto clientIdValue = json["clientId"];
+
+  if(digitValue.isUndefined() || clientIdValue.isUndefined()) {
+    throw SymbolIdentifierFromJsonException{"The QJsonObject has some fields missing"};
+  }
+
+  auto digit = digitValue.toInt(-1);
+  auto clientId = clientIdValue.toInt(-1);
+
+  if(digit < 0 || clientId < 0) {
+    throw SymbolIdentifierFromJsonException{"One or more fields are not valid"};
+  }
+
+  _digit = digit;
+  _clientId = clientId;
+}
+
+Symbol::Identifier Symbol::Identifier::fromJsonObject(const QJsonObject &json) {
+  return Symbol::Identifier(json);
+}
+
+Symbol::Identifier Symbol::Identifier::fromJsonObject(QJsonObject &&json) {
+  return Symbol::Identifier(json);
+}
+
+QJsonObject Symbol::Identifier::toJsonObject() const {
+  QJsonObject json;
+
+  json["digit"] = QJsonValue(_digit);
+  json["clientId"] = QJsonValue(_clientId);
+
+  return json;
+}
+
+bool operator==(const Symbol::Identifier& lhs, const Symbol::Identifier& rhs) {
+  return lhs._digit == rhs._digit && lhs._clientId == rhs._clientId;
+}
+
+bool operator<(const Symbol::Identifier& lhs, const Symbol::Identifier& rhs) {
+  if(lhs._digit == rhs._digit)
+    return lhs._clientId < rhs._clientId;
+
+  return lhs._digit < rhs._digit;
+}
+
+int Symbol::Identifier::getDigit() const {
+  return _digit;
+}
+
+int Symbol::Identifier::getClientId() const {
+  return _clientId;
+}
+
+std::string Symbol::Identifier::to_string() const {
+  std::stringstream ss;
+  ss << _digit << "-" << _clientId;
+  return ss.str();
 }

@@ -75,6 +75,11 @@ namespace se_exceptions {
       SymbolFromJsonException(QString str): SE_Exception(str) {}
   };
 
+  class SymbolIdentifierFromJsonException : public SymbolFromJsonException {
+  public:
+      SymbolIdentifierFromJsonException(QString str): SymbolFromJsonException(str) {}
+  };
+
   class FileFromJsonException : public SE_Exception {
   public:
       FileFromJsonException(QString str): SE_Exception(str) {}

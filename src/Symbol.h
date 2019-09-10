@@ -13,11 +13,37 @@
 
 class Symbol {
 public:
+  class Identifier {
+  public:
+    Identifier();
+    Identifier(int digit, int clientId);
+    explicit Identifier(const QJsonObject &json);
+    explicit Identifier(QJsonObject &&json);
+
+    static Identifier fromJsonObject(const QJsonObject &json);
+    static Identifier fromJsonObject(QJsonObject &&json);
+    QJsonObject toJsonObject() const;
+
+    friend bool operator==(const Identifier& lhs, const Identifier& rhs);
+    friend bool operator<(const Identifier& lhs, const Identifier& rhs);
+
+    int getDigit() const;
+    int getClientId() const;
+    std::string to_string() const;
+
+  private:
+    void checkAndAssign(const QJsonObject &json);
+
+    int _digit, _clientId;
+  };
+
   Symbol();
   Symbol(SymbolId id, QChar chr);
   Symbol(SymbolId id, QChar chr, QFont font, QColor color, QColor backgroundColor);
   explicit Symbol(const QJsonObject &json);
   explicit Symbol(QJsonObject &&json);
+
+  friend bool operator<(const Symbol& lhs, const Symbol& rhs);
 
   static Symbol fromJsonObject(const QJsonObject &json);
   static Symbol fromJsonObject(QJsonObject &&json);
@@ -27,8 +53,8 @@ public:
   SymbolId getSymbolId() const;
   void setChar(QChar chr);
   QChar getChar() const;
-  void setPos(std::vector<int> pos);
-  std::vector<int> getPos() const;
+  void setPos(std::vector<Identifier> pos);
+  std::vector<Identifier> getPos() const;
   std::string to_string() const;
   std::string getFontInfo() const;
 
@@ -55,11 +81,11 @@ private:
 
   QJsonArray posToJsonArray() const;
   std::string posToString() const; //TODO vedi se rimuovere
-  static std::vector<int> jsonArrayToPos(const QJsonArray &array);
+  static std::vector<Identifier> jsonArrayToPos(const QJsonArray &array);
 
   SymbolId _id;
   QChar _char;
-  std::vector<int> _pos;
+  std::vector<Identifier> _pos;
   QFont _font;
   QColor _color;
   QColor _backgroundColor = QColor("#00000000");
