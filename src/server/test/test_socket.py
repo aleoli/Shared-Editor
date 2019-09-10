@@ -4,9 +4,15 @@ import time
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(("localhost", 1234))
 
-s.send(bytes([0, 0, 0, 5]))
+_str = "ciao!"
+b = bytes([0, 0, 0, 5])
+msg1 = b + _str.encode()
 
-s.send("ciao!".encode())
+_str = "wei"
+b = bytes([0, 0, 0, 3])
+msg2 = b + _str.encode()
+
+s.send(msg1 + msg2)
 
 tmp = s.recv(1024)
 print(tmp)

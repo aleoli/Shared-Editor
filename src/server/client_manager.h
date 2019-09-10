@@ -20,7 +20,7 @@ public slots:
   void disconnected(int id);
 
 private:
-  QTcpServer s;
-  std::map<int, Client *> clients;
-  int next_client_id = 0;
+  QTcpServer _s;
+  std::map<int, Client *> _clients;
+  int _next_client_id = 0;
 };

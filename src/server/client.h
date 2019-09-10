@@ -1,11 +1,6 @@
 #pragma once
 
-#define PKG_TERMINATOR 'a'
-
 #include "dependencies.h"
-
-#include <thread>
-#include <atomic>
 
 #include <QTcpSocket>
 
@@ -26,7 +21,7 @@ signals:
   void disconnected(int id);
 
 public slots:
-  void send(QString msg);
+  void send(QByteArray msg);
 
 private slots:
   void read();
@@ -36,12 +31,12 @@ private:
   void readSize();
   void readData();
 
-  int id;
+  int _id;
   Session* _session = nullptr;
 
-  QTcpSocket *socket;
-  QByteArray in_buffer;
+  QTcpSocket *_socket;
+  QByteArray _in_buffer;
 
-  uint32_t in_size = 0;
+  uint32_t _in_size = 0;
 
 };
