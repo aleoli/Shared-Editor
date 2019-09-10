@@ -10,6 +10,8 @@ public:
   explicit SymbolId(const QJsonObject &json);
   explicit SymbolId(QJsonObject &&json);
 
+  friend bool operator<(const SymbolId& lhs, const SymbolId& rhs);
+
   static SymbolId fromJsonObject(const QJsonObject &json);
   static SymbolId fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;

@@ -19,6 +19,14 @@ SymbolId::SymbolId(QJsonObject &&json) {
   checkAndAssign(json);
 }
 
+bool operator<(const SymbolId& lhs, const SymbolId& rhs) {
+  if(lhs._clientId == rhs._clientId) {
+    return lhs._charId < rhs._charId;
+  }
+
+  return lhs._clientId < rhs._clientId;
+}
+
 void SymbolId::checkAndAssign(const QJsonObject &json) {
   auto clientIdValue = json["clientId"];
   auto charIdValue = json["charId"];
