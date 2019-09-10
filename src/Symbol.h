@@ -25,11 +25,11 @@ public:
     QColor color, QColor backgroundColor);
 
   explicit Symbol(const QJsonObject &json);
-  explicit Symbol(const QJsonObject &&json);
+  explicit Symbol(QJsonObject &&json);
   //TODO altri costruttori..
 
   static Symbol fromJsonObject(const QJsonObject &json);
-  static Symbol fromJsonObject(const QJsonObject &&json);
+  static Symbol fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
   SymbolId getSymbolId() const;
@@ -58,9 +58,7 @@ public:
   QColor getBackgroundColor() const;
 
 private:
-  void checkAndAssign(const QJsonValue &idValue, const QJsonValue &charValue,
-    const QJsonValue &posValue, const QJsonValue &fontValue,
-    const QJsonValue &colorValue, const QJsonValue &backgroundColorValue);
+  void checkAndAssign(const QJsonObject &json);
 
   QJsonArray posToJsonArray() const;
   std::string posToString() const; //TODO vedi se rimuovere

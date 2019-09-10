@@ -30,30 +30,20 @@ Symbol::Symbol(SymbolId id, QChar chr, std::vector<int> pos, QFont font,
     _backgroundColor(backgroundColor) {}
 
 Symbol::Symbol(const QJsonObject &json) {
+  checkAndAssign(json);
+}
+
+Symbol::Symbol(QJsonObject &&json) {
+  checkAndAssign(json);
+}
+
+void Symbol::checkAndAssign (const QJsonObject &json) {
   auto idValue = json["id"];
   auto charValue = json["char"];
   auto posValue = json["pos"];
   auto fontValue = json["font"];
   auto colorValue = json["color"];
   auto backgroundColorValue = json["backgroundColor"];
-
-  checkAndAssign(idValue, charValue, posValue, fontValue, colorValue, backgroundColorValue);
-}
-
-Symbol::Symbol(const QJsonObject &&json) {
-  auto idValue = json["id"];
-  auto charValue = json["char"];
-  auto posValue = json["pos"];
-  auto fontValue = json["font"];
-  auto colorValue = json["color"];
-  auto backgroundColorValue = json["backgroundColor"];
-
-  checkAndAssign(idValue, charValue, posValue, fontValue, colorValue, backgroundColorValue);
-}
-
-void Symbol::checkAndAssign (const QJsonValue &idValue, const QJsonValue &charValue,
-  const QJsonValue &posValue, const QJsonValue &fontValue, const QJsonValue &colorValue,
-  const QJsonValue &backgroundColorValue) {
 
   if(idValue.isUndefined() || charValue.isUndefined() || posValue.isUndefined()
       || fontValue.isUndefined() || colorValue.isUndefined()
@@ -103,7 +93,7 @@ Symbol Symbol::fromJsonObject(const QJsonObject &json) {
   return Symbol(json);
 }
 
-Symbol Symbol::fromJsonObject(const QJsonObject &&json) {
+Symbol Symbol::fromJsonObject(QJsonObject &&json) {
   return Symbol(json);
 }
 

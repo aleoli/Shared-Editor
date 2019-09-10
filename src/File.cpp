@@ -13,23 +13,18 @@ File::File(int id, std::vector<int> user_ids, std::vector<Symbol> symbols)
   : _id(id), _user_ids(user_ids), _symbols(symbols) {}
 
 File::File(const QJsonObject &json){
+  checkAndAssign(json);
+}
+
+File::File(QJsonObject &&json){
+  checkAndAssign(json);
+}
+
+void File::checkAndAssign(const QJsonObject &json) {
   auto idValue = json["id"];
   auto userIdsValue = json["userIds"];
   auto symbolsValue = json["symbols"];
 
-  checkAndAssign(idValue, userIdsValue, symbolsValue);
-}
-
-File::File(const QJsonObject &&json){
-  auto idValue = json["id"];
-  auto userIdsValue = json["userIds"];
-  auto symbolsValue = json["symbols"];
-
-  checkAndAssign(idValue, userIdsValue, symbolsValue);
-}
-
-void File::checkAndAssign(const QJsonValue &idValue, const QJsonValue &userIdsValue,
-  const QJsonValue &symbolsValue) {
   if(idValue.isUndefined() || userIdsValue.isUndefined() || symbolsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
@@ -56,7 +51,7 @@ File File::fromJsonObject(const QJsonObject &json) {
   return File(json);
 }
 
-File File::fromJsonObject(const QJsonObject &&json) {
+File File::fromJsonObject(QJsonObject &&json) {
   return File(json);
 }
 

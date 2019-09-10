@@ -45,10 +45,10 @@ public:
 
   Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data);
   explicit Message(const QJsonObject &json);
-  explicit Message(const QJsonObject &&json);
+  explicit Message(QJsonObject &&json);
 
   static Message fromJsonObject(const QJsonObject &json);
-  static Message fromJsonObject(const QJsonObject &&json);
+  static Message fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
   Message::Type getType() const;
@@ -58,8 +58,7 @@ public:
   QJsonObject getData() const;
 
 private:
-  void checkAndAssign(const QJsonValue &typeValue, const QJsonValue &actionValue,
-    const QJsonValue &errorValue, const QJsonValue &statusValue, const QJsonValue &dataValue);
+  void checkAndAssign(const QJsonObject &json);
 
   Message::Type _type;
   int _action;

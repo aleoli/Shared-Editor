@@ -12,11 +12,11 @@ public:
   File();
   File(int id, std::vector<int> user_ids, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
-  explicit File(const QJsonObject &&json);
+  explicit File(QJsonObject &&json);
   //TODO altri costruttori..
 
   static File fromJsonObject(const QJsonObject &json);
-  static File fromJsonObject(const QJsonObject &&json);
+  static File fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
   int getId() const;
@@ -25,8 +25,7 @@ public:
   std::string to_string() const;
 
 private:
-  void checkAndAssign(const QJsonValue &idValue, const QJsonValue &userIdsValue,
-    const QJsonValue &symbolsValue);
+  void checkAndAssign(const QJsonObject &json);
 
   QJsonArray userIdsToJsonArray() const;
   std::string userIdsToString() const; //TODO vedi se rimuovere

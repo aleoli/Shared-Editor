@@ -9,27 +9,20 @@ Message::Message(Message::Type type, int action, bool error, Message::Status sta
   : _type(type), _action(action), _error(error), _status(status), _data(data) {}
 
 Message::Message(const QJsonObject &json) {
+  checkAndAssign(json);
+}
+
+Message::Message(QJsonObject &&json) {
+  checkAndAssign(json);
+}
+
+void Message::checkAndAssign(const QJsonObject &json) {
   auto typeValue = json["type"];
   auto actionValue = json["action"];
   auto errorValue = json["error"];
   auto statusValue = json["status"];
   auto dataValue = json["data"];
 
-  checkAndAssign(typeValue, actionValue, errorValue, statusValue, dataValue);
-}
-
-Message::Message(const QJsonObject &&json) {
-  auto typeValue = json["type"];
-  auto actionValue = json["action"];
-  auto errorValue = json["error"];
-  auto statusValue = json["status"];
-  auto dataValue = json["data"];
-
-  checkAndAssign(typeValue, actionValue, errorValue, statusValue, dataValue);
-}
-
-void Message::checkAndAssign(const QJsonValue &typeValue, const QJsonValue &actionValue,
-  const QJsonValue &errorValue, const QJsonValue &statusValue, const QJsonValue &dataValue) {
   if(typeValue.isUndefined() || actionValue.isUndefined() || errorValue.isUndefined()
         || statusValue.isUndefined() || dataValue.isUndefined()) {
           throw MessageFromJsonException{"The QJsonObject has some fields missing"};
@@ -67,7 +60,7 @@ Message Message::fromJsonObject(const QJsonObject &json) {
   return Message(json);
 }
 
-Message Message::fromJsonObject(const QJsonObject &&json) {
+Message Message::fromJsonObject(QJsonObject &&json) {
   return Message(json);
 }
 
