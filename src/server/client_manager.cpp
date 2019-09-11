@@ -3,7 +3,6 @@
 #include "client.h"
 
 #include <iostream>
-#include <unistd.h>
 
 ClientManager::ClientManager(QObject *parent): QObject(parent) {
   connect(&this->_s, SIGNAL(newConnection()), SLOT(newConnection()));
