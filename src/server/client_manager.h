@@ -13,7 +13,7 @@ public:
   ~ClientManager();
 
 signals:
-  void dataReceived(QByteArray);
+  void dataReceived(QByteArray msg);
 
 public slots:
   void newConnection();

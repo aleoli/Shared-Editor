@@ -23,6 +23,7 @@ void ClientManager::newConnection() {
     auto cl = new Client{this->_s.nextPendingConnection(), this->_next_client_id};
 		QThread *t = new QThread(cl);
 		cl->moveToThread(t);
+		connect(cl, SIGNAL(dataReady(QByteArray)), this, SIGNAL(dataReceived(QByteArray)));
     connect(cl, SIGNAL(disconnected(int)), SLOT(disconnected(int)));
     this->_clients[this->_next_client_id] = cl;
 		this->_threads[this->_next_client_id++] = t;

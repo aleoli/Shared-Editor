@@ -14,7 +14,6 @@ public:
   ~Client();
 
   Client& operator=(const Client &c) = delete;
-  void operator()();
 
 signals:
   void dataReady(QByteArray data);
