@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+
+<qresource prefix="/buttons">
+    <file alias="bold.png">imgs/bold.png</file>
+    <file alias="copy.png">imgs/copy.png</file>
+    <file alias="new.png">imgs/new.png</file>
+    <file alias="paste.png">imgs/paste.png</file>
+    <file alias="letter.png">imgs/letter.png</file>
+    <file alias="info.png">imgs/info.png</file>
+</qresource>
+
+</RCC>

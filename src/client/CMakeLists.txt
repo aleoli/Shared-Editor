@@ -14,6 +14,6 @@ file(GLOB src_files
     "../*.cpp"
 )
 
-add_executable(client ${src_files})
+add_executable(client ${src_files} resources.qrc)
 
 target_link_libraries(client ${LIBRARIES} pthread)

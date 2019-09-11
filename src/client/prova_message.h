@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QJsonObject>
 #include <QString>
 #include <QJsonDocument>
@@ -18,14 +20,14 @@ Message createMessage() {
     false, Message::Status::RESPONSE, data);
 }
 
-void saveToFile(QString path, Message &m) {
+void writeMessage(QString path, Message &m) {
   // trasformo in QByteArray
   QJsonDocument doc(m.toJsonObject());
 
 #if SAVE_BINARY
   auto array = doc.toBinaryData();
 #else
-  auto array = doc.toJson();
+  auto array = doc.toJson(QJsonDocument::Compact);
 #endif
 
   // scrivo su file
@@ -33,18 +35,20 @@ void saveToFile(QString path, Message &m) {
 
   if(!file.open(QIODevice::WriteOnly)){
     std::cout << "cannot open file" << std::endl;
+    exit(-1);
   }
 
   file.write(array);
   file.close();
 }
 
-Message readFile(QString path) {
+Message readMessage(QString path) {
   // leggo da file
   QFile file(path);
 
   if(!file.open(QIODevice::ReadOnly)){
     std::cout << "cannot open file" << std::endl;
+    exit(-1);
   }
 
   auto data = file.readAll();
@@ -66,11 +70,10 @@ void prova_message() {
   Message m = createMessage();
 
   // leggo messaggio da file (da socket è molto simile il procedimento)
-  //Message m2 = readFile("prova.shed");
+  //Message m2 = readMessage("prova.shed");
 
   // passaggio a QJsonObject e viceversa
-  auto json = m.toJsonObject();
-  Message m3 = Message::fromJsonObject(json);
+  Message m3 = Message::fromJsonObject(m.toJsonObject());
 
   // stampe varie
   std::cout << "type: " << static_cast<int>(m3.getType()) << std::endl;
@@ -80,9 +83,10 @@ void prova_message() {
 
   auto data = m3.getData();
 
+  std::cout << "data:" << std::endl;
   std::cout << data["name"].toString().toStdString() << std::endl;
   std::cout << data["id_user"].toInt() << std::endl;
 
   // scrivo su file (su socket è molto simile)
-  //saveToFile("prova.shed", m2);
+  //writeMessage("prova.shed", m2);
 }

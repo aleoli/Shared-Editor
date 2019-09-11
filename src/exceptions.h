@@ -64,4 +64,39 @@ namespace se_exceptions {
       MessageFromJsonException(QString str): SE_Exception(str) {}
   };
 
+  // File related exceptions
+  class SymbolIdFromJsonException : public SE_Exception {
+  public:
+      SymbolIdFromJsonException(QString str): SE_Exception(str) {}
+  };
+
+  class SymbolFromJsonException : public SE_Exception {
+  public:
+      SymbolFromJsonException(QString str): SE_Exception(str) {}
+  };
+
+  class SymbolIdentifierFromJsonException : public SymbolFromJsonException {
+  public:
+      SymbolIdentifierFromJsonException(QString str): SymbolFromJsonException(str) {}
+  };
+
+  class FileException : public SE_Exception {
+  public:
+      FileException(QString str): SE_Exception(str) {}
+  };
+
+  class FileFromJsonException : public FileException {
+  public:
+      FileFromJsonException(QString str): FileException(str) {}
+  };
+
+  class FileLocalInsertException : public FileException {
+  public:
+      FileLocalInsertException(QString str): FileException(str) {}
+  };
+
+  class FileSymbolsException : public FileException {
+  public:
+      FileSymbolsException(QString str): FileException(str) {}
+  };
 }
