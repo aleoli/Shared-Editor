@@ -76,7 +76,7 @@ void Client::readData() {
     this->_in_buffer.append(this->_socket->read(read_n));
     if(this->_in_buffer.size() >= this->_in_size) {
       this->_in_size = 0;
-      emit this->dataReady(this->_in_buffer);
+      emit this->dataReady(this->_id, this->_in_buffer);
       // TODO: questi dati vanno mandati da qualche parte per il processamento
       std::string str{this->_in_buffer.data()};
       this->_in_buffer.clear();
@@ -98,4 +98,11 @@ void Client::send(QByteArray msg) {
 
 void Client::_disconnected() {
   emit this->disconnected(this->_id);
+}
+
+void Client::disconnect(int id) {
+	if(this->_id == id) {
+		this->_socket->disconnect();
+		this->_disconnected();
+	}
 }

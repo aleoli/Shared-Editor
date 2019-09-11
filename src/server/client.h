@@ -16,11 +16,12 @@ public:
   Client& operator=(const Client &c) = delete;
 
 signals:
-  void dataReady(QByteArray data);
+  void dataReady(int client_id, QByteArray data);
   void disconnected(int id);
 
 public slots:
   void send(QByteArray msg);
+	void disconnect(int id);
 
 private slots:
   void read();

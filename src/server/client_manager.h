@@ -13,11 +13,13 @@ public:
   ~ClientManager();
 
 signals:
-  void dataReceived(QByteArray msg);
+  void dataReceived(int client_id, QByteArray msg);
+	void closeClient(int id);
 
 public slots:
   void newConnection();
   void disconnected(int id);
+	void onCloseClient(int id);
 
 private:
   QTcpServer _s;
