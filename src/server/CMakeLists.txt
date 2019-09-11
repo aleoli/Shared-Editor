@@ -7,12 +7,15 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(..)
 include_directories(persistence)
+include_directories(test)
 
 file(GLOB src_files
     "*.h"
     "*.cpp"
     "../*.h"
     "../*.cpp"
+    "io_thread/*.h"
+    "io_thread/*.cpp"
 )
 
 add_executable(server ${src_files})
