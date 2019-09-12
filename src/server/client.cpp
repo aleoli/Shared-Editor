@@ -4,7 +4,7 @@
 
 #include "session.h"
 
-Client::Client(QTcpSocket *s, int id): QObject(nullptr) {
+Client::Client(QTcpSocket *s, quint64 id): QObject(nullptr) {
   this->_id = id;
   this->_socket = s;
   connect(this->_socket, SIGNAL(readyRead()), SLOT(read()));

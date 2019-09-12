@@ -23,7 +23,7 @@ public slots:
 
 private:
   QTcpServer _s;
-  std::map<int, Client *> _clients;
-	std::map<int, QThread *> _threads;
-  int _next_client_id = 0;
+  std::map<quint64, Client *> _clients;
+	std::map<quint64, QThread *> _threads;
+  quint64 _next_client_id = 0;
 };
