@@ -77,6 +77,7 @@ Session Session::start(int user_id) {
       continue;
     }
   }
+	throw std::exception();		// silence warning
 }
 
 Session Session::get(const QString& token) {
