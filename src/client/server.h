@@ -17,6 +17,7 @@ public:
 public slots:
   void connect();
   void write(QByteArray data);
+  void disconnect();
 
 private slots:
   void read();
@@ -24,6 +25,7 @@ private slots:
 signals:
   void connection_error();
   void dataReady(QByteArray data);
+  void disconnected();
 
 private:
   static std::shared_ptr<Server> instance;

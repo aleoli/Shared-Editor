@@ -29,6 +29,13 @@ void Server::connect() {
   }
 }
 
+void Server::disconnect() {
+  this->_socket->disconnect();
+  this->_socket->disconnectFromHost();
+  this->_socket->deleteLater();
+  emit this->disconnected();
+}
+
 void Server::write(QByteArray data) {
   QByteArray data2;
   quint32 size = data.size();
