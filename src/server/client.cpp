@@ -2,8 +2,6 @@
 
 #include <QDataStream>
 
-#include <arpa/inet.h>
-
 #include "session.h"
 
 Client::Client(QTcpSocket *s, int id): QObject(nullptr) {
@@ -58,9 +56,10 @@ void Client::read() {
 
 void Client::readSize() {
   if(this->_socket->bytesAvailable() >= 4) {
-    uint32_t tmp;
-    memcpy(&tmp, this->_socket->read(4).data(), 4);
-    this->_in_size = ntohl(tmp);
+    QByteArray data = this->_socket->read(4);
+    QDataStream ds(data);
+    ds.setByteOrder(QDataStream::BigEndian);
+    ds >> this->_in_size;
   }
 }
 
@@ -87,11 +86,14 @@ void Client::readData() {
 
 void Client::send(QByteArray msg) {
   if(this->_socket->state() == QAbstractSocket::ConnectedState) {
-    uint32_t size = htonl(msg.size());
-    QByteArray arr;
-    QDataStream stream(&arr, QIODevice::WriteOnly);
-    stream << size;
-    this->_socket->write(arr+msg);
+    QByteArray data;
+    quint32 size = msg.size();
+    QDataStream ds(&data, QIODevice::WriteOnly);
+    ds.setByteOrder(QDataStream::BigEndian);
+    ds << size;
+    data += msg;
+
+    this->_socket->write(data);
     this->_socket->waitForBytesWritten();
   }
 }

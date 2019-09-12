@@ -37,6 +37,6 @@ private:
   QTcpSocket *_socket;
   QByteArray _in_buffer;
 
-  uint32_t _in_size = 0;
+  quint32 _in_size = 0;
 
 };
