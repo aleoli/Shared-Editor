@@ -13,7 +13,12 @@
 #define PROVA_MESSAGE 0
 #define PROVA_FILE 0
 #define PROVA_TEXTEDIT 0
-#define PROVA_CRDT 1
+#define PROVA_CRDT 0
+#define PROVA_SERVER 1
+
+#if PROVA_SERVER
+#include "test/prova_server.h"
+#endif
 
 int main(int argc, char **argv) {
   std::cout << "hello world!" << std::endl;
@@ -32,6 +37,10 @@ int main(int argc, char **argv) {
 
 #if PROVA_CRDT
   prova_crdt();
+#endif
+
+#if PROVA_SERVER
+  prova_server(argc, argv);
 #endif
 
   return 0;

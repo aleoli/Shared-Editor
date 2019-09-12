@@ -29,6 +29,7 @@ void ClientManager::newConnection() {
     this->_clients[this->_next_client_id] = cl;
 		this->_threads[this->_next_client_id++] = t;
 		t->start();
+    // TODO: è una prova
     cl->send("Bella!!");
   }
 }

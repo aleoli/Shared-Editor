@@ -9,7 +9,7 @@ class Client: public QObject {
 public:
   Client(const Client &c) = delete;
   Client(Client &&c);
-  explicit Client(QTcpSocket *s, int id);
+  explicit Client(QTcpSocket *s, quint64 id);
 
   ~Client();
 
@@ -31,12 +31,12 @@ private:
   void readSize();
   void readData();
 
-  int _id;
+  quint64 _id;
   Session* _session = nullptr;
 
   QTcpSocket *_socket;
   QByteArray _in_buffer;
 
-  uint32_t _in_size = 0;
+  quint32 _in_size = 0;
 
 };

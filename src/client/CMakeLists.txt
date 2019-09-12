@@ -12,6 +12,8 @@ file(GLOB src_files
     "*.cpp"
     "../*.h"
     "../*.cpp"
+    "test/*.h"
+    "test/*.cpp"
 )
 
 add_executable(client ${src_files} resources.qrc)
