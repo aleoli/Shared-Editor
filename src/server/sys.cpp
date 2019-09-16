@@ -33,7 +33,7 @@ SysConf initiate_system(const QApplication &app) {
   bool file_exists = dir.exists("shared-editor.db");
 
   // mi assicuro che l'istanza del DB sia richimata almeno una volta prima della prima query
-  DB *db = DB::get();
+  auto db = DB::get(conf.mem_only);
   (void) db;
 
   if(!dir_exists || !file_exists) {
@@ -51,8 +51,9 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
   const QCommandLineOption versionOption = parser.addVersionOption();
   parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
   const QCommandLineOption portOption({"p", "port"}, "Port to bind.", "Port", QString::number(DEF_PORT));
+  const QCommandLineOption moOption({"m", "mem-only"}, "Create Mem-Only DB (only for testing and debugging).");
 
-  parser.addOptions({portOption});
+  parser.addOptions({portOption, moOption});
 
   parser.process(app);
 
@@ -62,6 +63,7 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
   if(!ok) {
     throw se_exceptions::ArgNotValidException{"Not valid port '"+parser.value(portOption)+"'"};
   }
+  conf.mem_only = parser.isSet(moOption);
 
   return conf;
 }

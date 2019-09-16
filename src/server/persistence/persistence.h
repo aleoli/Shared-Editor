@@ -1,8 +1,6 @@
 #ifndef PERSISTENCE_H
 #define PERSISTENCE_H
 
-#define IN_MEMORY 0
-
 namespace persistence {
 
 class DB;
