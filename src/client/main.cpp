@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 #endif
 
 #if PROVA_TEXTEDIT
-  prova_textedit(argc, argv);
+  prova_textedit(app);
 #endif
 
 #if PROVA_CRDT

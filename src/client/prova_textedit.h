@@ -4,9 +4,7 @@
 #include <QRect>
 #include <QDesktopWidget>
 
-void prova_textedit(int argc, char **argv) {
-  QApplication a(argc, argv);
-
+void prova_textedit(QApplication &a) {
   // classe che conterrà tutta la logica della nostra interfaccia.. DA IMPLEMENTARE!
   TextEdit mw;
 
@@ -18,5 +16,5 @@ void prova_textedit(int argc, char **argv) {
 
   // eseguo
   mw.show();
-  a.exec();
+  exit(a.exec());
 }
