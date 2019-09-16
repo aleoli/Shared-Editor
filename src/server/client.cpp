@@ -7,14 +7,13 @@
 Client::Client(QTcpSocket *s, quint64 id): QObject(nullptr) {
   this->_id = id;
   this->_socket = s;
+  this->_socket->setParent(this);
   connect(this->_socket, SIGNAL(readyRead()), SLOT(read()));
   connect(this->_socket, SIGNAL(disconnected()), SLOT(_disconnected()));
 }
 
 Client::Client(Client &&c) {
   this->_id = c._id;
-  this->_session = c._session;
-  c._session = nullptr;
   if(this->_socket != nullptr) {
     QObject::disconnect(this->_socket, SIGNAL(readyRead()), this, SLOT(read()));
     QObject::disconnect(this->_socket, SIGNAL(disconnected()), this, SLOT(_disconnected()));
@@ -33,10 +32,6 @@ Client::Client(Client &&c) {
 }
 
 Client::~Client() {
-  if(this->_session != nullptr) {
-    delete this->_session;
-    this->_session = nullptr;
-  }
   if(this->_socket != nullptr) {
     QObject::disconnect(this->_socket, SIGNAL(readyRead()), this, SLOT(read()));
     QObject::disconnect(this->_socket, SIGNAL(disconnected()), this, SLOT(_disconnected()));
@@ -76,16 +71,12 @@ void Client::readData() {
     if(this->_in_buffer.size() >= this->_in_size) {
       this->_in_size = 0;
       emit this->dataReady(this->_id, this->_in_buffer);
-      // TODO: questi dati vanno mandati da qualche parte per il processamento
-      std::string str{this->_in_buffer.data()};
-      this->_in_buffer.clear();
-      std::cout << str << std::endl;
     }
   }
 }
 
-void Client::send(QByteArray msg) {
-  if(this->_socket->state() == QAbstractSocket::ConnectedState) {
+void Client::send(quint64 client_id, QByteArray msg) {
+  if(client_id == this->_id && this->_socket->state() == QAbstractSocket::ConnectedState) {
     QByteArray data;
     quint32 size = msg.size();
     QDataStream ds(&data, QIODevice::WriteOnly);
@@ -102,7 +93,7 @@ void Client::_disconnected() {
   emit this->disconnected(this->_id);
 }
 
-void Client::disconnect(int id) {
+void Client::disconnect(quint64 id) {
 	if(this->_id == id) {
 		this->_socket->disconnect();
 		this->_disconnected();

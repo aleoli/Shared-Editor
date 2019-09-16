@@ -23,7 +23,9 @@ using namespace se_exceptions;
 class persistence::DB {
 public:
     DB(const DB&) = delete;
+    DB(DB&&) = delete;
     DB& operator=(const DB&) = delete;
+    DB& operator=(DB&&) = delete;
 
     static std::shared_ptr<DB> get(bool mem_only = false) {
         if(DB::instance == nullptr) {

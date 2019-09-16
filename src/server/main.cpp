@@ -1,5 +1,6 @@
 #define TEST_USER 0
 #define TEST_SOCKET 1
+#define TEST_MESSAGE 1
 
 #include <QApplication>
 
@@ -12,10 +13,16 @@
 #include "test_user.h"
 #endif
 
-#if TEST_SOCKET
+#if TEST_SOCKET or TEST_MESSAGE
 #include <QTcpServer>
 #include <QTcpSocket>
 #include "client_manager.h"
+#endif
+
+#if TEST_MESSAGE
+#include "message_manager.h"
+#include <memory>
+#include <QThread>
 #endif
 
 #include "exceptions.h"
@@ -30,8 +37,18 @@ int main(int argc, char *argv[]) {
   test_user();
 #endif
 
-#if TEST_SOCKET
+#if TEST_SOCKET or TEST_MESSAGE
   auto cm = ClientManager::get(conf.port);
+#endif
+
+#if TEST_MESSAGE
+  auto mm = MessageManager::get();
+  QThread mm_thread{};
+  mm->moveToThread(&mm_thread);
+  QObject::connect(cm.get(), SIGNAL(dataReceived(quint64, QByteArray)), mm.get(), SLOT(process_data(quint64, QByteArray)));
+  QObject::connect(cm.get(), SIGNAL(closeClient(quint64)), mm.get(), SLOT(client_disconnected(quint64)));
+  QObject::connect(mm.get(), SIGNAL(send_data(quint64, QByteArray)), cm.get(), SLOT(sendData(quint64, QByteArray)));
+  mm_thread.start();
 #endif
 
   return app.exec();
