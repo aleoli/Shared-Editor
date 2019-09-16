@@ -1,5 +1,7 @@
 #pragma once
 
+#include "def.h"
+
 #include <memory>
 
 #include <QObject>
@@ -11,8 +13,9 @@ class Server: public QObject {
 public:
   Server(const Server&) = delete;
   Server& operator=(const Server&) = delete;
+  Server(QObject *parent = nullptr) = delete;
 
-  static std::shared_ptr<Server> get();
+  static std::shared_ptr<Server> get(QString host = DEF_HOST, int port = DEF_PORT);
 
 public slots:
   void connect();
@@ -29,7 +32,7 @@ signals:
 
 private:
   static std::shared_ptr<Server> instance;
-  Server(QString host, int port = 1234);
+  Server(QString host, int port);
 
   void readSize();
   void readData();
