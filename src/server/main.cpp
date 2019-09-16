@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if TEST_SOCKET
-  ClientManager cm;
+  auto cm = ClientManager::get();
 #endif
 
   return app.exec();
