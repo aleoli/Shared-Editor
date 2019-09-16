@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include <QSqlTableModel>
 #include <QSqlRecord>
@@ -21,9 +22,14 @@ using namespace se_exceptions;
 
 class persistence::DB {
 public:
-    static DB* get() {
-        static DB* db = new DB{};
-        return db;
+    DB(const DB&) = delete;
+    DB& operator=(const DB&) = delete;
+
+    static std::shared_ptr<DB> get(bool mem_only = false) {
+        if(DB::instance == nullptr) {
+            DB::instance.reset(new DB{mem_only});
+        }
+        return DB::instance;
     }
 
     static void create_db_if_not_exists(QString path = "") {
@@ -88,17 +94,18 @@ public:
     }
 
 private:
-    explicit DB() {
+    static std::shared_ptr<DB> instance;
+
+    explicit DB(bool mem_only = false) {
         if(!QSqlDatabase::isDriverAvailable("QSQLITE")) {
           std::cerr << "ERRORE: No Driver" << std::endl;
           exit(1);    // se non ha i driver del DB posso anche interrompere il programma, tanto non può funzionare
         }
         db = QSqlDatabase::addDatabase("QSQLITE");
-#if IN_MEMORY
-        db.setDatabaseName(":memory:");
-#else
-        db.setDatabaseName(QDir::homePath()+"/.shared_editor/shared-editor.db");
-#endif
+        if(mem_only)
+            db.setDatabaseName(":memory:");
+        else
+            db.setDatabaseName(QDir::homePath()+"/.shared_editor/shared-editor.db");
 
         if(!db.open()) {
             std::cerr << "ERRORE: connessione al DB fallita" << std::endl << db.lastError().text().toStdString() << std::endl;

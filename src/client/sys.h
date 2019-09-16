@@ -3,8 +3,8 @@
 #include <QApplication>
 
 typedef struct SysConf {
+  QString host;
   int port;
-  bool mem_only;
 } SysConf;
 
 SysConf initiate_system(const QApplication &app);

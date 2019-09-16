@@ -14,8 +14,8 @@ file(GLOB src_files
     "*.cpp"
     "../*.h"
     "../*.cpp"
-    "io_thread/*.h"
-    "io_thread/*.cpp"
+    "persistence/*.h"
+    "persistence/*.cpp"
 )
 
 add_executable(server ${src_files})

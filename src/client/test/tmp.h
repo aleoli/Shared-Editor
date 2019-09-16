@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../server.h"
+#include "../sys.h"
 
 #include <QObject>
 #include <QByteArray>
@@ -11,7 +12,7 @@
 class Tmp: public QObject {
   Q_OBJECT
 public:
-  Tmp();
+  explicit Tmp(const SysConf& conf);
 
 public slots:
   void started();

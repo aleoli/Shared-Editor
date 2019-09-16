@@ -1,14 +1,21 @@
 #include "dependencies.h"
 
+#include "def.h"
+
 #include <QTcpServer>
 #include <QThread>
 
 #include <map>
+#include <memory>
 
 class ClientManager: public QObject {
   Q_OBJECT
 public:
-  explicit ClientManager(QObject *parent = nullptr);
+  ClientManager(const ClientManager&) = delete;
+  ClientManager& operator=(const ClientManager&) = delete;
+  ClientManager(QObject *parent = nullptr) = delete;
+
+  static std::shared_ptr<ClientManager> get(int port = DEF_PORT);
 
   ~ClientManager();
 
@@ -22,6 +29,9 @@ public slots:
 	void onCloseClient(int id);
 
 private:
+  static std::shared_ptr<ClientManager> instance;
+  explicit ClientManager(int port, QObject *parent = nullptr);
+
   QTcpServer _s;
   std::map<quint64, Client *> _clients;
 	std::map<quint64, QThread *> _threads;

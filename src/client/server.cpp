@@ -15,9 +15,9 @@ Server::Server(QString host, int port): QObject(nullptr) {
   QObject::connect(this->_socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
 }
 
-std::shared_ptr<Server> Server::get() {
+std::shared_ptr<Server> Server::get(QString host, int port) {
   if(instance == nullptr) {
-    instance.reset(new Server{"localhost"});
+    instance.reset(new Server{host, port});
   }
   return instance;
 }

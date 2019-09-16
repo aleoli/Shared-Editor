@@ -4,18 +4,16 @@
 
 #include <iostream>
 
-#include <QApplication>
 #include <QThread>
 #include <QTimer>
 
+#include "../sys.h"
 #include "tmp.h"
 
-void prova_server(int argc, char *argv[]) {
-  QApplication app(argc, argv);
-
-  Tmp tmp;
+void prova_server(QApplication &app, const SysConf& conf) {
+  Tmp tmp{conf};
 
   QObject::connect(&tmp, SIGNAL(quit()), &app, SLOT(quit()));
 
-  app.exec();
+  exit(app.exec());
 }

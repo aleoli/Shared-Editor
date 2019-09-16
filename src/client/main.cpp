@@ -1,4 +1,10 @@
 #include <iostream>
+
+#include <QApplication>
+
+#include "sys.h"
+
+
 #include "prova_message.h"
 #include "prova_file.h"
 #include "Symbol.h"
@@ -21,7 +27,8 @@
 #endif
 
 int main(int argc, char **argv) {
-  std::cout << "hello world!" << std::endl;
+  QApplication app(argc, argv);
+  SysConf conf = initiate_system(app);
 
 #if PROVA_MESSAGE
   prova_message();
@@ -32,7 +39,7 @@ int main(int argc, char **argv) {
 #endif
 
 #if PROVA_TEXTEDIT
-  prova_textedit(argc, argv);
+  prova_textedit(app);
 #endif
 
 #if PROVA_CRDT
@@ -40,8 +47,8 @@ int main(int argc, char **argv) {
 #endif
 
 #if PROVA_SERVER
-  prova_server(argc, argv);
+  prova_server(app, conf);
 #endif
 
-  return 0;
+  return app.exec();
 }

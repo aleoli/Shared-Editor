@@ -27,6 +27,12 @@ namespace se_exceptions {
       char *c_str;
   };
 
+  // arg parse exceptions
+  class ArgNotValidException: public SE_Exception {
+  public:
+      ArgNotValidException(QString str): SE_Exception(str) {}
+  };
+
   // database exceptions
   class SQLException: public SE_Exception {
   public:
