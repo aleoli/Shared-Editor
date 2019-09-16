@@ -2,8 +2,8 @@
 
 #include <QTimer>
 
-Tmp::Tmp(): QObject(nullptr) {
-  this->_server = Server::get();
+Tmp::Tmp(const SysConf& conf): QObject(nullptr) {
+  this->_server = Server::get(conf.host, conf.port);
   this->_thread = new QThread{this};
   this->_server->moveToThread(this->_thread);
   QObject::connect(this->_thread, SIGNAL(started()), this->_server.get(), SLOT(connect()));

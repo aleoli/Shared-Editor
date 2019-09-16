@@ -24,14 +24,14 @@ using namespace se_exceptions;
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
-  initiate_system();
+  SysConf conf = initiate_system(app);
 
 #if TEST_USER
   test_user();
 #endif
 
 #if TEST_SOCKET
-  auto cm = ClientManager::get();
+  auto cm = ClientManager::get(conf.port);
 #endif
 
   return app.exec();

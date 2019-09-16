@@ -3,6 +3,7 @@
 #include <QApplication>
 
 typedef struct SysConf {
+  QString host;
   int port;
 } SysConf;
 
