@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
   QObject::connect(cm.get(), SIGNAL(dataReceived(quint64, QByteArray)), mm.get(), SLOT(process_data(quint64, QByteArray)));
   QObject::connect(cm.get(), SIGNAL(closeClient(quint64)), mm.get(), SLOT(client_disconnected(quint64)));
   QObject::connect(mm.get(), SIGNAL(send_data(quint64, QByteArray)), cm.get(), SLOT(sendData(quint64, QByteArray)));
+  QObject::connect(mm.get(), SIGNAL(connection_error(quint64)), cm.get(), SIGNAL(force_close(quint64)));
   mm_thread.start();
 #endif
 

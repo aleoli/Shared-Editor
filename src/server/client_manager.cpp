@@ -36,6 +36,7 @@ void ClientManager::newConnection() {
     connect(cl, SIGNAL(disconnected(quint64)), SLOT(disconnected(quint64)));
 		connect(this, SIGNAL(closeClient(quint64)), cl, SLOT(disconnect(quint64)));
     connect(cl, SIGNAL(disconnected(quint64)), this, SIGNAL(closeClient(quint64)));
+    connect(this, SIGNAL(force_close(quint64)), cl, SLOT(disconnect(quint64)));
     connect(this, SIGNAL(send_data(quint64, QByteArray)), cl, SLOT(send(quint64, QByteArray)));
     this->_clients[this->_next_client_id] = cl;
 		this->_threads[this->_next_client_id++] = t;

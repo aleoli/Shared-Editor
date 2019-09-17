@@ -26,7 +26,8 @@ public:
 
 signals:
   void dataReceived(quint64 client_id, QByteArray msg);
-	void closeClient(quint64 id);
+	void closeClient(quint64 id);              // usata dal client per segnalare che si è chiuso
+  void force_close(quint64 id);              // usata per dire al client di chiudersi               -> evita che venga inviato un signal doppio
   void send_data(quint64 client_id, QByteArray data);
 
 public slots:

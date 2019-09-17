@@ -1,5 +1,8 @@
 #include "message_manager.h"
 
+#include "exceptions.h"
+#include "server_message_parser.h"
+
 #include <iostream>
 
 std::shared_ptr<MessageManager> MessageManager::instance = nullptr;
@@ -20,13 +23,26 @@ std::shared_ptr<MessageManager> MessageManager::get() {
 void MessageManager::process_data(quint64 client_id, QByteArray data) {
   auto it = this->_data_env.find(client_id);
   if(it == this->_data_env.end()) {
-    Data data;
-    data.client_id = client_id;
-    this->_data_env[client_id] = data;
+    Data _data;
+    _data.client_id = client_id;
+    this->_data_env[client_id] = _data;
   }
+
+  try {
+    ServerMessageParser parser{data};
+    auto msg = parser.get();
+  } catch(se_exceptions::SE_Exception ex) {
+    std::cerr << ex.what() << std::endl;
+    emit this->connection_error(client_id);
+    return;
+  }
+
+  // ---
   std::cout << "MM: " << data.data() << std::endl;
   // TODO: process message
   QByteArray out{"Ciao!!"};
+  // ---
+
   emit this->send_data(client_id, out);
 }
 

@@ -26,6 +26,7 @@ public:
 signals:
   void send_data(quint64 client_id, QByteArray data);
   void send_data(std::list<quint64> client_list, QByteArray data);
+  void connection_error(quint64 client_id);
 
 public slots:
   void process_data(quint64 client_id, QByteArray data);

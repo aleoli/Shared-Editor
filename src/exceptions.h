@@ -5,26 +5,16 @@ namespace se_exceptions {
   class SE_Exception: public std::exception {
   public:
       SE_Exception(QString str): std::exception(), str(str) {
-        this->c_str = new char[str.length()+1];
-        int i=0;
-        for(auto& c: str.toStdString()) {
-          this->c_str[i++] = c;
-        }
-        this->c_str[i] = '\0';
-      }
-
-      virtual ~SE_Exception() {
-        delete[] this->c_str;
-        this->c_str = nullptr;
+        this->std_str = this->str.toStdString();
       }
 
       virtual const char* what() const noexcept {
-          return this->c_str;
+          return this->std_str.c_str();
       }
 
   private:
       QString str;
-      char *c_str;
+      std::string std_str;
   };
 
   // arg parse exceptions
