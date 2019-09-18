@@ -1,9 +1,12 @@
 #include "message_manager.h"
 
+#include "def.h"
 #include "exceptions.h"
-#include "server_message_parser.h"
+#include "Message.h"
 
 #include <iostream>
+
+#include <QJsonDocument>
 
 std::shared_ptr<MessageManager> MessageManager::instance = nullptr;
 
@@ -29,8 +32,12 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
   }
 
   try {
-    ServerMessageParser parser{data};
-    auto msg = parser.get();
+#if SAVE_BINARY
+    auto doc = QJsonDocument::fromBinaryData(data);
+#else
+    auto doc = QJsonDocument::fromJson(data);
+#endif
+    Message msg{doc.object()};
   } catch(se_exceptions::SE_Exception ex) {
     std::cerr << ex.what() << std::endl;
     emit this->connection_error(client_id);
