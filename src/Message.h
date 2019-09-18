@@ -43,6 +43,7 @@ public:
     RESPONSE
   };
 
+  explicit Message();
   Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data);
   explicit Message(const QJsonObject &json);
   explicit Message(QJsonObject &&json);

@@ -14,6 +14,12 @@
 class MessageManager: public QObject {
   Q_OBJECT
 public:
+  typedef struct Data {
+    quint64 client_id;
+    std::shared_ptr<Session> session;
+    std::shared_ptr<File> file;
+  } Data;
+
   MessageManager(const MessageManager&) = delete;
   MessageManager(MessageManager&&) = delete;
   MessageManager& operator=(const MessageManager&) = delete;
@@ -33,12 +39,6 @@ public slots:
   void client_disconnected(quint64 client_id);
 
 private:
-  typedef struct Data {
-    quint64 client_id;
-    std::shared_ptr<Session> session;
-    std::shared_ptr<File> file;
-  } Data;
-
   static std::shared_ptr<MessageManager> instance;
   explicit MessageManager(QObject *parent = nullptr);
 

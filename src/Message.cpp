@@ -5,6 +5,9 @@
 
 using namespace se_exceptions;
 
+Message::Message() {
+}
+
 Message::Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data)
   : _type(type), _action(action), _error(error), _status(status), _data(data) {}
 

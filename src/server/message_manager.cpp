@@ -3,6 +3,7 @@
 #include "def.h"
 #include "exceptions.h"
 #include "Message.h"
+#include "server_message_processor.h"
 
 #include <iostream>
 
@@ -38,19 +39,33 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
     auto doc = QJsonDocument::fromJson(data);
 #endif
     Message msg{doc.object()};
+    auto mp = ServerMessageProcessor{msg, this->_data_env[client_id]};
+    Message res = mp;
+    QJsonDocument res_doc(res.toJsonObject());
+#if SAVE_BINARY
+    auto array = res_doc.toBinaryData();
+#else
+    auto array = res_doc.toJson(QJsonDocument::Compact);
+#endif
+    if(mp.sendToAll()) {
+      this->send_all(client_id, mp.fileId(), array);
+    } else {
+      emit this->send_data(client_id, array);
+    }
+    return;
   } catch(se_exceptions::SE_Exception ex) {
     std::cerr << ex.what() << std::endl;
     emit this->connection_error(client_id);
     return;
   }
-
+/*
   // ---
   std::cout << "MM: " << data.data() << std::endl;
   // TODO: process message
   QByteArray out{"Ciao!!"};
   // ---
 
-  emit this->send_data(client_id, out);
+  emit this->send_data(client_id, out);*/
 }
 
 void MessageManager::open_file(quint64 client_id, std::shared_ptr<File> file) {
