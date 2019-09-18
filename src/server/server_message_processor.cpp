@@ -1,6 +1,7 @@
 #include "server_message_processor.h"
 
 ServerMessageProcessor::ServerMessageProcessor(const Message &m, MessageManager::Data& data): MessageProcessor(m), _data(data) {
+  this->process_message();
 }
 
 void ServerMessageProcessor::process_message() {

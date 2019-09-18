@@ -5,7 +5,7 @@
 
 using namespace se_exceptions;
 
-Message::Message() {
+Message::Message(): _type(Type::FILE), _action(0), _error(false), _status(Status::QUERY) {
 }
 
 Message::Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data)

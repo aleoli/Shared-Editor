@@ -16,8 +16,14 @@ void MessageProcessor::process_message() {
     case Message::Type::FILESYSTEM:
       break;
   }
+  this->dumb();
 }
 
 void MessageProcessor::dumb() {
   this->_res = this->_m;
+  this->_has_resp = true;
+}
+
+bool MessageProcessor::hasResp() const {
+  return this->_has_resp;
 }
