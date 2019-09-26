@@ -1,19 +1,19 @@
 #include "message_processor.h"
 
-MessageProcessor::MessageProcessor(const Message &m): _m(m) {
-}
-
-MessageProcessor::operator Message() const {
-  return this->_res;
+MessageProcessor::MessageProcessor(const Message &m)
+  : _m(m), _has_resp(false) {
 }
 
 void MessageProcessor::process_message() {
   switch(this->_m.getType()) {
     case Message::Type::FILE:
+      process_file();
       break;
     case Message::Type::USER:
+      process_user();
       break;
     case Message::Type::FILESYSTEM:
+      process_filesystem();
       break;
   }
   this->dumb();
@@ -24,6 +24,10 @@ void MessageProcessor::dumb() {
   this->_has_resp = true;
 }
 
-bool MessageProcessor::hasResp() const {
+bool MessageProcessor::hasResponse() const {
   return this->_has_resp;
+}
+
+Message MessageProcessor::getResponse() const {
+  return this->_res;
 }

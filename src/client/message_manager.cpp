@@ -34,10 +34,10 @@ void MessageManager::process_data(QByteArray data) {
 #endif
     Message msg{doc.object()};
     auto mp = ClientMessageProcessor{msg};
-    if(!mp.hasResp()) {
+    if(!mp.hasResponse()) {
       return;
     }
-    Message res = mp;
+    Message res = mp.getResponse();
     QJsonDocument res_doc(res.toJsonObject());
 #if SAVE_BINARY
     auto array = res_doc.toBinaryData();

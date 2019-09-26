@@ -40,10 +40,10 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
 #endif
     Message msg{doc.object()};
     auto mp = ServerMessageProcessor{msg, this->_data_env[client_id]};
-    if(!mp.hasResp()) {
+    if(!mp.hasResponse()) {
       return;
     }
-    Message res = mp;
+    Message res = mp.getResponse();
     QJsonDocument res_doc(res.toJsonObject());
 #if SAVE_BINARY
     auto array = res_doc.toBinaryData();
@@ -51,7 +51,7 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
     auto array = res_doc.toJson(QJsonDocument::Compact);
 #endif
     std::cout << "OUT: " << array.data() << std::endl;
-    if(mp.sendToAll()) {
+    if(mp.shouldSendToAll()) {
       this->send_all(client_id, mp.fileId(), array);
     } else {
       emit this->send_data(client_id, array);
