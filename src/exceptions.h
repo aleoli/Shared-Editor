@@ -95,4 +95,25 @@ namespace se_exceptions {
   public:
       FileSymbolsException(QString str): FileException(str) {}
   };
+
+  // MessageManagerExceptions
+  class MessageManagerException : public SE_Exception {
+  public:
+      MessageManagerException(QString str): SE_Exception(str) {}
+  };
+
+  class ClientLoginException : public MessageManagerException {
+  public:
+      ClientLoginException(QString str): MessageManagerException(str) {}
+  };
+
+  class ClientFileException : public MessageManagerException {
+  public:
+      ClientFileException(QString str): MessageManagerException(str) {}
+  };
+
+  class FileNotFoundException : public MessageManagerException {
+  public:
+      FileNotFoundException(QString str): MessageManagerException(str) {}
+  };
 }

@@ -67,6 +67,9 @@ private:
   //caricamento in memoria del file nella FifoMap, se non c'è già
   void loadFile(int fileId);
 
+  bool clientIsLogged(quint64 clientId);
+  bool clientHasFileOpen(quint64 clientId, int fileId);
+
   typedef struct Data {
     quint64 clientId;
     int fileId;

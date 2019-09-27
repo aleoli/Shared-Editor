@@ -4,6 +4,8 @@
 #include "Message.h"
 #include "server_message_processor.h"
 
+using namespace se_exceptions;
+
 #include <iostream>
 
 std::shared_ptr<MessageManager> MessageManager::instance = nullptr;
@@ -109,7 +111,9 @@ void MessageManager::send_all(quint64 client_id, int file_id, QByteArray data) {
 */
 
 void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> session) {
-  //TODO check per vedere se il client id già esiste in _clients
+  if(clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is already logged in"};
+  }
 
   Data data;
   data.clientId = clientId;
@@ -120,22 +124,18 @@ void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> sessio
 }
 
 void MessageManager::clientDisconnected(quint64 clientId) {
-  if(_clients.count(clientId) == 0) return;
+  if(_clients.count(clientId) == 0) return; //no exception here
 
   //se aveva un file aperto, lo rimuovo da _fileClients
-  if(_clients[clientId].fileIsOpen) {
-      int fileId = _clients[clientId].fileId;
-      auto &list = _fileClients[fileId];
-      list.remove(clientId);
-      if(list.empty()) _fileClients.erase(fileId);
+  auto data = _clients[clientId];
+  if(data.fileIsOpen) {
+      closeFile(clientId, data.fileId);
   }
 
   _clients.erase(clientId);
 }
 
 void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
-  //i check sul client e sul file sono già stati fatti in precedenza
-
   auto list = _fileClients[fileId]; //per copia
   list.remove(clientId);
 
@@ -145,10 +145,13 @@ void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
 }
 
 QByteArray MessageManager::getFile(quint64 clientId, int fileId) {
-  //TODO se il clientId non è presente in _clients, c'è qualche problema
-  // perchè nella fase di login doveva essere inserito -> lancia eccezione o non so
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
 
-  //TODO se il client ha un altro file aperto nel frattempo, eccezione
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client has not opened the file"};
+  }
 
   //carico file in memoria se non c'è già
   loadFile(fileId);
@@ -169,7 +172,7 @@ QByteArray MessageManager::getFile(quint64 clientId, int fileId) {
 
 void MessageManager::loadFile(int fileId) {
   //TODO carica file da disco e mettilo nella mappa
-  //TODO check se il file non esiste -> eccezione ?
+  //TODO check se il file non esiste -> eccezione FileNotFoundException
 
   if(_openFiles.count(fileId) != 0) return;
 
@@ -178,7 +181,13 @@ void MessageManager::loadFile(int fileId) {
 }
 
 void MessageManager::addSymbol(quint64 clientId, int fileId, const Symbol& sym) {
-  //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client has not opened the file"};
+  }
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
@@ -189,7 +198,13 @@ void MessageManager::addSymbol(quint64 clientId, int fileId, const Symbol& sym) 
 }
 
 void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId) {
-  //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client has not opened the file"};
+  }
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
@@ -200,7 +215,13 @@ void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& 
 }
 
 Symbol& MessageManager::getSymbol(quint64 clientId, int fileId, const SymbolId& symId) {
-  //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client has not opened the file"};
+  }
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
@@ -211,7 +232,13 @@ Symbol& MessageManager::getSymbol(quint64 clientId, int fileId, const SymbolId& 
 }
 
 void MessageManager::closeFile(quint64 clientId, int fileId) {
-  //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client has not opened the file"};
+  }
 
   //rimuovo da fileClients
   auto &list = _fileClients[fileId];
@@ -220,4 +247,14 @@ void MessageManager::closeFile(quint64 clientId, int fileId) {
 
   //rimuovo da _clients
   _clients[clientId].fileIsOpen = false;
+}
+
+bool MessageManager::clientIsLogged(quint64 clientId) {
+  return _clients.count(clientId) != 0;
+}
+
+bool MessageManager::clientHasFileOpen(quint64 clientId, int fileId) {
+  auto data = _clients[clientId];
+
+  return data.fileIsOpen && data.fileId == fileId;
 }
