@@ -3,6 +3,8 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
+#define BINARY_MESSAGE 0
+
 class Message {
 public:
   enum class Type {
@@ -50,7 +52,10 @@ public:
 
   static Message fromJsonObject(const QJsonObject &json);
   static Message fromJsonObject(QJsonObject &&json);
+  static Message fromQByteArray(const QByteArray &array);
+  static Message fromQByteArray(QByteArray &&array);
   QJsonObject toJsonObject() const;
+  QByteArray toQByteArray() const;
 
   Message::Type getType() const;
   int getAction() const;

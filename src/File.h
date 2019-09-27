@@ -7,6 +7,8 @@
 #include <QJsonValue>
 #include <QJsonArray>
 
+#define BINARY_FILE 0
+
 class File {
 public:
   File();
@@ -17,7 +19,10 @@ public:
 
   static File fromJsonObject(const QJsonObject &json);
   static File fromJsonObject(QJsonObject &&json);
+  static File fromQByteArray(const QByteArray &array);
+  static File fromQByteArray(QByteArray &&array);
   QJsonObject toJsonObject() const;
+  QByteArray toQByteArray() const;
 
   int getId() const;
   std::vector<int> getUserIds() const;

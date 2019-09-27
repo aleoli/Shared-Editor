@@ -2,6 +2,7 @@
 
 #include "exceptions.h"
 #include <QJsonValue>
+#include <QJsonDocument>
 
 using namespace se_exceptions;
 
@@ -67,6 +68,26 @@ Message Message::fromJsonObject(QJsonObject &&json) {
   return Message(json);
 }
 
+Message Message::fromQByteArray(const QByteArray &array) {
+  #if BINARY_MESSAGE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return Message(doc.object());
+}
+
+Message Message::fromQByteArray(QByteArray &&array) {
+  #if BINARY_MESSAGE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return Message(doc.object());
+}
+
 QJsonObject Message::toJsonObject() const {
   QJsonObject json;
 
@@ -77,6 +98,16 @@ QJsonObject Message::toJsonObject() const {
   json["data"] = QJsonValue(_data);
 
   return json;
+}
+
+QByteArray Message::toQByteArray() const {
+  QJsonDocument doc(toJsonObject());
+
+#if BINARY_MESSAGE
+  return doc.toBinaryData();
+#else
+  return doc.toJson(QJsonDocument::Compact);
+#endif
 }
 
 Message::Type Message::getType() const {

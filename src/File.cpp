@@ -9,6 +9,7 @@ using namespace se_exceptions;
 #include <cmath>
 #include <algorithm>
 #include <QChar>
+#include <QJsonDocument>
 
 File::File() {}
 
@@ -60,6 +61,26 @@ File File::fromJsonObject(QJsonObject &&json) {
   return File(json);
 }
 
+File File::fromQByteArray(const QByteArray &array) {
+  #if BINARY_FILE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return File(doc.object());
+}
+
+File File::fromQByteArray(QByteArray &&array) {
+  #if BINARY_FILE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return File(doc.object());
+}
+
 QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
@@ -68,6 +89,16 @@ QJsonObject File::toJsonObject() const {
   json["symbols"] = QJsonValue(symbolsToJsonArray());
 
   return json;
+}
+
+QByteArray File::toQByteArray() const {
+  QJsonDocument doc(toJsonObject());
+
+#if BINARY_FILE
+  return doc.toBinaryData();
+#else
+  return doc.toJson(QJsonDocument::Compact);
+#endif
 }
 
 QJsonArray File::userIdsToJsonArray() const {
