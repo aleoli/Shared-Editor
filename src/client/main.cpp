@@ -8,6 +8,7 @@
 #include "prova_message.h"
 #include "prova_file.h"
 #include "Symbol.h"
+#include "SymbolId.h"
 #include "File.h"
 #include "exceptions.h"
 #include <string>
@@ -19,8 +20,8 @@
 #define PROVA_MESSAGE 0
 #define PROVA_FILE 0
 #define PROVA_TEXTEDIT 0
-#define PROVA_CRDT 0
-#define PROVA_SERVER 1
+#define PROVA_CRDT 1
+#define PROVA_SERVER 0
 
 #if PROVA_SERVER
 #include "test/prova_server.h"
@@ -48,7 +49,8 @@ int main(int argc, char **argv) {
 
 #if PROVA_SERVER
   prova_server(app, conf);
+  return app.exec();
 #endif
 
-  return app.exec();
+  return 0;
 }

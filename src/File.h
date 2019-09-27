@@ -25,7 +25,8 @@ public:
   int getId() const;
   std::vector<int> getUserIds() const;
   std::vector<Symbol> getSymbols() const;
-  const Symbol& symbolAt(int pos) const;
+  Symbol& symbolAt(int pos);
+  Symbol& symbolById(SymbolId id);
   int numSymbols() const;
   std::string to_string() const;
   std::string text() const;

@@ -18,6 +18,9 @@ void prova_crdt() {
   std::cout << "Inserimento locale:" << std::endl;
   std::cout << f.text() << std::endl;
 
+  // testo symbolById
+  std::cout << "Verifico che mi restituisca il simbolo con carattere 'a': ";
+  std::cout << f.symbolById({1,2}).getChar().toLatin1() << std::endl;
 
   // simulo un inserimento remoto
   File f2 = f;
@@ -82,4 +85,5 @@ void prova_crdt() {
   catch(...) {
     std::cout << "Corretto" << std::endl;
   }
+
 }

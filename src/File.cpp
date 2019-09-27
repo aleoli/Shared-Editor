@@ -186,12 +186,24 @@ std::vector<Symbol> File::getSymbols() const {
   return _symbols;
 }
 
-const Symbol& File::symbolAt(int pos) const {
+Symbol& File::symbolAt(int pos) {
   if(_symbols.size() <= pos) {
     throw FileSymbolsException{"Invalid position"};
   }
 
   return _symbols[pos];
+}
+
+Symbol& File::symbolById(SymbolId id) {
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id](const Symbol &cmp) {
+        return cmp.getSymbolId() == id;
+  });
+
+  if(result == std::end(_symbols)) {
+    throw FileSymbolsException{"Symbol does not exist"};
+  }
+
+  return *result;
 }
 
 int File::numSymbols() const {
