@@ -6,6 +6,7 @@ include(../../cmake/qt_libraries.cmake)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(..)
+include_directories(test) # da togliere
 
 file(GLOB src_files
     "*.h"
@@ -16,6 +17,6 @@ file(GLOB src_files
     "test/*.cpp"
 )
 
-add_executable(client ${src_files} resources.qrc)
+add_executable(client ${src_files} test/resources.qrc)
 
 target_link_libraries(client ${LIBRARIES} pthread)
