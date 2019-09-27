@@ -1,13 +1,10 @@
 #include "message_manager.h"
 
-#include "def.h"
 #include "exceptions.h"
 #include "Message.h"
 #include "client_message_processor.h"
 
 #include <iostream>
-
-#include <QJsonDocument>
 
 std::shared_ptr<MessageManager> MessageManager::instance = nullptr;
 
@@ -27,28 +24,19 @@ std::shared_ptr<MessageManager> MessageManager::get() {
 void MessageManager::process_data(QByteArray data) {
   std::cout << "DATA: " << data.data() << std::endl;
   try {
-#if SAVE_BINARY
-    auto doc = QJsonDocument::fromBinaryData(data);
-#else
-    auto doc = QJsonDocument::fromJson(data);
-#endif
-    Message msg{doc.object()};
+    auto msg = Message::fromQByteArray(data);
     auto mp = ClientMessageProcessor{msg};
     if(!mp.hasResponse()) {
       return;
     }
+
     Message res = mp.getResponse();
-    QJsonDocument res_doc(res.toJsonObject());
-#if SAVE_BINARY
-    auto array = res_doc.toBinaryData();
-#else
-    auto array = res_doc.toJson(QJsonDocument::Compact);
-#endif
+    auto array = res.toQByteArray();
     std::cout << "OUT: " << array.data() << std::endl;
     emit this->send_data(array);
+
   } catch(se_exceptions::SE_Exception ex) {
     std::cerr << ex.what() << std::endl;
     emit this->connection_error();
-    return;
   }
 }

@@ -3,12 +3,13 @@
 #include "message_processor.h"
 #include "message_manager.h"
 
+#include <memory>
+
 class ServerMessageProcessor: public MessageProcessor {
 public:
-  ServerMessageProcessor(const Message &m, MessageManager::Data& data);
+  ServerMessageProcessor(const Message &m, quint64 clientId);
 
   bool shouldSendToAll() const;
-  int fileId() const;
 
 protected:
   virtual void process_file();
@@ -17,5 +18,6 @@ protected:
 
 private:
   bool _to_all;
-  MessageManager::Data& _data;
+  quint64 _clientId;
+  std::shared_ptr<MessageManager> _manager;
 };

@@ -3,4 +3,4 @@
 #define DEF_HOST "localhost"
 #define DEF_PORT 1234
 
-#define SAVE_BINARY 0
+#define MAX_OPEN_FILES 100
