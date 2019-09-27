@@ -37,6 +37,7 @@ public:
   void remoteInsert(const Symbol &sym);
   void localDelete(int pos);
   void remoteDelete(SymbolId id);
+  //TODO per aggiornare simboli?? (es mettere il grassetto..)
 
 private:
   void checkAndAssign(const QJsonObject &json);

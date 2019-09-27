@@ -32,8 +32,13 @@ public:
   /* gestione file */
   // richiesta di un file da parte di un client
   QByteArray getFile(quint64 clientId, int fileId);
-  // aggiunta di un simbolo nel file (da rivedere un attimo i parametri)
-  void editFile(quint64 clientId, int fileId, const Symbol& sym);
+  // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
+  void addSymbol(quint64 clientId, int fileId, const Symbol& sym);
+  void deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId);
+  //TODO messaggi per aggiornare simboli?? (es mettere il grassetto..)
+  // bisogna vedere se mandare un messaggio con l'oggetto simbolo da rimpiazzare
+  // oppure se trattare ogni modifica singolarmente (direi la prima)
+
   // chiusura fiel da parte del client -> rimozione da fileClients, NON dalla FifoMap
   void closeFile(quint64 clientId, int fileId);
 

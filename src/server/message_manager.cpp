@@ -177,7 +177,7 @@ void MessageManager::loadFile(int fileId) {
   _openFiles[fileId] = f;
 }
 
-void MessageManager::editFile(quint64 clientId, int fileId, const Symbol& sym) {
+void MessageManager::addSymbol(quint64 clientId, int fileId, const Symbol& sym) {
   //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
 
   //sempre il check per vedere se il file è caricato in memoria
@@ -186,6 +186,17 @@ void MessageManager::editFile(quint64 clientId, int fileId, const Symbol& sym) {
 
   File& f = _openFiles[fileId];
   f.remoteInsert(sym);
+}
+
+void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId) {
+  //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
+
+  //sempre il check per vedere se il file è caricato in memoria
+  // (potrebbe essere stato rimosso)
+  loadFile(fileId);
+
+  File& f = _openFiles[fileId];
+  f.remoteDelete(symId);
 }
 
 void MessageManager::closeFile(quint64 clientId, int fileId) {
