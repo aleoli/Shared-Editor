@@ -35,9 +35,9 @@ public:
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
   void addSymbol(quint64 clientId, int fileId, const Symbol& sym);
   void deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId);
-  //TODO messaggi per aggiornare simboli?? (es mettere il grassetto..)
-  // bisogna vedere se mandare un messaggio con l'oggetto simbolo da rimpiazzare
-  // oppure se trattare ogni modifica singolarmente (direi la prima)
+  // per la modifica di un simbolo -> lo restituisco, e ci pensa il chiamante a modificarlo
+  // in base a cosa deve modificare
+  Symbol& getSymbol(quint64 clientId, int fileId, const SymbolId& symId);
 
   // chiusura fiel da parte del client -> rimozione da fileClients, NON dalla FifoMap
   void closeFile(quint64 clientId, int fileId);

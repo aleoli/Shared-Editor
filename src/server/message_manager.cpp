@@ -199,6 +199,17 @@ void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& 
   f.remoteDelete(symId);
 }
 
+Symbol& MessageManager::getSymbol(quint64 clientId, int fileId, const SymbolId& symId) {
+  //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
+
+  //sempre il check per vedere se il file è caricato in memoria
+  // (potrebbe essere stato rimosso)
+  loadFile(fileId);
+
+  File& f = _openFiles[fileId];
+  return f.symbolById(symId);
+}
+
 void MessageManager::closeFile(quint64 clientId, int fileId) {
   //TODO anche qua check in _clients per vedere se il client esiste e ha quel file aperto -> se no eccezione?
 
