@@ -1,6 +1,8 @@
 #include "Message.h"
 
 #include "exceptions.h"
+#include "def.h"
+
 #include <QJsonValue>
 #include <QJsonDocument>
 

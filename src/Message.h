@@ -3,8 +3,6 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
-#define BINARY_MESSAGE 0
-
 class Message {
 public:
   enum class Type {

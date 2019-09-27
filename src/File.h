@@ -7,8 +7,6 @@
 #include <QJsonValue>
 #include <QJsonArray>
 
-#define BINARY_FILE 0
-
 class File {
 public:
   File();

@@ -2,6 +2,7 @@
 
 #include "utils.h"
 #include "exceptions.h"
+#include "def.h"
 
 using namespace se_exceptions;
 
