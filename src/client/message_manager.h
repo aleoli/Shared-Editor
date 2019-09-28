@@ -27,6 +27,5 @@ private:
   static std::shared_ptr<MessageManager> instance;
   explicit MessageManager(QObject *parent = nullptr);
 
-  std::shared_ptr<File> _file;
   QString _token;
 };
