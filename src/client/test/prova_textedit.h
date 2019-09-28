@@ -4,6 +4,8 @@
 #include <QRect>
 #include <QDesktopWidget>
 
+#include "TextEdit.h"
+
 void prova_textedit(QApplication &a) {
   // classe che conterrà tutta la logica della nostra interfaccia.. DA IMPLEMENTARE!
   TextEdit mw;

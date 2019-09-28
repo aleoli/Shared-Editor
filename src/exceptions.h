@@ -116,4 +116,15 @@ namespace se_exceptions {
   public:
       FileNotFoundException(QString str): MessageManagerException(str) {}
   };
+
+  // MainThread exceptions
+  class MainThreadException : public SE_Exception {
+  public:
+      MainThreadException(QString str): SE_Exception(str) {}
+  };
+
+  class FileNotReceivedException : public MainThreadException {
+  public:
+      FileNotReceivedException(QString str): MainThreadException(str) {}
+  };
 }
