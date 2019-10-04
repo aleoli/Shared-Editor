@@ -43,13 +43,17 @@ public:
     RESPONSE
   };
 
+  explicit Message();
   Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data);
   explicit Message(const QJsonObject &json);
   explicit Message(QJsonObject &&json);
 
   static Message fromJsonObject(const QJsonObject &json);
   static Message fromJsonObject(QJsonObject &&json);
+  static Message fromQByteArray(const QByteArray &array);
+  static Message fromQByteArray(QByteArray &&array);
   QJsonObject toJsonObject() const;
+  QByteArray toQByteArray() const;
 
   Message::Type getType() const;
   int getAction() const;

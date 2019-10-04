@@ -5,3 +5,5 @@ class User;
 
 class ClientManager;
 class Client;
+
+class MessageManager;

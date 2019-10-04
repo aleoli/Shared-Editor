@@ -2,6 +2,7 @@
 
 #include "utils.h"
 #include "exceptions.h"
+#include "def.h"
 
 using namespace se_exceptions;
 
@@ -9,6 +10,7 @@ using namespace se_exceptions;
 #include <cmath>
 #include <algorithm>
 #include <QChar>
+#include <QJsonDocument>
 
 File::File() {}
 
@@ -60,6 +62,26 @@ File File::fromJsonObject(QJsonObject &&json) {
   return File(json);
 }
 
+File File::fromQByteArray(const QByteArray &array) {
+  #if BINARY_FILE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return File(doc.object());
+}
+
+File File::fromQByteArray(QByteArray &&array) {
+  #if BINARY_FILE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return File(doc.object());
+}
+
 QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
@@ -68,6 +90,16 @@ QJsonObject File::toJsonObject() const {
   json["symbols"] = QJsonValue(symbolsToJsonArray());
 
   return json;
+}
+
+QByteArray File::toQByteArray() const {
+  QJsonDocument doc(toJsonObject());
+
+#if BINARY_FILE
+  return doc.toBinaryData();
+#else
+  return doc.toJson(QJsonDocument::Compact);
+#endif
 }
 
 QJsonArray File::userIdsToJsonArray() const {
@@ -154,12 +186,24 @@ std::vector<Symbol> File::getSymbols() const {
   return _symbols;
 }
 
-const Symbol& File::symbolAt(int pos) const {
+Symbol& File::symbolAt(int pos) {
   if(_symbols.size() <= pos) {
     throw FileSymbolsException{"Invalid position"};
   }
 
   return _symbols[pos];
+}
+
+Symbol& File::symbolById(SymbolId id) {
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id](const Symbol &cmp) {
+        return cmp.getSymbolId() == id;
+  });
+
+  if(result == std::end(_symbols)) {
+    throw FileSymbolsException{"Symbol does not exist"};
+  }
+
+  return *result;
 }
 
 int File::numSymbols() const {

@@ -58,7 +58,6 @@ public:
   std::string to_string() const;
   std::string getFontInfo() const;
 
-  //TODO metodo per determinare posizione ?
   void setFont(QFont font);
   const QFont &getFont() const;
   void setBold(bool enable);

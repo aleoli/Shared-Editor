@@ -1,9 +1,15 @@
 #include "Message.h"
 
 #include "exceptions.h"
+#include "def.h"
+
 #include <QJsonValue>
+#include <QJsonDocument>
 
 using namespace se_exceptions;
+
+Message::Message(): _type(Type::FILE), _action(0), _error(false), _status(Status::QUERY) {
+}
 
 Message::Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data)
   : _type(type), _action(action), _error(error), _status(status), _data(data) {}
@@ -64,6 +70,26 @@ Message Message::fromJsonObject(QJsonObject &&json) {
   return Message(json);
 }
 
+Message Message::fromQByteArray(const QByteArray &array) {
+  #if BINARY_MESSAGE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return Message(doc.object());
+}
+
+Message Message::fromQByteArray(QByteArray &&array) {
+  #if BINARY_MESSAGE
+      auto doc = QJsonDocument::fromBinaryData(array);
+  #else
+      auto doc = QJsonDocument::fromJson(array);
+  #endif
+
+  return Message(doc.object());
+}
+
 QJsonObject Message::toJsonObject() const {
   QJsonObject json;
 
@@ -74,6 +100,16 @@ QJsonObject Message::toJsonObject() const {
   json["data"] = QJsonValue(_data);
 
   return json;
+}
+
+QByteArray Message::toQByteArray() const {
+  QJsonDocument doc(toJsonObject());
+
+#if BINARY_MESSAGE
+  return doc.toBinaryData();
+#else
+  return doc.toJson(QJsonDocument::Compact);
+#endif
 }
 
 Message::Type Message::getType() const {

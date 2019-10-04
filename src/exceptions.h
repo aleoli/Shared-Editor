@@ -5,26 +5,16 @@ namespace se_exceptions {
   class SE_Exception: public std::exception {
   public:
       SE_Exception(QString str): std::exception(), str(str) {
-        this->c_str = new char[str.length()+1];
-        int i=0;
-        for(auto& c: str.toStdString()) {
-          this->c_str[i++] = c;
-        }
-        this->c_str[i] = '\0';
-      }
-
-      virtual ~SE_Exception() {
-        delete[] this->c_str;
-        this->c_str = nullptr;
+        this->std_str = this->str.toStdString();
       }
 
       virtual const char* what() const noexcept {
-          return this->c_str;
+          return this->std_str.c_str();
       }
 
   private:
       QString str;
-      char *c_str;
+      std::string std_str;
   };
 
   // arg parse exceptions
@@ -104,5 +94,37 @@ namespace se_exceptions {
   class FileSymbolsException : public FileException {
   public:
       FileSymbolsException(QString str): FileException(str) {}
+  };
+
+  // MessageManagerExceptions
+  class MessageManagerException : public SE_Exception {
+  public:
+      MessageManagerException(QString str): SE_Exception(str) {}
+  };
+
+  class ClientLoginException : public MessageManagerException {
+  public:
+      ClientLoginException(QString str): MessageManagerException(str) {}
+  };
+
+  class ClientFileException : public MessageManagerException {
+  public:
+      ClientFileException(QString str): MessageManagerException(str) {}
+  };
+
+  class FileNotFoundException : public MessageManagerException {
+  public:
+      FileNotFoundException(QString str): MessageManagerException(str) {}
+  };
+
+  // MainThread exceptions
+  class MainThreadException : public SE_Exception {
+  public:
+      MainThreadException(QString str): SE_Exception(str) {}
+  };
+
+  class FileNotReceivedException : public MainThreadException {
+  public:
+      FileNotReceivedException(QString str): MainThreadException(str) {}
   };
 }

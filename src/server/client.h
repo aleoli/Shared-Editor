@@ -16,12 +16,12 @@ public:
   Client& operator=(const Client &c) = delete;
 
 signals:
-  void dataReady(int client_id, QByteArray data);
-  void disconnected(int id);
+  void dataReady(quint64 client_id, QByteArray data);
+  void disconnected(quint64 id);
 
 public slots:
-  void send(QByteArray msg);
-	void disconnect(int id);
+  void send(quint64 client_id, QByteArray msg);
+	void disconnect(quint64 id);
 
 private slots:
   void read();
@@ -32,7 +32,6 @@ private:
   void readData();
 
   quint64 _id;
-  Session* _session = nullptr;
 
   QTcpSocket *_socket;
   QByteArray _in_buffer;

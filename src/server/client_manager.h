@@ -1,3 +1,5 @@
+#pragma once
+
 #include "dependencies.h"
 
 #include "def.h"
@@ -7,26 +9,33 @@
 
 #include <map>
 #include <memory>
+#include <list>
 
 class ClientManager: public QObject {
   Q_OBJECT
 public:
   ClientManager(const ClientManager&) = delete;
+  ClientManager(ClientManager&&) = delete;
   ClientManager& operator=(const ClientManager&) = delete;
   ClientManager(QObject *parent = nullptr) = delete;
+  ClientManager& operator=(ClientManager&&) = delete;
 
   static std::shared_ptr<ClientManager> get(int port = DEF_PORT);
 
   ~ClientManager();
 
 signals:
-  void dataReceived(int client_id, QByteArray msg);
-	void closeClient(int id);
+  void dataReceived(quint64 client_id, QByteArray msg);
+	void closeClient(quint64 id);              // usata dal client per segnalare che si è chiuso
+  void force_close(quint64 id);              // usata per dire al client di chiudersi               -> evita che venga inviato un signal doppio
+  void send_data(quint64 client_id, QByteArray data);
 
 public slots:
   void newConnection();
-  void disconnected(int id);
-	void onCloseClient(int id);
+  void disconnected(quint64 id);
+	void onCloseClient(quint64 id);
+  void sendData(quint64 client_id, QByteArray data);
+  void sendData(std::list<quint64> client_list, QByteArray data);
 
 private:
   static std::shared_ptr<ClientManager> instance;

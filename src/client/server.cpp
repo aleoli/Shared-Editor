@@ -85,10 +85,7 @@ void Server::readData() {
     if(this->_in_buffer.size() >= this->_in_size) {
       this->_in_size = 0;
       emit this->dataReady(this->_in_buffer);
-      // TODO: questi dati vanno mandati da qualche parte per il processamento
-      std::string str{this->_in_buffer.data()};
       this->_in_buffer.clear();
-      std::cout << str << std::endl;
     }
   }
 }

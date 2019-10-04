@@ -17,12 +17,16 @@ public:
 
   static File fromJsonObject(const QJsonObject &json);
   static File fromJsonObject(QJsonObject &&json);
+  static File fromQByteArray(const QByteArray &array);
+  static File fromQByteArray(QByteArray &&array);
   QJsonObject toJsonObject() const;
+  QByteArray toQByteArray() const;
 
   int getId() const;
   std::vector<int> getUserIds() const;
   std::vector<Symbol> getSymbols() const;
-  const Symbol& symbolAt(int pos) const;
+  Symbol& symbolAt(int pos);
+  Symbol& symbolById(SymbolId id);
   int numSymbols() const;
   std::string to_string() const;
   std::string text() const;
