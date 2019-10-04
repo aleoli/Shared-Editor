@@ -71,6 +71,7 @@ void Client::readData() {
     if(this->_in_buffer.size() >= this->_in_size) {
       this->_in_size = 0;
       emit this->dataReady(this->_id, this->_in_buffer);
+      this->_in_buffer.clear();
     }
   }
 }
