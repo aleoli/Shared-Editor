@@ -88,8 +88,8 @@ QByteArray MessageManager::getFile(quint64 clientId, int fileId) {
     throw ClientLoginException{"Client is not logged in"};
   }
 
-  if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+  if(clientHasFileOpen(clientId)) {
+    throw ClientFileException{"Client has a file opened"};
   }
 
   //carico file in memoria se non c'è già
@@ -196,4 +196,8 @@ bool MessageManager::clientHasFileOpen(quint64 clientId, int fileId) {
   auto data = _clients[clientId];
 
   return data.fileIsOpen && data.fileId == fileId;
+}
+
+bool MessageManager::clientHasFileOpen(quint64 clientId) {
+  return _clients[clientId].fileIsOpen;
 }
