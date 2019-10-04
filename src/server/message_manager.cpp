@@ -49,67 +49,6 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
   }
 }
 
-/*
-void MessageManager::open_file(quint64 client_id, std::shared_ptr<File> file) {
-  auto it = this->_clients.find(client_id);
-  if(it == this->_clients.end()) {
-    Data data;
-    data.clientId = client_id;
-    data.file = file;
-    this->_clients[client_id] = data;
-  } else {
-    it->second.file = file;
-  }
-  auto it2 = this->_fileClients.find(file->getId());
-  if(it2 == this->_fileClients.end()) {
-    std::list<quint64> l;
-    l.push_back(client_id);
-    this->_fileClients[file->getId()] = l;
-  } else {
-    it2->second.push_back(client_id);
-  }
-}
-
-void MessageManager::close_file(quint64 client_id, std::shared_ptr<File> file) {
-  auto it = this->_fileClients.find(file->getId());
-  if(it != this->_fileClients.end()) {
-    it->second.remove_if([client_id](quint64 n) {
-      return n == client_id;
-    });
-    if(it->second.empty()) {
-      this->_fileClients.erase(it);
-    }
-  }
-}
-
-void MessageManager::client_disconnected(quint64 client_id) {
-  this->_clients.erase(client_id);
-  for(auto& it: this->_fileClients) {
-    it.second.remove_if([client_id](quint64 n) {
-      return n == client_id;
-    });
-    if(it.second.empty()) {
-      this->_fileClients.erase(it.first);
-    }
-  }
-}
-
-void MessageManager::send_all(quint64 client_id, int file_id, QByteArray data) {
-  auto it = this->_fileClients.find(file_id);
-  if(it != this->_fileClients.end()) {
-    std::list<quint64> l;
-    for(auto& i: it->second) {
-      if(client_id != i) {
-        l.push_back(i);
-      }
-    }
-    if(!l.empty()) {
-      emit this->send_data(l, data);
-    }
-  }
-}
-*/
-
 void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> session) {
   if(clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is already logged in"};
@@ -129,7 +68,7 @@ void MessageManager::clientDisconnected(quint64 clientId) {
   //se aveva un file aperto, lo rimuovo da _fileClients
   auto data = _clients[clientId];
   if(data.fileIsOpen) {
-      closeFile(clientId, data.fileId);
+    closeFile(clientId, data.fileId);
   }
 
   _clients.erase(clientId);

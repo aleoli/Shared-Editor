@@ -58,12 +58,6 @@ private:
   static std::shared_ptr<MessageManager> instance;
   explicit MessageManager(QObject *parent = nullptr);
 
-  /*
-  void open_file(quint64 client_id, std::shared_ptr<File> file);
-  void close_file(quint64 client_id, std::shared_ptr<File> file);
-  void send_all(quint64 client_id, int file_id, QByteArray data);
-  */
-
   //caricamento in memoria del file nella FifoMap, se non c'è già
   void loadFile(int fileId);
 
