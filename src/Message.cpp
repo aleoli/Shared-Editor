@@ -6,13 +6,16 @@
 #include <QJsonValue>
 #include <QJsonDocument>
 
+#include <sstream>
+#include <QStringList>
+
 using namespace se_exceptions;
 
-Message::Message(): _type(Type::FILE), _action(0), _error(false), _status(Status::QUERY) {
+Message::Message(): _type(Type::ERROR), _action(0), _status(Status::RESPONSE) {
 }
 
-Message::Message(Message::Type type, int action, bool error, Message::Status status, QJsonObject data)
-  : _type(type), _action(action), _error(error), _status(status), _data(data) {}
+Message::Message(Message::Type type, int action, Message::Status status, QJsonObject data)
+  : _type(type), _action(action), _status(status), _data(data) {}
 
 Message::Message(const QJsonObject &json) {
   checkAndAssign(json);
@@ -25,11 +28,10 @@ Message::Message(QJsonObject &&json) {
 void Message::checkAndAssign(const QJsonObject &json) {
   auto typeValue = json["type"];
   auto actionValue = json["action"];
-  auto errorValue = json["error"];
   auto statusValue = json["status"];
   auto dataValue = json["data"];
 
-  if(typeValue.isUndefined() || actionValue.isUndefined() || errorValue.isUndefined()
+  if(typeValue.isUndefined() || actionValue.isUndefined()
         || statusValue.isUndefined() || dataValue.isUndefined()) {
           throw MessageFromJsonException{"The QJsonObject has some fields missing"};
         }
@@ -37,7 +39,7 @@ void Message::checkAndAssign(const QJsonObject &json) {
   auto type = static_cast<Message::Type>(typeValue.toInt(-1));
   auto status = static_cast<Message::Status>(statusValue.toInt(-1));
 
-  if(type < Message::Type::FILE || type > Message::Type::FILESYSTEM
+  if(type < Message::Type::ERROR || type > Message::Type::FILESYSTEM
       || status < Message::Status::QUERY || status > Message::Status::RESPONSE) {
         throw MessageFromJsonException{"One or more fields are not valid"};
       }
@@ -47,17 +49,14 @@ void Message::checkAndAssign(const QJsonObject &json) {
     throw MessageFromJsonException{"One or more fields are not valid"};
   }
 
-  if(!errorValue.isBool() || !dataValue.isObject()) {
+  if(!dataValue.isObject()) {
     throw MessageFromJsonException{"One or more fields are not valid"};
   }
-
-  auto error = errorValue.toBool();
   auto data = dataValue.toObject();
 
   // setting parameters
   _type = type;
   _action = action;
-  _error = error;
   _status = status;
   _data = data;
 }
@@ -95,7 +94,6 @@ QJsonObject Message::toJsonObject() const {
 
   json["type"] = QJsonValue(static_cast<int>(_type));
   json["action"] = QJsonValue(_action);
-  json["error"] = QJsonValue(_error);
   json["status"] = QJsonValue(static_cast<int>(_status));
   json["data"] = QJsonValue(_data);
 
@@ -120,14 +118,25 @@ int Message::getAction() const {
   return _action;
 }
 
-bool Message::getError() const {
-  return _error;
-}
-
 Message::Status Message::getStatus() const {
   return _status;
 }
 
 QJsonObject Message::getData() const {
   return _data;
+}
+
+std::string Message::to_string() const {
+  std::stringstream ss;
+
+  ss << "Type: " << static_cast<int>(_type) << std::endl;
+  ss << "Action: " << _action << std::endl;
+  ss << "Status: " << static_cast<int>(_status) << std::endl;
+  ss << "Data: " << std::endl;
+
+  for(auto &key : _data.keys()) {
+    ss << '\t' << key.toStdString() << ", type: " << static_cast<int>(_data[key].type()) << std::endl;
+  }
+
+  return ss.str();
 }
