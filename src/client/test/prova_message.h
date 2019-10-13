@@ -8,28 +8,18 @@
 #include <iostream>
 #include "FifoMap.h"
 #include "Message.h"
-
-#define SAVE_BINARY 0
+#include "def.h"
 
 Message createMessage() {
   QJsonObject data;
   data["name"] = "newfile.txt";
   data["id_user"] = 5;
 
-  return Message(Message::Type::FILE, static_cast<int>(Message::FileAction::CLOSE_FILE),
-    false, Message::Status::RESPONSE, data);
+  return Message(Message::Type::FILE, static_cast<int>(Message::FileAction::CLOSE),
+    Message::Status::RESPONSE, data);
 }
 
 void writeMessage(QString path, Message &m) {
-  // trasformo in QByteArray
-  QJsonDocument doc(m.toJsonObject());
-
-#if SAVE_BINARY
-  auto array = doc.toBinaryData();
-#else
-  auto array = doc.toJson(QJsonDocument::Compact);
-#endif
-
   // scrivo su file
   QFile file(path);
 
@@ -38,7 +28,7 @@ void writeMessage(QString path, Message &m) {
     exit(-1);
   }
 
-  file.write(array);
+  file.write(m.toQByteArray());
   file.close();
 }
 
@@ -54,39 +44,22 @@ Message readMessage(QString path) {
   auto data = file.readAll();
   file.close();
 
-  // trasformo in oggetto Message
-#if SAVE_BINARY
-  auto doc = QJsonDocument::fromBinaryData(data);
-#else
-  auto doc = QJsonDocument::fromJson(data);
-#endif
-
-  auto jsonObject = doc.object();
-  return Message::fromJsonObject(jsonObject);
+  return Message::fromQByteArray(data);
 }
 
 void prova_message() {
-  // creo messaggio a caso
-  Message m = createMessage();
+  Message m1 = createMessage();
 
-  // leggo messaggio da file (da socket è molto simile il procedimento)
-  //Message m2 = readMessage("prova.shed");
+  std::cout << "PROVA STAMPA MESSAGGIO" << std::endl;
+  std::cout << m1.to_string() << std::endl;
 
-  // passaggio a QJsonObject e viceversa
-  Message m3 = Message::fromJsonObject(m.toJsonObject());
+  Message m2(m1.toJsonObject());
+  std::cout << "PROVA COPIA MESSAGGIO:" << std::endl;
+  std::cout << m2.to_string() << std::endl;
 
-  // stampe varie
-  std::cout << "type: " << static_cast<int>(m3.getType()) << std::endl;
-  std::cout << "action: " << static_cast<int>(m3.getAction()) << std::endl;
-  std::cout << "error: " << m3.getError() << std::endl;
-  std::cout << "status: " << static_cast<int>(m3.getStatus()) << std::endl;
-
-  auto data = m3.getData();
-
-  std::cout << "data:" << std::endl;
-  std::cout << data["name"].toString().toStdString() << std::endl;
-  std::cout << data["id_user"].toInt() << std::endl;
-
-  // scrivo su file (su socket è molto simile)
-  //writeMessage("prova.shed", m2);
+  // test scrittura su disco e lettura
+  writeMessage("m1.shed", m1);
+  Message m3 = readMessage("m1.shed");
+  std::cout << "PROVA SCRITTURA/LETTURA MESSAGE SU DISCO" << std::endl;
+  std::cout << m3.to_string();
 }
