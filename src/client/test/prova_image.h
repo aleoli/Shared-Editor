@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QByteArray>
 #include <QBuffer>
+#include <string>
 
 void showImage(QImage &im) {
   QLabel *myLabel = new QLabel();
@@ -11,12 +12,12 @@ void showImage(QImage &im) {
   myLabel->show();
 }
 
-QByteArray saveImage(QImage &im) {
+std::string saveImage(QImage &im) {
   QByteArray ba;
   QBuffer buffer(&ba);
   buffer.open(QIODevice::WriteOnly);
   im.save(&buffer, "PNG");
-  return ba.toBase64();
+  return ba.toBase64().toStdString();
 }
 
 void prova_image(QApplication &a) {
@@ -25,10 +26,10 @@ void prova_image(QApplication &a) {
 
    auto ba = saveImage(im1);
 
-   //std::cout << ba.toStdString() << std::endl;
+   //std::cout << ba << std::endl;
 
    QImage im2;
-   im2.loadFromData(QByteArray::fromBase64(ba), "PNG");
+   im2.loadFromData(QByteArray::fromBase64(QByteArray::fromStdString(ba)), "PNG");
 
    //show img
    QLabel myLabel;
