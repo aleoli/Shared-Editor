@@ -9,4 +9,8 @@
     <file alias="info.png">imgs/info.png</file>
 </qresource>
 
+<qresource prefix="/other">
+  <file alias="malnati.jpg">imgs/malnati.jpg</file>
+</qresource>
+
 </RCC>

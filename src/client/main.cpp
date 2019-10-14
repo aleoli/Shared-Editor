@@ -10,13 +10,15 @@
 #include "prova_textedit.h"
 #include "prova_crdt.h"
 #include "MainThread.h"
+#include "prova_image.h"
 
 #define PROVA_MESSAGE 0
 #define PROVA_FILE 0
 #define PROVA_TEXTEDIT 0
 #define PROVA_CRDT 0
-#define PROVA_SERVER 1
+#define PROVA_SERVER 0
 #define MAINTHREAD 0
+#define PROVA_IMAGE 1
 
 #if PROVA_SERVER
 #include "test/prova_server.h"
@@ -50,6 +52,10 @@ int main(int argc, char **argv) {
 #if MAINTHREAD
   MainThread mthr{app};
   mthr.start();
+#endif
+
+#if PROVA_IMAGE
+  prova_image(app);
 #endif
 
   return 0;
