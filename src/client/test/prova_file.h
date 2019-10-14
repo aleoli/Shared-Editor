@@ -4,19 +4,9 @@
 #include "File.h"
 #include "Symbol.h"
 #include <QChar>
-
-#define SAVE_BINARY 0
+#include "def.h"
 
 void writeFile(QString path, File &f) {
-  // trasformo in QByteArray
-  QJsonDocument doc(f.toJsonObject());
-
-#if SAVE_BINARY
-  auto array = doc.toBinaryData();
-#else
-  auto array = doc.toJson(QJsonDocument::Compact);
-#endif
-
   // scrivo su file
   QFile file(path);
 
@@ -25,7 +15,7 @@ void writeFile(QString path, File &f) {
     exit(-1);
   }
 
-  file.write(array);
+  file.write(f.toQByteArray());
   file.close();
 }
 
@@ -41,15 +31,7 @@ File readFile(QString path) {
   auto data = file.readAll();
   file.close();
 
-  // trasformo in oggetto Message
-#if SAVE_BINARY
-  auto doc = QJsonDocument::fromBinaryData(data);
-#else
-  auto doc = QJsonDocument::fromJson(data);
-#endif
-
-  auto jsonObject = doc.object();
-  return File(jsonObject);
+  return File::fromQByteArray(data);
 }
 
 void prova_file() {
