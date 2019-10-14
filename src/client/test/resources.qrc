@@ -10,7 +10,7 @@
 </qresource>
 
 <qresource prefix="/other">
-  <file alias="malnati.jpg">imgs/malnati.jpg</file>
+  <file alias="malnati.png">imgs/malnati.png</file>
 </qresource>
 
 </RCC>
