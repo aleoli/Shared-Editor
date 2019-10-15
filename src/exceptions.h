@@ -127,4 +127,10 @@ namespace se_exceptions {
   public:
       FileNotReceivedException(QString str): MainThreadException(str) {}
   };
+
+  // FSElement exceptions
+  class FSElementFromJsonException : public SE_Exception {
+  public:
+      FSElementFromJsonException(QString str): SE_Exception(str) {}
+  };
 }
