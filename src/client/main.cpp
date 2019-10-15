@@ -14,11 +14,11 @@
 
 #define PROVA_MESSAGE 0
 #define PROVA_FILE 0
-#define PROVA_TEXTEDIT 0
+#define PROVA_TEXTEDIT 1
 #define PROVA_CRDT 0
 #define PROVA_SERVER 0
 #define MAINTHREAD 0
-#define PROVA_IMAGE 1
+#define PROVA_IMAGE 0
 
 #if PROVA_SERVER
 #include "test/prova_server.h"
