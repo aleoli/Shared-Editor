@@ -8,8 +8,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
-#include <QFont>
-#include <QColor>
+#include <QTextCharFormat>
 
 class Symbol {
 public:
@@ -39,7 +38,7 @@ public:
 
   Symbol();
   Symbol(SymbolId id, QChar chr);
-  Symbol(SymbolId id, QChar chr, QFont font, QColor color, QColor backgroundColor);
+  Symbol(SymbolId id, QChar chr, QTextCharFormat fmt);
   explicit Symbol(const QJsonObject &json);
   explicit Symbol(QJsonObject &&json);
 
@@ -48,6 +47,9 @@ public:
   static Symbol fromJsonObject(const QJsonObject &json);
   static Symbol fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
+
+  static QJsonObject serializeFormat(const QTextCharFormat &fmt);
+  static QTextCharFormat deserializeFormat(const QJsonObject &json);
 
   void setSymbolId(SymbolId id);
   SymbolId getSymbolId() const;
@@ -58,8 +60,10 @@ public:
   std::string to_string() const;
   std::string getFontInfo() const;
 
+  void setFormat(QTextCharFormat fmt);
+  QTextCharFormat getFormat() const;
   void setFont(QFont font);
-  const QFont &getFont() const;
+  QFont getFont() const;
   void setBold(bool enable);
   bool isBold() const;
   void setSize(int size);
@@ -85,7 +89,5 @@ private:
   SymbolId _id;
   QChar _char;
   std::vector<Identifier> _pos;
-  QFont _font;
-  QColor _color;
-  QColor _backgroundColor = QColor("#00000000");
+  QTextCharFormat _fmt;
 };
