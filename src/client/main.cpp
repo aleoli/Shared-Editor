@@ -3,26 +3,9 @@
 #include <QApplication>
 
 #include "sys.h"
-
-#include "prova_message.h"
-#include "prova_file.h"
-#include "exceptions.h"
-#include "prova_textedit.h"
-#include "prova_crdt.h"
 #include "MainThread.h"
-#include "prova_image.h"
 
-#define PROVA_MESSAGE 0
-#define PROVA_FILE 0
-#define PROVA_TEXTEDIT 1
-#define PROVA_CRDT 0
-#define PROVA_SERVER 0
-#define MAINTHREAD 0
-#define PROVA_IMAGE 0
-
-#if PROVA_SERVER
-#include "test/prova_server.h"
-#endif
+#include "prove.h"
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
@@ -56,6 +39,10 @@ int main(int argc, char **argv) {
 
 #if PROVA_IMAGE
   prova_image(app);
+#endif
+
+#if PROVA_FSELEMENT
+  prova_fselement();
 #endif
 
   return 0;
