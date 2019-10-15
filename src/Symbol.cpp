@@ -255,13 +255,13 @@ bool Symbol::isItalic() const {
 std::string Symbol::getFontInfo() const {
   std::stringstream ss;
 
-  ss << "\tsize: " << getSize() << std::endl;
-  ss << "\tbold: " << isBold() << std::endl;
-  ss << "\tunderline: " << isUnderline() << std::endl;
-  ss << "\titalic: " << isItalic() << std::endl;
-  ss << "\tfamily: " << getFamily().toStdString() << std::endl;
-  ss << "\tcolor: " << getColor().name(QColor::HexArgb).toStdString() << std::endl;
-  ss << "\tbackground color: " << getBackgroundColor().name(QColor::HexArgb).toStdString();
+  ss << "\t\tsize: " << getSize() << std::endl;
+  ss << "\t\tbold: " << isBold() << std::endl;
+  ss << "\t\tunderline: " << isUnderline() << std::endl;
+  ss << "\t\titalic: " << isItalic() << std::endl;
+  ss << "\t\tfamily: " << getFamily().toStdString() << std::endl;
+  ss << "\t\tcolor: " << getColor().name(QColor::HexArgb).toStdString() << std::endl;
+  ss << "\t\tbackground color: " << getBackgroundColor().name(QColor::HexArgb).toStdString();
 
   return ss.str();
 }

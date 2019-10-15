@@ -152,7 +152,7 @@ std::string File::symbolsToString() const {
   std::stringstream ss;
 
   for(auto& el : _symbols) {
-    ss << el.to_string() << std::endl;
+    ss << '\t' << el.to_string() << std::endl;
   }
 
   return ss.str();
