@@ -24,3 +24,9 @@ void TextEditor::on_pushButton_2_clicked()
     if(dialog.exec() == QDialog::Rejected) return;
     ui->plainTextEdit->print(&printer);
 }
+
+// TODO: controlla se serve
+void TextEditor::on_fontComboBox_currentFontChanged(const QFont &f) {}
+
+// TODO: controlla se serve
+void TextEditor::on_comboBox_activated(const QString &arg1) {}

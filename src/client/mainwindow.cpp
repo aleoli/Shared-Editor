@@ -77,3 +77,6 @@ void MainWindow::userLogOut(){
         showLoginPage();
     }
 }
+
+// TODO: controlla se serve
+void MainWindow::on_actionPrint_triggered() {}
