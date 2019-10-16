@@ -16,6 +16,7 @@
 #include <QTextEdit>
 #include <vector>
 #include <QChar>
+#include <QListWidget>
 
 class TextEdit : public QMainWindow {
     Q_OBJECT
@@ -39,8 +40,12 @@ private:
     void setupEditActions();
     void setupTextActions();
 
+    void initDock();
+    void addFakeUsers();
+
     QTextEdit *textEdit;
     QAction *actionTextBold;
+    QListWidget *dock;
     std::vector<QChar> symbols;
 
     bool flagBold, flagCursor, flagChange;

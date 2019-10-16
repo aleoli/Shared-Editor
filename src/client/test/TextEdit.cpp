@@ -8,6 +8,13 @@
 #include <QTextDocument>
 #include <QTextBlock>
 #include <QFont>
+#include <QDockWidget>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QListView>
+#include <QListWidget>
+#include <QListWidgetItem>
 
 #include "TextEdit.h"
 #include "Symbol.h"
@@ -34,6 +41,36 @@ TextEdit::TextEdit(QWidget *parent)
   QObject::connect(textEdit, &QTextEdit::cursorPositionChanged, this, &TextEdit::cursorChanged);
 
   flagBold = flagCursor = flagChange = false;
+
+  // dock right
+  initDock();
+  addFakeUsers();
+}
+
+void TextEdit::initDock() {
+  auto *dockWidget = new QDockWidget(tr("Utenti connessi:"), this);
+  dockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
+  addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+
+  dock = new QListWidget(this);
+  dockWidget->setWidget(dock);
+}
+
+void TextEdit::addFakeUsers() {
+  /*
+  QLabel *bob = new QLabel("bob", this);
+  QLabel *ale = new QLabel("ale", this);
+
+  auto layout = dock->layout();
+  layout->addWidget(bob, 0, Qt::AlignTop);
+  layout->addWidget(ale, 0, Qt::AlignTop);
+  */
+  auto bob = new QListWidgetItem("bob", dock);
+  auto ale = new QListWidgetItem("ale", dock);
+  bob->setFlags(Qt::NoItemFlags);
+  bob->setForeground(Qt::red);
+  ale->setFlags(Qt::NoItemFlags);
+  ale->setForeground(Qt::blue);
 }
 
 void TextEdit::setupFileActions() {
