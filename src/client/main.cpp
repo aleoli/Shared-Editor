@@ -15,11 +15,20 @@
 #define PROVA_FILE 0
 #define PROVA_TEXTEDIT 0
 #define PROVA_CRDT 0
-#define PROVA_SERVER 1
+#define PROVA_SERVER 0
 #define MAINTHREAD 0
+#define GUI 1
 
 #if PROVA_SERVER
 #include "test/prova_server.h"
+#endif
+
+#if GUI
+#include "mainwindow.h"
+#include "login.h"
+#include "record.h"
+#include "texteditor.h"
+#include "docsbrowser.h"
 #endif
 
 int main(int argc, char **argv) {
@@ -50,6 +59,12 @@ int main(int argc, char **argv) {
 #if MAINTHREAD
   MainThread mthr{app};
   mthr.start();
+#endif
+
+#if GUI
+  MainWindow w;
+  w.show();
+  return app.exec();
 #endif
 
   return 0;
