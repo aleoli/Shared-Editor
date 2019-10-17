@@ -14,8 +14,6 @@
 
 using namespace se_exceptions;
 
-#define SAVE_BINARY 0
-
 Message createMessage() {
   QJsonObject data;
   data["name"] = "newfile.txt";

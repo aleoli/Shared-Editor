@@ -27,6 +27,7 @@ public:
       CLOSE,
       EDIT,
       DELETE,
+      FILE_DELETED,
       GET_LINK,
       ACTIVATE_LINK
   };
