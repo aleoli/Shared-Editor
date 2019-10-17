@@ -13,12 +13,12 @@ Symbol::Symbol(SymbolId id, QChar chr) : _id(id), _char(chr) {}
 Symbol::Symbol(SymbolId id, QChar chr, QTextCharFormat fmt)
   : _id(id), _char(chr), _fmt(fmt) {}
 
-Symbol::Symbol(const QJsonObject &json) {
-  checkAndAssign(json);
+Symbol::Symbol(const QJsonObject &json, bool readPos) {
+  checkAndAssign(json, readPos);
 }
 
-Symbol::Symbol(QJsonObject &&json) {
-  checkAndAssign(json);
+Symbol::Symbol(QJsonObject &&json, bool readPos) {
+  checkAndAssign(json, readPos);
 }
 
 bool operator<(const Symbol& lhs, const Symbol& rhs) {
@@ -41,18 +41,16 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
   return !operator==(lhs, rhs);
 }
 
-void Symbol::checkAndAssign (const QJsonObject &json) {
+void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
   auto idValue = json["id"];
   auto charValue = json["char"];
-  auto posValue = json["pos"];
   auto fmtValue = json["fmt"];
 
-  if(idValue.isUndefined() || charValue.isUndefined() || posValue.isUndefined()
-      || fmtValue.isUndefined()) {
+  if(idValue.isUndefined() || charValue.isUndefined() || fmtValue.isUndefined()) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!idValue.isObject() || !posValue.isArray() || !fmtValue.isObject()) {
+  if(!idValue.isObject() || !fmtValue.isObject()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -63,31 +61,44 @@ void Symbol::checkAndAssign (const QJsonObject &json) {
   }
 
   auto idJson = idValue.toObject();
-  auto posArray = posValue.toArray();
 
   auto fmt = deserializeFormat(fmtValue.toObject());
 
+  if(readPos) {
+    auto posValue = json["pos"];
+    if(posValue.isUndefined()) {
+      throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+    }
+
+    if(!posValue.isArray()) {
+      throw SymbolFromJsonException{"One or more fields are not valid"};
+    }
+
+    _pos = jsonArrayToPos(posValue.toArray());
+  }
+
   _id = SymbolId{idJson};
   _char = QChar(charUnicode);
-  _pos = jsonArrayToPos(posArray);
   _fmt = fmt;
 }
 
-Symbol Symbol::fromJsonObject(const QJsonObject &json) {
-  return Symbol(json);
+Symbol Symbol::fromJsonObject(const QJsonObject &json, bool readPos) {
+  return Symbol(json, readPos);
 }
 
-Symbol Symbol::fromJsonObject(QJsonObject &&json) {
-  return Symbol(json);
+Symbol Symbol::fromJsonObject(QJsonObject &&json, bool readPos) {
+  return Symbol(json, readPos);
 }
 
-QJsonObject Symbol::toJsonObject() const {
+QJsonObject Symbol::toJsonObject(bool writePos) const {
   QJsonObject json;
 
   json["id"] = QJsonValue(_id.toJsonObject());
   json["char"] = QJsonValue(_char.unicode());
-  json["pos"] = QJsonValue(posToJsonArray());
   json["fmt"] = QJsonValue(serializeFormat(_fmt));
+
+  if(writePos)
+    json["pos"] = QJsonValue(posToJsonArray());
 
   return json;
 }

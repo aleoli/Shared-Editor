@@ -54,19 +54,30 @@ void prova_file() {
     throw TestException{"test copia symbol fallito"};
   }
 
+  // test senza passare il pos
+  Symbol s3(s1.toJsonObject(), false);
+  if(!s3.getPos().empty()) {
+    throw TestException{"test copia symbol senza pos fallito"};
+  }
+  s3.setPos(s1.getPos());
+  if(s1 != s3) {
+    throw TestException{"test copia symbol senza pos fallito"};
+  }
+
+
   std::cout << "Test passato" << std::endl;
 
   // test File
   std::cout << "Test classe File" << std::endl;
 
-  Symbol s3({3,4}, 'x');
-  Symbol s4({5,6}, 'w');
+  Symbol s4({3,4}, 'x');
+  Symbol s5({5,6}, 'w');
 
 
   File f1(0);
-  f1.localInsert(s2, 0);
-  f1.localInsert(s3, 1);
+  f1.localInsert(s3, 0);
   f1.localInsert(s4, 1);
+  f1.localInsert(s5, 1);
   f1.addClient(1, "bob");
   f1.addClient(2, "ale");
   f1.addClient(3, "klajdi");

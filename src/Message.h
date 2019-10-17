@@ -79,8 +79,6 @@ public:
   QJsonObject getData() const;
   std::string to_string() const;
 
-  std::string to_string() const; // for debug
-
 private:
   void checkAndAssign(const QJsonObject &json);
 

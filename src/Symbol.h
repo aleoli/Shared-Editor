@@ -39,16 +39,16 @@ public:
   Symbol();
   Symbol(SymbolId id, QChar chr);
   Symbol(SymbolId id, QChar chr, QTextCharFormat fmt);
-  explicit Symbol(const QJsonObject &json);
-  explicit Symbol(QJsonObject &&json);
+  Symbol(const QJsonObject &json, bool readPos = true);
+  Symbol(QJsonObject &&json, bool readPos = true);
 
   friend bool operator<(const Symbol& lhs, const Symbol& rhs);
   friend bool operator==(const Symbol& lhs, const Symbol& rhs);
   friend bool operator!=(const Symbol& lhs, const Symbol& rhs);
 
-  static Symbol fromJsonObject(const QJsonObject &json);
-  static Symbol fromJsonObject(QJsonObject &&json);
-  QJsonObject toJsonObject() const;
+  static Symbol fromJsonObject(const QJsonObject &json, bool readPos = true);
+  static Symbol fromJsonObject(QJsonObject &&json, bool readPos = true);
+  QJsonObject toJsonObject(bool writePos = true) const;
 
   static QJsonObject serializeFormat(const QTextCharFormat &fmt);
   static QTextCharFormat deserializeFormat(const QJsonObject &json);
@@ -82,7 +82,7 @@ public:
   QColor getBackgroundColor() const;
 
 private:
-  void checkAndAssign(const QJsonObject &json);
+  void checkAndAssign(const QJsonObject &json, bool readPos = true);
 
   QJsonArray posToJsonArray() const;
   std::string posToString() const; //TODO vedi se rimuovere
