@@ -10,6 +10,7 @@
 #include "def.h"
 #include "persistence_global.h"
 #include "exceptions.h"
+#include "sets.h"
 
 SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app);
 
@@ -52,8 +53,9 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
   parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
   const QCommandLineOption portOption({"p", "port"}, "Port to bind.", "Port", QString::number(DEF_PORT));
   const QCommandLineOption moOption({"m", "mem-only"}, "Create Mem-Only DB (only for testing and debugging).");
+  const QCommandLineOption logOption({"l", "log"}, "Log Level [ERROR, warn, debug, info].", "LogLevel", "error");
 
-  parser.addOptions({portOption, moOption});
+  parser.addOptions({portOption, moOption, logOption});
 
   parser.process(app);
 
@@ -64,6 +66,8 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
     throw se_exceptions::ArgNotValidException{"Not valid port '"+parser.value(portOption)+"'"};
   }
   conf.mem_only = parser.isSet(moOption);
+
+  auto sets = Sets::get(parser.value(logOption).toLower());
 
   return conf;
 }
