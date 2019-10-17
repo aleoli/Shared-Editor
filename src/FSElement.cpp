@@ -80,6 +80,10 @@ int FSElement::getParentId() const {
   return _parentId;
 }
 
+void FSElement::setParentId(int parentId) {
+  _parentId = parentId;
+}
+
 QString FSElement::getName() const {
   return _name;
 }
