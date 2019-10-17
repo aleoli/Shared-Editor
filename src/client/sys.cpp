@@ -7,6 +7,7 @@
 
 #include "def.h"
 #include "exceptions.h"
+#include "sets.h"
 
 SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app);
 
@@ -26,8 +27,9 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
   parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
   QCommandLineOption hOption({"s", "server"}, "Server to connect.", "Server", DEF_HOST);
   QCommandLineOption portOption({"p", "port"}, "Port to connect.", "Port", QString::number(DEF_PORT));
+  const QCommandLineOption logOption({"l", "log"}, "Log Level [ERROR, warn, debug, info].", "LogLevel", "error");
 
-  parser.addOptions({hOption, portOption});
+  parser.addOptions({hOption, portOption, logOption});
 
   parser.process(app);
 
@@ -38,6 +40,8 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
   if(!ok) {
     throw se_exceptions::ArgNotValidException{"Not valid port '"+parser.value(portOption)+"'"};
   }
+
+  auto sets = Sets::get(parser.value(logOption).toLower());
 
   return conf;
 }
