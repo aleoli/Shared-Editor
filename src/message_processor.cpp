@@ -6,22 +6,24 @@ MessageProcessor::MessageProcessor(const Message &m)
 
 void MessageProcessor::process_message() {
   switch(this->_m.getType()) {
-    case Message::Type::FILE:
-      process_file();
+    case Message::Type::ERROR:
+      process_error();
       break;
     case Message::Type::USER:
       process_user();
       break;
+    case Message::Type::FILE:
+      process_file();
+      break;
+    case Message::Type::FILE_EDIT:
+      process_file_edit();
+      break;
     case Message::Type::FILESYSTEM:
       process_filesystem();
       break;
+    // non ci possono essere altri casi: l'eccezione sarebbe stata lanciata
+    // quando il messaggio è stato deserializzato
   }
-  this->dumb();
-}
-
-void MessageProcessor::dumb() {
-  this->_res = this->_m;
-  this->_has_resp = true;
 }
 
 bool MessageProcessor::hasResponse() const {

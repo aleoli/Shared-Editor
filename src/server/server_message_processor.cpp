@@ -13,12 +13,22 @@ bool ServerMessageProcessor::shouldSendToAll() const {
   return this->_to_all;
 }
 
+void ServerMessageProcessor::process_error() {
+  //TODO fai qualcosa
+  std::cout << "ciao server" << std::endl;
+}
+
+void ServerMessageProcessor::process_user() {
+  //TODO switch statement
+  std::cout << "ciao server" << std::endl;
+}
+
 void ServerMessageProcessor::process_file() {
   //TODO switch statement
   std::cout << "ciao server" << std::endl;
 }
 
-void ServerMessageProcessor::process_user() {
+void ServerMessageProcessor::process_file_edit() {
   //TODO switch statement
   std::cout << "ciao server" << std::endl;
 }
