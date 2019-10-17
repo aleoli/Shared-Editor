@@ -56,20 +56,54 @@ void prova_file() {
   Symbol s3({3,4}, 'x');
   Symbol s4({5,6}, 'w');
 
-  std::vector<Symbol> symbols{sym, s3, s4};
-  std::vector<int> ids{1,2,3,4,5,6,7,8,9,0};
 
-  File f1(0, ids, symbols);
+  File f1(0);
+  f1.localInsert(s2, 0);
+  f1.localInsert(s3, 1);
+  f1.localInsert(s4, 1);
+  f1.addClient(1, "bob");
+  f1.addClient(2, "ale");
+  f1.addClient(3, "klajdi");
+  f1.addClient(4, "erich");
+
   std::cout << "PROVA STAMPA FILE" << std::endl;
+  std::cout << f1.to_string() << std::endl;
+
+  std::cout << "PROVA AGGIUNTA/RIMOZIONI CLIENTS" << std::endl;
+  try {
+    f1.addClient(1, "pippo");
+  }
+  catch(...) {
+    std::cout << "pass" << std::endl;
+  }
+
+  try {
+    f1.removeClient(5);
+  }
+  catch(...) {
+    std::cout << "pass" << std::endl;
+  }
+
+  try {
+    f1.updateCursorPosition(7, 5);
+  }
+  catch(...) {
+    std::cout << "pass" << std::endl;
+  }
+
+  f1.removeClient(2);
+  f1.updateCursorPosition(1, 74);
+  f1.updateCursorPosition(3, 45);
+
   std::cout << f1.to_string();
 
   File f2(f1.toJsonObject());
   std::cout << "PROVA COPIA FILE:" << std::endl;
-  std::cout << f2.to_string();
+  std::cout << f2.to_string() << std::endl;;
 
   // test scrittura su disco e lettura
   writeFile("f1.shed", f1);
   File f3 = readFile("f1.shed");
   std::cout << "PROVA SCRITTURA/LETTURA FILE SU DISCO" << std::endl;
-  std::cout << f3.to_string();
+  std::cout << f3.to_string() << std::endl;
 }
