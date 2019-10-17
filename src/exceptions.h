@@ -96,6 +96,11 @@ namespace se_exceptions {
       FileSymbolsException(QString str): FileException(str) {}
   };
 
+  class FileClientException : public FileException {
+  public:
+      FileClientException(QString str): FileException(str) {}
+  };
+
   // MessageManagerExceptions
   class MessageManagerException : public SE_Exception {
   public:

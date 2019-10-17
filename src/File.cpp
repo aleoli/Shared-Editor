@@ -16,8 +16,8 @@ File::File() {}
 
 File::File(int id) : _id(id) {}
 
-File::File(int id, std::vector<int> user_ids, std::vector<Symbol> symbols)
-  : _id(id), _userIds(user_ids), _symbols(symbols) {}
+File::File(int id, std::unordered_map<int, File::ClientInfo> users, std::vector<Symbol> symbols)
+  : _id(id), _users(users), _symbols(symbols) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -29,14 +29,14 @@ File::File(QJsonObject &&json){
 
 void File::checkAndAssign(const QJsonObject &json) {
   auto idValue = json["id"];
-  auto userIdsValue = json["userIds"];
+  auto usersValue = json["users"];
   auto symbolsValue = json["symbols"];
 
-  if(idValue.isUndefined() || userIdsValue.isUndefined() || symbolsValue.isUndefined()) {
+  if(idValue.isUndefined() || usersValue.isUndefined() || symbolsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!userIdsValue.isArray() || !symbolsValue.isArray()) {
+  if(!usersValue.isArray() || !symbolsValue.isArray()) {
     throw FileFromJsonException{"One or more fields are not valid"};
   }
 
@@ -46,11 +46,11 @@ void File::checkAndAssign(const QJsonObject &json) {
     throw FileFromJsonException{"One or more fields are not valid"};
   }
 
-  auto userIds = userIdsValue.toArray();
+  auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
 
   _id = id;
-  _userIds = jsonArrayToUserIds(userIds);
+  _users = jsonArrayToUsers(users);
   _symbols = jsonArrayToSymbols(symbols);
 }
 
@@ -86,7 +86,7 @@ QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
   json["id"] = QJsonValue(_id);
-  json["userIds"] = QJsonValue(userIdsToJsonArray());
+  json["users"] = QJsonValue(usersToJsonArray());
   json["symbols"] = QJsonValue(symbolsToJsonArray());
 
   return json;
@@ -102,40 +102,64 @@ QByteArray File::toQByteArray() const {
 #endif
 }
 
-QJsonArray File::userIdsToJsonArray() const {
+QJsonArray File::usersToJsonArray() const {
   QJsonArray array;
 
-  for(int el : _userIds) {
-    array.append(el);
+  for(auto &el : _users) {
+    QJsonObject value;
+
+    value["clientId"] = el.second.clientId;
+    value["username"] = el.second.username;
+    value["cursorPosition"] = el.second.cursorPosition;
+
+    array.append(value);
   }
 
   return array;
 }
 
-std::string File::userIdsToString() const {
+std::string File::usersToString() const {
   std::stringstream ss;
 
-  for(int el : _userIds) {
-    ss << el << ' ';
+  for(auto &el : _users) {
+    ss << "\tclientId: " << el.second.clientId << std::endl;
+    ss << "\t\tusername: " << el.second.username.toStdString() << std::endl;
+    ss << "\t\tcursorPosition: " << el.second.cursorPosition << std::endl;
   }
 
   return ss.str();
 }
 
-std::vector<int> File::jsonArrayToUserIds(const QJsonArray &array) {
-  std::vector<int> userIds;
+std::unordered_map<int, File::ClientInfo> File::jsonArrayToUsers(const QJsonArray &array) {
+  std::unordered_map<int, File::ClientInfo> users;
 
   for(auto&& el : array) {
-    auto val = el.toInt(-1);
+    auto clientIdValue = el["clientId"];
+    auto usernameValue = el["username"];
+    auto cursorPositionValue = el["cursorPosition"];
 
-    if(val == -1) {
-      throw FileFromJsonException{"One or more fields in user ids array are not valid"};
+    if(clientIdValue.isUndefined() || usernameValue.isUndefined()
+      || cursorPositionValue.isUndefined()) {
+        throw FileFromJsonException{"The QJsonObject has some fields missing"};
+      }
+
+    auto clientId = clientIdValue.toInt(-1);
+    auto cursorPosition = cursorPositionValue.toInt(-1);
+
+    if(clientId == -1 || cursorPosition == -1) {
+      throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
-    userIds.push_back(val);
+    if(!usernameValue.isString()) {
+      throw FileFromJsonException{"One or more fields in users array are not valid"};
+    }
+
+    File::ClientInfo info { clientId, usernameValue.toString(), cursorPosition };
+
+    users[clientId] = info;
   }
 
-  return userIds;
+  return users;
 }
 
 QJsonArray File::symbolsToJsonArray() const {
@@ -151,8 +175,13 @@ QJsonArray File::symbolsToJsonArray() const {
 std::string File::symbolsToString() const {
   std::stringstream ss;
 
-  for(auto& el : _symbols) {
-    ss << '\t' << el.to_string() << std::endl;
+  for(auto it = _symbols.begin(); it != _symbols.end(); it++) {
+    auto &el = *it;
+
+    ss << '\t' << el.to_string();
+
+    if(it+1 != _symbols.end())
+      ss << std::endl;
   }
 
   return ss.str();
@@ -178,8 +207,8 @@ int File::getId() const {
   return _id;
 }
 
-std::vector<int> File::getUserIds() const {
-  return _userIds;
+std::unordered_map<int, File::ClientInfo> File::getUsers() const {
+  return _users;
 }
 
 std::vector<Symbol> File::getSymbols() const {
@@ -214,7 +243,7 @@ std::string File::to_string() const {
   std::stringstream ss;
 
   ss << "ID: " << _id << std::endl;
-  ss << "User IDs: " << userIdsToString() << std::endl;
+  ss << "User IDs: " << std::endl << usersToString() << std::endl;
   ss << "Symbols:" << std::endl << symbolsToString();
 
   return ss.str();
@@ -230,8 +259,28 @@ std::string File::text() const {
   return ss.str();
 }
 
-void File::addUserId(int id) {
-  _userIds.push_back(id);
+void File::addClient(int clientId, QString username) {
+  if(_users.count(clientId) != 0) {
+    throw FileClientException{"Client already exists"};
+  }
+
+  _users[clientId] = { clientId, username, 0 };
+}
+
+void File::removeClient(int clientId) {
+  if(_users.count(clientId) == 0) {
+    throw FileClientException{"Client does not exist"};
+  }
+
+  _users.erase(clientId);
+}
+
+void File::updateCursorPosition(int clientId, int newPosition) {
+  if(_users.count(clientId) == 0) {
+    throw FileClientException{"Client does not exist"};
+  }
+
+  _users[clientId].cursorPosition = newPosition;
 }
 
 void File::localInsert(Symbol &sym, int pos) {
