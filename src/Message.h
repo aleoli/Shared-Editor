@@ -27,6 +27,7 @@ public:
       CLOSE,
       EDIT,
       DELETE,
+      FILE_DELETED,
       GET_LINK,
       ACTIVATE_LINK
   };
@@ -69,12 +70,14 @@ public:
   QJsonObject toJsonObject() const;
   QByteArray toQByteArray() const;
 
+  friend bool operator==(const Message& lhs, const Message& rhs);
+  friend bool operator!=(const Message& lhs, const Message& rhs);
+
   Message::Type getType() const;
   int getAction() const;
   Message::Status getStatus() const;
   QJsonObject getData() const;
-
-  std::string to_string() const; // for debug
+  std::string to_string() const;
 
 private:
   void checkAndAssign(const QJsonObject &json);

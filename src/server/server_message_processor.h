@@ -12,8 +12,10 @@ public:
   bool shouldSendToAll() const;
 
 protected:
-  virtual void process_file();
+  virtual void process_error();
   virtual void process_user();
+  virtual void process_file_edit();
+  virtual void process_file();
   virtual void process_filesystem();
 
 private:

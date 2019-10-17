@@ -10,6 +10,10 @@
 #include "Message.h"
 #include "def.h"
 
+#include "exceptions.h"
+
+using namespace se_exceptions;
+
 Message createMessage() {
   QJsonObject data;
   data["name"] = "newfile.txt";
@@ -20,6 +24,7 @@ Message createMessage() {
 }
 
 void writeMessage(QString path, Message &m) {
+
   // scrivo su file
   QFile file(path);
 
@@ -48,18 +53,27 @@ Message readMessage(QString path) {
 }
 
 void prova_message() {
+  std::cout << "Test classe Message" << std::endl;
+
+  // creo messaggio a caso
   Message m1 = createMessage();
 
-  std::cout << "PROVA STAMPA MESSAGGIO" << std::endl;
   std::cout << m1.to_string() << std::endl;
 
-  Message m2(m1.toJsonObject());
-  std::cout << "PROVA COPIA MESSAGGIO:" << std::endl;
-  std::cout << m2.to_string() << std::endl;
+  // passaggio a QJsonObject e viceversa
+  Message m2 = Message::fromJsonObject(m1.toJsonObject());
+
+  if(m1 != m2) {
+    throw TestException{"test copia fallito"};
+  }
 
   // test scrittura su disco e lettura
   writeMessage("m1.shed", m1);
   Message m3 = readMessage("m1.shed");
-  std::cout << "PROVA SCRITTURA/LETTURA MESSAGE SU DISCO" << std::endl;
-  std::cout << m3.to_string();
+
+  if(m1 != m3) {
+    throw TestException{"test scrittura/lettura disco fallito"};
+  }
+
+  std::cout << "Test passato" << std::endl;
 }

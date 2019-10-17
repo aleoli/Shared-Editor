@@ -96,6 +96,11 @@ namespace se_exceptions {
       FileSymbolsException(QString str): FileException(str) {}
   };
 
+  class FileClientException : public FileException {
+  public:
+      FileClientException(QString str): FileException(str) {}
+  };
+
   // MessageManagerExceptions
   class MessageManagerException : public SE_Exception {
   public:
@@ -126,5 +131,17 @@ namespace se_exceptions {
   class FileNotReceivedException : public MainThreadException {
   public:
       FileNotReceivedException(QString str): MainThreadException(str) {}
+  };
+
+  // FSElement exceptions
+  class FSElementFromJsonException : public SE_Exception {
+  public:
+      FSElementFromJsonException(QString str): SE_Exception(str) {}
+  };
+
+  // test exception
+  class TestException: public SE_Exception {
+  public:
+      TestException(QString str): SE_Exception(str) {}
   };
 }

@@ -6,12 +6,19 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QJsonArray>
+#include <QString>
+#include <unordered_map>
 
 class File {
 public:
+  typedef struct {
+    int clientId;
+    QString username;
+  } ClientInfo;
+
   File();
   explicit File(int id);
-  File(int id, std::vector<int> user_ids, std::vector<Symbol> _symbols);
+  File(int id, std::unordered_map<int, File::ClientInfo> users, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -22,16 +29,22 @@ public:
   QJsonObject toJsonObject() const;
   QByteArray toQByteArray() const;
 
+  friend bool operator==(const File& lhs, const File& rhs);
+  friend bool operator!=(const File& lhs, const File& rhs);
+  friend bool operator==(const File::ClientInfo& lhs, const File::ClientInfo& rhs);
+
   int getId() const;
-  std::vector<int> getUserIds() const;
+  std::unordered_map<int, File::ClientInfo> getUsers() const;
   std::vector<Symbol> getSymbols() const;
   Symbol& symbolAt(int pos);
   Symbol& symbolById(SymbolId id);
+  int getPosition(SymbolId id);
   int numSymbols() const;
   std::string to_string() const;
   std::string text() const;
 
-  void addUserId(int id);
+  void addClient(int clientId, QString username);
+  void removeClient(int clientId);
 
   //CRDT
   void localInsert(Symbol &sym, int pos);
@@ -46,15 +59,15 @@ private:
     std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
     int level = 0);
 
-  QJsonArray userIdsToJsonArray() const;
-  std::string userIdsToString() const; //TODO vedi se rimuovere
-  static std::vector<int> jsonArrayToUserIds(const QJsonArray &array);
+  QJsonArray usersToJsonArray() const;
+  std::string usersToString() const; //TODO vedi se rimuovere
+  static std::unordered_map<int, File::ClientInfo> jsonArrayToUsers(const QJsonArray &array);
 
   QJsonArray symbolsToJsonArray() const;
   std::string symbolsToString() const; //TODO vedi se rimuovere
   static std::vector<Symbol> jsonArrayToSymbols(const QJsonArray &array);
 
   int _id;
-  std::vector<int> _userIds;
+  std::unordered_map<int, ClientInfo> _users;
   std::vector<Symbol> _symbols;
 };

@@ -5,7 +5,6 @@
 
 #include <QJsonValue>
 #include <QJsonDocument>
-
 #include <sstream>
 #include <QStringList>
 
@@ -139,4 +138,13 @@ std::string Message::to_string() const {
   }
 
   return ss.str();
+}
+
+bool operator==(const Message& lhs, const Message& rhs) {
+  return lhs._type == rhs._type && lhs._action == rhs._action
+  && lhs._status == rhs._status && lhs._data == rhs._data;
+}
+
+bool operator!=(const Message& lhs, const Message& rhs) {
+  return !operator==(lhs, rhs);
 }

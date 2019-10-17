@@ -36,40 +36,94 @@ File readFile(QString path) {
 
 void prova_file() {
   // test Symbol
-  Symbol sym({1,2}, 'y');
-  sym.setPos({{1,1}, {2,1}, {3,1}});
-  sym.setBold(true);
-  sym.setSize(20);
-  sym.setUnderline(true);
-  sym.setFamily("Helvetica");
-  sym.setColor("red");
-  sym.setBackgroundColor("#6600ff00");
+  std::cout << "Test classe Symbol" << std::endl;
 
-  std::cout << "PROVA STAMPA SIMBOLO" << std::endl;
-  std::cout << sym.to_string() << std::endl;
+  Symbol s1({1,2}, 'y');
+  s1.setPos({{1,1}, {2,1}, {3,1}});
+  s1.setBold(true);
+  s1.setSize(20);
+  s1.setUnderline(true);
+  s1.setFamily("Helvetica");
+  s1.setColor("red");
+  s1.setBackgroundColor("#6600ff00");
 
-  Symbol s2(sym.toJsonObject());
-  std::cout << "PROVA COPIA SIMBOLO:" << std::endl;
-  std::cout << s2.to_string() << std::endl;
+  std::cout << s1.to_string() << std::endl;
+
+  Symbol s2(s1.toJsonObject());
+  if(s1 != s2) {
+    throw TestException{"test copia symbol fallito"};
+  }
+
+  // test senza passare il pos
+  Symbol s3(s1.toJsonObject(), false);
+  if(!s3.getPos().empty()) {
+    throw TestException{"test copia symbol senza pos fallito"};
+  }
+  s3.setPos(s1.getPos());
+  if(s1 != s3) {
+    throw TestException{"test copia symbol senza pos fallito"};
+  }
+
+
+  std::cout << "Test passato" << std::endl;
 
   // test File
-  Symbol s3({3,4}, 'x');
-  Symbol s4({5,6}, 'w');
+  std::cout << "Test classe File" << std::endl;
 
-  std::vector<Symbol> symbols{sym, s3, s4};
-  std::vector<int> ids{1,2,3,4,5,6,7,8,9,0};
+  Symbol s4({3,4}, 'x');
+  Symbol s5({5,6}, 'w');
 
-  File f1(0, ids, symbols);
-  std::cout << "PROVA STAMPA FILE" << std::endl;
-  std::cout << f1.to_string();
+
+  File f1(0);
+  f1.localInsert(s3, 0);
+  f1.localInsert(s4, 1);
+  f1.localInsert(s5, 1);
+  f1.addClient(1, "bob");
+  f1.addClient(2, "ale");
+  f1.addClient(3, "klajdi");
+  f1.addClient(4, "erich");
+
+  std::cout << f1.to_string() << std::endl;
+
+  // test per ritrovare i simboli
+  if(f1.symbolAt(1) != s5) {
+    throw TestException{"test symbolAt fallito"};
+  }
+
+  if(f1.symbolById({3,4}) != s4) {
+    throw TestException{"test symbolById fallito"};
+  }
+
+  if(f1.getPosition({3,4}) != 2) {
+    throw TestException{"test getPosition fallito"};
+  }
+
+  // chiamate che devono generano eccezioni
+  try {
+    f1.addClient(1, "pippo");
+    throw TestException{"test addClient fallito"};
+  }
+  catch(...) {}
+
+  try {
+    f1.removeClient(5);
+    throw TestException{"test removeClient fallito"};
+  }
+  catch(...) {}
+
+  f1.removeClient(2);
 
   File f2(f1.toJsonObject());
-  std::cout << "PROVA COPIA FILE:" << std::endl;
-  std::cout << f2.to_string();
+  if(f1 != f2) {
+    throw TestException{"test copia file fallito"};
+  }
 
   // test scrittura su disco e lettura
   writeFile("f1.shed", f1);
   File f3 = readFile("f1.shed");
-  std::cout << "PROVA SCRITTURA/LETTURA FILE SU DISCO" << std::endl;
-  std::cout << f3.to_string();
+  if(f1 != f3) {
+    throw TestException{"test lettura/scrittura disco fallito"};
+  }
+
+  std::cout << "Test passato" << std::endl;
 }

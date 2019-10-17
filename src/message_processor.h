@@ -11,8 +11,10 @@ public:
 
 protected:
   virtual void process_message();
-  virtual void process_file() = 0;
+  virtual void process_error() = 0;
   virtual void process_user() = 0;
+  virtual void process_file_edit() = 0;
+  virtual void process_file() = 0;
   virtual void process_filesystem() = 0;
 
   const Message& _m;
@@ -20,6 +22,4 @@ protected:
   bool _has_resp;
 
 private:
-  //TODO da togliere
-  void dumb();
 };

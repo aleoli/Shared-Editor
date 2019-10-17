@@ -10,15 +10,15 @@ Symbol::Symbol() {}
 
 Symbol::Symbol(SymbolId id, QChar chr) : _id(id), _char(chr) {}
 
-Symbol::Symbol(SymbolId id, QChar chr, QFont font, QColor color, QColor backgroundColor)
-  : _id(id), _char(chr), _font(font), _color(color), _backgroundColor(backgroundColor) {}
+Symbol::Symbol(SymbolId id, QChar chr, QTextCharFormat fmt)
+  : _id(id), _char(chr), _fmt(fmt) {}
 
-Symbol::Symbol(const QJsonObject &json) {
-  checkAndAssign(json);
+Symbol::Symbol(const QJsonObject &json, bool readPos) {
+  checkAndAssign(json, readPos);
 }
 
-Symbol::Symbol(QJsonObject &&json) {
-  checkAndAssign(json);
+Symbol::Symbol(QJsonObject &&json, bool readPos) {
+  checkAndAssign(json, readPos);
 }
 
 bool operator<(const Symbol& lhs, const Symbol& rhs) {
@@ -29,23 +29,28 @@ bool operator<(const Symbol& lhs, const Symbol& rhs) {
   return lhs._pos < rhs._pos;
 }
 
-void Symbol::checkAndAssign (const QJsonObject &json) {
+bool operator==(const Symbol& lhs, const Symbol& rhs) {
+  return lhs._id == rhs._id && lhs._char == rhs._char &&
+    lhs._pos == rhs._pos &&
+    lhs.getFont() == rhs.getFont() &&
+    lhs.getColor() == rhs.getColor() &&
+    lhs.getBackgroundColor() == rhs.getBackgroundColor();
+}
+
+bool operator!=(const Symbol& lhs, const Symbol& rhs) {
+  return !operator==(lhs, rhs);
+}
+
+void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
   auto idValue = json["id"];
   auto charValue = json["char"];
-  auto posValue = json["pos"];
-  auto fontValue = json["font"];
-  auto colorValue = json["color"];
-  auto backgroundColorValue = json["backgroundColor"];
+  auto fmtValue = json["fmt"];
 
-  if(idValue.isUndefined() || charValue.isUndefined() || posValue.isUndefined()
-      || fontValue.isUndefined() || colorValue.isUndefined()
-      || backgroundColorValue.isUndefined()) {
+  if(idValue.isUndefined() || charValue.isUndefined() || fmtValue.isUndefined()) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!idValue.isObject() || !posValue.isArray()
-      || !fontValue.isString() || !colorValue.isString()
-      || !backgroundColorValue.isString()) {
+  if(!idValue.isObject() || !fmtValue.isObject()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -56,11 +61,79 @@ void Symbol::checkAndAssign (const QJsonObject &json) {
   }
 
   auto idJson = idValue.toObject();
-  auto posArray = posValue.toArray();
+
+  auto fmt = deserializeFormat(fmtValue.toObject());
+
+  if(readPos) {
+    auto posValue = json["pos"];
+    if(posValue.isUndefined()) {
+      throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+    }
+
+    if(!posValue.isArray()) {
+      throw SymbolFromJsonException{"One or more fields are not valid"};
+    }
+
+    _pos = jsonArrayToPos(posValue.toArray());
+  }
+
+  _id = SymbolId{idJson};
+  _char = QChar(charUnicode);
+  _fmt = fmt;
+}
+
+Symbol Symbol::fromJsonObject(const QJsonObject &json, bool readPos) {
+  return Symbol(json, readPos);
+}
+
+Symbol Symbol::fromJsonObject(QJsonObject &&json, bool readPos) {
+  return Symbol(json, readPos);
+}
+
+QJsonObject Symbol::toJsonObject(bool writePos) const {
+  QJsonObject json;
+
+  json["id"] = QJsonValue(_id.toJsonObject());
+  json["char"] = QJsonValue(_char.unicode());
+  json["fmt"] = QJsonValue(serializeFormat(_fmt));
+
+  if(writePos)
+    json["pos"] = QJsonValue(posToJsonArray());
+
+  return json;
+}
+
+QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt) {
+  QJsonObject json;
+
+  json["font"] = QJsonValue(fmt.font().toString());
+  json["color"] = QJsonValue(fmt.foreground().color().name(QColor::HexArgb));
+  json["backgroundColor"] = QJsonValue(fmt.background().color().name(QColor::HexArgb));
+
+  return json;
+}
+
+QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
+  QTextCharFormat fmt;
+  QFont font;
+  QColor color, backgroundColor;
+
+  auto fontValue = json["font"];
+  auto colorValue = json["color"];
+  auto backgroundColorValue = json["backgroundColor"];
+
+  if(fontValue.isUndefined() || colorValue.isUndefined()
+      || backgroundColorValue.isUndefined()) {
+    throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+  }
+
+  if(!fontValue.isString() || !colorValue.isString()
+      || !backgroundColorValue.isString()) {
+    throw SymbolFromJsonException{"One or more fields are not valid"};
+  }
 
   auto fontString = fontValue.toString();
-
-  if(!_font.fromString(fontString)) {
+  if(!font.fromString(fontString)) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -68,38 +141,19 @@ void Symbol::checkAndAssign (const QJsonObject &json) {
   if(!QColor::isValidColor(colorString)) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
-  _color.setNamedColor(colorString);
+  color.setNamedColor(colorString);
 
   auto backgroundColorString = backgroundColorValue.toString();
   if(!QColor::isValidColor(backgroundColorString)) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
-  _backgroundColor.setNamedColor(backgroundColorString);
+  backgroundColor.setNamedColor(backgroundColorString);
 
-  _id = SymbolId{idJson};
-  _char = QChar(charUnicode);
-  _pos = jsonArrayToPos(posArray);
-}
+  fmt.setFont(font);
+  fmt.setForeground(color);
+  fmt.setBackground(backgroundColor);
 
-Symbol Symbol::fromJsonObject(const QJsonObject &json) {
-  return Symbol(json);
-}
-
-Symbol Symbol::fromJsonObject(QJsonObject &&json) {
-  return Symbol(json);
-}
-
-QJsonObject Symbol::toJsonObject() const {
-  QJsonObject json;
-
-  json["id"] = QJsonValue(_id.toJsonObject());
-  json["char"] = QJsonValue(_char.unicode());
-  json["pos"] = QJsonValue(posToJsonArray());
-  json["font"] = QJsonValue(_font.toString());
-  json["color"] = QJsonValue(_color.name(QColor::HexArgb));
-  json["backgroundColor"] = QJsonValue(_backgroundColor.name(QColor::HexArgb));
-
-  return json;
+  return fmt;
 }
 
 QJsonArray Symbol::posToJsonArray() const {
@@ -165,92 +219,98 @@ std::vector<Symbol::Identifier> Symbol::getPos() const{
 std::string Symbol::to_string() const{
   std::stringstream ss;
 
-  ss << "-------------------------------------" << std::endl;
-  ss << "ID: " << _id.to_string() << std::endl;
-  ss << "Char: " << _char.toLatin1() << std::endl;
-  ss << "Pos: " << posToString() << std::endl;
-  ss << "Style:" << std::endl << getFontInfo() << std::endl;
-  ss << "-------------------------------------";
+  ss << "Symbol: " << _id.to_string() << std::endl;
+  ss << "\tChar: " << _char.toLatin1() << std::endl;
+  ss << "\tPos: " << posToString() << std::endl;
+  ss << "\tStyle:" << std::endl << getFontInfo() << std::endl;
 
   return ss.str();
 }
 
-void Symbol::setFont(QFont font) {
-  _font = font;
+void Symbol::setFormat(QTextCharFormat fmt) {
+  _fmt = fmt;
 }
 
-const QFont& Symbol::getFont() const {
-  return _font;
+QTextCharFormat Symbol::getFormat() const {
+  return _fmt;
+}
+
+void Symbol::setFont(QFont font) {
+  _fmt.setFont(font);
+}
+
+QFont Symbol::getFont() const {
+  return _fmt.font();
 }
 
 void Symbol::setBold(bool enable) {
-  _font.setBold(enable);
+  _fmt.setFontWeight(QFont::Bold);
 }
 
 bool Symbol::isBold() const {
-  return _font.bold();
+  return _fmt.font().bold();
 }
 
 void Symbol::setSize(int size){
-  _font.setPointSize(size);
+  _fmt.setFontPointSize(size);
 }
 
 int Symbol::getSize() const {
-  return _font.pointSize();
+  return _fmt.fontPointSize();
 }
 
 void Symbol::setUnderline(bool enable) {
-  _font.setUnderline(enable);
+  _fmt.setFontUnderline(enable);
 }
 
 bool Symbol::isUnderline()  const {
-  return _font.underline();
+  return _fmt.fontUnderline();
 }
 
 void Symbol::setItalic(bool enable) {
-  _font.setItalic(enable);
+  _fmt.setFontItalic(enable);
 }
 
 bool Symbol::isItalic() const {
-  return _font.italic();
+  return _fmt.fontItalic();
 }
 
 std::string Symbol::getFontInfo() const {
   std::stringstream ss;
 
-  ss << "size: " << getSize() << std::endl;
-  ss << "bold: " << isBold() << std::endl;
-  ss << "underline: " << isUnderline() << std::endl;
-  ss << "italic: " << isItalic() << std::endl;
-  ss << "family: " << getFamily().toStdString() << std::endl;
-  ss << "color: " << _color.name(QColor::HexArgb).toStdString() << std::endl;
-  ss << "background color: " << _backgroundColor.name(QColor::HexArgb).toStdString();
+  ss << "\t\tsize: " << getSize() << std::endl;
+  ss << "\t\tbold: " << isBold() << std::endl;
+  ss << "\t\tunderline: " << isUnderline() << std::endl;
+  ss << "\t\titalic: " << isItalic() << std::endl;
+  ss << "\t\tfamily: " << getFamily().toStdString() << std::endl;
+  ss << "\t\tcolor: " << getColor().name(QColor::HexArgb).toStdString() << std::endl;
+  ss << "\t\tbackground color: " << getBackgroundColor().name(QColor::HexArgb).toStdString();
 
   return ss.str();
 }
 
 void Symbol::setFamily(const QString &family) {
-  _font.setFamily(family);
+  _fmt.setFontFamily(family);
 }
 
 QString Symbol::getFamily() const {
-  return _font.family();
+  return _fmt.fontFamily();
 }
 
 void Symbol::setColor(const QColor &color) {
-  _color = color;
+  _fmt.setForeground(color);
 }
 
 QColor Symbol::getColor() const {
-  return _color;
+  return _fmt.foreground().color();
 }
 
 void Symbol::setBackgroundColor(const QColor &color) {
-  _backgroundColor = color;
+  _fmt.setBackground(color);
 }
 
 QColor Symbol::getBackgroundColor() const {
-  return _backgroundColor;
+  return _fmt.background().color();
 }
 
 //IDENTIFIER
