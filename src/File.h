@@ -38,6 +38,7 @@ public:
   std::vector<Symbol> getSymbols() const;
   Symbol& symbolAt(int pos);
   Symbol& symbolById(SymbolId id);
+  int getPosition(SymbolId id);
   int numSymbols() const;
   std::string to_string() const;
   std::string text() const;

@@ -85,6 +85,19 @@ void prova_file() {
 
   std::cout << f1.to_string() << std::endl;
 
+  // test per ritrovare i simboli
+  if(f1.symbolAt(1) != s5) {
+    throw TestException{"test symbolAt fallito"};
+  }
+
+  if(f1.symbolById({3,4}) != s4) {
+    throw TestException{"test symbolById fallito"};
+  }
+
+  if(f1.getPosition({3,4}) != 2) {
+    throw TestException{"test getPosition fallito"};
+  }
+
   // chiamate che devono generano eccezioni
   try {
     f1.addClient(1, "pippo");

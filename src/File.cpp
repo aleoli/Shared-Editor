@@ -230,6 +230,18 @@ Symbol& File::symbolById(SymbolId id) {
   return *result;
 }
 
+int File::getPosition(SymbolId id) {
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id](const Symbol &cmp) {
+        return cmp.getSymbolId() == id;
+  });
+
+  if(result == std::end(_symbols)) {
+    throw FileSymbolsException{"Symbol does not exist"};
+  }
+
+  return result - _symbols.begin();
+}
+
 int File::numSymbols() const {
   return _symbols.size();
 }
