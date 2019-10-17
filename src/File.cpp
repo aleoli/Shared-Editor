@@ -110,7 +110,6 @@ QJsonArray File::usersToJsonArray() const {
 
     value["clientId"] = el.second.clientId;
     value["username"] = el.second.username;
-    value["cursorPosition"] = el.second.cursorPosition;
 
     array.append(value);
   }
@@ -124,7 +123,6 @@ std::string File::usersToString() const {
   for(auto &el : _users) {
     ss << "\tclientId: " << el.second.clientId << std::endl;
     ss << "\t\tusername: " << el.second.username.toStdString() << std::endl;
-    ss << "\t\tcursorPosition: " << el.second.cursorPosition << std::endl;
   }
 
   return ss.str();
@@ -136,17 +134,14 @@ std::unordered_map<int, File::ClientInfo> File::jsonArrayToUsers(const QJsonArra
   for(auto&& el : array) {
     auto clientIdValue = el["clientId"];
     auto usernameValue = el["username"];
-    auto cursorPositionValue = el["cursorPosition"];
 
-    if(clientIdValue.isUndefined() || usernameValue.isUndefined()
-      || cursorPositionValue.isUndefined()) {
+    if(clientIdValue.isUndefined() || usernameValue.isUndefined()) {
         throw FileFromJsonException{"The QJsonObject has some fields missing"};
       }
 
     auto clientId = clientIdValue.toInt(-1);
-    auto cursorPosition = cursorPositionValue.toInt(-1);
 
-    if(clientId == -1 || cursorPosition == -1) {
+    if(clientId == -1) {
       throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
@@ -154,7 +149,7 @@ std::unordered_map<int, File::ClientInfo> File::jsonArrayToUsers(const QJsonArra
       throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
-    File::ClientInfo info { clientId, usernameValue.toString(), cursorPosition };
+    File::ClientInfo info { clientId, usernameValue.toString() };
 
     users[clientId] = info;
   }
@@ -264,7 +259,7 @@ void File::addClient(int clientId, QString username) {
     throw FileClientException{"Client already exists"};
   }
 
-  _users[clientId] = { clientId, username, 0 };
+  _users[clientId] = { clientId, username };
 }
 
 void File::removeClient(int clientId) {
@@ -273,14 +268,6 @@ void File::removeClient(int clientId) {
   }
 
   _users.erase(clientId);
-}
-
-void File::updateCursorPosition(int clientId, int newPosition) {
-  if(_users.count(clientId) == 0) {
-    throw FileClientException{"Client does not exist"};
-  }
-
-  _users[clientId].cursorPosition = newPosition;
 }
 
 void File::localInsert(Symbol &sym, int pos) {

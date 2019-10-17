@@ -84,16 +84,7 @@ void prova_file() {
     std::cout << "pass" << std::endl;
   }
 
-  try {
-    f1.updateCursorPosition(7, 5);
-  }
-  catch(...) {
-    std::cout << "pass" << std::endl;
-  }
-
   f1.removeClient(2);
-  f1.updateCursorPosition(1, 74);
-  f1.updateCursorPosition(3, 45);
 
   std::cout << f1.to_string();
 

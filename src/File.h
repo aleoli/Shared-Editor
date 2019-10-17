@@ -14,7 +14,6 @@ public:
   typedef struct {
     int clientId;
     QString username;
-    int cursorPosition;
   } ClientInfo;
 
   File();
@@ -41,7 +40,6 @@ public:
 
   void addClient(int clientId, QString username);
   void removeClient(int clientId);
-  void updateCursorPosition(int clientId, int newPosition);
 
   //CRDT
   void localInsert(Symbol &sym, int pos);
