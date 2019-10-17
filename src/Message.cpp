@@ -8,9 +8,6 @@
 #include <sstream>
 #include <QStringList>
 
-#include <sstream>
-#include <QStringList>
-
 using namespace se_exceptions;
 
 Message::Message(): _type(Type::ERROR), _action(0), _status(Status::RESPONSE) {
