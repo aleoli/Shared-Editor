@@ -21,8 +21,8 @@ Message createMessage() {
   data["name"] = "newfile.txt";
   data["id_user"] = 5;
 
-  return Message(Message::Type::FILE, static_cast<int>(Message::FileAction::CLOSE_FILE),
-    false, Message::Status::RESPONSE, data);
+  return Message(Message::Type::FILE, static_cast<int>(Message::FileAction::CLOSE),
+    Message::Status::RESPONSE, data);
 }
 
 void writeMessage(QString path, Message &m) {
