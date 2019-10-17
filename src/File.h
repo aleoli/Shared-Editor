@@ -29,6 +29,10 @@ public:
   QJsonObject toJsonObject() const;
   QByteArray toQByteArray() const;
 
+  friend bool operator==(const File& lhs, const File& rhs);
+  friend bool operator!=(const File& lhs, const File& rhs);
+  friend bool operator==(const File::ClientInfo& lhs, const File::ClientInfo& rhs);
+
   int getId() const;
   std::unordered_map<int, File::ClientInfo> getUsers() const;
   std::vector<Symbol> getSymbols() const;

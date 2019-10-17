@@ -102,3 +102,12 @@ std::string FSElement::to_string() const {
 
   return ss.str();
 }
+
+bool operator==(const FSElement& lhs, const FSElement& rhs) {
+  return lhs._id == rhs._id && lhs._parentId == rhs._parentId &&
+    lhs._name == rhs._name && lhs._type == rhs._type;
+}
+
+bool operator!=(const FSElement& lhs, const FSElement& rhs) {
+  return !operator==(lhs, rhs);
+}

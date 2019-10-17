@@ -5,6 +5,8 @@
 
 #include <QJsonValue>
 #include <QJsonDocument>
+#include <sstream>
+#include <QStringList>
 
 using namespace se_exceptions;
 
@@ -130,4 +132,30 @@ Message::Status Message::getStatus() const {
 
 QJsonObject Message::getData() const {
   return _data;
+}
+
+std::string Message::to_string() const {
+  std::stringstream ss;
+
+  ss << "type: " << static_cast<int>(_type) << std::endl;
+  ss << "action: " << static_cast<int>(_action) << std::endl;
+  ss << "error: " << _error << std::endl;
+  ss << "status: " << static_cast<int>(_status) << std::endl;
+  ss << "data: " << std::endl;
+
+  for(auto &key : _data.keys()) {
+    ss << "\t" << key.toStdString() << ": " << static_cast<int>(_data[key].type()) << std::endl;
+  }
+
+  return ss.str();
+}
+
+bool operator==(const Message& lhs, const Message& rhs) {
+  return lhs._type == rhs._type && lhs._action == rhs._action &&
+    lhs._error == rhs._error && lhs._status == rhs._status &&
+    lhs._data == rhs._data;
+}
+
+bool operator!=(const Message& lhs, const Message& rhs) {
+  return !operator==(lhs, rhs);
 }

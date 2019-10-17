@@ -55,11 +55,15 @@ public:
   QJsonObject toJsonObject() const;
   QByteArray toQByteArray() const;
 
+  friend bool operator==(const Message& lhs, const Message& rhs);
+  friend bool operator!=(const Message& lhs, const Message& rhs);
+
   Message::Type getType() const;
   int getAction() const;
   bool getError() const;
   Message::Status getStatus() const;
   QJsonObject getData() const;
+  std::string to_string() const;
 
 private:
   void checkAndAssign(const QJsonObject &json);

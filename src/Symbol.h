@@ -43,6 +43,8 @@ public:
   explicit Symbol(QJsonObject &&json);
 
   friend bool operator<(const Symbol& lhs, const Symbol& rhs);
+  friend bool operator==(const Symbol& lhs, const Symbol& rhs);
+  friend bool operator!=(const Symbol& lhs, const Symbol& rhs);
 
   static Symbol fromJsonObject(const QJsonObject &json);
   static Symbol fromJsonObject(QJsonObject &&json);

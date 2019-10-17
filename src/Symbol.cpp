@@ -29,6 +29,18 @@ bool operator<(const Symbol& lhs, const Symbol& rhs) {
   return lhs._pos < rhs._pos;
 }
 
+bool operator==(const Symbol& lhs, const Symbol& rhs) {
+  return lhs._id == rhs._id && lhs._char == rhs._char &&
+    lhs._pos == rhs._pos &&
+    lhs.getFont() == rhs.getFont() &&
+    lhs.getColor() == rhs.getColor() &&
+    lhs.getBackgroundColor() == rhs.getBackgroundColor();
+}
+
+bool operator!=(const Symbol& lhs, const Symbol& rhs) {
+  return !operator==(lhs, rhs);
+}
+
 void Symbol::checkAndAssign (const QJsonObject &json) {
   auto idValue = json["id"];
   auto charValue = json["char"];

@@ -21,22 +21,28 @@ std::string saveImage(QImage &im) {
 }
 
 void prova_image(QApplication &a) {
-   QImage im1;
-   im1.load(":/other/malnati.png");
+  std::cout << "Test serializzazione QImage" << std::endl;
 
-   auto ba = saveImage(im1);
+  QImage im1;
+  im1.load(":/other/malnati.png");
 
-   //std::cout << ba << std::endl;
+  auto ba = saveImage(im1);
 
-   QImage im2;
-   im2.loadFromData(QByteArray::fromBase64(QByteArray::fromStdString(ba)), "PNG");
+  //std::cout << ba << std::endl;
 
-   //show img
-   QLabel myLabel;
-   myLabel.setPixmap(QPixmap::fromImage(im2));
-   myLabel.show();
+  QImage im2;
+  im2.loadFromData(QByteArray::fromBase64(QByteArray::fromStdString(ba)), "PNG");
 
-   std::cout << "Sono uguali: " << (im1 == im2) << std::endl;
+  //show img
+  QLabel myLabel;
+  myLabel.setPixmap(QPixmap::fromImage(im2));
+  myLabel.show();
 
-   exit(a.exec());
+  if(im1 != im2) {
+   throw TestException{"test copia QImage fallito"};
+  }
+
+  std::cout << "Test passato" << std::endl;
+
+  exit(a.exec());
 }

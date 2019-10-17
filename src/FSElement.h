@@ -9,7 +9,7 @@ public:
     FILE,
     DIRECTORY
   };
-  
+
   FSElement();
   FSElement(int id, int parentId, QString name, Type type);
   explicit FSElement(const QJsonObject &json);
@@ -18,6 +18,9 @@ public:
   static FSElement fromJsonObject(const QJsonObject &json);
   static FSElement fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
+
+  friend bool operator==(const FSElement& lhs, const FSElement& rhs);
+  friend bool operator!=(const FSElement& lhs, const FSElement& rhs);
 
   //TODO i setter servono?
   int getId() const;

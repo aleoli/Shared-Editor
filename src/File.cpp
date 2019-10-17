@@ -383,3 +383,15 @@ void File::remoteDelete(SymbolId id) {
 
   _symbols.erase(result);
 }
+
+bool operator==(const File& lhs, const File& rhs) {
+  return lhs._id == rhs._id && lhs._users == rhs._users && lhs._symbols == rhs._symbols;
+}
+
+bool operator!=(const File& lhs, const File& rhs) {
+  return !operator==(lhs, rhs);
+}
+
+bool operator==(const File::ClientInfo& lhs, const File::ClientInfo& rhs) {
+  return lhs.clientId == rhs.clientId && lhs.username == rhs.username;
+}

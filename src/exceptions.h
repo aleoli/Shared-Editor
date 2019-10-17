@@ -138,4 +138,10 @@ namespace se_exceptions {
   public:
       FSElementFromJsonException(QString str): SE_Exception(str) {}
   };
+
+  // test exception
+  class TestException: public SE_Exception {
+  public:
+      TestException(QString str): SE_Exception(str) {}
+  };
 }
