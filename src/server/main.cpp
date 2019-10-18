@@ -8,6 +8,7 @@
 
 #include "persistence_global.h"
 #include "sys.h"
+#include "utils.h"
 
 #if TEST_USER
 #include "test_user.h"
@@ -32,6 +33,7 @@ using namespace se_exceptions;
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   SysConf conf = initiate_system(app);
+  info("System successfully started");
 
 #if TEST_USER
   test_user();
