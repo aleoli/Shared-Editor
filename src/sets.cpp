@@ -18,14 +18,16 @@ std::shared_ptr<Sets> Sets::get(QString log_level) {
 }
 
 Sets::LogLevel Sets::getLogLevel(QString log_level) {
-  if(log_level == "error") {
+  if(log_level == "none") {
+    return Sets::LogLevel::NONE;
+  } else if(log_level == "error") {
     return Sets::LogLevel::ERROR;
   } else if(log_level == "warn") {
     return Sets::LogLevel::WARN;
-  } else if(log_level == "debug") {
-    return Sets::LogLevel::DEBUG;
   } else if(log_level == "info") {
     return Sets::LogLevel::INFO;
+  } else if(log_level == "debug") {
+    return Sets::LogLevel::DEBUG;
   }
   throw se_exceptions::ArgNotValidException{"Not valid value for log level '"+log_level+"'"};
 }

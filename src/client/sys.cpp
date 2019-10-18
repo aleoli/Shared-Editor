@@ -27,7 +27,7 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
   parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
   QCommandLineOption hOption({"s", "server"}, "Server to connect.", "Server", DEF_HOST);
   QCommandLineOption portOption({"p", "port"}, "Port to connect.", "Port", QString::number(DEF_PORT));
-  const QCommandLineOption logOption({"l", "log"}, "Log Level [ERROR, warn, debug, info].", "LogLevel", "error");
+  const QCommandLineOption logOption({"l", "log"}, "Log Level [NONE, error, warn, info, debug].", "LogLevel", "none");
 
   parser.addOptions({hOption, portOption, logOption});
 

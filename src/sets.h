@@ -7,7 +7,7 @@
 class Sets {
 public:
   typedef enum LogLevel {
-    ERROR, WARN, DEBUG, INFO
+    NONE, ERROR, WARN, INFO, DEBUG
   } LogLevel;
 
   Sets(const Sets&) = delete;
@@ -16,7 +16,7 @@ public:
   Sets() = delete;
   Sets& operator=(Sets&&) = delete;
 
-  static std::shared_ptr<Sets> get(QString log_level = "error");
+  static std::shared_ptr<Sets> get(QString log_level = "none");
 
   ~Sets();
 

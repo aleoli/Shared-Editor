@@ -53,7 +53,7 @@ SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
   parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
   const QCommandLineOption portOption({"p", "port"}, "Port to bind.", "Port", QString::number(DEF_PORT));
   const QCommandLineOption moOption({"m", "mem-only"}, "Create Mem-Only DB (only for testing and debugging).");
-  const QCommandLineOption logOption({"l", "log"}, "Log Level [ERROR, warn, debug, info].", "LogLevel", "error");
+  const QCommandLineOption logOption({"l", "log"}, "Log Level [NONE, error, warn, info, debug].", "LogLevel", "none");
 
   parser.addOptions({portOption, moOption, logOption});
 
