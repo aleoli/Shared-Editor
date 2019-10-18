@@ -136,8 +136,9 @@ std::unordered_map<int, File::ClientInfo> File::jsonArrayToUsers(const QJsonArra
       throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
-    auto clientIdValue = el.toObject()["clientId"];
-    auto usernameValue = el.toObject()["username"];
+    auto obj = el.toObject();
+    auto clientIdValue = obj["clientId"];
+    auto usernameValue = obj["username"];
 
     if(clientIdValue.isUndefined() || usernameValue.isUndefined()) {
         throw FileFromJsonException{"The QJsonObject has some fields missing"};
