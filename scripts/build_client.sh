@@ -10,7 +10,7 @@ cd src/client
 mkdir build &> /dev/null
 cd build
 cmake .. -DCMAKE_PREFIX_PATH=$path
-make
+make -j$((nproc+1))
 cd ..
 mkdir ../../bin &> /dev/null
 cp build/client ../../bin/client
