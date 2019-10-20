@@ -60,6 +60,11 @@ namespace se_exceptions {
       MessageFromJsonException(QString str): SE_Exception(str) {}
   };
 
+  class MessageDataException : public SE_Exception {
+  public:
+      MessageDataException(QString str): SE_Exception(str) {}
+  };
+
   // File related exceptions
   class SymbolIdFromJsonException : public SE_Exception {
   public:

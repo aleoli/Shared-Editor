@@ -70,7 +70,7 @@ void prova_crdt() {
     f2.localInsert(s6, -3);
     throw TestException{"localInsert ha avuto successo (non doveva)"};
   }
-  catch(...) {
+  catch(FileSymbolsException e) {
   }
 
   try {
@@ -78,21 +78,21 @@ void prova_crdt() {
     f2.localInsert(s7, f.numSymbols() + 1);
     throw TestException{"localInsert ha avuto successo (non doveva)"};
   }
-  catch(...) {
+  catch(FileSymbolsException e) {
   }
 
   try {
     f2.localDelete(-1);
     throw TestException{"localDelete ha avuto successo (non doveva)"};
   }
-  catch(...) {
+  catch(FileSymbolsException e) {
   }
 
   try {
     f2.localDelete(f.numSymbols());
     throw TestException{"localDelete ha avuto successo (non doveva)"};
   }
-  catch(...) {
+  catch(FileSymbolsException e) {
   }
 
   std::cout << "Test passato" << std::endl;
