@@ -90,7 +90,7 @@ void prova_file() {
     throw TestException{"test symbolAt fallito"};
   }
 
-  if(f1.symbolById({3,4}) != s4) {
+  if(f1.symbolById({3,4}).second != s4) {
     throw TestException{"test symbolById fallito"};
   }
 
