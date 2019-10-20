@@ -3,7 +3,6 @@
 #include "exceptions.h"
 #include "def.h"
 
-#include <QJsonValue>
 #include <QJsonDocument>
 #include <sstream>
 #include <QStringList>
@@ -12,6 +11,9 @@ using namespace se_exceptions;
 
 Message::Message(): _type(Type::ERROR), _action(0), _status(Status::RESPONSE) {
 }
+
+Message::Message(Message::Type type, int action, Message::Status status)
+  : _type(type), _action(action), _status(status) {}
 
 Message::Message(Message::Type type, int action, Message::Status status, QJsonObject data)
   : _type(type), _action(action), _status(status), _data(data) {}
@@ -113,16 +115,122 @@ Message::Type Message::getType() const {
   return _type;
 }
 
+void Message::setType(Message::Type type) {
+  _type = type;
+}
+
 int Message::getAction() const {
   return _action;
+}
+
+void Message::setAction(int action) {
+  _action = action;
 }
 
 Message::Status Message::getStatus() const {
   return _status;
 }
 
+void Message::setStatus(Message::Status status) {
+  _status = status;
+}
+
 QJsonObject Message::getData() const {
   return _data;
+}
+
+void Message::setData(const QJsonObject &data) {
+  _data = data;
+}
+
+int Message::getInt(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    throw MessageDataException{"Data object has no value with that key"};
+  }
+
+  int val = value.toInt(-1);
+
+  if(val == -1) {
+    throw MessageDataException{"Value is not an integer"};
+  }
+
+  return val;
+}
+
+QString Message::getString(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    throw MessageDataException{"Data object has no value with that key"};
+  }
+
+  if(!value.isString()) {
+    throw MessageDataException{"Value is not a string"};
+  }
+
+  return value.toString();
+}
+
+QJsonObject Message::getObject(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    throw MessageDataException{"Data object has no value with that key"};
+  }
+
+  if(!value.isObject()) {
+    throw MessageDataException{"Value is not an object"};
+  }
+
+  return value.toObject();
+}
+
+QJsonArray Message::getArray(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    throw MessageDataException{"Data object has no value with that key"};
+  }
+
+  if(!value.isArray()) {
+    throw MessageDataException{"Value is not an array"};
+  }
+
+  return value.toArray();
+}
+
+void Message::setValue(const QString &key, int value) {
+  if(!_data.value(key).isUndefined()) {
+    throw MessageDataException{"Key is already present in data"};
+  }
+
+  _data[key] = value;
+}
+
+void Message::setValue(const QString &key, const QString &value) {
+  if(!_data.value(key).isUndefined()) {
+    throw MessageDataException{"Key is already present in data"};
+  }
+
+  _data[key] = value;
+}
+
+void Message::setValue(const QString &key, const QJsonObject &value) {
+  if(!_data.value(key).isUndefined()) {
+    throw MessageDataException{"Key is already present in data"};
+  }
+
+  _data[key] = value;
+}
+
+void Message::setValue(const QString &key, const QJsonArray &value) {
+  if(!_data.value(key).isUndefined()) {
+    throw MessageDataException{"Key is already present in data"};
+  }
+
+  _data[key] = value;
 }
 
 std::string Message::to_string() const {
