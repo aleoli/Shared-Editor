@@ -63,7 +63,7 @@ private:
 
   bool clientIsLogged(quint64 clientId);
   bool clientHasFileOpen(quint64 clientId); // voglio sapere se ha aperto un qualunque file
-  bool clientHasFileOpen(quint64 clientId, int fileId); // voglio sapere se ha aperto uno specifico file 
+  bool clientHasFileOpen(quint64 clientId, int fileId); // voglio sapere se ha aperto uno specifico file
 
   typedef struct Data {
     quint64 clientId;
