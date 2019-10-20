@@ -37,13 +37,13 @@ QString rndString(int randomStringLength) {
 
 void error(QString str) {
   if(Sets::get()->getLogLevel() >= Sets::LogLevel::ERROR) {
-    std::cout << BOLD(FRED("[error] ")) << str.toStdString() << std::endl;
+    std::cerr << BOLD(FRED("[error] ")) << str.toStdString() << std::endl;
   }
 }
 
 void warn(QString str) {
   if(Sets::get()->getLogLevel() >= Sets::LogLevel::WARN) {
-    std::cout << BOLD(FYEL("[warn] ")) << str.toStdString() << std::endl;
+    std::cerr << BOLD(FYEL("[warn] ")) << str.toStdString() << std::endl;
   }
 }
 
