@@ -64,7 +64,6 @@ void prova_file() {
     throw TestException{"test copia symbol senza pos fallito"};
   }
 
-
   std::cout << "Test passato" << std::endl;
 
   // test File
@@ -103,13 +102,13 @@ void prova_file() {
     f1.addClient(1, "pippo");
     throw TestException{"test addClient fallito"};
   }
-  catch(...) {}
+  catch(FileClientException e) {}
 
   try {
     f1.removeClient(5);
     throw TestException{"test removeClient fallito"};
   }
-  catch(...) {}
+  catch(FileClientException e) {}
 
   f1.removeClient(2);
 

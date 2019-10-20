@@ -37,6 +37,90 @@ void writeMessage(QString path, Message &m) {
   file.close();
 }
 
+void testDataGetters() {
+  Message m(Message::Type::FILE, 4, Message::Status::QUERY);
+  QJsonObject obj;
+  obj["pizza"] = 4;
+  auto array = QJsonArray{1,2,3};
+
+  m.setValue("int", 5);
+  m.setValue("string", "ciao");
+  m.setValue("obj", obj);
+  m.setValue("arr", array);
+
+  //test errors
+  try {
+    m.setValue("int", 24);
+    throw TestException{"setValue fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  if(m.getInt("int") != 5) {
+    throw TestException{"getInt fallito"};
+  }
+
+  if(m.getString("string") != "ciao") {
+    throw TestException{"getString fallito"};
+  }
+
+  if(m.getObject("obj") != obj) {
+    throw TestException{"getObject fallito"};
+  }
+
+  if(m.getArray("arr") != array) {
+    throw TestException{"getArray fallito"};
+  }
+
+  try {
+    m.getInt("aaa");
+    throw TestException{"getInt fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  try {
+    m.getString("aaa");
+    throw TestException{"getString fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  try {
+    m.getObject("aaa");
+    throw TestException{"getObject fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  try {
+    m.getArray("aaa");
+    throw TestException{"getArray fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  try {
+    m.getInt("string");
+    throw TestException{"getInt fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  try {
+    m.getString("int");
+    throw TestException{"getString fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  try {
+    m.getObject("arr");
+    throw TestException{"getObject fallito"};
+  }
+  catch(MessageDataException e) {}
+
+  try {
+    m.getArray("obj");
+    throw TestException{"getArray fallito"};
+  }
+  catch(MessageDataException e) {}
+
+}
+
 Message readMessage(QString path) {
   // leggo da file
   QFile file(path);
@@ -74,6 +158,8 @@ void prova_message() {
   if(m1 != m3) {
     throw TestException{"test scrittura/lettura disco fallito"};
   }
+
+  testDataGetters();
 
   std::cout << "Test passato" << std::endl;
 }
