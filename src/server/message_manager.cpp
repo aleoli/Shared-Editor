@@ -167,7 +167,7 @@ Symbol& MessageManager::getSymbol(quint64 clientId, int fileId, const SymbolId& 
   loadFile(fileId);
 
   File& f = _openFiles[fileId];
-  return f.symbolById(symId);
+  return f.symbolById(symId).second;
 }
 
 void MessageManager::closeFile(quint64 clientId, int fileId) {
