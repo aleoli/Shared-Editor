@@ -18,7 +18,7 @@ public:
 
   File();
   explicit File(int id);
-  File(int id, std::unordered_map<int, File::ClientInfo> users, std::vector<Symbol> _symbols);
+  File(int id, std::unordered_map<int, File::ClientInfo> clients, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -34,10 +34,10 @@ public:
   friend bool operator==(const File::ClientInfo& lhs, const File::ClientInfo& rhs);
 
   int getId() const;
-  std::unordered_map<int, File::ClientInfo> getUsers() const;
+  std::unordered_map<int, File::ClientInfo> getClients() const;
   std::vector<Symbol> getSymbols() const;
   Symbol& symbolAt(int pos);
-  Symbol& symbolById(SymbolId id);
+  std::pair<int, Symbol&> symbolById(SymbolId id);
   int getPosition(SymbolId id);
   int numSymbols() const;
   std::string to_string() const;
@@ -48,9 +48,9 @@ public:
 
   //CRDT
   void localInsert(Symbol &sym, int pos);
-  void remoteInsert(const Symbol &sym);
+  int remoteInsert(const Symbol &sym); // returns the position in which i inserted
   void localDelete(int pos);
-  void remoteDelete(SymbolId id);
+  int remoteDelete(SymbolId id); // returns the position of the deleted element
 
 private:
   void checkAndAssign(const QJsonObject &json);
@@ -59,15 +59,15 @@ private:
     std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
     int level = 0);
 
-  QJsonArray usersToJsonArray() const;
-  std::string usersToString() const; //TODO vedi se rimuovere
-  static std::unordered_map<int, File::ClientInfo> jsonArrayToUsers(const QJsonArray &array);
+  QJsonArray clientsToJsonArray() const;
+  std::string clientsToString() const; //TODO vedi se rimuovere
+  static std::unordered_map<int, File::ClientInfo> jsonArrayToclients(const QJsonArray &array);
 
   QJsonArray symbolsToJsonArray() const;
   std::string symbolsToString() const; //TODO vedi se rimuovere
   static std::vector<Symbol> jsonArrayToSymbols(const QJsonArray &array);
 
   int _id;
-  std::unordered_map<int, ClientInfo> _users;
+  std::unordered_map<int, ClientInfo> _clients;
   std::vector<Symbol> _symbols;
 };
