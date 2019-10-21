@@ -4,6 +4,7 @@
 
 #include "utils.h"
 #include "session.h"
+#include "FSElement_db.h"
 
 #include "exceptions.h"
 
@@ -67,6 +68,7 @@ void User::remove() {
 User User::registra(QString nickname, QString email, QString password) {
   User u{nickname, email, password};
   u.save();   // lancia un'eccezione se non ci riesce
+  FSElement_db::mkroot(u.id);
   return u;
 }
 

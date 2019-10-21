@@ -13,6 +13,8 @@ using persistence::Persistent;
 using persistence::Lazy;
 using persistence::LazyList;
 
+class SharedLink;   // fix circular include
+
 class FSElement_db: public Persistent {
 public:
   FSElement_db(const FSElement_db &);
@@ -31,15 +33,27 @@ public:
   static const QString table_name;
 
   QString getName() const;
-  std::vector<FSElement_db*> getChildren();
 
-  static FSElement_db create(const Session &s, int parent_id, QString name, bool is_file = false);
-  FSElement_db clone(const Session &s);
+  static FSElement_db get(const Session &s, int id);
+  static FSElement_db mkroot(int user_id);
+
+  static FSElement_db root(int user_id);
+  FSElement_db mkdir(const Session &s, QString name);
+  FSElement_db mkfile(const Session &s, QString name);
+  std::vector<FSElement_db*> ls(const Session &s);
+  static FSElement_db link(const Session &s, const QString &token);
+
+  SharedLink share(const Session &s);
+
   FSElement getFSElement() const;
   File load() const;
   void store(const File &f);
 
 private:
+  static FSElement_db create(int user_id, int parent_id, QString name, bool is_file = false);
+  FSElement_db clone(const Session &s);
+  std::vector<FSElement_db*> getChildren();
+
   FSElement load_dir() const;
   void del_file();
   bool is_link() const;

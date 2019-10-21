@@ -6,6 +6,7 @@
 
 #include "utils.h"
 #include "File.h"
+#include "SharedLink.h"
 
 const QString FSElement_db::table_name = "fs_element";
 
@@ -90,13 +91,13 @@ void FSElement_db::save_record(QSqlRecord &r) {
 }
 
 void FSElement_db::remove() {
+  // TODO: controlla che non si stia eliminando la root dir
   auto children = this->_children.getValues();
   for(auto& c: children) {
     c->remove();
   }
   if(!this->is_link()) {
     // è il proprietario
-    debug("Links: "+QString::number(this->id));
     for(auto& link: this->_links.getValues()) {
       // TODO: va notificato
       debug(link->getName());
@@ -105,21 +106,22 @@ void FSElement_db::remove() {
     if(this->_type == FSElement::Type::FILE) {
       this->del_file();
     }
+    // TODO: remove shared_links
   }
   // se è un link, è sufficiente eliminare la entry
   info(QString{"Remove "}+(this->is_link() ? "Link" : "File")+" ID: "+QString::number(this->id)+(this->_type == FSElement::Type::FILE ? " path "+this->_path : ""));
   this->_remove<FSElement_db>();
 }
 
-FSElement_db FSElement_db::create(const Session &s, int parent_id, QString name, bool is_file) {
+FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool is_file) {
   FSElement_db fs_e{};
   // TODO: controlla che non ci sia già
   fs_e._path = is_file ? rndString(64) : "";
   fs_e._name = name;
   fs_e._type = is_file ? FSElement::Type::FILE : FSElement::Type::DIRECTORY;
   fs_e._parent_id = parent_id;
-  fs_e._owner_id = s.getUserId();
-  fs_e._creator_id = s.getUserId();
+  fs_e._owner_id = user_id;
+  fs_e._creator_id = user_id;
   fs_e.save();
   fs_e._children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+QString::number(fs_e.id)};
   fs_e._links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+QString::number(fs_e.id)};
@@ -137,9 +139,9 @@ FSElement_db FSElement_db::create(const Session &s, int parent_id, QString name,
     File el{fs_e.id};
     f.write(el.toQByteArray());
     f.close();
-    info("New File ID: "+QString::number(fs_e.id)+" path "+fs_e._path);
+    info("New File ID: "+QString::number(fs_e.id)+" path "+fs_e._path+" parent_id: "+QString::number(fs_e._parent_id));
   } else {
-    info("New Dir ID: "+QString::number(fs_e.id));
+    info("New Dir ID: "+QString::number(fs_e.id)+" parent_id: "+QString::number(fs_e._parent_id));
   }
   return fs_e;
 }
@@ -212,6 +214,97 @@ void FSElement_db::del_file() {
   }
   QFile file(this->getPath());
   file.remove();
+}
+
+FSElement_db FSElement_db::get(const Session &s, int id) {
+  auto fs_e = DB::get()->getOne<FSElement_db>(id);
+  if(fs_e._owner_id != id) {
+    warn("User "+QString::number(id)+" has tryed to access a file of user "+QString::number(fs_e._owner_id));
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  return fs_e;
+}
+
+FSElement_db FSElement_db::mkroot(int user_id) {
+  bool no_folder = false;
+  try {
+    FSElement_db::root(user_id);
+  } catch(...) {
+    // TODO: controlla che l'ecezione sia del tipo giusto
+    no_folder = true;
+  }
+  if(!no_folder) {
+    error("Double creation of root dir");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  return FSElement_db::create(user_id, -1, "root", false);
+}
+
+FSElement_db FSElement_db::root(int user_id) {
+  auto l = DB::get()->get<FSElement_db>("parent_id = -1 AND creator_id = "+QString::number(user_id));
+  if(l.size() != 1) {
+    // TODO: lancia eccezione
+    throw 1;
+  }
+  return l[0];
+}
+
+FSElement_db FSElement_db::mkdir(const Session &s, QString name) {
+  if(this->_type != FSElement::Type::DIRECTORY) {
+    error("Trying to create a directory in not-dir");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  if(this->_owner_id != s.getUserId()) {
+    error("Trying to modify not your directory");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  return FSElement_db::create(s.getUserId(), this->id, name, false);
+}
+
+FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
+  if(this->_type != FSElement::Type::DIRECTORY) {
+    error("Trying to create a file in not-dir");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  if(this->_owner_id != s.getUserId()) {
+    error("Trying to modify not your directory");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  return FSElement_db::create(s.getUserId(), this->id, name, true);
+}
+
+std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
+  if(s.getUserId() != this->_owner_id) {
+    warn("Trying to access not your directory");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  return this->getChildren();
+}
+
+SharedLink FSElement_db::share(const Session &s) {
+  if(this->_type != FSElement::Type::FILE) {
+    error("Trying to share a not-file element");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  if(s.getUserId() != this->_owner_id) {
+    warn("Trying to share not your file");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+  return SharedLink::create(this->id);
+}
+
+FSElement_db FSElement_db::link(const Session &s, const QString &token) {
+  auto orig = SharedLink::get(token).element();
+  return orig.clone(s);
 }
 
 QString FSElement_db::getPath() const {
