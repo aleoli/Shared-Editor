@@ -322,6 +322,16 @@ void FSElement_db::mv(const Session &s, int new_dir_id) {
 	this->mv(s, dir);
 }
 
+void FSElement_db::rename(const Session &s, QString name) {
+	if(s.getUserId() != this->_owner_id) {
+    warn("Trying to rename not your element");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+	this->_name = name;
+	this->save();
+}
+
 SharedLink FSElement_db::share(const Session &s) {
   if(this->_type != FSElement::Type::FILE) {
     error("Trying to share a not-file element");

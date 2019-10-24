@@ -99,7 +99,8 @@ void test_fs() {
 			debug("\t+ "+f->getName());
 		}
 
-		debug("\nMove f2 to d1\n");
+		debug("\nMove f2 to d1 and rename it\n");
+		f2.rename(s, "f2 renamed.se");
 		f2.mv(s, d1);
 		d2.clearCache();	// devo pulire la cache della vecchia cartella, non può farlo da solo
 

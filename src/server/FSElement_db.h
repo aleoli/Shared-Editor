@@ -46,6 +46,7 @@ public:
   SharedLink share(const Session &s);
 	void mv(const Session &s, FSElement_db &fs_e);
 	void mv(const Session &s, int new_dir_id);
+	void rename(const Session &s, QString name);
 
 	User getCreator();
 
