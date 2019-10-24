@@ -208,7 +208,7 @@ void FSElement_db::store(const File &f) {
 
 void FSElement_db::del_file() {
   if(this->_type != FSElement::Type::FILE) {
-    warn("You are tring to store to an element that is not a file");
+    warn("You are tring to delete to an element that is not a file");
     // TODO: lancia eccezione
     exit(1);
   }
@@ -218,8 +218,8 @@ void FSElement_db::del_file() {
 
 FSElement_db FSElement_db::get(const Session &s, int id) {
   auto fs_e = DB::get()->getOne<FSElement_db>(id);
-  if(fs_e._owner_id != id) {
-    warn("User "+QString::number(id)+" has tryed to access a file of user "+QString::number(fs_e._owner_id));
+  if(fs_e._owner_id != s.getUserId()) {
+    warn("User "+QString::number(s.getUserId())+" has tryed to access a file of user "+QString::number(fs_e._owner_id));
     // TODO: lancia eccezione
     exit(1);
   }
@@ -280,6 +280,11 @@ FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
 }
 
 std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
+	if(this->_type != FSElement::Type::DIRECTORY) {
+		warn("Trying to list a not-directory element");
+		// TODO: lancia eccezione
+		exit(1);
+	}
   if(s.getUserId() != this->_owner_id) {
     warn("Trying to access not your directory");
     // TODO: lancia eccezione
@@ -299,6 +304,11 @@ SharedLink FSElement_db::share(const Session &s) {
     // TODO: lancia eccezione
     exit(1);
   }
+	if(this->is_link()) {
+		warn("Trying to share a shared file");
+		// TODO: lancia eccezione
+		exit(1);
+	}
   return SharedLink::create(this->id);
 }
 
