@@ -8,6 +8,7 @@
 #include "session.h"
 #include "FSElement.h"
 #include "File.h"
+#include "user.h"
 
 using persistence::Persistent;
 using persistence::Lazy;
@@ -42,12 +43,17 @@ public:
   FSElement_db mkfile(const Session &s, QString name);
   std::vector<FSElement_db*> ls(const Session &s);
   static FSElement_db link(const Session &s, const QString &token);
-
   SharedLink share(const Session &s);
+	void mv(const Session &s, FSElement_db &fs_e);
+	void mv(const Session &s, int new_dir_id);
+
+	User getCreator();
 
   FSElement getFSElement() const;
   File load() const;
   void store(const File &f);
+
+	void clearCache();
 
 private:
   static FSElement_db create(int user_id, int parent_id, QString name, bool is_file = false);
@@ -65,8 +71,9 @@ private:
   FSElement::Type _type;
   int _parent_id;
   int _owner_id;
-  int _creator_id;
+  //int _creator_id;
 
+	Lazy<User> _creator;
   Lazy<FSElement_db> _original;
   LazyList<FSElement_db> _links;
   LazyList<FSElement_db> _children;

@@ -81,5 +81,46 @@ void test_fs() {
     s2.close();
   }
 
+	{
+		debug("Move Test");
+
+		auto root = FSElement_db::root(s.getUserId());
+		auto d1 = root.mkdir(s, "d1");
+		auto d2 = root.mkdir(s, "d2");
+		auto f1 = d1.mkfile(s, "f1.se");
+		auto f2 = d2.mkfile(s, "f2.se");
+
+		debug("\nd1 files");
+		for(auto& f: d1.ls(s)) {
+			debug("\t+ "+f->getName());
+		}
+		debug("\nd2 files");
+		for(auto& f: d2.ls(s)) {
+			debug("\t+ "+f->getName());
+		}
+
+		debug("\nMove f2 to d1\n");
+		f2.mv(s, d1);
+		d2.clearCache();	// devo pulire la cache della vecchia cartella, non può farlo da solo
+
+		debug("\nd1 files");
+		for(auto& f: d1.ls(s)) {
+			debug("\t+ "+f->getName());
+		}
+		debug("\nd2 files");
+		for(auto& f: d2.ls(s)) {
+			debug("\t+ "+f->getName());
+		}
+
+		if(d1.ls(s).size() == 2 && d2.ls(s).size() == 0) {
+			info("Move Test PASSED");
+		} else {
+			warn("Move Test FAILED");
+		}
+
+		d1.remove();
+		d2.remove();
+	}
+
   s.close();
 }

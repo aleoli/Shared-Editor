@@ -119,6 +119,15 @@ public:
         return this->ids;
     }
 
+		void clear() {
+				for(int i=0; i<this->values.size(); i++) {
+						delete this->values[i];
+				}
+				this->ids.clear();
+				this->values.clear();
+				this->has_values = false;
+		}
+
 private:
     void load_from_query() {
         QSqlTableModel model;
@@ -131,7 +140,7 @@ private:
             this->values.push_back(new T{model.record(i)});
             this->ids.push_back(model.record(i).value("id").toInt());
         }
-        this->has_query = false;
+        //this->has_query = false;
         this->has_values = true;
     }
 

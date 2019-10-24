@@ -16,7 +16,7 @@ FSElement_db::FSElement_db(): Persistent() {
   this->_type = FSElement::Type::FILE;
   this->_parent_id = -1;
   this->_owner_id = -1;
-  this->_creator_id = -1;
+  this->_creator = Lazy<User>{-1};
   this->_original = Lazy<FSElement_db>{-1};
 }
 
@@ -26,7 +26,7 @@ FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
   this->_type = e._type;
   this->_parent_id = e._parent_id;
   this->_owner_id = e._owner_id;
-  this->_creator_id = e._creator_id;
+  this->_creator = e._creator;
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
@@ -38,7 +38,7 @@ FSElement_db::FSElement_db(FSElement_db &&e): Persistent(e) {
   this->_type = e._type;
   this->_parent_id = e._parent_id;
   this->_owner_id = e._owner_id;
-  this->_creator_id = e._creator_id;
+  this->_creator = e._creator;
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
@@ -50,7 +50,7 @@ FSElement_db::FSElement_db(QSqlRecord r): Persistent(r) {
   this->_type = static_cast<FSElement::Type>(r.value("type").toInt());
   this->_parent_id = r.value("parent_id").toInt();
   this->_owner_id = r.value("owner_id").toInt();
-  this->_creator_id = r.value("creator_id").toInt();
+  this->_creator = Lazy<User>{r.value("creator_id").toInt()};
   this->_children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+r.value("id").toString()};
   this->_original = Lazy<FSElement_db>{r.value("linked_from").toInt()};
   this->_links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+r.value("id").toString()};
@@ -68,7 +68,7 @@ FSElement_db& FSElement_db::operator=(const FSElement_db& e) {
   this->_type = e._type;
   this->_parent_id = e._parent_id;
   this->_owner_id = e._owner_id;
-  this->_creator_id = e._creator_id;
+  this->_creator = e._creator;
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
@@ -86,7 +86,7 @@ void FSElement_db::save_record(QSqlRecord &r) {
   r.setValue("type", static_cast<int>(this->_type));
   r.setValue("parent_id", this->_parent_id);
   r.setValue("owner_id", this->_owner_id);
-  r.setValue("creator_id", this->_creator_id);
+  r.setValue("creator_id", this->_creator.getId());
   r.setValue("linked_from", this->_original.getId());
 }
 
@@ -121,7 +121,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
   fs_e._type = is_file ? FSElement::Type::FILE : FSElement::Type::DIRECTORY;
   fs_e._parent_id = parent_id;
   fs_e._owner_id = user_id;
-  fs_e._creator_id = user_id;
+  fs_e._creator = Lazy<User>{user_id};
   fs_e.save();
   fs_e._children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+QString::number(fs_e.id)};
   fs_e._links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+QString::number(fs_e.id)};
@@ -147,7 +147,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
 }
 
 FSElement_db FSElement_db::clone(const Session &s) {
-  if(this->_creator_id == s.getUserId()) {
+  if(this->_creator.getId() == s.getUserId()) {
     error("Link creation of own element");
     // TODO: lancia eccezione
     exit(1);
@@ -262,6 +262,7 @@ FSElement_db FSElement_db::mkdir(const Session &s, QString name) {
     // TODO: lancia eccezione
     exit(1);
   }
+	this->_children.clear();
   return FSElement_db::create(s.getUserId(), this->id, name, false);
 }
 
@@ -276,6 +277,7 @@ FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
     // TODO: lancia eccezione
     exit(1);
   }
+	this->_children.clear();
   return FSElement_db::create(s.getUserId(), this->id, name, true);
 }
 
@@ -291,6 +293,33 @@ std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
     exit(1);
   }
   return this->getChildren();
+}
+
+void FSElement_db::mv(const Session &s, FSElement_db &fs_e) {
+	if(s.getUserId() != this->_owner_id) {
+    warn("Trying to move not your element");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+	if(s.getUserId() != fs_e._owner_id) {
+    warn("Trying to move to not your directory");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+	if(fs_e._type != FSElement::Type::DIRECTORY) {
+    error("Trying to move to not-directory element");
+    // TODO: lancia eccezione
+    exit(1);
+  }
+	debug("Moving file "+QString::number(this->id)+" from dir "+QString::number(this->_parent_id)+" to dir "+QString::number(fs_e.id));
+	this->_parent_id = fs_e.id;
+	this->save();
+	fs_e._children.clear();
+}
+
+void FSElement_db::mv(const Session &s, int new_dir_id) {
+	auto dir = FSElement_db::get(s, new_dir_id);
+	this->mv(s, dir);
 }
 
 SharedLink FSElement_db::share(const Session &s) {
@@ -317,6 +346,13 @@ FSElement_db FSElement_db::link(const Session &s, const QString &token) {
   return orig.clone(s);
 }
 
+void FSElement_db::clearCache() {
+	this->_creator.clear();
+  this->_original.clear();
+  this->_links.clear();
+  this->_children.clear();
+}
+
 QString FSElement_db::getPath() const {
   return QDir::homePath()+"/.shared_editor/data/"+this->_path;
 }
@@ -330,5 +366,9 @@ std::vector<FSElement_db*> FSElement_db::getChildren() {
 }
 
 bool FSElement_db::is_link() const {
-  return this->_owner_id != this->_creator_id;
+  return this->_owner_id != this->_creator.getId();
+}
+
+User FSElement_db::getCreator() {
+	return this->_creator.getValue();
 }
