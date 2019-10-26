@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(..)
 include_directories(test) # da togliere
+include_directories(stub) # da togliere
 
 file(GLOB src_files
     "*.h"
@@ -15,6 +16,9 @@ file(GLOB src_files
     "../*.cpp"
     "test/*.h"
     "test/*.cpp"
+    "stub/*.h"
+    "stub/*.cpp"
+    "stub/*.ui"
 )
 
 add_executable(client ${src_files} test/resources.qrc)

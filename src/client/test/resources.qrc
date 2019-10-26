@@ -13,4 +13,8 @@
   <file alias="malnati.png">imgs/malnati.png</file>
 </qresource>
 
+<qresource prefix="/imgs">
+    <file alias="loading">imgs/loading.gif</file>
+</qresource>
+
 </RCC>

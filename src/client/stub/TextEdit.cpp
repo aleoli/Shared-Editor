@@ -1,6 +1,8 @@
 //
 // Created by Gianluca on 07/08/2019.
 //
+#include "TextEdit.h"
+
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
@@ -16,18 +18,16 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 
-#include "TextEdit.h"
 #include "Symbol.h"
-
-//TODO: leggi in TextEdit.h
+#include "utils.h"
 
 TextEdit::TextEdit(QWidget *parent)
         : QMainWindow(parent)
 {
   // QTextEdit sarà il nostro widget principale, contiene un box in cui inserire testo.
   // Inoltre avremo un menu, in cui ci saranno tutte le varie opzioni, e una toolbar che ne avrà un set
-  textEdit = new QTextEdit(this);
-  setCentralWidget(textEdit);
+  _textEdit = new QTextEdit(this);
+  setCentralWidget(_textEdit);
 
   // inizializzo tutte le varie azioni. Un'azione può essere "Nuovo File", "Copia", "Incolla", "Grassetto", ...
   // per ogni azione va associato uno slot (funzione che esegue qualcosa quando si vuole eseguire l'azione
@@ -37,14 +37,19 @@ TextEdit::TextEdit(QWidget *parent)
   setupTextActions();
 
   // signal/slot aggiunta / rimozione / modifica caratteri
-  QObject::connect(textEdit->document(), &QTextDocument::contentsChange, this, &TextEdit::change);
-  QObject::connect(textEdit, &QTextEdit::cursorPositionChanged, this, &TextEdit::cursorChanged);
+  QObject::connect(_textEdit->document(), &QTextDocument::contentsChange, this, &TextEdit::change);
+  QObject::connect(_textEdit, &QTextEdit::cursorPositionChanged, this, &TextEdit::cursorChanged);
 
-  flagBold = flagCursor = flagChange = false;
+  _flagBold = _flagCursor = _flagChange = false;
 
-  // dock right
+  // _dock right
   initDock();
-  addFakeUsers();
+  //addFakeUsers();
+}
+
+void TextEdit::setFile(const File &f, int charId) {
+  _file = f;
+  _charId = charId;
 }
 
 void TextEdit::initDock() {
@@ -52,23 +57,17 @@ void TextEdit::initDock() {
   dockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
   addDockWidget(Qt::RightDockWidgetArea, dockWidget);
 
-  dock = new QListWidget(this);
-  dockWidget->setWidget(dock);
+  _dock = new QListWidget(this);
+  dockWidget->setWidget(_dock);
 }
 
 void TextEdit::addFakeUsers() {
-  /*
-  QLabel *bob = new QLabel("bob", this);
-  QLabel *ale = new QLabel("ale", this);
+  auto bob = new QListWidgetItem("bob", _dock);
+  auto ale = new QListWidgetItem("ale", _dock);
 
-  auto layout = dock->layout();
-  layout->addWidget(bob, 0, Qt::AlignTop);
-  layout->addWidget(ale, 0, Qt::AlignTop);
-  */
-  auto bob = new QListWidgetItem("bob", dock);
-  auto ale = new QListWidgetItem("ale", dock);
   bob->setFlags(Qt::NoItemFlags);
   bob->setForeground(Qt::red);
+
   ale->setFlags(Qt::NoItemFlags);
   ale->setForeground(Qt::blue);
 }
@@ -82,19 +81,12 @@ void TextEdit::setupFileActions() {
   // aggiunge menu File
   QMenu *menu = menuBar()->addMenu(tr("&File"));
 
-  // AZIONE NUOVO FILE
-  // aggiungo una voce "Nuovo file", specificando l'icona per la toolbar, e aggiungo la voce sia nel menu che nella toolbar
-  // inoltre, alla voce è collegato uno slot TextEdit::fileNew, che esegue azioni quando viene cliccata la voce
-  const QIcon newIcon(":/buttons/new.png");
-  QAction *a = menu->addAction(newIcon,  tr("&New"), this, &TextEdit::fileNew);
-  tb->addAction(a);
-
   const QIcon addLetterIcon(":/buttons/letter.png");
   QAction *add = menu->addAction(addLetterIcon,  tr("&Add"), this, &TextEdit::addLetter);
   tb->addAction(add);
 
   const QIcon getInfoIcon(":/buttons/info.png");
-  QAction *info = menu->addAction(getInfoIcon,  tr("&Add"), this, &TextEdit::getCharInfo);
+  QAction *info = menu->addAction(getInfoIcon,  tr("&Add"), this, &TextEdit::printTextFile);
   tb->addAction(info);
 }
 
@@ -109,7 +101,7 @@ void TextEdit::setupEditActions() {
   const QIcon copyIcon(":/buttons/copy.png");
 
   // in questo caso, QTextEdit ha già uno slot che fa la copia del testo in automatico, non è da implementare
-  QAction *actionCopy = menu->addAction(copyIcon, tr("&Copy"), textEdit, &QTextEdit::copy);
+  QAction *actionCopy = menu->addAction(copyIcon, tr("&Copy"), _textEdit, &QTextEdit::copy);
   actionCopy->setPriority(QAction::LowPriority);
 
   //imposto la shortcut da usare (che sarebbe CTRL+C)
@@ -120,7 +112,7 @@ void TextEdit::setupEditActions() {
   const QIcon pasteIcon(":/buttons/paste.png");
 
   // in questo caso, QTextEdit ha già uno slot che fa l'incolla del testo in automatico, non è da implementare
-  QAction *actionPaste = menu->addAction(pasteIcon, tr("&Paste"), textEdit, &QTextEdit::paste);
+  QAction *actionPaste = menu->addAction(pasteIcon, tr("&Paste"), _textEdit, &QTextEdit::paste);
   actionPaste->setPriority(QAction::LowPriority);
 
   //imposto la shortcut da usare (che sarebbe CTRL+V)
@@ -138,41 +130,37 @@ void TextEdit::setupTextActions() {
   // AZIONE GRASSETTO
   // aggiungo un'azione per il grassetto, e ci associo uno slot (implementato da me)
   const QIcon boldIcon(":/buttons/bold.png");
-  actionTextBold = menu->addAction(boldIcon, tr("&Bold"), this, &TextEdit::textBold);
+  _actionTextBold = menu->addAction(boldIcon, tr("&Bold"), this, &TextEdit::textBold);
   // shortcut: CTRL+B
-  actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
-  actionTextBold->setPriority(QAction::LowPriority);
+  _actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
+  _actionTextBold->setPriority(QAction::LowPriority);
 
   //questo è solo per dare il grassetto alla voce nel menu file.. non mette in grassetto il testo ovviamente
   QFont bold;
   bold.setBold(true);
-  actionTextBold->setFont(bold);
+  _actionTextBold->setFont(bold);
 
-  tb->addAction(actionTextBold);
-  actionTextBold->setCheckable(true);
-}
-
-void TextEdit::fileNew() {
-  std::cout << "ciaoo" << std::endl;
+  tb->addAction(_actionTextBold);
+  _actionTextBold->setCheckable(true);
 }
 
 void TextEdit::textBold() {
-  if(flagBold) {
-    flagBold = false;
+  if(_flagBold) {
+    _flagBold = false;
     return;
   }
 
-  std::cout << "Premuto tasto grassetto" << std::endl;
+  debug("Premuto tasto grassetto");
+
   // setto flag
-  flagChange = true;
+  _flagChange = true;
 
   // setto il formato, se l'icona bold è checkata allora devo mettere in grassetto, altrimenti normale
   QTextCharFormat fmt;
-  fmt.setFontWeight(actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
+  fmt.setFontWeight(_actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
 
-  // dove metto in grassetto? se sto selezionando un testo, allora in tutto quel testo,
-  // altrimenti setto in grassetto la parola in cui si trova il mio cursore in questo momento
-  QTextCursor cursor = textEdit->textCursor();
+  //TODO rivedere logica
+  QTextCursor cursor = _textEdit->textCursor();
 
   if (!cursor.hasSelection()) {
       cursor.select(QTextCursor::WordUnderCursor);
@@ -180,7 +168,7 @@ void TextEdit::textBold() {
   }
 
   //setto in grassetto
-  textEdit->mergeCurrentCharFormat(fmt);
+  _textEdit->mergeCurrentCharFormat(fmt);
 }
 
 void TextEdit::addLetter() {
@@ -193,73 +181,66 @@ void TextEdit::addLetter() {
   sym.setColor("red");
   sym.setBackgroundColor("#6600ff00");
 
-  textEdit->textCursor().insertText(sym.getChar(), sym.getFormat());
+  _textEdit->textCursor().insertText(sym.getChar(), sym.getFormat());
 }
 
-void TextEdit::getCharInfo() {
-  /* per spostare il cursore alla posizione desiderata (esempio N):
-  QTextCursor cursor(textEdit->document()); -> lo crea all'inizio del file
-  cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, N); */
-
-  //prendo il cursore attuale
-  QTextCursor cursor(textEdit->textCursor());
-
-  auto charFormat = cursor.charFormat();
-  auto font = charFormat.font();
-
-  std::cout << "INFOS" << std::endl;
-  std::cout << "Bold: " << font.bold() << std::endl;
-  std::cout << "Size: " << font.pointSize() << std::endl;
-  std::cout << "Underline: " << font.underline() << std::endl;
-  std::cout << "Italic: " << font.italic() << std::endl;
-  std::cout << "Family: " << font.family().toStdString() << std::endl;
-  std::cout << "Color: " << charFormat.foreground().color().name(QColor::HexArgb).toStdString() << std::endl;
-  std::cout << "Background Color: "
-    << charFormat.background().color().name(QColor::HexArgb).toStdString() << std::endl;
+void TextEdit::printTextFile() {
+  info(QString::fromStdString(_file.text()));
+  debug(QString::fromStdString(_file.to_string()));
 }
 
 void TextEdit::change(int pos, int removed, int added) {
-  if(flagChange) {
-    flagChange = false;
+  if(_flagChange) {
+    _flagChange = false;
     return;
   }
 
-  std::cout << "contentsChange: rimossi " << removed << " aggiunti " << added << std::endl;
+  //TODO se removed == added -> UPDATE
+  //TODO si potrebbe fare anche una cosa più elaborata,
+  //    tipo 2 rem e 3 added significa 2 update e 1 added, ma non so se vale la pena
+
+  debug("contentsChange: rimossi " + QString::number(removed) + " aggiunti " + QString::number(added));
 
   // verifico quali caratteri sono stati rimossi (accedendo al vettore di simboli)
   for(int i=0; i<removed; i++) {
 
     // individuo simbolo e lo rimuovo dal vettore
-    auto sym = symbols.at(pos);
+    _file.localDelete(pos);
 
-    std::cout << "\tRimosso: " << sym.toLatin1() << std::endl;
-
-    symbols.erase(symbols.begin()+pos);
+    //TODO mandare messaggio al server
   }
 
   // verifico quali caratteri sono stati aggiunti (direttamente dall'editor)
+  QTextCursor cursor(_textEdit->document());
+  cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
+
   for(int i=0; i<added; i++) {
 
-    auto sym = textEdit->document()->characterAt(pos + i);
+    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto fmt = cursor.charFormat();
 
-    std::cout << "\tAggiunto: " << sym.toLatin1() << std::endl;
+    //creo symbol e lo aggiungo al file
+    //TODO userId / clientId ???
+    Symbol s{{0, _charId++}, chr, fmt};
+    _file.localInsert(s, pos+i);
 
-    //inserisco nel vettore di simboli
-    symbols.insert(symbols.begin()+pos+i, sym);
+    //TODO mandare messaggio al server
+
+    cursor.movePosition(QTextCursor::NextCharacter);
   }
 
-  flagCursor = true;
+  _flagCursor = true;
 }
 
 void TextEdit::cursorChanged() {
-  if(flagCursor) {
-    flagCursor = false;
+  if(_flagCursor) {
+    _flagCursor = false;
     return;
   }
 
-  auto font = textEdit->currentFont();
-  if(font.bold() != actionTextBold->isChecked()) {
-    flagBold = true;
-    actionTextBold->activate(QAction::Trigger);
+  auto font = _textEdit->currentFont();
+  if(font.bold() != _actionTextBold->isChecked()) {
+    _flagBold = true;
+    _actionTextBold->activate(QAction::Trigger);
   }
 }

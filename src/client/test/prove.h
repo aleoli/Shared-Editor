@@ -10,6 +10,7 @@
 #include "prova_image.h"
 #include "prova_fselement.h"
 #include "prova_server.h"
+#include "prova_misc.h"
 
 #define PROVA_MESSAGE 0
 #define PROVA_FILE 0
@@ -19,6 +20,7 @@
 #define MAINTHREAD 0
 #define PROVA_IMAGE 0
 #define PROVA_FSELEMENT 0
+#define PROVA_MISC 0
 
 void prova(QApplication &app) {
   #if PROVA_MESSAGE
@@ -53,5 +55,9 @@ void prova(QApplication &app) {
 
   #if PROVA_FSELEMENT
     prova_fselement();
+  #endif
+
+  #if PROVA_MISC
+    prova_misc();
   #endif
 }

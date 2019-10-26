@@ -5,10 +5,15 @@
 #include "sys.h"
 #include "utils.h"
 
-#define TEST 1
+#define TEST 0
+#define STUB 1
 
 #if TEST
 #include "prove.h"
+#endif
+
+#if STUB
+#include "guiwrapper.h"
 #endif
 
 int main(int argc, char **argv) {
@@ -16,11 +21,18 @@ int main(int argc, char **argv) {
   SysConf conf = initiate_system(app);
   info("System successfully started");
 
-  #if TEST
+#if TEST
   prova(app);
-  #else
+#else
   //vero main
-  #endif
+#endif
+
+#if STUB
+  GuiWrapper w;
+  w.run();
+
+  return app.exec();
+#endif
 
   return 0;
 }
