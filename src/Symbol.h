@@ -83,10 +83,7 @@ public:
 
 private:
   void checkAndAssign(const QJsonObject &json, bool readPos = true);
-
-  QJsonArray posToJsonArray() const;
   std::string posToString() const; //TODO vedi se rimuovere
-  static std::vector<Identifier> jsonArrayToPos(const QJsonArray &array);
 
   SymbolId _id;
   QChar _char;
