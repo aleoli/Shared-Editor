@@ -384,10 +384,13 @@ int File::remoteDelete(SymbolId id) {
 }
 
 void File::remoteUpdate(const Symbol &sym) {
-  auto &symbol = symbolById(sym.getSymbolId()).second;
+  try {
+    auto &symbol = symbolById(sym.getSymbolId()).second;
 
-  symbol.setChar(sym.getChar());
-  symbol.setFormat(sym.getFormat());
+    symbol.setChar(sym.getChar());
+    symbol.setFormat(sym.getFormat());
+  }
+  catch(FileSymbolsException e) {} // il simbolo non esiste più, non faccio niente
 }
 
 bool operator==(const File& lhs, const File& rhs) {
