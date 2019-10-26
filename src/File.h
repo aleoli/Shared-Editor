@@ -8,6 +8,7 @@
 #include <QJsonArray>
 #include <QString>
 #include <unordered_map>
+#include "utils.h"
 
 class File {
 public:
@@ -63,9 +64,7 @@ private:
   std::string clientsToString() const; //TODO vedi se rimuovere
   static std::unordered_map<int, File::ClientInfo> jsonArrayToclients(const QJsonArray &array);
 
-  QJsonArray symbolsToJsonArray() const;
   std::string symbolsToString() const; //TODO vedi se rimuovere
-  static std::vector<Symbol> jsonArrayToSymbols(const QJsonArray &array);
 
   int _id;
   std::unordered_map<int, ClientInfo> _clients;
