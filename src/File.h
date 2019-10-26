@@ -52,6 +52,7 @@ public:
   int remoteInsert(const Symbol &sym); // returns the position in which i inserted
   void localDelete(int pos);
   int remoteDelete(SymbolId id); // returns the position of the deleted element
+  void remoteUpdate(const Symbol &sym);
 
 private:
   void checkAndAssign(const QJsonObject &json);

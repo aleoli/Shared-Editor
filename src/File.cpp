@@ -383,6 +383,13 @@ int File::remoteDelete(SymbolId id) {
   return result - _symbols.begin();
 }
 
+void File::remoteUpdate(const Symbol &sym) {
+  auto &symbol = symbolById(sym.getSymbolId()).second;
+
+  symbol.setChar(sym.getChar());
+  symbol.setFormat(sym.getFormat());
+}
+
 bool operator==(const File& lhs, const File& rhs) {
   return lhs._id == rhs._id && lhs._clients == rhs._clients && lhs._symbols == rhs._symbols;
 }
