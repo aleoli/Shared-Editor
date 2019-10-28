@@ -14,36 +14,36 @@ class FileSelector;
 
 class FileSelector : public QDialog
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit FileSelector(QWidget *parent = nullptr);
-    ~FileSelector();
+  explicit FileSelector(QWidget *parent = nullptr);
+  ~FileSelector();
 
-    void unblock();
-    void clear();
+  void unblock();
+  void clear();
 
 public slots:
-    void openFile();
-    void newFile();
+  void getFile();
+  void newFile();
 
 signals:
-    void openFileRequest(int);
-    void newFileRequest();
+  void newFileRequest();
+  void getFileRequest(int);
 
 private:
-    void initLoading();
-    void disable();
-    void enable();
-    void startLoading();
-    void stopLoading();
+  void initLoading();
+  void disable();
+  void enable();
+  void startLoading();
+  void stopLoading();
 
-    QLineEdit *_id;
-    QPushButton *_btnOpen, *_btnNew;
-    Ui::FileSelector *ui;
+  QLineEdit *_id;
+  QPushButton *_btnOpen, *_btnNew;
+  Ui::FileSelector *ui;
 
-    QLabel *_loading;
-    std::shared_ptr<QMovie> _movie;
+  QLabel *_loading;
+  std::shared_ptr<QMovie> _movie;
 };
 
 #endif // FILESELECTOR_H

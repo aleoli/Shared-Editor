@@ -50,6 +50,15 @@ TextEdit::TextEdit(QWidget *parent)
 void TextEdit::setFile(const File &f, int charId) {
   _file = f;
   _charId = charId;
+
+  //TODO inizializza editor visivo con i simboli del file
+}
+
+void TextEdit::closeEvent(QCloseEvent *event) {
+  debug("Chiusura editor");
+
+  emit closeFileRequest();
+  event->accept();
 }
 
 void TextEdit::initDock() {

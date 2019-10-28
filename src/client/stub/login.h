@@ -14,33 +14,35 @@ class Login;
 
 class Login : public QDialog
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit Login(QWidget *parent = nullptr);
-    ~Login();
+  explicit Login(QWidget *parent = nullptr);
+  ~Login();
 
-    void unblock();
-    void clear();
+  void unblock();
+  void clear();
 
 signals:
-    void loginRequest(QString, QString);
+  void loginRequest(QString, QString);
+  void newUserRequest(QString, QString, QString);
 
 public slots:
-    void login();
+  void login();
+  void newUser();
 
 private:
-    void initLoading();
-    void disable();
-    void enable();
-    void startLoading();
-    void stopLoading();
+  void initLoading();
+  void disable();
+  void enable();
+  void startLoading();
+  void stopLoading();
 
-    QLineEdit *_psw, *_username;
-    QPushButton *_btn;
-    QLabel *_loading;
-    std::shared_ptr<QMovie> _movie;
-    Ui::Login *ui;
+  QLineEdit *_psw, *_username;
+  QPushButton *_btnLogin, *_btnNew;
+  QLabel *_loading;
+  std::shared_ptr<QMovie> _movie;
+  Ui::Login *ui;
 };
 
 #endif // LOGIN_H

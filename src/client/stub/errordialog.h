@@ -9,20 +9,20 @@ class ErrorDialog;
 
 class ErrorDialog : public QDialog
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit ErrorDialog(QWidget *parent = nullptr);
-    ~ErrorDialog();
+  explicit ErrorDialog(QWidget *parent = nullptr);
+  ~ErrorDialog();
 
-    void setErrorMsg(QString msg);
-    static void showDialog(QWidget *parent, QString msg);
+  void setErrorMsg(QString msg);
+  static void showDialog(QWidget *parent, QString msg);
 
 signals:
-    void setText(QString);
+  void setText(QString);
 
 private:
-    Ui::ErrorDialog *ui;
+  Ui::ErrorDialog *ui;
 };
 
 #endif // ERRORDIALOG_H

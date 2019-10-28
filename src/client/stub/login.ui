@@ -78,11 +78,22 @@
     </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="loginButton">
-     <property name="text">
-      <string>Login</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="newButton">
+       <property name="text">
+        <string>New User</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="loginButton">
+       <property name="text">
+        <string>Login</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -95,8 +106,8 @@
    <slot>login()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>282</y>
+     <x>380</x>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel">
      <x>180</x>
@@ -104,10 +115,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>newButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Login</receiver>
+   <slot>newUser()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>59</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>login()</slot>
-  <slot>usernameChanged(QString)</slot>
-  <slot>passwordChanged(QString)</slot>
+  <slot>newUser()</slot>
  </slots>
 </ui>

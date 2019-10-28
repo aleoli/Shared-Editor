@@ -89,7 +89,7 @@
    <sender>openButton</sender>
    <signal>clicked()</signal>
    <receiver>FileSelector</receiver>
-   <slot>openFile()</slot>
+   <slot>getFile()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>348</x>
@@ -119,8 +119,7 @@
   </connection>
  </connections>
  <slots>
-  <slot>idChanged(QString)</slot>
-  <slot>openFile()</slot>
+  <slot>getFile()</slot>
   <slot>newFile()</slot>
  </slots>
 </ui>
