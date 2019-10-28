@@ -51,7 +51,7 @@ void File::checkAndAssign(const QJsonObject &json) {
 
   _id = id;
   _clients = jsonArrayToclients(clients);
-  _symbols = jsonArrayToSymbols(symbols);
+  _symbols = utils::jsonArrayToVector<Symbol>(symbols);
 }
 
 File File::fromJsonObject(const QJsonObject &json) {
@@ -87,7 +87,7 @@ QJsonObject File::toJsonObject() const {
 
   json["id"] = QJsonValue(_id);
   json["clients"] = QJsonValue(clientsToJsonArray());
-  json["symbols"] = QJsonValue(symbolsToJsonArray());
+  json["symbols"] = QJsonValue(utils::vectorToJsonArray(_symbols));
 
   return json;
 }
@@ -162,16 +162,6 @@ std::unordered_map<int, File::ClientInfo> File::jsonArrayToclients(const QJsonAr
   return clients;
 }
 
-QJsonArray File::symbolsToJsonArray() const {
-  QJsonArray array;
-
-  for(auto& el : _symbols) {
-    array.append(el.toJsonObject());
-  }
-
-  return array;
-}
-
 std::string File::symbolsToString() const {
   std::stringstream ss;
 
@@ -185,22 +175,6 @@ std::string File::symbolsToString() const {
   }
 
   return ss.str();
-}
-
-std::vector<Symbol> File::jsonArrayToSymbols(const QJsonArray &array) {
-  std::vector<Symbol> symbols;
-
-  for(auto&& el : array) {
-    if(!el.isObject()) {
-      throw FileFromJsonException{"One or more fields in symbols array are not valid"};
-    }
-
-    auto val = el.toObject();
-
-    symbols.emplace_back(val);
-  }
-
-  return symbols;
 }
 
 int File::getId() const {
@@ -407,6 +381,16 @@ int File::remoteDelete(SymbolId id) {
 
   _symbols.erase(result);
   return result - _symbols.begin();
+}
+
+void File::remoteUpdate(const Symbol &sym) {
+  try {
+    auto &symbol = symbolById(sym.getSymbolId()).second;
+
+    symbol.setChar(sym.getChar());
+    symbol.setFormat(sym.getFormat());
+  }
+  catch(FileSymbolsException e) {} // il simbolo non esiste più, non faccio niente
 }
 
 bool operator==(const File& lhs, const File& rhs) {

@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "exceptions.h"
+#include "utils.h"
 
 using namespace se_exceptions;
 
@@ -74,7 +75,7 @@ void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
       throw SymbolFromJsonException{"One or more fields are not valid"};
     }
 
-    _pos = jsonArrayToPos(posValue.toArray());
+    _pos = utils::jsonArrayToVector<Identifier>(posValue.toArray());
   }
 
   _id = SymbolId{idJson};
@@ -98,7 +99,7 @@ QJsonObject Symbol::toJsonObject(bool writePos) const {
   json["fmt"] = QJsonValue(serializeFormat(_fmt));
 
   if(writePos)
-    json["pos"] = QJsonValue(posToJsonArray());
+    json["pos"] = QJsonValue(utils::vectorToJsonArray(_pos));
 
   return json;
 }
@@ -156,16 +157,6 @@ QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
   return fmt;
 }
 
-QJsonArray Symbol::posToJsonArray() const {
-  QJsonArray array;
-
-  for(auto& el : _pos) {
-    array.append(el.toJsonObject());
-  }
-
-  return array;
-}
-
 std::string Symbol::posToString() const {
   std::stringstream ss;
 
@@ -174,22 +165,6 @@ std::string Symbol::posToString() const {
   }
 
   return ss.str();
-}
-
-std::vector<Symbol::Identifier> Symbol::jsonArrayToPos(const QJsonArray &array) {
-  std::vector<Symbol::Identifier> pos;
-
-  for(auto&& el : array) {
-    if(!el.isObject()) {
-      throw SymbolFromJsonException{"One or more fields in symbols array are not valid"};
-    }
-
-    auto val = el.toObject();
-
-    pos.emplace_back(val);
-  }
-
-  return pos;
 }
 
 void Symbol::setSymbolId(SymbolId id) {
