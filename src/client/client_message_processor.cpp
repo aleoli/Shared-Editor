@@ -317,7 +317,7 @@ void ClientMessageProcessor::remoteInsert() {
 
   auto symbols = _m.getArray("symbols");
 
-  emit _manager->remoteInsertQuery(jsonArrayToVector<Symbol>(symbols));
+  emit _manager->remoteInsertQuery(utils::jsonArrayToVector<Symbol>(symbols));
 }
 
 void ClientMessageProcessor::remoteDelete() {
@@ -325,7 +325,7 @@ void ClientMessageProcessor::remoteDelete() {
 
   auto ids = _m.getArray("ids");
 
-  emit _manager->remoteDeleteQuery(jsonArrayToVector<SymbolId>(ids));
+  emit _manager->remoteDeleteQuery(utils::jsonArrayToVector<SymbolId>(ids));
 }
 
 void ClientMessageProcessor::remoteUpdate() {
@@ -333,7 +333,7 @@ void ClientMessageProcessor::remoteUpdate() {
 
   auto symbols = _m.getArray("symbols");
 
-  emit _manager->remoteUpdateQuery(jsonArrayToVector<Symbol>(symbols));
+  emit _manager->remoteUpdateQuery(utils::jsonArrayToVector<Symbol>(symbols));
 }
 
 void ClientMessageProcessor::userConnected() {
@@ -391,7 +391,7 @@ void ClientMessageProcessor::getDir() {
 
   auto elements = _m.getArray("elements");
 
-  emit _manager->getDirResponse(jsonArrayToVector<FSElement>(elements));
+  emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements));
 }
 
 void ClientMessageProcessor::moveFile() {
