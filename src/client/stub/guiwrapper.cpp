@@ -1,6 +1,5 @@
 #include "guiwrapper.h"
 
-#include <iostream>
 #include <QTimer>
 #include "errordialog.h"
 #include "exceptions.h"
@@ -26,8 +25,6 @@ GuiWrapper::GuiWrapper(QWidget *parent)
   _window = OpenWindow::NONE;
   _waiting = false;
 
-  debug(QString::number(USERLOGIN));
-
   connectWidgets();
   initClientToServer();
   initServerToClient();
@@ -39,12 +36,13 @@ GuiWrapper::~GuiWrapper()
 
 void GuiWrapper::run() {
   _window = OpenWindow::LOGIN;
-  _login->show();
+  //_login->show();
   //_fileSelector->show();
-  //_textEdit->show();
+  _textEdit->show();
 
   //TODO poi rimuovi o commenta
-  testWindows();
+  //testWindows();
+  testEditor();
 }
 
 void GuiWrapper::testWindows() {
@@ -54,6 +52,30 @@ void GuiWrapper::testWindows() {
 
   QTimer::singleShot(15000, this, [this]() {loginResponseReceived("questoeuntokenautentico", 33, nullptr, nullptr);});
   QTimer::singleShot(30000, this, [this]() {newFileResponseReceived(0);});
+}
+
+void GuiWrapper::testEditor() {
+  info("TEST EDITOR");
+
+  //TEST user connessi/disconnessi
+  //QTimer::singleShot(3000, this, [this]() {_textEdit->setUser(22, "kaka");});
+  //QTimer::singleShot(6000, this, [this]() {emit userConnectedQuery(0, 33, "thiago silva");});
+  //QTimer::singleShot(9000, this, [this]() {emit userConnectedQuery(0, 44, "oddo");});
+  //QTimer::singleShot(12000, this, [this]() {emit userDisconnectedQuery(0, 33);});
+
+  //TEST moveCursor
+  //QTimer::singleShot(3000, this, [this]() {emit userConnectedQuery(0, 33, "thiago silva");});
+  //QTimer::singleShot(6000, this, [this]() {emit remoteMoveQuery(0, 33, {1,343}, 5);});
+
+  //TEST setFile e refresh
+  QTimer::singleShot(3000, this, [this]() {
+    File f;
+    Symbol s1 {{1,2}, 'c'}, s2({1,3}, 'i'), s3({1,4}, 'a'), s4({1,5}, 'o');
+    f.localInsert(s1, 0);
+    f.localInsert(s2, 1);
+    f.localInsert(s3, 2);
+    f.localInsert(s4, 3);
+    _textEdit->setFile(f);});
 }
 
 void GuiWrapper::connectWidgets() {
@@ -242,7 +264,7 @@ void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickna
   debug("User id: " + QString::number(userId));
 
   _account.token = token;
-  _textEdit->setUserId(userId);
+  _textEdit->setUser(userId, _account.username);
   //INFO nella versione definitiva settare nickname e icona
 
   _login->unblock();
@@ -265,7 +287,7 @@ void GuiWrapper::newUserResponseReceived(QString token, int userId) {
   debug("User id: " + QString::number(userId));
 
   _account.token = token;
-  _textEdit->setUserId(userId);
+  _textEdit->setUser(userId, _account.username);
 
   _login->unblock();
   _login->clear();

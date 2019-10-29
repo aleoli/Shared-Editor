@@ -6,17 +6,39 @@
 #include <QChar>
 #include <QListWidget>
 #include <QCloseEvent>
+#include <QListWidgetItem>
+#include <QString>
+#include <unordered_map>
 
 #include "File.h"
+#include "Cursor.h"
+#include "ColorGenerator.h"
 
 class TextEdit : public QMainWindow {
     Q_OBJECT
+
+    typedef struct {
+      int userId;
+      QListWidgetItem *item;
+      QString username;
+      Cursor *cursor;
+      QColor color;
+    } remoteUser;
+
+    typedef struct {
+      int userId;
+      QListWidgetItem *item = nullptr;
+      QString username;
+      int charId;
+      QColor color;
+    } localUser;
+
 public:
   explicit TextEdit(QWidget *parent = nullptr);
   void closeEvent (QCloseEvent *event) override;
 
   void setFile(const File &f, int charId = 0);
-  void setUserId(int userId);
+  void setUser(int userId, QString username);
 
 public slots:
   // messaggi dal server
@@ -47,16 +69,18 @@ private:
   void setupTextActions();
 
   void initDock();
-  void addFakeUsers();
+  void refresh();
 
   QTextEdit *_textEdit;
   QAction *_actionTextBold;
   QListWidget *_dock;
 
   File _file;
-  //TODO si possono fare check su questi attributi per vedere se c'è stato qualche errore
-  int _charId = -1;
-  int _userId = -1;
+  localUser _user; // TODO si può fare un check su questo attributo per vedere se ci sono errori
+
+  //struttura dati per cursori etc
+  std::unordered_map<int, remoteUser> _users;
 
   bool _flagBold, _flagCursor, _flagChange;
+  ColorGenerator _gen;
 };

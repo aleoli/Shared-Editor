@@ -15,11 +15,13 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QListView>
-#include <QListWidget>
-#include <QListWidgetItem>
+
 
 #include "Symbol.h"
 #include "utils.h"
+#include "exceptions.h"
+
+using namespace se_exceptions;
 
 TextEdit::TextEdit(QWidget *parent)
         : QMainWindow(parent)
@@ -44,18 +46,47 @@ TextEdit::TextEdit(QWidget *parent)
 
   // _dock right
   initDock();
-  //addFakeUsers();
 }
 
 void TextEdit::setFile(const File &f, int charId) {
   _file = f;
-  _charId = charId;
+  _user.charId = charId;
 
-  //TODO inizializza editor visivo con i simboli del file
+  refresh();
 }
 
-void TextEdit::setUserId(int userId) {
-  _userId = userId;
+void TextEdit::refresh() {
+  //attenzione che viene emesso contentsChange
+  _flagChange = true;
+
+  auto doc = _textEdit->document();
+  auto cursor = QTextCursor(doc);
+
+  //cancello tutto
+  cursor.select(QTextCursor::Document);
+  cursor.deleteChar();
+
+  for(auto &sym : _file.getSymbols()) {
+    cursor.setCharFormat(sym.getFormat());
+    cursor.insertText(sym.getChar());
+  }
+}
+
+void TextEdit::setUser(int userId, QString username) {
+  _user.userId = userId;
+  _user.username = username;
+  _user.color = _gen.getColor();
+  _user.charId = 0;
+
+  if(_user.item != nullptr) {
+    _dock->takeItem(_dock->row(_user.item));
+    delete _user.item;
+  }
+
+  _user.item = new QListWidgetItem(username);
+  _user.item->setFlags(Qt::NoItemFlags);
+  _user.item->setForeground(_user.color);
+  _dock->insertItem(0, _user.item);
 }
 
 void TextEdit::initDock() {
@@ -65,17 +96,6 @@ void TextEdit::initDock() {
 
   _dock = new QListWidget(this);
   dockWidget->setWidget(_dock);
-}
-
-void TextEdit::addFakeUsers() {
-  auto bob = new QListWidgetItem("bob", _dock);
-  auto ale = new QListWidgetItem("ale", _dock);
-
-  bob->setFlags(Qt::NoItemFlags);
-  bob->setForeground(Qt::red);
-
-  ale->setFlags(Qt::NoItemFlags);
-  ale->setForeground(Qt::blue);
 }
 
 void TextEdit::setupFileActions() {
@@ -227,7 +247,7 @@ void TextEdit::change(int pos, int removed, int added) {
 
     //creo symbol e lo aggiungo al file
     //TODO userId / clientId ???
-    Symbol s{{0, _charId++}, chr, fmt};
+    Symbol s{{_user.userId, _user.charId++}, chr, fmt};
     _file.localInsert(s, pos+i);
 
     //TODO mandare messaggio al server
@@ -239,6 +259,7 @@ void TextEdit::change(int pos, int removed, int added) {
 }
 
 void TextEdit::cursorChanged() {
+  //TODO rivedere qua che c'è un bordello e mandare messaggio al server
   if(_flagCursor) {
     _flagCursor = false;
     return;
@@ -259,6 +280,8 @@ void TextEdit::closeEvent(QCloseEvent *event) {
 }
 
 // SLOT messaggi ricevuti da remoto
+//INFO il fileId qui diamo per scontato che sia corretto, ma andrebbe fatto un check
+// Serve soprattutto nel caso in cui l'app supporti più files aperti
 
 void TextEdit::remoteInsertQuery(int fileId, std::vector<Symbol> symbols) {
 //TODO
@@ -273,13 +296,50 @@ void TextEdit::remoteUpdateQuery(int fileId, std::vector<Symbol> symbols) {
 }
 
 void TextEdit::userConnectedQuery(int fileId, int clientId, QString username) {
-//TODO
+  info("New remote user: " + username + " " + QString::number(clientId));
+
+  remoteUser user;
+  user.userId = clientId;
+  user.username = username;
+  user.color = _gen.getColor();
+  user.cursor = new Cursor(_textEdit, user.color);
+
+  user.item = new QListWidgetItem(username, _dock);
+  user.item->setFlags(Qt::NoItemFlags);
+  user.item->setForeground(user.color);
+
+  //TODO check nella mappa per vedere che non ci sia già
+  _users[clientId] = user;
 }
 
 void TextEdit::userDisconnectedQuery(int fileId, int clientId) {
-//TODO
+  info("User: " + QString::number(clientId) + " disconnected");
+
+  //TODO check nella mappa per vedere che ci sia
+  auto user = _users[clientId];
+
+  delete user.cursor;
+  _dock->takeItem(_dock->row(user.item));
+  delete user.item;
+
+  _users.erase(clientId);
 }
 
 void TextEdit::remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
-//TODO
+  debug("User: " + QString::number(clientId) + " moved cursor");
+
+  //TODO check nella mappa per vedere che ci sia
+  auto user = _users[clientId];
+  int pos;
+
+  try {
+    pos = _file.symbolById(symbolId).first;
+    debug("Trovato simbolo esatto dove muovere il cursore");
+  }
+  catch(FileSymbolsException e) {
+    debug("Il simbolo non esiste più, sposto il cursore in un intorno di esso");
+    pos = cursorPosition;
+  }
+
+  user.cursor->updateCursorPosition(pos);
 }

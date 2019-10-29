@@ -77,6 +77,7 @@ private:
   void initServerToClient();
   void checkWaiting(bool shouldBe);
   void testWindows();
+  void testEditor();
 
   //ENUM per tenere traccia di quale finestra è aperta al momento (serve per sapere dove stampare i msg di errore)
   //si può anche usare per rinforzare i controlli sui msg ricevuti
