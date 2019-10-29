@@ -47,8 +47,8 @@ public slots:
 
   // slot di ricezione messaggi dal mm
   void errorResponseReceived(QString reason);
-  void loginResponseReceived(QString token);
-  void newUserResponseReceived(QString token);
+  void loginResponseReceived(QString token, int userId, QString nickname, QString icon);
+  void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
   void getFileResponseReceived(File file, int charId);
   void remoteInsertQueryReceived(std::vector<Symbol> symbols);

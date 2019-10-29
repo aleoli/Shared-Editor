@@ -42,7 +42,7 @@ void GuiWrapper::testWindows() {
   info("Tra 15 secondi arriva una loginResponseReceived");
   info("Tra 30 secondi arriva un newFileResponseReceived");
 
-  QTimer::singleShot(15000, this, [this]() {loginResponseReceived("questoeuntokenautentico");});
+  QTimer::singleShot(15000, this, [this]() {loginResponseReceived("questoeuntokenautentico", 33, nullptr, nullptr);});
   QTimer::singleShot(30000, this, [this]() {newFileResponseReceived(0);});
 }
 
@@ -162,10 +162,12 @@ void GuiWrapper::errorResponseReceived(QString reason) {
   }
 }
 
-void GuiWrapper::loginResponseReceived(QString token) {
+void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickname, QString icon) {
   checkWaiting(true);
 
   info("Ricevuto login response");
+  debug("Token: " + token);
+  debug("User id: " + QString::number(userId));
 
   _account.token = token;
   _login->unblock();
@@ -176,7 +178,7 @@ void GuiWrapper::loginResponseReceived(QString token) {
   _fileSelector->show();
 }
 
-void GuiWrapper::newUserResponseReceived(QString token) {
+void GuiWrapper::newUserResponseReceived(QString token, int userId) {
   //TODO
 }
 
