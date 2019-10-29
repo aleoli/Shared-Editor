@@ -26,8 +26,8 @@ signals:
   // messaggi Server -> Client. La GUI deve collegarci gli slot
   void errorResponse(QString reason);
 
-  void loginResponse(QString token, QString nickname, QString icon); //ATTENZIONE nickname e icon possono essere nullptr!
-  void newUserResponse(QString token);
+  void loginResponse(QString token, int userId, QString nickname, QString icon); //ATTENZIONE nickname e icon possono essere nullptr!
+  void newUserResponse(QString token, int userId);
   void editUserResponse();
   void deleteUserResponse();
   void newFileResponse(int fileId);

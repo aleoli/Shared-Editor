@@ -224,6 +224,7 @@ void ClientMessageProcessor::login() {
   QString nickname = nullptr, icon = nullptr;
 
   auto token = _m.getString("token");
+  auto userId = _m.getInt("userId");
 
   try {
     nickname = _m.getString("nickname");
@@ -235,15 +236,16 @@ void ClientMessageProcessor::login() {
   }
   catch(MessageDataException e) {}
 
-  emit _manager->loginResponse(token, nickname, icon);
+  emit _manager->loginResponse(token, userId, nickname, icon);
 }
 
 void ClientMessageProcessor::newUser() {
   info("USER::NEW response received");
 
   auto token = _m.getString("token");
+  auto userId = _m.getInt("userId");
 
-  emit _manager->newUserResponse(token);
+  emit _manager->newUserResponse(token, userId);
 }
 
 void ClientMessageProcessor::editUser() {
