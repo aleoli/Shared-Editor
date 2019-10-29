@@ -38,9 +38,9 @@ signals:
   void getLinkResponse(QString link);
   void activateLinkResponse(FSElement element, File file);
 
-  void remoteInsertQuery(std::vector<Symbol> symbols);
-  void remoteDeleteQuery(std::vector<SymbolId> ids);
-  void remoteUpdateQuery(std::vector<Symbol> symbols);
+  void remoteInsertQuery(int fileId, std::vector<Symbol> symbols);
+  void remoteDeleteQuery(int fileId, std::vector<SymbolId> ids);
+  void remoteUpdateQuery(int fileId, std::vector<Symbol> symbols);
   void userConnectedQuery(int fileId, int clientId, QString username);
   void userDisconnectedQuery(int fileId, int clientId);
   void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);

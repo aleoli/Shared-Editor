@@ -317,25 +317,28 @@ void ClientMessageProcessor::activateLink() {
 void ClientMessageProcessor::remoteInsert() {
   info("FILE_EDIT::REMOTE_INSERT query received");
 
+  auto fileId = _m.getInt("fileId");
   auto symbols = _m.getArray("symbols");
 
-  emit _manager->remoteInsertQuery(utils::jsonArrayToVector<Symbol>(symbols));
+  emit _manager->remoteInsertQuery(fileId, utils::jsonArrayToVector<Symbol>(symbols));
 }
 
 void ClientMessageProcessor::remoteDelete() {
   info("FILE_EDIT::REMOTE_DELETE query received");
 
+  auto fileId = _m.getInt("fileId");
   auto ids = _m.getArray("ids");
 
-  emit _manager->remoteDeleteQuery(utils::jsonArrayToVector<SymbolId>(ids));
+  emit _manager->remoteDeleteQuery(fileId, utils::jsonArrayToVector<SymbolId>(ids));
 }
 
 void ClientMessageProcessor::remoteUpdate() {
   info("FILE_EDIT::REMOTE_UPDATE query received");
 
+  auto fileId = _m.getInt("fileId");
   auto symbols = _m.getArray("symbols");
 
-  emit _manager->remoteUpdateQuery(utils::jsonArrayToVector<Symbol>(symbols));
+  emit _manager->remoteUpdateQuery(fileId, utils::jsonArrayToVector<Symbol>(symbols));
 }
 
 void ClientMessageProcessor::userConnected() {
