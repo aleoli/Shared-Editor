@@ -16,11 +16,12 @@ public:
   void closeEvent (QCloseEvent *event) override;
 
   void setFile(const File &f, int charId = 0);
+  void setUserId(int userId);
 
 public slots:
 
 signals:
-  void closeFileRequest();
+  void closeFileQuery(int fileId);
 
 private slots:
   void textBold();
@@ -43,6 +44,7 @@ private:
 
   File _file;
   int _charId = 0;
+  int _userId = 0;
 
   bool _flagBold, _flagCursor, _flagChange;
 };

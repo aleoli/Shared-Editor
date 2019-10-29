@@ -3,6 +3,14 @@
 #include <iostream>
 #include <QTimer>
 #include "errordialog.h"
+#include "exceptions.h"
+
+using namespace se_exceptions;
+
+#define USERLOGIN static_cast<int>(Message::Type::USER) * 100 + static_cast<int>(Message::UserAction::LOGIN)
+#define USERNEW static_cast<int>(Message::Type::USER) * 100 + static_cast<int>(Message::UserAction::NEW)
+#define FILENEW static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::NEW)
+#define FILEGET static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::GET)
 
 GuiWrapper::GuiWrapper(QWidget *parent)
     : QWidget(parent)
@@ -17,6 +25,8 @@ GuiWrapper::GuiWrapper(QWidget *parent)
 
   _window = OpenWindow::NONE;
   _waiting = false;
+
+  debug(QString::number(USERLOGIN));
 
   connectWidgets();
   initClientToServer();
@@ -48,23 +58,42 @@ void GuiWrapper::testWindows() {
 
 void GuiWrapper::connectWidgets() {
   // connetto i signal dei widget con gli slot di questa classe
-  connect(_login, &Login::loginRequest, this, &GuiWrapper::loginRequest);
-  connect(_login, &Login::newUserRequest, this, &GuiWrapper::newUserRequest);
+  connect(_login, &Login::loginQuery, this, &GuiWrapper::loginQuery);
+  connect(_login, &Login::newUserQuery, this, &GuiWrapper::newUserQuery);
 
-  connect(_fileSelector, &FileSelector::newFileRequest, this, &GuiWrapper::newFileRequest);
-  connect(_fileSelector, &FileSelector::getFileRequest, this, &GuiWrapper::getFileRequest);
+  connect(_fileSelector, &FileSelector::newFileQuery, this, &GuiWrapper::newFileQuery);
+  connect(_fileSelector, &FileSelector::getFileQuery, this, &GuiWrapper::getFileQuery);
 
-  connect(_textEdit, &TextEdit::closeFileRequest, this, &GuiWrapper::closeFileRequest);
+  connect(_textEdit, &TextEdit::closeFileQuery, this, &GuiWrapper::closeFileQuery);
+  //TODO altri del textEdit
 }
 
 void GuiWrapper::initClientToServer() {
   //Comunicazioni Client -> Server
-  //TODO collego SIGNAL GuiWrapper a SLOT MessageManager
+  connect(this, &GuiWrapper::sendLoginQuery, _manager.get(), &MessageManager::loginQuery);
+  connect(this, &GuiWrapper::sendNewUserQuery, _manager.get(), &MessageManager::newUserQuery);
+  connect(this, &GuiWrapper::sendNewFileQuery, _manager.get(), &MessageManager::newFileQuery);
+  connect(this, &GuiWrapper::sendGetFileQuery, _manager.get(), &MessageManager::getFileQuery);
+  connect(this, &GuiWrapper::sendCloseFileQuery, _manager.get(), &MessageManager::closeFileQuery);
+  connect(this, &GuiWrapper::sendLocalInsertQuery, _manager.get(), &MessageManager::localInsertQuery);
+  connect(this, &GuiWrapper::sendLocalDeleteQuery, _manager.get(), &MessageManager::localDeleteQuery);
+  connect(this, &GuiWrapper::sendLocalUpdateQuery, _manager.get(), &MessageManager::localUpdateQuery);
+  connect(this, &GuiWrapper::sendLocalMoveQuery, _manager.get(), &MessageManager::localMoveQuery);
 }
 
 void GuiWrapper::initServerToClient() {
   //Comunicazioni Server -> Client
-  //TODO collego SIGNAL MessageManager a SLOT GuiWrapper
+  connect(_manager.get(), &MessageManager::errorResponse, this, &GuiWrapper::errorResponseReceived);
+  connect(_manager.get(), &MessageManager::loginResponse, this, &GuiWrapper::loginResponseReceived);
+  connect(_manager.get(), &MessageManager::newUserResponse, this, &GuiWrapper::newUserResponseReceived);
+  connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiWrapper::newFileResponseReceived);
+  connect(_manager.get(), &MessageManager::getFileResponse, this, &GuiWrapper::getFileResponseReceived);
+  connect(_manager.get(), &MessageManager::remoteInsertQuery, this, &GuiWrapper::remoteInsertQueryReceived);
+  connect(_manager.get(), &MessageManager::remoteDeleteQuery, this, &GuiWrapper::remoteDeleteQueryReceived);
+  connect(_manager.get(), &MessageManager::remoteUpdateQuery, this, &GuiWrapper::remoteUpdateQueryReceived);
+  connect(_manager.get(), &MessageManager::userConnectedQuery, this, &GuiWrapper::userConnectedQueryReceived);
+  connect(_manager.get(), &MessageManager::userDisconnectedQuery, this, &GuiWrapper::userDisconnectedQueryReceived);
+  connect(_manager.get(), &MessageManager::remoteMoveQuery, this, &GuiWrapper::remoteMoveQueryReceived);
 }
 
 void GuiWrapper::checkWaiting(bool shouldBe) {
@@ -73,62 +102,82 @@ void GuiWrapper::checkWaiting(bool shouldBe) {
       + " ma dovrebbe essere " + QString::number(shouldBe));
 
     //TODO eccezione
-    throw std::runtime_error("errore _waiting");
+    throw SE_Exception("errore _waiting");
   }
 
   // setto anche il nuovo valore
   _waiting = !_waiting;
 }
 
-void GuiWrapper::loginRequest(QString username, QString psw) {
-  // TODO qui si dovrebbe creare un Message e mandarlo al server
+void GuiWrapper::loginQuery(QString username, QString psw) {
   checkWaiting(false);
+  _lastMessageSent = USERLOGIN;
 
   info("Invio login request");
 
   _account.username = username;
   _account.psw = psw;
   _account.token = nullptr;
+
+  emit sendLoginQuery(username, psw);
 }
 
-void GuiWrapper::newUserRequest(QString username, QString psw, QString pswRepeat) {
-  // TODO qui si dovrebbe creare un Message e mandarlo al server
+void GuiWrapper::newUserQuery(QString username, QString psw, QString pswRepeat) {
   checkWaiting(false);
+  _lastMessageSent = USERNEW;
 
   info("Invio new user request");
 
   _account.username = username;
   _account.psw = psw;
   _account.token = nullptr;
+
+  emit sendNewUserQuery(username, psw, pswRepeat);
 }
 
-void GuiWrapper::getFileRequest(int id) {
-  // TODO qui si dovrebbe creare un Message e mandarlo al server
+void GuiWrapper::getFileQuery(int id) {
   checkWaiting(false);
+  _lastMessageSent = FILEGET;
 
   info("Invio get file request");
 
-  (void) id;
+  emit sendGetFileQuery(_account.token, id);
 }
 
-void GuiWrapper::newFileRequest() {
-  // TODO qui si dovrebbe creare un Message e mandarlo al server
+void GuiWrapper::newFileQuery() {
   checkWaiting(false);
+  _lastMessageSent = FILENEW;
 
   info("Invio new file request");
 
-  //QString name = rndString(64);
-  //TODO devo salvare il nome del file da qualche parte perchè nella risposta non c'è
+  //TODO il nome del file nel client definitivo deve essere ricevuto come parametro e salvato da qualche parte
+  emit sendNewFileQuery(_account.token, "questoeunnomeautentico");
 }
 
-void GuiWrapper::closeFileRequest() {
-  // TODO qui si dovrebbe creare un Message e mandarlo al server
-
+void GuiWrapper::closeFileQuery(int fileId) {
   info("Invio close file request");
+
+  emit sendCloseFileQuery(_account.token, fileId);
 
   // riapro browser
   _window = OpenWindow::BROWSER;
   _fileSelector->show();
+}
+
+void GuiWrapper::localInsertQuery(int fileId, std::vector<Symbol> symbols) {
+  //TODO
+}
+
+void GuiWrapper::localDeleteQuery(int fileId, std::vector<SymbolId> ids) {
+  //TODO
+}
+
+void GuiWrapper::localUpdateQuery(int fileId, std::vector<Symbol> symbols) {
+  //TODO
+}
+
+void GuiWrapper::localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition) {
+  //TODO
 }
 
 // SLOT MM
@@ -145,7 +194,7 @@ void GuiWrapper::errorResponseReceived(QString reason) {
           break;
 
       case OpenWindow::EDITOR:
-          //ErrorDialog::showDialog(_textEdit, reason);
+          ErrorDialog::showDialog(_textEdit, reason);
           break;
 
       case OpenWindow::BROWSER:
@@ -164,12 +213,19 @@ void GuiWrapper::errorResponseReceived(QString reason) {
 
 void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickname, QString icon) {
   checkWaiting(true);
+  if(_lastMessageSent != USERLOGIN) {
+      debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
+      throw SE_Exception("Errore, mi aspettavo un messaggio diverso");
+  }
 
   info("Ricevuto login response");
   debug("Token: " + token);
   debug("User id: " + QString::number(userId));
 
   _account.token = token;
+  _textEdit->setUserId(userId);
+  //TODO nickname e icona...
+
   _login->unblock();
   _login->clear();
   _login->close();
@@ -179,19 +235,40 @@ void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickna
 }
 
 void GuiWrapper::newUserResponseReceived(QString token, int userId) {
-  //TODO
+  checkWaiting(true);
+  if(_lastMessageSent != USERNEW) {
+      debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
+      throw SE_Exception("Errore, mi aspettavo un messaggio diverso");
+  }
+
+  info("Ricevuto new user response");
+  debug("Token: " + token);
+  debug("User id: " + QString::number(userId));
+
+  _account.token = token;
+  _textEdit->setUserId(userId);
+
+  _login->unblock();
+  _login->clear();
+  _login->close();
+
+  _window = OpenWindow::BROWSER;
+  _fileSelector->show();
 }
 
 void GuiWrapper::newFileResponseReceived(int id) {
   checkWaiting(true);
+  if(_lastMessageSent != FILENEW) {
+      debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
+      throw SE_Exception("Errore, mi aspettavo un messaggio diverso");
+  }
 
   info("Ricevuto new file response");
 
   _fileSelector->unblock();
   _fileSelector->close();
-  //TODO magari aggiorno la view del browser inserendo il nuovo file
+  //TODO nella versione definitiva, qua bisogna aggiornare la view del browser
 
-  //TODO creo file vuoto con questo id e apro editor
   File f(id);
   _textEdit->setFile(f);
 
@@ -201,39 +278,48 @@ void GuiWrapper::newFileResponseReceived(int id) {
 
 void GuiWrapper::getFileResponseReceived(File file, int charId) {
   checkWaiting(true);
+  if(_lastMessageSent != FILEGET) {
+      debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
+      throw SE_Exception("Errore, mi aspettavo un messaggio diverso");
+  }
 
-  info("Ricevuto file response");
+  info("Ricevuto get file response");
 
-  //TODO assegna file
-  //_file = f;
   _fileSelector->unblock();
   _fileSelector->close();
-  //TODO magari aggiorno la view del browser inserendo il nuovo file
 
-  //TODO apri editor con file
+  _textEdit->setFile(file, charId);
+
   _window = OpenWindow::EDITOR;
+  _textEdit->show();
 }
 
-void GuiWrapper::remoteInsertQueryReceived(std::vector<Symbol> symbols) {
-  //TODO
+void GuiWrapper::remoteInsertQueryReceived(int fileId, std::vector<Symbol> symbols) {
+  info("Ricevuto remote insert query");
+  //TODO signal per il textEdit
 }
 
-void GuiWrapper::remoteDeleteQueryReceived(std::vector<SymbolId> ids) {
-  //TODO
+void GuiWrapper::remoteDeleteQueryReceived(int fileId, std::vector<SymbolId> ids) {
+  info("Ricevuto remote delete query");
+  //TODO signal per il textEdit
 }
 
-void GuiWrapper::remoteUpdateQueryReceived(std::vector<Symbol> symbols) {
-  //TODO
+void GuiWrapper::remoteUpdateQueryReceived(int fileId, std::vector<Symbol> symbols) {
+  info("Ricevuto remote update query");
+  //TODO signal per il textEdit
 }
 
 void GuiWrapper::userConnectedQueryReceived(int fileId, int clientId, QString username) {
-  //TODO
+  info("Ricevuto user connected query");
+  //TODO signal per il textEdit
 }
 
 void GuiWrapper::userDisconnectedQueryReceived(int fileId, int clientId) {
-  //TODO
+  info("Ricevuto user disconnected query");
+  //TODO signal per il textEdit
 }
 
 void GuiWrapper::remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
-  //TODO
+  info("Ricevuto remote move query");
+  //TODO signal per il textEdit
 }

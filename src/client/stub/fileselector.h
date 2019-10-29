@@ -28,8 +28,8 @@ public slots:
   void newFile();
 
 signals:
-  void newFileRequest();
-  void getFileRequest(int);
+  void newFileQuery();
+  void getFileQuery(int);
 
 private:
   void initLoading();

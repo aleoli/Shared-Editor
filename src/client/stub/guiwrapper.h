@@ -6,6 +6,7 @@
 #include "fileselector.h"
 #include "TextEdit.h"
 #include "../message_manager.h"
+#include "Message.h"
 #include <memory>
 
 class GuiWrapper : public QWidget
@@ -25,25 +26,29 @@ public:
 
 signals:
   //segnali da emettere per mandare messaggi al server
-  void sendLoginRequest(QString username, QString password);
-  void sendNewUserRequest(QString username, QString password, QString passwordRepeat);
-  void sendNewFileRequest(QString token, QString name, int dirId = 0);
-  void sendGetFileRequest(QString token, int fileId);
-  void sendCloseFileRequest(QString token, int fileId);
-  void sendLocalInsertRequest(QString token, int fileId, std::vector<Symbol> symbols);
-  void sendLocalDeleteRequest(QString token, int fileId, std::vector<SymbolId> ids);
-  void sendLocalUpdateRequest(QString token, int fileId, std::vector<Symbol> symbols);
-  void sendLocalMoveRequest(QString token, int fileId, SymbolId symbolId, int cursorPosition);
+  void sendLoginQuery(QString username, QString password);
+  void sendNewUserQuery(QString username, QString password, QString passwordRepeat);
+  void sendNewFileQuery(QString token, QString name, int dirId = 0);
+  void sendGetFileQuery(QString token, int fileId);
+  void sendCloseFileQuery(QString token, int fileId);
+  void sendLocalInsertQuery(QString token, int fileId, std::vector<Symbol> symbols);
+  void sendLocalDeleteQuery(QString token, int fileId, std::vector<SymbolId> ids);
+  void sendLocalUpdateQuery(QString token, int fileId, std::vector<Symbol> symbols);
+  void sendLocalMoveQuery(QString token, int fileId, SymbolId symbolId, int cursorPosition);
 
 public slots:
   // slot di azioni compiute dall'user (connessioni con gli elementi grafici)
-  void loginRequest(QString username, QString psw);
-  void newUserRequest(QString username, QString psw, QString pswRepeat);
+  void loginQuery(QString username, QString psw);
+  void newUserQuery(QString username, QString psw, QString pswRepeat);
 
-  void newFileRequest();
-  void getFileRequest(int id);
+  void newFileQuery();
+  void getFileQuery(int id);
   //TODO quelli del TextEdit
-  void closeFileRequest();
+  void closeFileQuery(int fileId);
+  void localInsertQuery(int fileId, std::vector<Symbol> symbols);
+  void localDeleteQuery(int fileId, std::vector<SymbolId> ids);
+  void localUpdateQuery(int fileId, std::vector<Symbol> symbols);
+  void localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition);
 
   // slot di ricezione messaggi dal mm
   void errorResponseReceived(QString reason);
@@ -51,9 +56,9 @@ public slots:
   void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
   void getFileResponseReceived(File file, int charId);
-  void remoteInsertQueryReceived(std::vector<Symbol> symbols);
-  void remoteDeleteQueryReceived(std::vector<SymbolId> ids);
-  void remoteUpdateQueryReceived(std::vector<Symbol> symbols);
+  void remoteInsertQueryReceived(int fileId, std::vector<Symbol> symbols);
+  void remoteDeleteQueryReceived(int fileId, std::vector<SymbolId> ids);
+  void remoteUpdateQueryReceived(int fileId, std::vector<Symbol> symbols);
   void userConnectedQueryReceived(int fileId, int clientId, QString username);
   void userDisconnectedQueryReceived(int fileId, int clientId);
   void remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
@@ -75,9 +80,12 @@ private:
       EDITOR
   };
 
-  //TODO considerare la presenza di un altro enum per tenere traccia dell'ultimo messaggio inviato
+  //Attributo per tenere traccia dell'ultimo messaggio inviato
+  // è uguale a TYPE * 100 + ACTION
   // ulteriore check per garantire sicurezza / stabilità all'applicazione
   // (i msg tipo localinsert e altri non devono essere contati, solo quelli che prevedono risposta)
+  //TODO considerare se inserirlo anche nel client definitivo
+  int _lastMessageSent;
 
   //booleano per vedere se sono in attesa di una risposta a un messaggio. Usato per rinforzare i check sui msg inviati
   //se è impostato a true e voglio mandare un messaggio -> errore grave!

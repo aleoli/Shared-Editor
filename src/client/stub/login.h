@@ -24,8 +24,8 @@ public:
   void clear();
 
 signals:
-  void loginRequest(QString, QString);
-  void newUserRequest(QString, QString, QString);
+  void loginQuery(QString, QString);
+  void newUserQuery(QString, QString, QString);
 
 public slots:
   void login();

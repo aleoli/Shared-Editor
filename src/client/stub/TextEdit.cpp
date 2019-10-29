@@ -54,10 +54,14 @@ void TextEdit::setFile(const File &f, int charId) {
   //TODO inizializza editor visivo con i simboli del file
 }
 
+void TextEdit::setUserId(int userId) {
+  _userId = userId;
+}
+
 void TextEdit::closeEvent(QCloseEvent *event) {
   debug("Chiusura editor");
 
-  emit closeFileRequest();
+  emit closeFileQuery(_file.getId());
   event->accept();
 }
 

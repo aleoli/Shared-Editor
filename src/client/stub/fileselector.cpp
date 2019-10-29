@@ -56,7 +56,7 @@ void FileSelector::getFile() {
 
   debug("Premuto btnOpen. Id: " + QString::number(id));
 
-  emit getFileRequest(id);
+  emit getFileQuery(id);
 }
 
 void FileSelector::newFile() {
@@ -65,7 +65,7 @@ void FileSelector::newFile() {
 
   debug("Premuto btnNew");
 
-  emit newFileRequest();
+  emit newFileQuery();
 }
 
 void FileSelector::disable() {

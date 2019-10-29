@@ -52,7 +52,7 @@ void Login::login() {
 
   debug("Premuto btnLogin. Username: " + username + " Password: " + psw);
 
-  emit loginRequest(username, psw);
+  emit loginQuery(username, psw);
 }
 
 void Login::newUser() {
@@ -70,7 +70,7 @@ void Login::newUser() {
 
   debug("Premuto btnNew. Username: " + username + " Password: " + psw);
 
-  emit newUserRequest(username, psw, psw);
+  emit newUserQuery(username, psw, psw);
 }
 
 void Login::unblock() {
