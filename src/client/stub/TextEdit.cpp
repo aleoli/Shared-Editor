@@ -58,13 +58,6 @@ void TextEdit::setUserId(int userId) {
   _userId = userId;
 }
 
-void TextEdit::closeEvent(QCloseEvent *event) {
-  debug("Chiusura editor");
-
-  emit closeFileQuery(_file.getId());
-  event->accept();
-}
-
 void TextEdit::initDock() {
   auto *dockWidget = new QDockWidget(tr("Utenti connessi:"), this);
   dockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
@@ -256,4 +249,37 @@ void TextEdit::cursorChanged() {
     _flagBold = true;
     _actionTextBold->activate(QAction::Trigger);
   }
+}
+
+void TextEdit::closeEvent(QCloseEvent *event) {
+  debug("Chiusura editor");
+
+  emit closeFileQuery(_file.getId());
+  event->accept();
+}
+
+// SLOT messaggi ricevuti da remoto
+
+void TextEdit::remoteInsertQuery(int fileId, std::vector<Symbol> symbols) {
+//TODO
+}
+
+void TextEdit::remoteDeleteQuery(int fileId, std::vector<SymbolId> ids) {
+//TODO
+}
+
+void TextEdit::remoteUpdateQuery(int fileId, std::vector<Symbol> symbols) {
+//TODO
+}
+
+void TextEdit::userConnectedQuery(int fileId, int clientId, QString username) {
+//TODO
+}
+
+void TextEdit::userDisconnectedQuery(int fileId, int clientId) {
+//TODO
+}
+
+void TextEdit::remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
+//TODO
 }

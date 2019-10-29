@@ -19,9 +19,20 @@ public:
   void setUserId(int userId);
 
 public slots:
+  // messaggi dal server
+  void remoteInsertQuery(int fileId, std::vector<Symbol> symbols);
+  void remoteDeleteQuery(int fileId, std::vector<SymbolId> ids);
+  void remoteUpdateQuery(int fileId, std::vector<Symbol> symbols);
+  void userConnectedQuery(int fileId, int clientId, QString username);
+  void userDisconnectedQuery(int fileId, int clientId);
+  void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
 
 signals:
   void closeFileQuery(int fileId);
+  void localInsertQuery(int fileId, std::vector<Symbol> symbols);
+  void localDeleteQuery(int fileId, std::vector<SymbolId> ids);
+  void localUpdateQuery(int fileId, std::vector<Symbol> symbols);
+  void localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition);
 
 private slots:
   void textBold();
@@ -43,8 +54,9 @@ private:
   QListWidget *_dock;
 
   File _file;
-  int _charId = 0;
-  int _userId = 0;
+  //TODO si possono fare check su questi attributi per vedere se c'è stato qualche errore
+  int _charId = -1;
+  int _userId = -1;
 
   bool _flagBold, _flagCursor, _flagChange;
 };

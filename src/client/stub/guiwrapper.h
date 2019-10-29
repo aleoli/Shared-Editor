@@ -36,6 +36,14 @@ signals:
   void sendLocalUpdateQuery(QString token, int fileId, std::vector<Symbol> symbols);
   void sendLocalMoveQuery(QString token, int fileId, SymbolId symbolId, int cursorPosition);
 
+  //segnali per il TextEdit
+  void remoteInsertQuery(int fileId, std::vector<Symbol> symbols);
+  void remoteDeleteQuery(int fileId, std::vector<SymbolId> ids);
+  void remoteUpdateQuery(int fileId, std::vector<Symbol> symbols);
+  void userConnectedQuery(int fileId, int clientId, QString username);
+  void userDisconnectedQuery(int fileId, int clientId);
+  void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+
 public slots:
   // slot di azioni compiute dall'user (connessioni con gli elementi grafici)
   void loginQuery(QString username, QString psw);
@@ -43,7 +51,7 @@ public slots:
 
   void newFileQuery();
   void getFileQuery(int id);
-  //TODO quelli del TextEdit
+
   void closeFileQuery(int fileId);
   void localInsertQuery(int fileId, std::vector<Symbol> symbols);
   void localDeleteQuery(int fileId, std::vector<SymbolId> ids);
@@ -84,7 +92,7 @@ private:
   // è uguale a TYPE * 100 + ACTION
   // ulteriore check per garantire sicurezza / stabilità all'applicazione
   // (i msg tipo localinsert e altri non devono essere contati, solo quelli che prevedono risposta)
-  //TODO considerare se inserirlo anche nel client definitivo
+  //INFO considerare se inserirlo anche nel client definitivo
   int _lastMessageSent;
 
   //booleano per vedere se sono in attesa di una risposta a un messaggio. Usato per rinforzare i check sui msg inviati
