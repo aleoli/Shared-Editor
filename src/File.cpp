@@ -198,27 +198,33 @@ Symbol& File::symbolAt(int pos) {
 }
 
 std::pair<int, Symbol&> File::symbolById(SymbolId id) {
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id](const Symbol &cmp) {
-        return cmp.getSymbolId() == id;
+  int pos = 0;
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
+        bool val = cmp.getSymbolId() == id;
+        if(!val) pos++;
+        return val;
   });
 
   if(result == std::end(_symbols)) {
     throw FileSymbolsException{"Symbol does not exist"};
   }
 
-  return {result - _symbols.begin(), *result};
+  return {pos, *result};
 }
 
 int File::getPosition(SymbolId id) {
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id](const Symbol &cmp) {
-        return cmp.getSymbolId() == id;
+  int pos = 0;
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
+        bool val = cmp.getSymbolId() == id;
+        if(!val) pos++;
+        return val;
   });
 
   if(result == std::end(_symbols)) {
     throw FileSymbolsException{"Symbol does not exist"};
   }
 
-  return result - _symbols.begin();
+  return pos;
 }
 
 int File::numSymbols() const {
@@ -243,6 +249,10 @@ std::string File::text() const {
   }
 
   return ss.str();
+}
+
+void File::clear() {
+  _symbols.clear();
 }
 
 void File::addClient(int clientId, QString username) {
@@ -352,13 +362,16 @@ void File::findPosition(int clientId, std::vector<Symbol::Identifier> v1,
 }
 
 int File::remoteInsert(const Symbol &sym) {
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [sym](const Symbol &cmp) {
-        return sym < cmp;
+  int pos = 0;
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [sym, &pos](const Symbol &cmp) {
+        bool val = sym < cmp;
+        if(!val) pos++;
+        return val;
     });
 
   _symbols.emplace(result, sym);
 
-  return result - _symbols.begin();
+  return pos;
 }
 
 void File::localDelete(int pos) {
@@ -370,8 +383,11 @@ void File::localDelete(int pos) {
 }
 
 int File::remoteDelete(SymbolId id) {
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id](const Symbol &cmp) {
-        return id == cmp.getSymbolId();
+  int pos = 0;
+  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
+        bool val = id == cmp.getSymbolId();
+        if(!val) pos++;
+        return val;
     });
 
   if(result == std::end(_symbols)) {
@@ -380,17 +396,23 @@ int File::remoteDelete(SymbolId id) {
   }
 
   _symbols.erase(result);
-  return result - _symbols.begin();
+  return pos;
 }
 
-void File::remoteUpdate(const Symbol &sym) {
+int File::remoteUpdate(const Symbol &sym) {
   try {
-    auto &symbol = symbolById(sym.getSymbolId()).second;
+    auto pos = symbolById(sym.getSymbolId());
+    auto &symbol = pos.second;
 
     symbol.setChar(sym.getChar());
     symbol.setFormat(sym.getFormat());
+
+    return pos.first;
   }
-  catch(FileSymbolsException e) {} // il simbolo non esiste più, non faccio niente
+  catch(FileSymbolsException e) {
+    //il simbolo non esiste più
+    return -1;
+  }
 }
 
 bool operator==(const File& lhs, const File& rhs) {
