@@ -7,6 +7,8 @@
     <file alias="paste.png">imgs/paste.png</file>
     <file alias="letter.png">imgs/letter.png</file>
     <file alias="info.png">imgs/info.png</file>
+    <file alias="clear.png">imgs/clear.png</file>
+    <file alias="refresh.png">imgs/refresh.png</file>
 </qresource>
 
 <qresource prefix="/other">

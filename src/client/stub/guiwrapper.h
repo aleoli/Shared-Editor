@@ -14,9 +14,10 @@ class GuiWrapper : public QWidget
     Q_OBJECT
 
     typedef struct {
-        QString username;
-        QString psw;
-        QString token;
+      QString username;
+      QString psw;
+      int userId;
+      QString token;
     } account;
 
 public:
@@ -37,9 +38,9 @@ signals:
   void sendLocalMoveQuery(QString token, int fileId, SymbolId symbolId, int cursorPosition);
 
   //segnali per il TextEdit
-  void remoteInsertQuery(int fileId, std::vector<Symbol> symbols);
-  void remoteDeleteQuery(int fileId, std::vector<SymbolId> ids);
-  void remoteUpdateQuery(int fileId, std::vector<Symbol> symbols);
+  void remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols);
+  void remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId> ids);
+  void remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> symbols);
   void userConnectedQuery(int fileId, int clientId, QString username);
   void userDisconnectedQuery(int fileId, int clientId);
   void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
@@ -64,9 +65,9 @@ public slots:
   void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
   void getFileResponseReceived(File file, int charId);
-  void remoteInsertQueryReceived(int fileId, std::vector<Symbol> symbols);
-  void remoteDeleteQueryReceived(int fileId, std::vector<SymbolId> ids);
-  void remoteUpdateQueryReceived(int fileId, std::vector<Symbol> symbols);
+  void remoteInsertQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols);
+  void remoteDeleteQueryReceived(int fileId, int clientId, std::vector<SymbolId> ids);
+  void remoteUpdateQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols);
   void userConnectedQueryReceived(int fileId, int clientId, QString username);
   void userDisconnectedQueryReceived(int fileId, int clientId);
   void remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
@@ -78,6 +79,7 @@ private:
   void checkWaiting(bool shouldBe);
   void testWindows();
   void testEditor();
+  void testCRDT();
 
   //ENUM per tenere traccia di quale finestra è aperta al momento (serve per sapere dove stampare i msg di errore)
   //si può anche usare per rinforzare i controlli sui msg ricevuti

@@ -10,15 +10,19 @@
 #include <QTextEdit>
 #include <QColor>
 
+#include "Symbol.h"
+
 class Cursor : public QLabel {
   Q_OBJECT
 
 public:
   Cursor(QTextEdit *parent, QColor color);
   void updateCursorPosition(int position);
+  void insert(const Symbol &sym, int position);
+  void remove(int position);
 
 public slots:
-  void updateCursorSize();
+  void updateCursorView();
 
 private slots:
   void changeVisibility();

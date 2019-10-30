@@ -18,3 +18,7 @@ QColor ColorGenerator::getColor() {
 
   return QColor(color);
 }
+
+void ColorGenerator::reset() {
+  _counter = 0;
+}

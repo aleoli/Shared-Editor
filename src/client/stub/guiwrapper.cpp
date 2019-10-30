@@ -17,7 +17,6 @@ GuiWrapper::GuiWrapper(QWidget *parent)
   _login = new Login(this);
   _fileSelector = new FileSelector(this);
   _textEdit = new TextEdit(this);
-
   _textEdit->setAttribute(Qt::WA_QuitOnClose, false);
 
   _manager = MessageManager::get();
@@ -36,13 +35,14 @@ GuiWrapper::~GuiWrapper()
 
 void GuiWrapper::run() {
   _window = OpenWindow::LOGIN;
-  //_login->show();
+  _login->show();
   //_fileSelector->show();
-  _textEdit->show();
+  //_textEdit->setUser(33, "bob");
+  //_textEdit->show();
 
-  //TODO poi rimuovi o commenta
   //testWindows();
-  testEditor();
+  //testEditor();
+  //testCRDT();
 }
 
 void GuiWrapper::testWindows() {
@@ -58,17 +58,13 @@ void GuiWrapper::testEditor() {
   info("TEST EDITOR");
 
   //TEST user connessi/disconnessi
-  //QTimer::singleShot(3000, this, [this]() {_textEdit->setUser(22, "kaka");});
-  //QTimer::singleShot(6000, this, [this]() {emit userConnectedQuery(0, 33, "thiago silva");});
-  //QTimer::singleShot(9000, this, [this]() {emit userConnectedQuery(0, 44, "oddo");});
-  //QTimer::singleShot(12000, this, [this]() {emit userDisconnectedQuery(0, 33);});
-
-  //TEST moveCursor
-  //QTimer::singleShot(3000, this, [this]() {emit userConnectedQuery(0, 33, "thiago silva");});
-  //QTimer::singleShot(6000, this, [this]() {emit remoteMoveQuery(0, 33, {1,343}, 5);});
+  QTimer::singleShot(3000, this, [this]() {_textEdit->setUser(22, "kaka");});
+  QTimer::singleShot(6000, this, [this]() {emit userConnectedQuery(0, 33, "thiago silva");});
+  QTimer::singleShot(9000, this, [this]() {emit userConnectedQuery(0, 44, "oddo");});
+  QTimer::singleShot(12000, this, [this]() {emit userDisconnectedQuery(0, 33);});
 
   //TEST setFile e refresh
-  QTimer::singleShot(3000, this, [this]() {
+  QTimer::singleShot(15000, this, [this]() {
     File f;
     Symbol s1 {{1,2}, 'c'}, s2({1,3}, 'i'), s3({1,4}, 'a'), s4({1,5}, 'o');
     f.localInsert(s1, 0);
@@ -76,6 +72,67 @@ void GuiWrapper::testEditor() {
     f.localInsert(s3, 2);
     f.localInsert(s4, 3);
     _textEdit->setFile(f);});
+
+  //TEST moveCursor
+  QTimer::singleShot(18000, this, [this]() {emit remoteMoveQuery(0, 44, {1,4}, 2);});
+}
+
+void GuiWrapper::testCRDT() {
+  debug("TEST CRDT");
+  //connessione
+  QTimer::singleShot(5000, this, [this]() {emit userConnectedQuery(0, 32, "thiago silva");});
+
+  //aggiungo caratteri a caso
+  QTimer::singleShot(8000, this, [this]() {
+    QChar c('c');
+    Symbol s{{32, 0}, c};
+    File f = _textEdit->getFile();
+    f.localInsert(s, 0); //per costruire il vettore pos!
+    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
+
+  QTimer::singleShot(9000, this, [this]() {
+    QChar c('i');
+    Symbol s{{32, 1}, c};
+    File f = _textEdit->getFile();
+    f.localInsert(s, 1); //per costruire il vettore pos!
+    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
+
+  QTimer::singleShot(10000, this, [this]() {
+    QChar c('a');
+    Symbol s{{32, 2}, c};
+    File f = _textEdit->getFile();
+    f.localInsert(s, 2); //per costruire il vettore pos!
+    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
+
+  QTimer::singleShot(11000, this, [this]() {
+    QChar c('o');
+    Symbol s{{32, 3}, c};
+    File f = _textEdit->getFile();
+    f.localInsert(s, 3); //per costruire il vettore pos!
+    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
+  /*
+  QTimer::singleShot(12000, this, [this]() {
+    QChar c('H');
+    Symbol s{{32, 4}, c};
+    File f = _textEdit->getFile();
+    f.localInsert(s, 10); //per costruire il vettore pos!
+    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});*/
+
+  QTimer::singleShot(13000, this, [this]() {
+    emit remoteDeleteQuery(0, 32, std::vector<SymbolId>{{32,1}});});
+
+  QTimer::singleShot(14000, this, [this]() {
+    emit remoteDeleteQuery(0, 32, std::vector<SymbolId>{{33,10}});});
+
+  QTimer::singleShot(15000, this, [this]() {
+    emit remoteDeleteQuery(0, 32, std::vector<SymbolId>{{36,10}});});
+
+  QTimer::singleShot(16000, this, [this]() {
+    auto sym = _textEdit->getFile().symbolAt(1);
+    sym.setChar('Z');
+    emit remoteUpdateQuery(0, 32, std::vector<Symbol>{sym});});
+
+  QTimer::singleShot(30000, this, [this]() {emit userDisconnectedQuery(0, 32);});
 }
 
 void GuiWrapper::connectWidgets() {
@@ -151,6 +208,7 @@ void GuiWrapper::loginQuery(QString username, QString psw) {
 
   _account.username = username;
   _account.psw = psw;
+  _account.userId = -1;
   _account.token = nullptr;
 
   emit sendLoginQuery(username, psw);
@@ -164,6 +222,7 @@ void GuiWrapper::newUserQuery(QString username, QString psw, QString pswRepeat) 
 
   _account.username = username;
   _account.psw = psw;
+  _account.userId = -1;
   _account.token = nullptr;
 
   emit sendNewUserQuery(username, psw, pswRepeat);
@@ -199,25 +258,25 @@ void GuiWrapper::closeFileQuery(int fileId) {
 }
 
 void GuiWrapper::localInsertQuery(int fileId, std::vector<Symbol> symbols) {
-  info("Invio local insert query");
+  //debug("Invio local insert query");
 
   emit sendLocalInsertQuery(_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localDeleteQuery(int fileId, std::vector<SymbolId> ids) {
-  info("Invio local delete query");
+  //debug("Invio local delete query");
 
   emit sendLocalDeleteQuery(_account.token, fileId, ids);
 }
 
 void GuiWrapper::localUpdateQuery(int fileId, std::vector<Symbol> symbols) {
-  info("Invio local update query");
+  //debug("Invio local update query");
 
   emit sendLocalUpdateQuery(_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition) {
-  info("Invio local move query");
+  //debug("Invio local move query");
 
   emit sendLocalMoveQuery(_account.token, fileId, symbolId, cursorPosition);
 }
@@ -264,6 +323,7 @@ void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickna
   debug("User id: " + QString::number(userId));
 
   _account.token = token;
+  _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
   //INFO nella versione definitiva settare nickname e icona
 
@@ -287,6 +347,7 @@ void GuiWrapper::newUserResponseReceived(QString token, int userId) {
   debug("User id: " + QString::number(userId));
 
   _account.token = token;
+  _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
 
   _login->unblock();
@@ -337,22 +398,22 @@ void GuiWrapper::getFileResponseReceived(File file, int charId) {
   _textEdit->show();
 }
 
-void GuiWrapper::remoteInsertQueryReceived(int fileId, std::vector<Symbol> symbols) {
-  info("Ricevuto remote insert query");
+void GuiWrapper::remoteInsertQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols) {
+  //debug("Ricevuto remote insert query");
 
-  emit remoteInsertQuery(fileId, symbols);
+  emit remoteInsertQuery(fileId, clientId, symbols);
 }
 
-void GuiWrapper::remoteDeleteQueryReceived(int fileId, std::vector<SymbolId> ids) {
-  info("Ricevuto remote delete query");
+void GuiWrapper::remoteDeleteQueryReceived(int fileId, int clientId, std::vector<SymbolId> ids) {
+  //debug("Ricevuto remote delete query");
 
-  emit remoteDeleteQuery(fileId, ids);
+  emit remoteDeleteQuery(fileId, clientId, ids);
 }
 
-void GuiWrapper::remoteUpdateQueryReceived(int fileId, std::vector<Symbol> symbols) {
-  info("Ricevuto remote update query");
+void GuiWrapper::remoteUpdateQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols) {
+  //debug("Ricevuto remote update query");
 
-  emit remoteUpdateQuery(fileId, symbols);
+  emit remoteUpdateQuery(fileId, clientId, symbols);
 }
 
 void GuiWrapper::userConnectedQueryReceived(int fileId, int clientId, QString username) {
@@ -370,7 +431,7 @@ void GuiWrapper::userDisconnectedQueryReceived(int fileId, int clientId) {
 }
 
 void GuiWrapper::remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
-  info("Ricevuto remote move query");
+  debug("Ricevuto remote move query");
   debug("Client id: " + QString::number(clientId));
 
   emit remoteMoveQuery(fileId, clientId, symbolId, cursorPosition);

@@ -26,25 +26,27 @@ class TextEdit : public QMainWindow {
     } remoteUser;
 
     typedef struct {
+      bool initialized = false;
       int userId;
       QListWidgetItem *item = nullptr;
       QString username;
       int charId;
-      QColor color;
     } localUser;
 
 public:
   explicit TextEdit(QWidget *parent = nullptr);
   void closeEvent (QCloseEvent *event) override;
+  void showEvent(QShowEvent* event) override;
 
   void setFile(const File &f, int charId = 0);
+  File& getFile();
   void setUser(int userId, QString username);
 
 public slots:
   // messaggi dal server
-  void remoteInsertQuery(int fileId, std::vector<Symbol> symbols);
-  void remoteDeleteQuery(int fileId, std::vector<SymbolId> ids);
-  void remoteUpdateQuery(int fileId, std::vector<Symbol> symbols);
+  void remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols);
+  void remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId> ids);
+  void remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> symbols);
   void userConnectedQuery(int fileId, int clientId, QString username);
   void userDisconnectedQuery(int fileId, int clientId);
   void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
@@ -67,9 +69,15 @@ private:
   void setupFileActions();
   void setupEditActions();
   void setupTextActions();
+  void updateActions();
 
   void initDock();
-  void refresh();
+  void refresh(bool changeFile = false);
+  void clear();
+  void reset();
+
+  std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
+  int getCursorPosition(SymbolId id, int position);
 
   QTextEdit *_textEdit;
   QAction *_actionTextBold;
@@ -81,6 +89,8 @@ private:
   //struttura dati per cursori etc
   std::unordered_map<int, remoteUser> _users;
 
-  bool _flagBold, _flagCursor, _flagChange;
+  //booleano che utilizzo per evitare che certi slot vengano emessi quando non voglio
+  //esempio: faccio clear -> non voglio che venga eseguito lo slot change()
+  bool _blockSignals;
   ColorGenerator _gen;
 };

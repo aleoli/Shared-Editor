@@ -3,7 +3,7 @@
 #include <vector>
 #include <QColor>
 
-//TODO migliorare la logica (ovviamente), fai qualche ricerca 
+//TODO migliorare la logica (ovviamente), fai qualche ricerca
 
 class ColorGenerator {
 public:
@@ -11,6 +11,7 @@ public:
   explicit ColorGenerator(int maxColors);
 
   QColor getColor();
+  void reset();
 
 private:
   int _maxColors;

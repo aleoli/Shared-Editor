@@ -23,10 +23,10 @@ Cursor::Cursor(QTextEdit *parent, QColor color) : QLabel(parent), textEdit_(pare
 
 void Cursor::updateCursorPosition(int position) {
   cursor_->setPosition(position);
-  updateCursorSize();
+  updateCursorView();
 }
 
-void Cursor::updateCursorSize() {
+void Cursor::updateCursorView() {
   auto rect = textEdit_->cursorRect(*cursor_);
 
   move(rect.x(), rect.y());
@@ -36,4 +36,21 @@ void Cursor::updateCursorSize() {
 void Cursor::changeVisibility() {
   isVisible_ ? setVisible(false) : setVisible(true);
   isVisible_ = !isVisible_;
+}
+
+void Cursor::insert(const Symbol &sym, int position) {
+  cursor_->setPosition(position);
+
+  cursor_->setCharFormat(sym.getFormat());
+  cursor_->insertText(sym.getChar());
+
+  updateCursorView();
+}
+
+void Cursor::remove(int position) {
+  cursor_->setPosition(position);
+
+  cursor_->deleteChar();
+
+  updateCursorView();
 }
