@@ -18,6 +18,7 @@ FSElement_db::FSElement_db(): Persistent() {
   this->_owner_id = -1;
   this->_creator = Lazy<User>{-1};
   this->_original = Lazy<FSElement_db>{-1};
+	this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+QString::number(this->id)};
 }
 
 FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
@@ -30,6 +31,7 @@ FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
+	this->_shared_links = e._shared_links;
 }
 
 FSElement_db::FSElement_db(FSElement_db &&e): Persistent(e) {
@@ -42,6 +44,7 @@ FSElement_db::FSElement_db(FSElement_db &&e): Persistent(e) {
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
+	this->_shared_links = e._shared_links;
 }
 
 FSElement_db::FSElement_db(QSqlRecord r): Persistent(r) {
@@ -54,6 +57,7 @@ FSElement_db::FSElement_db(QSqlRecord r): Persistent(r) {
   this->_children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+r.value("id").toString()};
   this->_original = Lazy<FSElement_db>{r.value("linked_from").toInt()};
   this->_links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+r.value("id").toString()};
+	this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+r.value("id").toString()};
 }
 
 FSElement_db::~FSElement_db() {
@@ -72,6 +76,7 @@ FSElement_db& FSElement_db::operator=(const FSElement_db& e) {
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
+	this->_shared_links = e._shared_links;
   Persistent::operator=(e);
   return *this;
 }
@@ -91,6 +96,10 @@ void FSElement_db::save_record(QSqlRecord &r) {
 }
 
 void FSElement_db::remove() {
+	this->remove([](int e_id, int owner_id) -> void {});
+}
+
+void FSElement_db::remove(std::function<void(int, int)> notify_fn) {
 	if(this->_type == FSElement::Type::DIRECTORY) {
 		if(this->_parent_id <= 0) {
 			// root dir
@@ -104,13 +113,15 @@ void FSElement_db::remove() {
 	  }
 	} else if(!this->is_link()) {
 		// file non linkato
+		for(auto& s_link: this->_shared_links.getValues()) {
+			s_link->remove();
+		}
 		for(auto& link: this->_links.getValues()) {
-      // TODO: va notificato
+      notify_fn(link->getId(), link->_owner_id);
       debug(link->getName());
       link->remove();
     }
     this->del_file();
-    // TODO: remove shared_links
 	}
   // se è un link, è sufficiente eliminare la entry
   info(QString{"Remove "}+(this->is_link() ? "Link" : "File")+" ID: "+QString::number(this->id)+(this->_type == FSElement::Type::FILE ? " path "+this->_path : ""));

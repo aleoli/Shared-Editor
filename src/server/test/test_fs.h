@@ -47,6 +47,11 @@ void test_fs() {
     debug("Share Test");
     auto s2 = User::login("fs_tester2", "ciao");
 
+		auto rm_lambda = [](int e_id, int owner_id) -> void {
+			// qua dentro il manager può gestire la cancellazione e mandare la notifica a chi di dovere
+			debug("NOTIFY: removed link_id "+QString::number(e_id)+" of user "+QString::number(owner_id));
+		};
+
     auto dir = FSElement_db::root(s.getUserId()).mkdir(s, "d1");
     auto f1 = dir.mkfile(s, "f1.se");
     auto f2 = dir.mkfile(s, "f2.se");
@@ -56,11 +61,11 @@ void test_fs() {
 
     bool match = f1.load().to_string() == f1_2.load().to_string();
 
-    f1_2.remove();
+    f1_2.remove(rm_lambda);
     bool t1 = DB::getAll<FSElement_db>().size() == 5;
 
     auto f1_3 = FSElement_db::link(s2, sl.getToken());
-    f1.remove();
+    f1.remove(rm_lambda);
 
     bool t2 = DB::getAll<FSElement_db>().size() == 4;
 
@@ -68,7 +73,7 @@ void test_fs() {
     sl = f1.share(s);
     auto f1_4 = FSElement_db::link(s2, sl.getToken());
 
-    dir.remove();
+    dir.remove(rm_lambda);
 
     bool t3 = DB::getAll<FSElement_db>().size() == 2;
 

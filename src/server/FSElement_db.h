@@ -9,6 +9,7 @@
 #include "FSElement.h"
 #include "File.h"
 #include "user.h"
+#include "SharedLink.h"
 
 using persistence::Persistent;
 using persistence::Lazy;
@@ -29,7 +30,8 @@ public:
 
   virtual void save();
   virtual void save_record(QSqlRecord &);
-  virtual void remove();
+	virtual void remove();
+  virtual void remove(std::function<void(int e_id, int owner_id)> notify_fn);
 
   static const QString table_name;
 
@@ -72,10 +74,10 @@ private:
   FSElement::Type _type;
   int _parent_id;
   int _owner_id;
-  //int _creator_id;
 
 	Lazy<User> _creator;
   Lazy<FSElement_db> _original;
   LazyList<FSElement_db> _links;
   LazyList<FSElement_db> _children;
+	LazyList<SharedLink> _shared_links;
 };
