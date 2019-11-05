@@ -91,23 +91,27 @@ void FSElement_db::save_record(QSqlRecord &r) {
 }
 
 void FSElement_db::remove() {
-  // TODO: controlla che non si stia eliminando la root dir
-  auto children = this->_children.getValues();
-  for(auto& c: children) {
-    c->remove();
-  }
-  if(!this->is_link()) {
-    // è il proprietario
-    for(auto& link: this->_links.getValues()) {
+	if(this->_type == FSElement::Type::DIRECTORY) {
+		if(this->_parent_id <= 0) {
+			// root dir
+			warn("cannot remove root dir");
+      // TODO: lancia eccezione
+      exit(1);
+		}
+		auto children = this->_children.getValues();
+		for(auto& c: children) {
+	    c->remove();
+	  }
+	} else if(!this->is_link()) {
+		// file non linkato
+		for(auto& link: this->_links.getValues()) {
       // TODO: va notificato
       debug(link->getName());
       link->remove();
     }
-    if(this->_type == FSElement::Type::FILE) {
-      this->del_file();
-    }
+    this->del_file();
     // TODO: remove shared_links
-  }
+	}
   // se è un link, è sufficiente eliminare la entry
   info(QString{"Remove "}+(this->is_link() ? "Link" : "File")+" ID: "+QString::number(this->id)+(this->_type == FSElement::Type::FILE ? " path "+this->_path : ""));
   this->_remove<FSElement_db>();
