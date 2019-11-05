@@ -227,11 +227,11 @@ bool Symbol::isBold() const {
 }
 
 void Symbol::setSize(int size){
-  _fmt.setFontPointSize(size);
+  _fmt.font().setPointSize(size);
 }
 
 int Symbol::getSize() const {
-  return _fmt.fontPointSize();
+  return _fmt.font().pointSize();
 }
 
 void Symbol::setUnderline(bool enable) {
