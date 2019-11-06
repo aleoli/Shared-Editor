@@ -28,6 +28,7 @@ private slots:
 signals:
   void connection_error();
   void dataReady(QByteArray data);
+  void connected();
   void disconnected();
 
 private:
