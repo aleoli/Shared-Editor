@@ -7,6 +7,7 @@
 #include "Symbol.h"
 
 using namespace se_exceptions;
+using namespace utils;
 
 
 void prova_jsonarraytovector() {
