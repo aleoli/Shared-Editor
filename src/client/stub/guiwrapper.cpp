@@ -1,8 +1,11 @@
 #include "guiwrapper.h"
 
 #include <QTimer>
+#include <QThread>
+
 #include "errordialog.h"
 #include "exceptions.h"
+#include "def.h"
 
 using namespace se_exceptions;
 
@@ -11,19 +14,22 @@ using namespace se_exceptions;
 #define FILENEW static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::NEW)
 #define FILEGET static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::GET)
 
-GuiWrapper::GuiWrapper(QWidget *parent)
+GuiWrapper::GuiWrapper(const SysConf &conf, QWidget *parent)
     : QWidget(parent)
 {
+  // inizializzazione threads
+  initThreads(conf);
+
+  // inizializzazione finestre
   _login = new Login(this);
   _fileSelector = new FileSelector(this);
   _textEdit = new TextEdit(this);
   _textEdit->setAttribute(Qt::WA_QuitOnClose, false);
 
-  _manager = MessageManager::get();
-
   _window = OpenWindow::NONE;
   _waiting = false;
 
+  // connessione signal / slot della gui
   connectWidgets();
   initClientToServer();
   initServerToClient();
@@ -31,6 +37,12 @@ GuiWrapper::GuiWrapper(QWidget *parent)
 
 GuiWrapper::~GuiWrapper()
 {
+  //TODO rivedere bene
+  _serverThread->quit();
+  _managerThread->quit();
+
+  _serverThread->wait();
+  _managerThread->wait();
 }
 
 void GuiWrapper::run() {
@@ -43,6 +55,33 @@ void GuiWrapper::run() {
   //testWindows();
   //testEditor();
   //testCRDT();
+}
+
+void GuiWrapper::initThreads(const SysConf &conf) {
+    // inizializzazione threads
+    _manager = MessageManager::get();
+    _server = Server::get(conf.host, conf.port);
+
+    _serverThread = new QThread{this};
+    _server->moveToThread(_serverThread);
+
+    _managerThread = new QThread{this};
+    _manager->moveToThread(_managerThread);
+
+    QObject::connect(_serverThread, SIGNAL(started()), _server.get(), SLOT(connect()));
+    QObject::connect(_server.get(), SIGNAL(disconnected()), this, SLOT(disconnected()));
+    QObject::connect(_server.get(), SIGNAL(dataReady(QByteArray)), _manager.get(), SLOT(process_data(QByteArray)));
+    QObject::connect(_server.get(), SIGNAL(connection_error()), this, SLOT(disconnected()));
+    QObject::connect(_manager.get(), SIGNAL(connection_error()), _server.get(), SLOT(disconnect()));
+    QObject::connect(_manager.get(), SIGNAL(send_data(QByteArray)), _server.get(), SLOT(write(QByteArray)));
+
+    _serverThread->start();
+    _managerThread->start();
+}
+
+void GuiWrapper::disconnected() {
+  //TODO rivedere e il server non manda quando prova a connettersi ma non risp nessuno
+  emit quit();
 }
 
 void GuiWrapper::testWindows() {

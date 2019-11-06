@@ -2,12 +2,15 @@
 #define MAINTHREAD_H
 
 #include <QWidget>
+#include <memory>
+
 #include "login.h"
 #include "fileselector.h"
 #include "TextEdit.h"
 #include "../message_manager.h"
+#include "../server.h"
+#include "../sys.h"
 #include "Message.h"
-#include <memory>
 
 class GuiWrapper : public QWidget
 {
@@ -21,7 +24,7 @@ class GuiWrapper : public QWidget
     } account;
 
 public:
-  GuiWrapper(QWidget *parent = 0);
+  GuiWrapper(const SysConf &conf, QWidget *parent = 0);
   ~GuiWrapper();
   void run();
 
@@ -44,6 +47,9 @@ signals:
   void userConnectedQuery(int fileId, int clientId, QString username);
   void userDisconnectedQuery(int fileId, int clientId);
   void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+
+  // chiusura app
+  void quit();
 
 public slots:
   // slot di azioni compiute dall'user (connessioni con gli elementi grafici)
@@ -72,6 +78,9 @@ public slots:
   void userDisconnectedQueryReceived(int fileId, int clientId);
   void remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
 
+  // disconnessione del server
+  void disconnected();
+
 private:
   void connectWidgets();
   void initClientToServer();
@@ -80,6 +89,7 @@ private:
   void testWindows();
   void testEditor();
   void testCRDT();
+  void initThreads(const SysConf &conf);
 
   //ENUM per tenere traccia di quale finestra è aperta al momento (serve per sapere dove stampare i msg di errore)
   //si può anche usare per rinforzare i controlli sui msg ricevuti
@@ -114,7 +124,11 @@ private:
   //altro
   account _account;
   OpenWindow _window;
+
+  //altri threads
   std::shared_ptr<MessageManager> _manager;
+  std::shared_ptr<Server> _server;
+  QThread *_serverThread, *_managerThread;
 };
 
 #endif // MAINTHREAD_H

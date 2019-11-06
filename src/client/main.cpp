@@ -28,7 +28,8 @@ int main(int argc, char **argv) {
 #endif
 
 #if STUB
-  GuiWrapper w;
+  GuiWrapper w(conf);
+  QObject::connect(&w, SIGNAL(quit()), &app, SLOT(quit()));
   w.run();
 
   return app.exec();
