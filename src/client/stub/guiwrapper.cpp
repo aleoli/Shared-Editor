@@ -13,6 +13,10 @@ using namespace se_exceptions;
 #define FILENEW static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::NEW)
 #define FILEGET static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::GET)
 
+//per finalità di debug e testing
+#define CONNECT_TO_SERVER 1
+#define USE_TESTS 0
+
 GuiWrapper::GuiWrapper(const SysConf &conf, QWidget *parent)
     : QWidget(parent)
 {
@@ -45,20 +49,24 @@ GuiWrapper::~GuiWrapper()
 }
 
 void GuiWrapper::run() {
+#if CONNECT_TO_SERVER
   _serverThread->start();
   _managerThread->start();
 
   _window = OpenWindow::LANDING;
   _landing->show();
-
-  //_login->show();
+#else
+  _login->show();
   //_fileSelector->show();
   //_textEdit->setUser(33, "bob");
   //_textEdit->show();
+#endif
 
+#if USE_TESTS
   //testWindows();
   //testEditor();
   //testCRDT();
+#endif
 }
 
 void GuiWrapper::initThreads(const SysConf &conf) {
@@ -92,7 +100,7 @@ void GuiWrapper::connected() {
 void GuiWrapper::connectionLost() {
   warn("La connessione è stata persa");
 
-  //TODO display messaggio su schermo
+  //TODO display messaggio su schermo (?)
 
   //TODO provare a recuperare la connessione invece di chiudere (?)
   emit quit();
