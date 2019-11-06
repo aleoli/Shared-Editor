@@ -14,13 +14,21 @@ file(GLOB src_files
     "*.cpp"
     "../*.h"
     "../*.cpp"
+    "*.ui"
+    "*.qrc"
+)
+
+file(GLOB test_files
     "test/*.h"
     "test/*.cpp"
+)
+
+file(GLOB stub_files
     "stub/*.h"
     "stub/*.cpp"
     "stub/*.ui"
+    "stub/*.qrc"
 )
-
-add_executable(client ${src_files} test/resources.qrc)
+add_executable(client ${src_files} ${test_files} ${stub_files})
 
 target_link_libraries(client ${LIBRARIES} pthread)
