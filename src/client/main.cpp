@@ -25,6 +25,9 @@ int main(int argc, char **argv) {
   prova(app);
 #else
   //vero main
+  //TODO vedere lo stub per come bisogna agire:
+  // per collegare gli opportuni signal/slot serve una classe "Wrapper" che inglobi 
+  //tutte le componenti principali, sia grafiche che non
 #endif
 
 #if STUB
