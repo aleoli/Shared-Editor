@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
 #if STUB
   GuiWrapper w(conf);
-  QObject::connect(&w, SIGNAL(quit()), &app, SLOT(quit()));
+  QObject::connect(&w, SIGNAL(quit()), &app, SLOT(quit()), Qt::QueuedConnection);
   w.run();
 
   return app.exec();

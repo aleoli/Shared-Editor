@@ -1,6 +1,5 @@
 #include "guiwrapper.h"
 
-#include <QTimer>
 #include <QThread>
 
 #include "errordialog.h"
@@ -21,6 +20,7 @@ GuiWrapper::GuiWrapper(const SysConf &conf, QWidget *parent)
   initThreads(conf);
 
   // inizializzazione finestre
+  _landing = new Landing(this);
   _login = new Login(this);
   _fileSelector = new FileSelector(this);
   _textEdit = new TextEdit(this);
@@ -37,7 +37,6 @@ GuiWrapper::GuiWrapper(const SysConf &conf, QWidget *parent)
 
 GuiWrapper::~GuiWrapper()
 {
-  //TODO rivedere bene
   _serverThread->quit();
   _managerThread->quit();
 
@@ -46,8 +45,13 @@ GuiWrapper::~GuiWrapper()
 }
 
 void GuiWrapper::run() {
-  _window = OpenWindow::LOGIN;
-  _login->show();
+  _serverThread->start();
+  _managerThread->start();
+
+  _window = OpenWindow::LANDING;
+  _landing->show();
+
+  //_login->show();
   //_fileSelector->show();
   //_textEdit->setUser(33, "bob");
   //_textEdit->show();
@@ -69,109 +73,29 @@ void GuiWrapper::initThreads(const SysConf &conf) {
     _manager->moveToThread(_managerThread);
 
     QObject::connect(_serverThread, SIGNAL(started()), _server.get(), SLOT(connect()));
-    QObject::connect(_server.get(), SIGNAL(disconnected()), this, SLOT(disconnected()));
+    QObject::connect(_server.get(), SIGNAL(connected()), this, SLOT(connected()));
+    QObject::connect(_server.get(), SIGNAL(disconnected()), this, SLOT(connectionLost()));
     QObject::connect(_server.get(), SIGNAL(dataReady(QByteArray)), _manager.get(), SLOT(process_data(QByteArray)));
-    QObject::connect(_server.get(), SIGNAL(connection_error()), this, SLOT(disconnected()));
+    QObject::connect(_server.get(), SIGNAL(connection_error()), this, SLOT(connectionLost()));
     QObject::connect(_manager.get(), SIGNAL(connection_error()), _server.get(), SLOT(disconnect()));
     QObject::connect(_manager.get(), SIGNAL(send_data(QByteArray)), _server.get(), SLOT(write(QByteArray)));
-
-    _serverThread->start();
-    _managerThread->start();
 }
 
-void GuiWrapper::disconnected() {
-  //TODO rivedere e il server non manda quando prova a connettersi ma non risp nessuno
+void GuiWrapper::connected() {
+  info("Connesso al server");
+
+  _window = OpenWindow::LOGIN;
+  _landing->close();
+  _login->show();
+}
+
+void GuiWrapper::connectionLost() {
+  warn("La connessione è stata persa");
+
+  //TODO display messaggio su schermo
+
+  //TODO provare a recuperare la connessione invece di chiudere (?)
   emit quit();
-}
-
-void GuiWrapper::testWindows() {
-  info("TEST FINESTRE");
-  info("Tra 15 secondi arriva una loginResponseReceived");
-  info("Tra 30 secondi arriva un newFileResponseReceived");
-
-  QTimer::singleShot(15000, this, [this]() {loginResponseReceived("questoeuntokenautentico", 33, nullptr, nullptr);});
-  QTimer::singleShot(30000, this, [this]() {newFileResponseReceived(0);});
-}
-
-void GuiWrapper::testEditor() {
-  info("TEST EDITOR");
-
-  //TEST user connessi/disconnessi
-  QTimer::singleShot(3000, this, [this]() {_textEdit->setUser(22, "kaka");});
-  QTimer::singleShot(6000, this, [this]() {emit userConnectedQuery(0, 33, "thiago silva");});
-  QTimer::singleShot(9000, this, [this]() {emit userConnectedQuery(0, 44, "oddo");});
-  QTimer::singleShot(12000, this, [this]() {emit userDisconnectedQuery(0, 33);});
-
-  //TEST setFile e refresh
-  QTimer::singleShot(15000, this, [this]() {
-    File f;
-    Symbol s1 {{1,2}, 'c'}, s2({1,3}, 'i'), s3({1,4}, 'a'), s4({1,5}, 'o');
-    f.localInsert(s1, 0);
-    f.localInsert(s2, 1);
-    f.localInsert(s3, 2);
-    f.localInsert(s4, 3);
-    _textEdit->setFile(f);});
-
-  //TEST moveCursor
-  QTimer::singleShot(18000, this, [this]() {emit remoteMoveQuery(0, 44, {1,4}, 2);});
-}
-
-void GuiWrapper::testCRDT() {
-  debug("TEST CRDT");
-  //connessione
-  QTimer::singleShot(5000, this, [this]() {emit userConnectedQuery(0, 32, "thiago silva");});
-
-  //aggiungo caratteri a caso
-  QTimer::singleShot(8000, this, [this]() {
-    QChar c('c');
-    Symbol s{{32, 0}, c};
-    File f = _textEdit->getFile();
-    f.localInsert(s, 0); //per costruire il vettore pos!
-    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
-
-  QTimer::singleShot(9000, this, [this]() {
-    QChar c('i');
-    Symbol s{{32, 1}, c};
-    File f = _textEdit->getFile();
-    f.localInsert(s, 1); //per costruire il vettore pos!
-    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
-
-  QTimer::singleShot(10000, this, [this]() {
-    QChar c('a');
-    Symbol s{{32, 2}, c};
-    File f = _textEdit->getFile();
-    f.localInsert(s, 2); //per costruire il vettore pos!
-    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
-
-  QTimer::singleShot(11000, this, [this]() {
-    QChar c('o');
-    Symbol s{{32, 3}, c};
-    File f = _textEdit->getFile();
-    f.localInsert(s, 3); //per costruire il vettore pos!
-    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});
-  /*
-  QTimer::singleShot(12000, this, [this]() {
-    QChar c('H');
-    Symbol s{{32, 4}, c};
-    File f = _textEdit->getFile();
-    f.localInsert(s, 10); //per costruire il vettore pos!
-    emit remoteInsertQuery(0, 32, std::vector<Symbol>{s});});*/
-
-  QTimer::singleShot(13000, this, [this]() {
-    emit remoteDeleteQuery(0, 32, std::vector<SymbolId>{{32,1}});});
-
-  QTimer::singleShot(14000, this, [this]() {
-    emit remoteDeleteQuery(0, 32, std::vector<SymbolId>{{33,10}});});
-
-  QTimer::singleShot(15000, this, [this]() {
-    emit remoteDeleteQuery(0, 32, std::vector<SymbolId>{{36,10}});});
-
-  QTimer::singleShot(16000, this, [this]() {
-    auto sym = _textEdit->getFile().symbolAt(1);
-    sym.setChar('Z');
-    emit remoteUpdateQuery(0, 32, std::vector<Symbol>{sym});});
-
-  QTimer::singleShot(30000, this, [this]() {emit userDisconnectedQuery(0, 32);});
 }
 
 void GuiWrapper::connectWidgets() {
@@ -329,6 +253,10 @@ void GuiWrapper::errorResponseReceived(QString reason) {
   debug(reason);
 
   switch(_window) {
+    case OpenWindow::LANDING:
+      ErrorDialog::showDialog(_landing, reason);
+      break;
+
     case OpenWindow::LOGIN:
       ErrorDialog::showDialog(_login, reason);
       break;

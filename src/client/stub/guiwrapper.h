@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <memory>
 
+#include "landing.h"
 #include "login.h"
 #include "fileselector.h"
 #include "TextEdit.h"
@@ -48,7 +49,6 @@ signals:
   void userDisconnectedQuery(int fileId, int clientId);
   void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
 
-  // chiusura app
   void quit();
 
 public slots:
@@ -78,8 +78,10 @@ public slots:
   void userDisconnectedQueryReceived(int fileId, int clientId);
   void remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
 
-  // disconnessione del server
-  void disconnected();
+private slots:
+  // connessione del server
+  void connected();
+  void connectionLost();
 
 private:
   void connectWidgets();
@@ -95,6 +97,7 @@ private:
   //si può anche usare per rinforzare i controlli sui msg ricevuti
   enum class OpenWindow {
       NONE,
+      LANDING,
       LOGIN,
       REGISTRATION,
       BROWSER,
@@ -117,6 +120,7 @@ private:
   bool _waiting;
 
   // finestre
+  Landing *_landing;
   Login *_login;
   FileSelector *_fileSelector;
   TextEdit *_textEdit;
