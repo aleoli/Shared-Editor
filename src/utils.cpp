@@ -37,24 +37,40 @@ QString rndString(int randomStringLength) {
 
 void error(QString str) {
   if(Sets::get()->getLogLevel() >= Sets::LogLevel::ERROR) {
+#if defined(__APPLE__) || defined(__linux__)
     std::cerr << BOLD(FRED("[error] ")) << str.toStdString() << std::endl;
+#else
+    std::cerr << "[error] " << str.toStdString() << std::endl;
+#endif
   }
 }
 
 void warn(QString str) {
   if(Sets::get()->getLogLevel() >= Sets::LogLevel::WARN) {
+#if defined(__APPLE__) || defined(__linux__)
     std::cerr << BOLD(FYEL("[warn] ")) << str.toStdString() << std::endl;
+#else
+    std::cerr << "[warn] " << str.toStdString() << std::endl;
+#endif
   }
 }
 
 void debug(QString str) {
   if(Sets::get()->getLogLevel() >= Sets::LogLevel::DEBUG) {
+#if defined(__APPLE__) || defined(__linux__)
     std::cout << BOLD(FBLU("[debug] ")) << str.toStdString() << std::endl;
+#else
+    std::cout << "[debug] " << str.toStdString() << std::endl;
+#endif
   }
 }
 
 void info(QString str) {
   if(Sets::get()->getLogLevel() >= Sets::LogLevel::INFO) {
+#if defined(__APPLE__) || defined(__linux__)
     std::cout << BOLD(FGRN("[info] ")) << str.toStdString() << std::endl;
+#else
+    std::cout << "[info] " << str.toStdString() << std::endl;
+#endif
   }
 }

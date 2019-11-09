@@ -4,6 +4,7 @@
 #include <vector>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QJsonObject>
 
 QString rndString(int randomStringLength = 16);
 
