@@ -12,6 +12,7 @@ Server::Server(QString host, int port): QObject(nullptr) {
   this->_port = port;
   this->_socket = new QTcpSocket(this);
   QObject::connect(this->_socket, SIGNAL(readyRead()), this, SLOT(read()));
+  QObject::connect(this->_socket, SIGNAL(connected()), this, SIGNAL(connected()));
   QObject::connect(this->_socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
 }
 
@@ -24,10 +25,6 @@ std::shared_ptr<Server> Server::get(QString host, int port) {
 
 void Server::connect() {
   this->_socket->connectToHost(this->_host, this->_port);
-  if(!this->_socket->waitForConnected()) {
-    emit this->connection_error();
-    return;
-  }
 }
 
 void Server::disconnect() {

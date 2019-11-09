@@ -48,8 +48,8 @@ void prova_crdt() {
   //cancellazione
   auto &sym = f2.symbolAt(2); // w
   auto id = sym.getSymbolId(); //occhio che se cancello da f2 poi perdo questa informazione
-  f.localDelete(1); // nciao
-  f2.localDelete(1); // nciao
+  f.localDelete(2); // nciao
+  f2.localDelete(2); // nciao
   pos = f2.remoteDelete(id); // nciao
 
   if(pos != -1) {
@@ -93,6 +93,18 @@ void prova_crdt() {
     throw TestException{"localDelete ha avuto successo (non doveva)"};
   }
   catch(FileSymbolsException e) {
+  }
+
+  //update
+  auto &sym2 = f.symbolAt(1); // c
+  sym2.setChar('v'); // nviao
+  f2.remoteUpdate(sym2);
+
+  if(f.text() != "nviao") {
+    throw TestException{"update non riuscito"};
+  }
+  if(f != f2) {
+    throw TestException{"remoteUpdate ha fallito"};
   }
 
   std::cout << "Test passato" << std::endl;

@@ -3,12 +3,10 @@
 #include <QApplication>
 #include <QRect>
 #include <QDesktopWidget>
-
-#include "TextEdit.h"
+#include "texteditqt.h"
 
 void prova_textedit(QApplication &a) {
-  // classe che conterrà tutta la logica della nostra interfaccia.. DA IMPLEMENTARE!
-  TextEdit mw;
+  TextEditQT mw;
 
   // setto dimensioni e posizione della finestra in base al desktop
   const QRect availableGeometry = QApplication::desktop()->availableGeometry(&mw);

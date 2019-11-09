@@ -6,11 +6,11 @@ else
   path=$QT_PATH
 fi
 
-cd src/client/gui
+cd src/client/test
 mkdir build &> /dev/null
 cd build
 cmake .. -DCMAKE_PREFIX_PATH=$path
 make -j$((nproc+1))
 cd ../../../../
 mkdir bin &> /dev/null
-cp src/client/gui/build/client bin/client
+cp src/client/test/build/testClient bin/testClient
