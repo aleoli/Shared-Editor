@@ -1,6 +1,7 @@
 #include "SharedLink.h"
 
 #include "utils.h"
+#include "exceptions.h"
 
 const QString SharedLink::table_name = "shared_link";
 
@@ -62,8 +63,7 @@ SharedLink SharedLink::create(int file_id) {
 SharedLink SharedLink::get(const QString &token) {
   auto l = DB::get()->get<SharedLink>("token = '"+token+"'");
   if(l.size() != 1) {
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::ShareException{"No token '"+token+"' found"};
   }
   return l[0];
 }

@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "File.h"
 #include "SharedLink.h"
+#include "exceptions.h"
 
 const QString FSElement_db::table_name = "fs_element";
 
@@ -104,8 +105,7 @@ void FSElement_db::remove(std::function<void(int, int)> notify_fn) {
 		if(this->_parent_id <= 0) {
 			// root dir
 			warn("cannot remove root dir");
-      // TODO: lancia eccezione
-      exit(1);
+      throw se_exceptions::RootDirException{"cannot remove root dir"};
 		}
 		auto children = this->_children.getValues();
 		for(auto& c: children) {
@@ -148,8 +148,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
     QFile f(fs_e.getPath());
     if(!f.open(QIODevice::WriteOnly)) {
       error("cannot open file "+fs_e._path);
-      // TODO: lancia eccezione
-      exit(1);
+      throw se_exceptions::NoFileOnDiskException{"cannot open file "+fs_e._path};
     }
     File el{fs_e.id};
     f.write(el.toQByteArray());
@@ -164,13 +163,11 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
 FSElement_db FSElement_db::clone(const Session &s) {
   if(this->_creator.getId() == s.getUserId()) {
     error("Link creation of own element");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::LinkException{"Link creation of own element"};
   }
   if(this->is_link()) {
     error("Cannot create a link of a link");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::LinkException{"Cannot create a link of a link"};
   }
   FSElement_db fs_e{*this};
   fs_e.id = 0;
@@ -191,14 +188,12 @@ FSElement FSElement_db::getFSElement() const {
 File FSElement_db::load() const {
   if(this->_type != FSElement::Type::FILE) {
     warn("You are tring to load an element that is not a file");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::ReadException{"You are tring to load an element that is not a file"};
   }
   QFile f(this->getPath());
   if(!f.open(QIODevice::ReadOnly)){
     error("cannot open file "+this->_path);
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::NoFileOnDiskException{"cannot open file "+this->_path};
   }
   auto data = f.readAll();
   f.close();
@@ -208,14 +203,12 @@ File FSElement_db::load() const {
 void FSElement_db::store(const File &f) {
   if(this->_type != FSElement::Type::FILE) {
     warn("You are tring to store to an element that is not a file");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::WriteException{"You are tring to store to an element that is not a file"};
   }
   QFile file(this->getPath());
   if(!file.open(QIODevice::WriteOnly)){
     error("cannot open file "+this->_path);
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::NoFileOnDiskException{"cannot open file "+this->_path};
   }
   file.write(f.toQByteArray());
   file.close();
@@ -224,8 +217,7 @@ void FSElement_db::store(const File &f) {
 void FSElement_db::del_file() {
   if(this->_type != FSElement::Type::FILE) {
     warn("You are tring to delete to an element that is not a file");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::WriteException{"You are tring to delete to an element that is not a file"};
   }
   QFile file(this->getPath());
   file.remove();
@@ -235,8 +227,7 @@ FSElement_db FSElement_db::get(const Session &s, int id) {
   auto fs_e = DB::get()->getOne<FSElement_db>(id);
   if(fs_e._owner_id != s.getUserId()) {
     warn("User "+QString::number(s.getUserId())+" has tryed to access a file of user "+QString::number(fs_e._owner_id));
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"User "+QString::number(s.getUserId())+" has tryed to access a file of user "+QString::number(fs_e._owner_id)};
   }
   return fs_e;
 }
@@ -251,8 +242,7 @@ FSElement_db FSElement_db::mkroot(int user_id) {
   }
   if(!no_folder) {
     error("Double creation of root dir");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::RootDirException{"Double creation of root dir"};
   }
   return FSElement_db::create(user_id, -1, "root", false);
 }
@@ -260,8 +250,7 @@ FSElement_db FSElement_db::mkroot(int user_id) {
 FSElement_db FSElement_db::root(int user_id) {
   auto l = DB::get()->get<FSElement_db>("parent_id = -1 AND creator_id = "+QString::number(user_id));
   if(l.size() != 1) {
-    // TODO: lancia eccezione
-    throw 1;
+    throw se_exceptions::RootDirException{"User "+QString::number(user_id)+" has not root dir"};
   }
   return l[0];
 }
@@ -269,13 +258,11 @@ FSElement_db FSElement_db::root(int user_id) {
 FSElement_db FSElement_db::mkdir(const Session &s, QString name) {
   if(this->_type != FSElement::Type::DIRECTORY) {
     error("Trying to create a directory in not-dir");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::WriteException{"Trying to create a directory in not-dir"};
   }
   if(this->_owner_id != s.getUserId()) {
     error("Trying to modify not your directory");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"Trying to modify not your directory"};
   }
 	this->_children.clear();
   return FSElement_db::create(s.getUserId(), this->id, name, false);
@@ -284,13 +271,11 @@ FSElement_db FSElement_db::mkdir(const Session &s, QString name) {
 FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
   if(this->_type != FSElement::Type::DIRECTORY) {
     error("Trying to create a file in not-dir");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::WriteException{"Trying to create a file in not-dir"};
   }
   if(this->_owner_id != s.getUserId()) {
     error("Trying to modify not your directory");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"Trying to modify not your directory"};
   }
 	this->_children.clear();
   return FSElement_db::create(s.getUserId(), this->id, name, true);
@@ -299,13 +284,11 @@ FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
 std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
 	if(this->_type != FSElement::Type::DIRECTORY) {
 		warn("Trying to list a not-directory element");
-		// TODO: lancia eccezione
-		exit(1);
+		throw se_exceptions::ReadException{"Trying to create a file in not-dir"};
 	}
   if(s.getUserId() != this->_owner_id) {
     warn("Trying to access not your directory");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"Trying to access not your directory"};
   }
   return this->getChildren();
 }
@@ -313,18 +296,15 @@ std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
 void FSElement_db::mv(const Session &s, FSElement_db &fs_e) {
 	if(s.getUserId() != this->_owner_id) {
     warn("Trying to move not your element");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"Trying to move not your element"};
   }
 	if(s.getUserId() != fs_e._owner_id) {
     warn("Trying to move to not your directory");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"Trying to move to not your directory"};
   }
 	if(fs_e._type != FSElement::Type::DIRECTORY) {
     error("Trying to move to not-directory element");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::WriteException{"Trying to move to not-directory element"};
   }
 	debug("Moving file "+QString::number(this->id)+" from dir "+QString::number(this->_parent_id)+" to dir "+QString::number(fs_e.id));
 	this->_parent_id = fs_e.id;
@@ -340,8 +320,7 @@ void FSElement_db::mv(const Session &s, int new_dir_id) {
 void FSElement_db::rename(const Session &s, QString name) {
 	if(s.getUserId() != this->_owner_id) {
     warn("Trying to rename not your element");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"Trying to rename not your element"};
   }
 	this->_name = name;
 	this->save();
@@ -350,18 +329,15 @@ void FSElement_db::rename(const Session &s, QString name) {
 SharedLink FSElement_db::share(const Session &s) {
   if(this->_type != FSElement::Type::FILE) {
     error("Trying to share a not-file element");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::ShareException{"Trying to share a not-file element"};
   }
   if(s.getUserId() != this->_owner_id) {
     warn("Trying to share not your file");
-    // TODO: lancia eccezione
-    exit(1);
+    throw se_exceptions::IllegalAccessException{"Trying to share not your file"};
   }
 	if(this->is_link()) {
 		warn("Trying to share a shared file");
-		// TODO: lancia eccezione
-		exit(1);
+		throw se_exceptions::ShareException{"Trying to share a shared file"};
 	}
   return SharedLink::create(this->id);
 }
