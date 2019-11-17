@@ -149,4 +149,45 @@ namespace se_exceptions {
   public:
       TestException(QString str): SE_Exception(str) {}
   };
+
+  // File SYstem exceptions
+  class FileSystemException: public SE_Exception {
+  public:
+      FileSystemException(QString str): SE_Exception(str) {}
+  }
+
+  class IllegalAccessException: public FileSystemException {
+  public:
+      IllegalAccessException(QString str): FileSystemException(str) {}
+  }
+
+  class RootDirExceptiopn: public FileSystemException {
+  public:
+      RootDirExceptiopn(QString str): FileSystemException(str) {}
+  }
+
+  class NoFileOnDiskException: public FileSystemException {
+  public:
+      NoFileOnDiskException(QString str): FileSystemException(str) {}
+  }
+
+  class LinkExcetpion: public FileSystemException {
+  public:
+      LinkExcetpion(QString str): FileSystemException(str) {}
+  }
+
+  class ReadException: public IllegalAccessException {
+  public:
+      ReadException(QString str): IllegalAccessException(str) {}
+  }
+
+  class WriteException: public IllegalAccessException {
+  public:
+      WriteException(QString str): IllegalAccessException(str) {}
+  }
+
+  class ShareException: public FileSystemException {
+  public:
+      ShareException(QString str): FileSystemException(str) {}
+  }
 }
