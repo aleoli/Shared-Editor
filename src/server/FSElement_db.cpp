@@ -1,6 +1,7 @@
 #include "FSElement_db.h"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QDir>
 #include <QJsonDocument>
 
@@ -130,7 +131,13 @@ void FSElement_db::remove(std::function<void(int, int)> notify_fn) {
 
 FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool is_file) {
   FSElement_db fs_e{};
-  // TODO: controlla che non ci sia già
+  if(is_file) {
+    do {
+      fs_e._path = rndString(64);
+    } while(!fs_e.path_on_disk_available());
+  } else {
+    fs_e._path = "";
+  }
   fs_e._path = is_file ? rndString(64) : "";
   fs_e._name = name;
   fs_e._type = is_file ? FSElement::Type::FILE : FSElement::Type::DIRECTORY;
@@ -236,8 +243,7 @@ FSElement_db FSElement_db::mkroot(int user_id) {
   bool no_folder = false;
   try {
     FSElement_db::root(user_id);
-  } catch(...) {
-    // TODO: controlla che l'ecezione sia del tipo giusto
+  } catch(const se_exceptions::RootDirException &ex) {
     no_folder = true;
   }
   if(!no_folder) {
@@ -372,4 +378,8 @@ bool FSElement_db::is_link() const {
 
 User FSElement_db::getCreator() {
 	return this->_creator.getValue();
+}
+
+bool FSElement_db::path_on_disk_available() {
+  return !QFileInfo::exists(this->getPath());
 }

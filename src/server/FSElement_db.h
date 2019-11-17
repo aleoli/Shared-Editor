@@ -68,6 +68,7 @@ private:
   bool is_link() const;
 
   QString getPath() const;
+  bool path_on_disk_available();
 
   QString _path;
   QString _name;

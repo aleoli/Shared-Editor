@@ -39,4 +39,6 @@ public:
 private:
   QString _token;
   Lazy<FSElement_db> _fs_element;
+
+  static bool token_available(const QString &token);
 };

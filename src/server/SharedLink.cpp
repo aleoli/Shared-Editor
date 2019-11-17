@@ -53,8 +53,9 @@ void SharedLink::remove() {
 
 SharedLink SharedLink::create(int file_id) {
   SharedLink sl{};
-  // TODO: controlla che non ci sia
-  sl._token = rndString(64);
+  do {
+    sl._token = rndString(64);
+  } while(!SharedLink::token_available(sl._token));
   sl._fs_element = Lazy<FSElement_db>{file_id};
   sl.save();
   return sl;
@@ -74,4 +75,9 @@ FSElement_db SharedLink::element() {
 
 QString SharedLink::getToken() const {
   return this->_token;
+}
+
+bool SharedLink::token_available(const QString &token) {
+  auto l = DB::get()->get<SharedLink>("token = '"+token+"'");
+  return l.empty();
 }
