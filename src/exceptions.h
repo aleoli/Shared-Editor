@@ -161,9 +161,9 @@ namespace se_exceptions {
       IllegalAccessException(QString str): FileSystemException(str) {}
   }
 
-  class RootDirExceptiopn: public FileSystemException {
+  class RootDirException: public FileSystemException {
   public:
-      RootDirExceptiopn(QString str): FileSystemException(str) {}
+      RootDirException(QString str): FileSystemException(str) {}
   }
 
   class NoFileOnDiskException: public FileSystemException {
@@ -171,9 +171,9 @@ namespace se_exceptions {
       NoFileOnDiskException(QString str): FileSystemException(str) {}
   }
 
-  class LinkExcetpion: public FileSystemException {
+  class LinkException: public FileSystemException {
   public:
-      LinkExcetpion(QString str): FileSystemException(str) {}
+      LinkException(QString str): FileSystemException(str) {}
   }
 
   class ReadException: public IllegalAccessException {
