@@ -1,6 +1,7 @@
 #define TEST_USER 0
 #define TEST_SOCKET 1
 #define TEST_MESSAGE 1
+#define TEST_FS 1
 
 #include <QApplication>
 
@@ -24,6 +25,10 @@
 #include "message_manager.h"
 #include <memory>
 #include <QThread>
+#endif
+
+#if TEST_FS
+#include "test_fs.h"
 #endif
 
 #include "exceptions.h"
@@ -52,6 +57,10 @@ int main(int argc, char *argv[]) {
   QObject::connect(mm.get(), SIGNAL(send_data(quint64, QByteArray)), cm.get(), SLOT(sendData(quint64, QByteArray)));
   QObject::connect(mm.get(), SIGNAL(connection_error(quint64)), cm.get(), SIGNAL(force_close(quint64)));
   mm_thread.start();
+#endif
+
+#if TEST_FS
+  test_fs();
 #endif
 
   return app.exec();

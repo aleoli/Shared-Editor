@@ -37,7 +37,7 @@ SysConf initiate_system(const QApplication &app) {
   auto db = DB::get(conf.mem_only);
   (void) db;
 
-  if(!dir_exists || !file_exists) {
+  if(!dir_exists || !file_exists || conf.mem_only) {
     DB::create_db_if_not_exists();
   }
 

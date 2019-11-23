@@ -1,6 +1,7 @@
 #include <vector>
 #include "../user.h"
 #include "../session.h"
+#include "utils.h"
 
 void test_user() {
   auto users{DB::getAll<User>()};
@@ -59,4 +60,6 @@ void test_user() {
       throw e;
     }
   }
+
+  info("User test passed");
 }

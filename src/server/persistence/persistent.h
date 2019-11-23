@@ -65,12 +65,15 @@ protected:
             }
         } else {
             auto record = model.record();
-            record.remove(record.indexOf("id"));        // rimuovo la colonna id perchè è auto-increment
+            record.setNull("id");
             this->save_record(record);
             if(!model.insertRecord(-1, record)) {
                 model.database().rollback();
                 throw SQLInsertException{"Failed insertion in table "+T::table_name};
             }
+            model.setSort(0, Qt::DescendingOrder);
+            model.select();
+            this->id = model.record(0).value("id").toInt();
         }
         model.submitAll();
         model.database().commit();

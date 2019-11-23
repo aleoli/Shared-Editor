@@ -54,9 +54,16 @@ public:
         return this->operator->();
     }
 
-    int getId() const{
+    int getId() const {
         return this->id;
     }
+
+		void clear() {
+				if(this->value)
+						delete this->value;
+				this->value = nullptr;
+				this->has_value = false;
+		}
 
 private:
     int id;
