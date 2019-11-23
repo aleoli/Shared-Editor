@@ -1,0 +1,8 @@
+# Legenda
+
+- verde: si può implementare diversamente
+- giallo: da fare in futuro
+- rosso: no
+- blu: cos'è?
+- viola: manca qualcosa
+- arancione: non implementato e non so se conviene farlo, oppure non so se si può fare
