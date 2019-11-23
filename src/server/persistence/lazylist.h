@@ -128,6 +128,11 @@ public:
 				this->has_values = false;
 		}
 
+    void addValue(T* v) {
+        this->ids.push_back(v->getId());
+        this->values.push_back(v);
+    }
+
 private:
     void load_from_query() {
         QSqlTableModel model;

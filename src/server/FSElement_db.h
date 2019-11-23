@@ -1,5 +1,7 @@
 #pragma once
 
+#define FILE_PATH "/.shared_editor/data/"
+
 #include <QString>
 
 #include "persistence_global.h"

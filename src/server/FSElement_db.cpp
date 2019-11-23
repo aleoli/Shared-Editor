@@ -138,7 +138,6 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
   } else {
     fs_e._path = "";
   }
-  fs_e._path = is_file ? rndString(64) : "";
   fs_e._name = name;
   fs_e._type = is_file ? FSElement::Type::FILE : FSElement::Type::DIRECTORY;
   fs_e._parent_id = parent_id;
@@ -270,8 +269,9 @@ FSElement_db FSElement_db::mkdir(const Session &s, QString name) {
     error("Trying to modify not your directory");
     throw se_exceptions::IllegalAccessException{"Trying to modify not your directory"};
   }
-	this->_children.clear();
-  return FSElement_db::create(s.getUserId(), this->id, name, false);
+  auto child = FSElement_db::create(s.getUserId(), this->id, name, false);
+  this->_children.addValue(new FSElement_db{child});
+  return child;
 }
 
 FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
@@ -361,7 +361,7 @@ void FSElement_db::clearCache() {
 }
 
 QString FSElement_db::getPath() const {
-  return QDir::homePath()+"/.shared_editor/data/"+this->_path;
+  return QDir::homePath()+FILE_PATH+this->_path;
 }
 
 QString FSElement_db::getName() const {

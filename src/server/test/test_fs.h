@@ -59,7 +59,7 @@ void test_fs() {
     auto sl = f1.share(s);
     auto f1_2 = FSElement_db::link(s2, sl.getToken());
 
-    bool match = f1.load().to_string() == f1_2.load().to_string();
+    bool match = f1.load() == f1_2.load();
 
     f1_2.remove(rm_lambda);
     bool t1 = DB::getAll<FSElement_db>().size() == 5;
