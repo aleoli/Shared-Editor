@@ -283,8 +283,9 @@ FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
     error("Trying to modify not your directory");
     throw se_exceptions::IllegalAccessException{"Trying to modify not your directory"};
   }
-	this->_children.clear();
-  return FSElement_db::create(s.getUserId(), this->id, name, true);
+  auto child = FSElement_db::create(s.getUserId(), this->id, name, true);
+  this->_children.addValue(new FSElement_db{child});
+  return child;
 }
 
 std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
@@ -315,7 +316,7 @@ void FSElement_db::mv(const Session &s, FSElement_db &fs_e) {
 	debug("Moving file "+QString::number(this->id)+" from dir "+QString::number(this->_parent_id)+" to dir "+QString::number(fs_e.id));
 	this->_parent_id = fs_e.id;
 	this->save();
-	fs_e._children.clear();
+  fs_e._children.addValue(new FSElement_db{*this});
 }
 
 void FSElement_db::mv(const Session &s, int new_dir_id) {
