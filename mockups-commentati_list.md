@@ -22,10 +22,10 @@
 
 ![](mockups-commentati/TendineTextEditor-01.png)
 
-# Vista relazione finestre
+<!--# Vista relazione finestre
 
-![](mockups-commentati/Overview.png)
+<!--![](mockups-commentati/Overview.png)
 
-# Vista completa relazione finestre
+<!--# Vista completa relazione finestre
 
-![](mockups-commentati/OverviewFull.png)
+<!--![](mockups-commentati/OverviewFull.png)
