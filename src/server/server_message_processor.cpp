@@ -2,6 +2,7 @@
 
 #include "user.h"
 #include "session.h"
+#include "FSElement_db.h"
 
 ServerMessageProcessor::ServerMessageProcessor(const Message &m, quint64 clientId)
     : MessageProcessor(m), _clientId(clientId), _to_all(false) {
@@ -66,8 +67,55 @@ void ServerMessageProcessor::process_user() {
 }
 
 void ServerMessageProcessor::process_file() {
-  //TODO switch statement
-  std::cout << "ciao server" << std::endl;
+  auto action = static_cast<Message::FileAction>(_m.getAction());
+  bool isResponse = _m.getStatus() == Message::Status::RESPONSE;
+
+  switch(action) {
+    case Message::FileAction::NEW:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        newFile();
+      break;
+
+    case Message::FileAction::GET:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getFile();
+      break;
+
+    case Message::FileAction::EDIT:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        editFile();
+      break;
+
+    case Message::FileAction::DELETE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        deleteFile();
+      break;
+
+    case Message::FileAction::GET_LINK:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getLink();
+      break;
+
+    case Message::FileAction::ACTIVATE_LINK:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        activateLink();
+      break;
+
+    default:
+      disconnect("Ricevuto messaggio con azione non valida");
+  }
 }
 
 void ServerMessageProcessor::process_file_edit() {
@@ -227,4 +275,145 @@ void ServerMessageProcessor::deleteUser() {
     // TODO
     error("EXCEPTION: TODO");
   }
+}
+
+
+
+void ServerMessageProcessor::newFile() {
+  info("NewFile query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto name = _m.getString("name");
+
+  int dirId = 0;
+  try {
+    dirId = _m.getInt("dirId");
+  } catch(MessageDataException ex) {
+    // use root dir
+  }
+
+  FSElement_db dir = dirId == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, dirId);
+  auto file = dir.mkfile(session, name);
+
+  QJsonObject data;
+  data["fileId"] = file.getId();
+
+  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::getFile() {
+  info("GetFile query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+  auto file = FSElement_db::get(session, fileId);
+
+  QJsonObject data;
+  data["file"] = file.getFSElement().toJsonObject();
+  // TODO
+  data["charId"] = 0;
+
+  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::closeFile() {
+  info("CloseFile query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+
+  // TODO
+
+  this->_has_resp = false;
+}
+
+void ServerMessageProcessor::editFile() {
+  info("EditFile query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+  auto file = FSElement_db::get(session, fileId);
+
+  try {
+    auto name = _m.getString("name");
+    file.rename(session, name);
+  } catch(MessageDataException ex) {
+    debug("No name change required");
+  }
+
+  QJsonObject data;
+
+  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::EDIT, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::deleteFile() {
+  info("DeleteFile query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+  auto file = FSElement_db::get(session, fileId);
+
+  file.remove([](int link_id, int owner_id) -> void {
+    // TODO
+    debug("NOTIFY: removed link_id "+QString::number(link_id)+" of user "+QString::number(owner_id));
+  });
+
+  QJsonObject data;
+
+  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::DELETE, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::getLink() {
+  info("GetLink query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+  auto file = FSElement_db::get(session, fileId);
+
+  auto link = file.share(session);
+
+  QJsonObject data;
+  data["link"] = link.getToken();
+
+  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET_LINK, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::activateLink() {
+  info("ActivateLink query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto link_token = _m.getString("link");
+  auto user_root = FSElement_db::root(session.getUserId());
+
+  auto file = FSElement_db::link(session, link_token);
+  file.mv(session, user_root);
+
+  QJsonObject data;
+  QJsonObject element;
+  element["fileId"] = file.getId();
+  element["name"] = file.getName();
+  data["element"] = element;
+  data["file"] = file.getFSElement().toJsonObject();
+
+  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
 }
