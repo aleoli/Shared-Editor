@@ -27,6 +27,7 @@ private:
 
   // handlers
   void login();
+  void logout();
   void newUser();
   void editUser();
   void deleteUser();

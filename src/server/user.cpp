@@ -111,3 +111,31 @@ QString User::getNickname() const {
 QString User::getEmail() const {
   return this->_email;
 }
+
+bool User::setPassword(QString old_password, QString password) {
+  QSqlQuery query("SELECT password FROM "+User::table_name+" WHERE id=?");
+  query.addBindValue(this->id);
+  if(query.exec()) {
+    while(query.next()) {
+      auto r = query.record();
+      if(User::check_pass(old_password, r.value("password").toString())) {
+        this->_password = User::encrypt(password);
+        return true;
+      } else {
+        return false;
+      }
+    }
+    throw SQLNoElementSelectException{"No element found in table '"+User::table_name+"'"};
+  } else {
+    throw SQLException{"No query exec on '"+User::table_name+"'"};
+  }
+}
+
+void User::setNickname(QString nickname) {
+  this->_nickname = nickname;
+}
+
+void User::setIcon(QString icon) {
+  // TODO: set icon
+  warn("TODO: set icon");
+}
