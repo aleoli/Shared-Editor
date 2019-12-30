@@ -26,9 +26,19 @@ private:
   void disconnect(QString why);
 
   // handlers
+
   void login();
   void logout();
   void newUser();
   void editUser();
   void deleteUser();
+
+  void newFile();
+  void getFile();
+  void closeFile();
+  void editFile();
+  void deleteFile();
+  void fileDeleted();
+  void getLink();
+  void activateLink();
 };
