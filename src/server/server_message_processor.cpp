@@ -124,8 +124,48 @@ void ServerMessageProcessor::process_file_edit() {
 }
 
 void ServerMessageProcessor::process_filesystem() {
-  //TODO switch statement
-  std::cout << "ciao server" << std::endl;
+  auto action = static_cast<Message::FileSystemAction>(_m.getAction());
+  bool isResponse = _m.getStatus() == Message::Status::RESPONSE;
+
+  switch(action) {
+    case Message::FileSystemAction::NEW_DIR:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        newDir();
+      break;
+
+    case Message::FileSystemAction::EDIT_DIR:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        editDir();
+      break;
+
+    case Message::FileSystemAction::DELETE_DIR:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        deleteDir();
+      break;
+
+    case Message::FileSystemAction::GET_DIR:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getDir();
+      break;
+
+    case Message::FileSystemAction::MOVE_FILE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        moveFile();
+      break;
+
+    default:
+      disconnect("Ricevuto messaggio con azione non valida");
+  }
 }
 
 void ServerMessageProcessor::disconnect(QString why) {
@@ -415,5 +455,134 @@ void ServerMessageProcessor::activateLink() {
   data["file"] = file.getFSElement().toJsonObject();
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+
+
+void ServerMessageProcessor::newDir() {
+  info("NewDir query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto name = _m.getString("name");
+  int parent_id = 0;
+  try {
+    parent_id = _m.getInt("parentId");
+  } catch(MessageDataException ex) {
+    // use root directory
+  }
+
+  auto dir = parent_id == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, parent_id);
+  auto new_dir = dir.mkdir(session, name);
+
+  QJsonObject data;
+  data["dirId"] = new_dir.getId();
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::NEW_DIR, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::editDir() {
+  info("EditDir query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto dir_id = _m.getInt("dirId");
+  auto dir = FSElement_db::get(session, dir_id);
+
+  try {
+    auto name = _m.getString("name");
+    dir.rename(session, name);
+  } catch(MessageDataException ex) {
+    debug("No name change required");
+  }
+
+  try {
+    auto parent_id = _m.getInt("parentId");
+    dir.mv(session, parent_id);
+  } catch(MessageDataException ex) {
+    debug("No parentId change required");
+  }
+
+  QJsonObject data;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::EDIT_DIR, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::deleteDir() {
+  info("DeleteDir query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto dir_id = _m.getInt("dirId");
+  auto dir = FSElement_db::get(session, dir_id);
+
+  dir.remove([](int link_id, int owner_id) -> void {
+    // TODO
+    debug("NOTIFY: removed link_id "+QString::number(link_id)+" of user "+QString::number(owner_id));
+  });
+
+  QJsonObject data;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::DELETE_DIR, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::getDir() {
+  info("GetDir query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto dir_id = 0;
+  try {
+    dir_id = _m.getInt("dirId");
+  } catch(MessageDataException ex) {
+    // use root directory
+  }
+
+  auto dir = dir_id == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, dir_id);
+
+  QJsonArray arr;
+  for(auto& f: dir.ls(session)) {
+    auto obj = f->getFSElement().toJsonObject();
+    arr.append(obj);
+  }
+
+  QJsonObject data;
+  data["elements"] = arr;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::GET_DIR, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::moveFile() {
+  info("MoveFile query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto file_id = _m.getInt("fileId");
+
+  auto dir_id = 0;
+  try {
+    dir_id = _m.getInt("dirId");
+  } catch(MessageDataException ex) {
+    // use root directory
+  }
+
+  auto file = FSElement_db::get(session, file_id);
+  auto dir = dir_id == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, dir_id);
+
+  file.mv(session, dir);
+
+  QJsonObject data;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::MOVE_FILE, Message::Status::RESPONSE, data};
   this->_has_resp = true;
 }
