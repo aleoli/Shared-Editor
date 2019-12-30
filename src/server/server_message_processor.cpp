@@ -1,6 +1,7 @@
 #include "server_message_processor.h"
 
 #include "user.h"
+#include "session.h"
 
 ServerMessageProcessor::ServerMessageProcessor(const Message &m, quint64 clientId)
     : MessageProcessor(m), _clientId(clientId), _to_all(false) {
@@ -29,6 +30,13 @@ void ServerMessageProcessor::process_user() {
         disconnect("Ricevuto messaggio con status non valido");
       else
         login();
+      break;
+
+    case Message::UserAction::LOGOUT:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        logout();
       break;
 
     case Message::UserAction::NEW:
@@ -107,17 +115,32 @@ void ServerMessageProcessor::login() {
   }
 }
 
+void ServerMessageProcessor::logout() {
+  info("Logout query received");
+
+  try {
+    auto token = _m.getString("token");
+    auto session = Session::get(token);
+    session.close();
+
+    this->_has_resp = false;
+  } catch(...) {
+    // TODO
+    error("EXCEPTION: TODO");
+  }
+}
+
 void ServerMessageProcessor::newUser() {
   info("NewUser query received");
 
   try {
-    QString nickname = "";
+    QString email = "";
     try {
-      nickname = _m.getString("nickname");
+      email = _m.getString("email");
     } catch(MessageDataException ex) {
-      nickname = _m.getString("email");
+      // TODO: vedi come fare per email vuota
     }
-    auto email = _m.getString("email");
+    auto nickname = _m.getString("username");
     auto password = _m.getString("password");
 
     auto u = User::registra(nickname, email, password);
@@ -138,9 +161,70 @@ void ServerMessageProcessor::newUser() {
 }
 
 void ServerMessageProcessor::editUser() {
+  info("EditUser query received");
 
+  try {
+    auto token = _m.getString("token");
+    auto session = Session::get(token);
+
+    auto user = session.getUser();
+
+    try {
+      auto old_password = _m.getString("oldPassword");
+      auto password = _m.getString("password");
+      if(password == _m.getString("pswRepeat")) {
+        bool res = user.setPassword(old_password, password);
+        if(!res) {
+          // TODO: va mandato un messaggio di errore
+        }
+      }
+    } catch(MessageDataException ex) {
+      debug("No pass change required");
+    }
+
+
+    try {
+      auto nickname = _m.getString("nickname");
+      user.setNickname(nickname);
+    } catch(MessageDataException ex) {
+      debug("No nickname change required");
+    }
+
+
+    try {
+      auto icon = _m.getString("icon");
+      user.setIcon(icon);
+    } catch(MessageDataException ex) {
+      debug("No icon change required");
+    }
+
+    user.save();
+
+    QJsonObject data;
+    this->_res = Message{Message::Type::USER, (int) Message::UserAction::EDIT, Message::Status::RESPONSE, data};
+    this->_has_resp = true;
+  } catch(...) {
+    // TODO
+    error("EXCEPTION: TODO");
+  }
 }
 
 void ServerMessageProcessor::deleteUser() {
+  info("DeleteUser query received");
 
+  try {
+    auto token = _m.getString("token");
+    auto session = Session::get(token);
+
+    auto user = session.getUser();
+
+    user.remove();
+
+    QJsonObject data;
+    this->_res = Message{Message::Type::USER, (int) Message::UserAction::DELETE, Message::Status::RESPONSE, data};
+    this->_has_resp = true;
+  } catch(...) {
+    // TODO
+    error("EXCEPTION: TODO");
+  }
 }

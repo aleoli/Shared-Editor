@@ -31,6 +31,10 @@ public:
   QString getNickname() const;
   QString getEmail() const;
 
+  bool setPassword(QString old_passwork, QString password);
+  void setNickname(QString nickname);
+  void setIcon(QString icon);
+
 private:
   User(QString nickname, QString email, QString password);
 
