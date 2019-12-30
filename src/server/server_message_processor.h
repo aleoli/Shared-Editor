@@ -22,4 +22,12 @@ private:
   bool _to_all;
   quint64 _clientId;
   std::shared_ptr<MessageManager> _manager;
+
+  void disconnect(QString why);
+
+  // handlers
+  void login();
+  void newUser();
+  void editUser();
+  void deleteUser();
 };
