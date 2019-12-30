@@ -110,7 +110,7 @@ void FSElement_db::remove(std::function<void(int, int)> notify_fn) {
 		}
 		auto children = this->_children.getValues();
 		for(auto& c: children) {
-	    c->remove();
+	    c->remove(notify_fn);
 	  }
 	} else if(!this->is_link()) {
 		// file non linkato

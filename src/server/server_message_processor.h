@@ -41,4 +41,10 @@ private:
   void fileDeleted();
   void getLink();
   void activateLink();
+
+  void newDir();
+  void editDir();
+  void deleteDir();
+  void getDir();
+  void moveFile();
 };
