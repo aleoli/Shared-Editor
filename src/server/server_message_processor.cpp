@@ -119,8 +119,41 @@ void ServerMessageProcessor::process_file() {
 }
 
 void ServerMessageProcessor::process_file_edit() {
-  //TODO switch statement
-  std::cout << "ciao server" << std::endl;
+  auto action = static_cast<Message::FileEditAction>(_m.getAction());
+  bool isResponse = _m.getStatus() == Message::Status::RESPONSE;
+
+  switch(action) {
+    case Message::FileEditAction::LOCAL_INSERT:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        localInsert();
+      break;
+
+    case Message::FileEditAction::LOCAL_DELETE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        localDelete();
+      break;
+
+    case Message::FileEditAction::LOCAL_UPDATE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        localUpdate();
+      break;
+
+    case Message::FileEditAction::LOCAL_MOVE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        localMove();
+      break;
+
+    default:
+      disconnect("Ricevuto messaggio con azione non valida");
+  }
 }
 
 void ServerMessageProcessor::process_filesystem() {
@@ -456,6 +489,24 @@ void ServerMessageProcessor::activateLink() {
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
   this->_has_resp = true;
+}
+
+
+
+void ServerMessageProcessor::localInsert() {
+  // TODO
+}
+
+void ServerMessageProcessor::localDelete() {
+  // TODO
+}
+
+void ServerMessageProcessor::localUpdate() {
+  // TODO
+}
+
+void ServerMessageProcessor::localMove() {
+  // TODO
 }
 
 

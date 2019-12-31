@@ -42,6 +42,11 @@ private:
   void getLink();
   void activateLink();
 
+  void localInsert();
+  void localDelete();
+  void localUpdate();
+  void localMove();
+
   void newDir();
   void editDir();
   void deleteDir();
