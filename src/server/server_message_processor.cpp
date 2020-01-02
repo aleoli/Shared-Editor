@@ -220,13 +220,15 @@ void ServerMessageProcessor::login() {
     auto username = _m.getString("username");
     auto password = _m.getString("password");
 
-    auto s = User::login(username, password);
+    auto s = std::make_shared<Session>(User::login(username, password));
 
     QJsonObject data;
-    data["token"] = s.getToken();
-    data["userId"] = s.getUser().getId();
+    data["token"] = s->getToken();
+    data["userId"] = s->getUser().getId();
 
     // TODO: set other fields
+
+    this->_manager->addClient(this->_clientId, s);
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::LOGIN, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -243,6 +245,8 @@ void ServerMessageProcessor::logout() {
     auto token = _m.getString("token");
     auto session = Session::get(token);
     session.close();
+
+    this->_manager->clientDisconnected(this->_clientId);
 
     this->_has_resp = false;
   } catch(...) {
@@ -265,13 +269,15 @@ void ServerMessageProcessor::newUser() {
     auto password = _m.getString("password");
 
     auto u = User::registra(nickname, email, password);
-    auto s = User::login(nickname, password);
+    auto s = std::make_shared<Session>(User::login(nickname, password));
 
     QJsonObject data;
-    data["token"] = s.getToken();
-    data["userId"] = s.getUser().getId();
+    data["token"] = s->getToken();
+    data["userId"] = s->getUser().getId();
 
     // TODO: set other fields
+
+    this->_manager->addClient(this->_clientId, s);
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::NEW, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -331,6 +337,7 @@ void ServerMessageProcessor::editUser() {
 }
 
 void ServerMessageProcessor::deleteUser() {
+  // TODO: l'utente può solo cancellarsi da solo, quindi devo anche farne il logout
   info("DeleteUser query received");
 
   try {
@@ -384,10 +391,10 @@ void ServerMessageProcessor::getFile() {
   auto session = Session::get(token);
 
   auto fileId = _m.getInt("fileId");
-  auto file = FSElement_db::get(session, fileId);
+  auto file = this->_manager->getFile(this->_clientId, fileId);
 
   QJsonObject data;
-  data["file"] = file.getFSElement().toJsonObject();
+  data["file"] = file.toJsonObject();
   // TODO
   data["charId"] = 0;
 
@@ -403,7 +410,7 @@ void ServerMessageProcessor::closeFile() {
 
   auto fileId = _m.getInt("fileId");
 
-  // TODO
+  this->_manager->closeFile(this->_clientId, fileId);
 
   this->_has_resp = false;
 }
