@@ -31,7 +31,7 @@ public:
 
   /* gestione file */
   // richiesta di un file da parte di un client
-  /*QByteArray*/ File getFile(quint64 clientId, int fileId);
+  File getFile(quint64 clientId, int fileId);
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
   void addSymbol(quint64 clientId, int fileId, const Symbol& sym);
   void deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId);
@@ -51,7 +51,6 @@ signals:
 
 public slots:
   void process_data(quint64 client_id, QByteArray data);
-  //void client_disconnected(quint64 client_id);
   void clientDisconnected(quint64 clientId);
 
 private:

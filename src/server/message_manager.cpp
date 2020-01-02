@@ -83,7 +83,7 @@ void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
   }
 }
 
-/*QByteArray*/ File MessageManager::getFile(quint64 clientId, int fileId) {
+File MessageManager::getFile(quint64 clientId, int fileId) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -106,7 +106,7 @@ void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
   _clients[clientId].fileId = fileId;
   _clients[clientId].fileIsOpen = true;
 
-  return f; //f.toQByteArray();
+  return f;
 }
 
 void MessageManager::loadFile(int fileId) {
