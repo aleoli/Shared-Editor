@@ -31,7 +31,7 @@ public:
 
   /* gestione file */
   // richiesta di un file da parte di un client
-  QByteArray getFile(quint64 clientId, int fileId);
+  /*QByteArray*/ File getFile(quint64 clientId, int fileId);
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
   void addSymbol(quint64 clientId, int fileId, const Symbol& sym);
   void deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId);

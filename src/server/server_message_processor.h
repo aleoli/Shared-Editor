@@ -38,7 +38,6 @@ private:
   void closeFile();
   void editFile();
   void deleteFile();
-  void fileDeleted();
   void getLink();
   void activateLink();
 
