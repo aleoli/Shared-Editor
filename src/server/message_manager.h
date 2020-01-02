@@ -29,6 +29,9 @@ public:
   //quando il processor processa un msg di login, va aggiunto a _clients
   void addClient(quint64 clientId, std::shared_ptr<Session> session, QString username);
   QString getUsername(quint64 clientId);
+  std::list<quint64> getClients(int userId);    // tutti i client in cui è connesso l'utente
+  std::list<quint64> getClientsInFile(int fileId);      // tutti i client che stanno lavorando su un file
+  int getUserId(quint64 client_id);
 
   /* gestione file */
   // richiesta di un file da parte di un client

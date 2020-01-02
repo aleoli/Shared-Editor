@@ -38,6 +38,8 @@ public:
   static const QString table_name;
 
   QString getName() const;
+  int getPhisicalId();
+  static int getIdForUser(const Session &s, int file_id, int user_id);
 
   static FSElement_db get(const Session &s, int id);
   static FSElement_db mkroot(int user_id);
@@ -58,6 +60,8 @@ public:
   File load() const;
   void store(const File &f);
 
+  bool is_link() const;
+
 	void clearCache();
 
 private:
@@ -67,7 +71,6 @@ private:
 
   FSElement load_dir() const;
   void del_file();
-  bool is_link() const;
 
   QString getPath() const;
   bool path_on_disk_available();

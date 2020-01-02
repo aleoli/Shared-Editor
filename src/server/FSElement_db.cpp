@@ -369,6 +369,29 @@ QString FSElement_db::getName() const {
   return this->_name;
 }
 
+int FSElement_db::getPhisicalId() {
+  if(this->is_link()) {
+    return this->_original.getId();
+  } else {
+    return this->getId();
+  }
+}
+
+int FSElement_db::getIdForUser(const Session &s, int file_id, int user_id) {
+  auto file = FSElement_db::get(s, file_id);
+  if(file.is_link()) {
+    file = file._original.getValue();
+  }
+  auto links = file._links.getValues();
+  for(auto &l: links) {
+    if(l->_owner_id == user_id) {
+      return l->_owner_id;
+    }
+  }
+  // TODO
+  throw 1;
+}
+
 std::vector<FSElement_db*> FSElement_db::getChildren() {
   return this->_children.getValues();
 }
