@@ -23,6 +23,8 @@ private:
   quint64 _clientId;
   std::shared_ptr<MessageManager> _manager;
 
+  static void delete_lambda(int link_id, int owner_id);
+
   void disconnect(QString why);
 
   // handlers

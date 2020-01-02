@@ -67,6 +67,24 @@ QString MessageManager::getUsername(quint64 clientId) {
   return this->_clients[clientId].username;
 }
 
+std::list<quint64> MessageManager::getClients(int userId) {
+  std::list<quint64> l;
+  for(auto &i: this->_clients) {
+    if(i.second.session->getUserId() == userId) {
+      l.push_back(i.second.clientId);
+    }
+  }
+  return l;
+}
+
+std::list<quint64> MessageManager::getClientsInFile(int fileId) {
+  return this->_fileClients[fileId];
+}
+
+int MessageManager::getUserId(quint64 client_id) {
+  return this->_clients[client_id].session->getUserId();
+}
+
 void MessageManager::clientDisconnected(quint64 clientId) {
   if(_clients.count(clientId) == 0) return; //no exception here
 

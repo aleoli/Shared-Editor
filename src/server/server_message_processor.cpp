@@ -390,7 +390,7 @@ void ServerMessageProcessor::getFile() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
   auto file = this->_manager->getFile(this->_clientId, fileId);
 
   QJsonObject data;
@@ -402,7 +402,7 @@ void ServerMessageProcessor::getFile() {
   this->_has_resp = true;
 
   QJsonObject data2;
-  data2["fileId"] = fileId;
+  data2["fileId"] = _m.getInt("fileId");
   data2["clientId"] = (int) this->_clientId;
   data2["username"] = this->_manager->getUsername(this->_clientId);
 
@@ -416,17 +416,26 @@ void ServerMessageProcessor::closeFile() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
 
   this->_manager->closeFile(this->_clientId, fileId);
 
-  QJsonObject data;
-  data["fileId"] = fileId;
-  data["clientId"] = (int) this->_clientId;
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
 
-  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, data};
-  this->_has_resp = true;
-  this->_to_all = true;
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["clientId"] = (int) this->_clientId;
+
+    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
 }
 
 void ServerMessageProcessor::editFile() {
@@ -457,13 +466,9 @@ void ServerMessageProcessor::deleteFile() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
-  auto file = FSElement_db::get(session, fileId);
+  auto file = FSElement_db::get(session, _m.getInt("fileId"));
 
-  file.remove([](int link_id, int owner_id) -> void {
-    // TODO
-    debug("NOTIFY: removed link_id "+QString::number(link_id)+" of user "+QString::number(owner_id));
-  });
+  file.remove(ServerMessageProcessor::delete_lambda);
 
   QJsonObject data;
 
@@ -477,8 +482,7 @@ void ServerMessageProcessor::getLink() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
-  auto file = FSElement_db::get(session, fileId);
+  auto file = FSElement_db::get(session, _m.getInt("fileId"));
 
   auto link = file.share(session);
 
@@ -520,20 +524,29 @@ void ServerMessageProcessor::localInsert() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
 
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
     this->_manager->addSymbol(this->_clientId, fileId, Symbol::fromJsonObject(symb.toObject()));
   }
 
-  QJsonObject data;
-  data["fileId"] = fileId;
-  data["symbols"] = _m.getArray("symbols");
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
 
-  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
-  this->_has_resp = true;
-  this->_to_all = true;
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["symbols"] = _m.getArray("symbols");
+
+    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
 }
 
 void ServerMessageProcessor::localDelete() {
@@ -542,20 +555,29 @@ void ServerMessageProcessor::localDelete() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
 
   auto ids = _m.getArray("ids");
   for(const auto &id: ids) {
     this->_manager->deleteSymbol(this->_clientId, fileId, SymbolId::fromJsonObject(id.toObject()));
   }
 
-  QJsonObject data;
-  data["fileId"] = fileId;
-  data["ids"] = _m.getArray("ids");
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
 
-  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
-  this->_has_resp = true;
-  this->_to_all = true;
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["ids"] = _m.getArray("ids");
+
+    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
 }
 
 void ServerMessageProcessor::localUpdate() {
@@ -564,7 +586,7 @@ void ServerMessageProcessor::localUpdate() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
 
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
@@ -573,13 +595,22 @@ void ServerMessageProcessor::localUpdate() {
     to_mod.update(s);
   }
 
-  QJsonObject data;
-  data["fileId"] = fileId;
-  data["symbols"] = _m.getArray("symbols");
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
 
-  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
-  this->_has_resp = true;
-  this->_to_all = true;
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["symbols"] = _m.getArray("symbols");
+
+    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
 }
 
 void ServerMessageProcessor::localMove() {
@@ -588,21 +619,30 @@ void ServerMessageProcessor::localMove() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = _m.getInt("fileId");
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
 
   auto symbolId = SymbolId::fromJsonObject(_m.getObject("symbolId"));
   auto cursorPosition = _m.getInt("cursorPosition");
   // TODO: sposta il cursore nel file
 
-  QJsonObject data;
-  data["fileId"] = fileId;
-  data["clientId"] = (int) this->_clientId;
-  data["symbolId"] = _m.getObject("symbolId");
-  data["cursorPosition"] = _m.getInt("cursorPosition");
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
 
-  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_MOVE, Message::Status::QUERY, data};
-  this->_has_resp = true;
-  this->_to_all = true;
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["clientId"] = (int) this->_clientId;
+    data["symbolId"] = _m.getObject("symbolId");
+    data["cursorPosition"] = _m.getInt("cursorPosition");
+
+    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_MOVE, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
 }
 
 
@@ -669,10 +709,7 @@ void ServerMessageProcessor::deleteDir() {
   auto dir_id = _m.getInt("dirId");
   auto dir = FSElement_db::get(session, dir_id);
 
-  dir.remove([](int link_id, int owner_id) -> void {
-    // TODO
-    debug("NOTIFY: removed link_id "+QString::number(link_id)+" of user "+QString::number(owner_id));
-  });
+  dir.remove(ServerMessageProcessor::delete_lambda);
 
   QJsonObject data;
 
@@ -732,4 +769,20 @@ void ServerMessageProcessor::moveFile() {
 
   this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::MOVE_FILE, Message::Status::RESPONSE, data};
   this->_has_resp = true;
+}
+
+void ServerMessageProcessor::delete_lambda(int link_id, int owner_id) {
+  debug("NOTIFY: removed link_id "+QString::number(link_id)+" of user "+QString::number(owner_id));
+
+  QJsonObject data;
+  data["fileId"] = link_id;
+
+  auto msg = Message{Message::Type::FILE, (int) Message::FileAction::FILE_DELETED, Message::Status::QUERY, data};
+  auto byte_data = msg.toQByteArray();
+
+  auto manager = MessageManager::get();
+  auto clients = manager->getClients(owner_id);
+  for(auto &cl: clients) {
+    manager->send_data(cl, byte_data);
+  }
 }
