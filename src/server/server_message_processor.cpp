@@ -501,19 +501,76 @@ void ServerMessageProcessor::activateLink() {
 
 
 void ServerMessageProcessor::localInsert() {
-  // TODO
+  info("LocalInsert query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+
+  auto symbols = _m.getArray("symbols");
+  for(const auto &symb: symbols) {
+    this->_manager->addSymbol(this->_clientId, fileId, Symbol::fromJsonObject(symb.toObject()));
+  }
+
+  // TODO: notifica agli altri collegati a questo file
+
+  this->_has_resp = false;
 }
 
 void ServerMessageProcessor::localDelete() {
-  // TODO
+  info("LocalDelete query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+
+  auto ids = _m.getArray("ids");
+  for(const auto &id: ids) {
+    this->_manager->deleteSymbol(this->_clientId, fileId, SymbolId::fromJsonObject(id.toObject()));
+  }
+
+  // TODO: notifica agli altri collegati a questo file
+
+  this->_has_resp = false;
 }
 
 void ServerMessageProcessor::localUpdate() {
-  // TODO
+  info("LocalUpdate query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+
+  auto symbols = _m.getArray("symbols");
+  for(const auto &symb: symbols) {
+    auto s = Symbol::fromJsonObject(symb.toObject());
+    auto to_mod = this->_manager->getSymbol(this->_clientId, fileId, s.getSymbolId());
+    to_mod.update(s);
+  }
+
+  // TODO: notifica agli altri collegati a questo file
+
+  this->_has_resp = false;
 }
 
 void ServerMessageProcessor::localMove() {
-  // TODO
+  info("LocalMove query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto fileId = _m.getInt("fileId");
+
+  auto symbolId = SymbolId::fromJsonObject(_m.getObject("symbolId"));
+  auto cursorPosition = _m.getInt("cursorPosition");
+  // TODO: sposta il cursore nel file
+
+  // TODO: notifica agli altri collegati a questo file
+
+  this->_has_resp = false;
 }
 
 

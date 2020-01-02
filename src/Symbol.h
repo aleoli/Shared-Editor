@@ -62,6 +62,8 @@ public:
   std::string to_string() const;
   std::string getFontInfo() const;
 
+  void update(const Symbol &s);
+
   void setFormat(QTextCharFormat fmt);
   QTextCharFormat getFormat() const;
   void setFont(QFont font);
