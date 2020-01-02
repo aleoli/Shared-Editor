@@ -228,7 +228,7 @@ void ServerMessageProcessor::login() {
 
     // TODO: set other fields
 
-    this->_manager->addClient(this->_clientId, s);
+    this->_manager->addClient(this->_clientId, s, username);
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::LOGIN, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -277,7 +277,7 @@ void ServerMessageProcessor::newUser() {
 
     // TODO: set other fields
 
-    this->_manager->addClient(this->_clientId, s);
+    this->_manager->addClient(this->_clientId, s, nickname);
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::NEW, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -400,6 +400,14 @@ void ServerMessageProcessor::getFile() {
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
   this->_has_resp = true;
+
+  QJsonObject data2;
+  data2["fileId"] = fileId;
+  data2["clientId"] = (int) this->_clientId;
+  data2["username"] = this->_manager->getUsername(this->_clientId);
+
+  auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data2};
+  this->_manager->sendToAll(this->_clientId, fileId, msg.toQByteArray());
 }
 
 void ServerMessageProcessor::closeFile() {
@@ -412,7 +420,13 @@ void ServerMessageProcessor::closeFile() {
 
   this->_manager->closeFile(this->_clientId, fileId);
 
-  this->_has_resp = false;
+  QJsonObject data;
+  data["fileId"] = fileId;
+  data["clientId"] = (int) this->_clientId;
+
+  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, data};
+  this->_has_resp = true;
+  this->_to_all = true;
 }
 
 void ServerMessageProcessor::editFile() {
@@ -513,9 +527,13 @@ void ServerMessageProcessor::localInsert() {
     this->_manager->addSymbol(this->_clientId, fileId, Symbol::fromJsonObject(symb.toObject()));
   }
 
-  // TODO: notifica agli altri collegati a questo file
+  QJsonObject data;
+  data["fileId"] = fileId;
+  data["symbols"] = _m.getArray("symbols");
 
-  this->_has_resp = false;
+  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
+  this->_has_resp = true;
+  this->_to_all = true;
 }
 
 void ServerMessageProcessor::localDelete() {
@@ -531,9 +549,13 @@ void ServerMessageProcessor::localDelete() {
     this->_manager->deleteSymbol(this->_clientId, fileId, SymbolId::fromJsonObject(id.toObject()));
   }
 
-  // TODO: notifica agli altri collegati a questo file
+  QJsonObject data;
+  data["fileId"] = fileId;
+  data["ids"] = _m.getArray("ids");
 
-  this->_has_resp = false;
+  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
+  this->_has_resp = true;
+  this->_to_all = true;
 }
 
 void ServerMessageProcessor::localUpdate() {
@@ -551,9 +573,13 @@ void ServerMessageProcessor::localUpdate() {
     to_mod.update(s);
   }
 
-  // TODO: notifica agli altri collegati a questo file
+  QJsonObject data;
+  data["fileId"] = fileId;
+  data["symbols"] = _m.getArray("symbols");
 
-  this->_has_resp = false;
+  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
+  this->_has_resp = true;
+  this->_to_all = true;
 }
 
 void ServerMessageProcessor::localMove() {
@@ -568,9 +594,15 @@ void ServerMessageProcessor::localMove() {
   auto cursorPosition = _m.getInt("cursorPosition");
   // TODO: sposta il cursore nel file
 
-  // TODO: notifica agli altri collegati a questo file
+  QJsonObject data;
+  data["fileId"] = fileId;
+  data["clientId"] = (int) this->_clientId;
+  data["symbolId"] = _m.getObject("symbolId");
+  data["cursorPosition"] = _m.getInt("cursorPosition");
 
-  this->_has_resp = false;
+  this->_res = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_MOVE, Message::Status::QUERY, data};
+  this->_has_resp = true;
+  this->_to_all = true;
 }
 
 

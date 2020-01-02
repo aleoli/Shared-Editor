@@ -27,7 +27,8 @@ public:
 
   /* gestione utenti */
   //quando il processor processa un msg di login, va aggiunto a _clients
-  void addClient(quint64 clientId, std::shared_ptr<Session> session);
+  void addClient(quint64 clientId, std::shared_ptr<Session> session, QString username);
+  QString getUsername(quint64 clientId);
 
   /* gestione file */
   // richiesta di un file da parte di un client
@@ -69,6 +70,7 @@ private:
     int fileId;
     std::shared_ptr<Session> session;
     bool fileIsOpen;
+    QString username;
   } Data;
 
   std::unordered_map<quint64, Data> _clients;                // mappa client_id -> Data
