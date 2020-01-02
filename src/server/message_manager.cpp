@@ -3,6 +3,7 @@
 #include "exceptions.h"
 #include "Message.h"
 #include "server_message_processor.h"
+#include "FSElement_db.h"
 
 using namespace se_exceptions;
 
@@ -93,7 +94,7 @@ File MessageManager::getFile(quint64 clientId, int fileId) {
   }
 
   //carico file in memoria se non c'è già
-  loadFile(fileId);
+  loadFile(clientId, fileId);
 
   if(_fileClients.count(fileId) == 0) {
     _fileClients[fileId] = std::list<quint64>{clientId};
@@ -109,13 +110,15 @@ File MessageManager::getFile(quint64 clientId, int fileId) {
   return f;
 }
 
-void MessageManager::loadFile(int fileId) {
+void MessageManager::loadFile(int clientId, int fileId) {
   //TODO carica file da disco e mettilo nella mappa
   //TODO check se il file non esiste -> eccezione FileNotFoundException
 
   if(_openFiles.count(fileId) != 0) return;
 
-  File f;
+  auto f_db = FSElement_db::get(*_clients[clientId].session, fileId);
+
+  File f = f_db.load();
   _openFiles[fileId] = f;
 }
 
@@ -130,7 +133,7 @@ void MessageManager::addSymbol(quint64 clientId, int fileId, const Symbol& sym) 
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
-  loadFile(fileId);
+  loadFile(clientId, fileId);
 
   File& f = _openFiles[fileId];
   f.remoteInsert(sym);
@@ -147,7 +150,7 @@ void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& 
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
-  loadFile(fileId);
+  loadFile(clientId, fileId);
 
   File& f = _openFiles[fileId];
   f.remoteDelete(symId);
@@ -164,7 +167,7 @@ Symbol& MessageManager::getSymbol(quint64 clientId, int fileId, const SymbolId& 
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
-  loadFile(fileId);
+  loadFile(clientId, fileId);
 
   File& f = _openFiles[fileId];
   return f.symbolById(symId).second;

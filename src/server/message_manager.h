@@ -58,7 +58,7 @@ private:
   explicit MessageManager(QObject *parent = nullptr);
 
   //caricamento in memoria del file nella FifoMap, se non c'è già
-  void loadFile(int fileId);
+  void loadFile(int clientId, int fileId);
 
   bool clientIsLogged(quint64 clientId);
   bool clientHasFileOpen(quint64 clientId); // voglio sapere se ha aperto un qualunque file
