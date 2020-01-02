@@ -19,7 +19,7 @@ protected:
   virtual void process_filesystem();
 
 private:
-  bool _to_all;
+  bool _to_all = false;
   quint64 _clientId;
   std::shared_ptr<MessageManager> _manager;
 

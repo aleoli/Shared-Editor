@@ -42,15 +42,14 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
       emit this->send_data(client_id, array);
     }
 
-  }
-  catch(se_exceptions::SE_Exception ex) {
+  } catch(se_exceptions::SE_Exception ex) {
     std::cerr << ex.what() << std::endl;
     emit this->connection_error(client_id);
     clientDisconnected(client_id);
   }
 }
 
-void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> session) {
+void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> session, QString username) {
   if(clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is already logged in"};
   }
@@ -59,8 +58,13 @@ void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> sessio
   data.clientId = clientId;
   data.session = session;
   data.fileIsOpen = false;
+  data.username = username;
 
   _clients[clientId] = data;
+}
+
+QString MessageManager::getUsername(quint64 clientId) {
+  return this->_clients[clientId].username;
 }
 
 void MessageManager::clientDisconnected(quint64 clientId) {
