@@ -533,6 +533,8 @@ void ServerMessageProcessor::activateLink() {
   auto file = FSElement_db::link(session, link_token);
   file.mv(session, user_root);
 
+	this->_manager->getFile(this->_clientId, file.getId());
+
   QJsonObject data;
   QJsonObject element;
   element["fileId"] = file.getId();
