@@ -133,9 +133,6 @@ File MessageManager::getFile(quint64 clientId, int fileId) {
 }
 
 void MessageManager::loadFile(int clientId, int fileId) {
-  //TODO carica file da disco e mettilo nella mappa
-  //TODO check se il file non esiste -> eccezione FileNotFoundException
-
   if(_openFiles.count(fileId) != 0) return;
 
   auto f_db = FSElement_db::get(*_clients[clientId].session, fileId);
