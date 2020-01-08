@@ -139,3 +139,13 @@ void User::setIcon(QString icon) {
   // TODO: set icon
   warn("TODO: set icon");
 }
+
+bool User::check_pass(QString pass) {
+	// TODO: controlla che la pass rispetti le specifiche
+	return true;
+}
+
+bool User::check_email(QString pass) {
+	// TODO: controlla che sia una email
+	return true;
+}

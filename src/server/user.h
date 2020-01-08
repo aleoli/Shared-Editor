@@ -35,6 +35,9 @@ public:
   void setNickname(QString nickname);
   void setIcon(QString icon);
 
+	static bool check_pass(QString pass);
+	static bool check_email(QString email);
+
 private:
   User(QString nickname, QString email, QString password);
 

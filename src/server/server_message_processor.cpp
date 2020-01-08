@@ -18,7 +18,7 @@ void ServerMessageProcessor::process_error() {
   // TODO: non so cosa farmene dell'errore lato server, disconnetto il client?!?
   info("ERROR message received");
   auto reason = _m.getString("reason");
-  debug(reason);
+  warn(reason);
 }
 
 void ServerMessageProcessor::process_user() {
@@ -84,6 +84,13 @@ void ServerMessageProcessor::process_file() {
       else
         getFile();
       break;
+
+		case Message::FileAction::CLOSE:
+			if(isResponse)
+				disconnect("Ricevuto messaggio con status non valido");
+			else
+				closeFile();
+			break;
 
     case Message::FileAction::EDIT:
       if(isResponse)
@@ -262,11 +269,26 @@ void ServerMessageProcessor::newUser() {
     QString email = "";
     try {
       email = _m.getString("email");
+			if(!User::check_email(email)) {
+				// TODO
+				throw 1;
+			}
     } catch(MessageDataException ex) {
       // TODO: vedi come fare per email vuota
     }
     auto nickname = _m.getString("username");
     auto password = _m.getString("password");
+		auto pswRepeat = _m.getString("pswRepeat");
+		if(password != pswRepeat) {
+			debug("Password and PswRepeat does not match");
+			// TODO
+			throw 1;
+		}
+
+		if(!User::check_pass(password)) {
+			// TODO
+			throw 1;
+		}
 
     auto u = User::registra(nickname, email, password);
     auto s = std::make_shared<Session>(User::login(nickname, password));
@@ -300,6 +322,10 @@ void ServerMessageProcessor::editUser() {
       auto old_password = _m.getString("oldPassword");
       auto password = _m.getString("password");
       if(password == _m.getString("pswRepeat")) {
+				if(!User::check_pass(password)) {
+					// TODO
+					throw 1;
+				}
         bool res = user.setPassword(old_password, password);
         if(!res) {
           // TODO: va mandato un messaggio di errore
@@ -379,6 +405,8 @@ void ServerMessageProcessor::newFile() {
 
   QJsonObject data;
   data["fileId"] = file.getId();
+
+	this->_manager->getFile(this->_clientId, file.getId());
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
   this->_has_resp = true;
