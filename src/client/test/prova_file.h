@@ -73,7 +73,7 @@ void prova_file() {
   Symbol s5({5,6}, 'w');
 
 
-  File f1(0);
+  File f1;
   f1.localInsert(s3, 0);
   f1.localInsert(s4, 1);
   f1.localInsert(s5, 1);
