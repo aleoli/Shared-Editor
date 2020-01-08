@@ -18,8 +18,7 @@ public:
   } ClientInfo;
 
   File();
-  explicit File(int id);
-  File(int id, std::unordered_map<int, File::ClientInfo> clients, std::vector<Symbol> _symbols);
+  File(std::unordered_map<int, File::ClientInfo> clients, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -34,7 +33,6 @@ public:
   friend bool operator!=(const File& lhs, const File& rhs);
   friend bool operator==(const File::ClientInfo& lhs, const File::ClientInfo& rhs);
 
-  int getId() const;
   std::unordered_map<int, File::ClientInfo> getClients() const;
   std::vector<Symbol> getSymbols() const;
   Symbol& symbolAt(int pos);
@@ -68,7 +66,6 @@ private:
 
   std::string symbolsToString() const; //TODO vedi se rimuovere
 
-  int _id;
   std::unordered_map<int, ClientInfo> _clients;
   std::vector<Symbol> _symbols;
 };
