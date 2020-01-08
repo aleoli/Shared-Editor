@@ -14,10 +14,8 @@ using namespace se_exceptions;
 
 File::File() {}
 
-File::File(int id) : _id(id) {}
-
-File::File(int id, std::unordered_map<int, File::ClientInfo> clients, std::vector<Symbol> symbols)
-  : _id(id), _clients(clients), _symbols(symbols) {}
+File::File(std::unordered_map<int, File::ClientInfo> clients, std::vector<Symbol> symbols)
+  : _clients(clients), _symbols(symbols) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -28,11 +26,10 @@ File::File(QJsonObject &&json){
 }
 
 void File::checkAndAssign(const QJsonObject &json) {
-  auto idValue = json["id"];
   auto clientsValue = json["clients"];
   auto symbolsValue = json["symbols"];
 
-  if(idValue.isUndefined() || clientsValue.isUndefined() || symbolsValue.isUndefined()) {
+  if(clientsValue.isUndefined() || symbolsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
@@ -40,16 +37,9 @@ void File::checkAndAssign(const QJsonObject &json) {
     throw FileFromJsonException{"One or more fields are not valid"};
   }
 
-  auto id = idValue.toInt(-1);
-
-  if(id < 0) {
-    throw FileFromJsonException{"One or more fields are not valid"};
-  }
-
   auto clients = clientsValue.toArray();
   auto symbols = symbolsValue.toArray();
 
-  _id = id;
   _clients = jsonArrayToclients(clients);
   _symbols = utils::jsonArrayToVector<Symbol>(symbols);
 }
@@ -85,7 +75,6 @@ File File::fromQByteArray(QByteArray &&array) {
 QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
-  json["id"] = QJsonValue(_id);
   json["clients"] = QJsonValue(clientsToJsonArray());
   json["symbols"] = QJsonValue(utils::vectorToJsonArray(_symbols));
 
@@ -177,10 +166,6 @@ std::string File::symbolsToString() const {
   return ss.str();
 }
 
-int File::getId() const {
-  return _id;
-}
-
 std::unordered_map<int, File::ClientInfo> File::getClients() const {
   return _clients;
 }
@@ -234,7 +219,6 @@ int File::numSymbols() const {
 std::string File::to_string() const {
   std::stringstream ss;
 
-  ss << "ID: " << _id << std::endl;
   ss << "User IDs: " << std::endl << clientsToString() << std::endl;
   ss << "Symbols:" << std::endl << symbolsToString();
 
@@ -416,7 +400,7 @@ int File::remoteUpdate(const Symbol &sym) {
 }
 
 bool operator==(const File& lhs, const File& rhs) {
-  return lhs._id == rhs._id && lhs._clients == rhs._clients && lhs._symbols == rhs._symbols;
+  return lhs._clients == rhs._clients && lhs._symbols == rhs._symbols;
 }
 
 bool operator!=(const File& lhs, const File& rhs) {
