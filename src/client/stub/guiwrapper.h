@@ -40,6 +40,8 @@ signals:
   void sendLocalDeleteQuery(QString token, int fileId, std::vector<SymbolId> ids);
   void sendLocalUpdateQuery(QString token, int fileId, std::vector<Symbol> symbols);
   void sendLocalMoveQuery(QString token, int fileId, SymbolId symbolId, int cursorPosition);
+  void sendGetLinkQuery(QString token, int fileId);
+  void sendActivateLinkQuery(QString token, QString link);
 
   //segnali per il TextEdit
   void remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols);
@@ -58,12 +60,14 @@ public slots:
 
   void newFileQuery();
   void getFileQuery(int id);
+  void activateLinkQuery(QString link);
 
   void closeFileQuery(int fileId);
   void localInsertQuery(int fileId, std::vector<Symbol> symbols);
   void localDeleteQuery(int fileId, std::vector<SymbolId> ids);
   void localUpdateQuery(int fileId, std::vector<Symbol> symbols);
   void localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition);
+  void getLinkQuery(int fileId);
 
   // slot di ricezione messaggi dal mm
   void errorResponseReceived(QString reason);
@@ -77,6 +81,8 @@ public slots:
   void userConnectedQueryReceived(int fileId, int clientId, QString username);
   void userDisconnectedQueryReceived(int fileId, int clientId);
   void remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+  void getLinkResponseReceived(QString link);
+  void activateLinkResponseReceived(FSElement element, File file);
 
 private slots:
   // connessione del server

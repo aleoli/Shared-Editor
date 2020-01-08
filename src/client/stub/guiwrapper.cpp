@@ -12,6 +12,7 @@ using namespace se_exceptions;
 #define USERNEW static_cast<int>(Message::Type::USER) * 100 + static_cast<int>(Message::UserAction::NEW)
 #define FILENEW static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::NEW)
 #define FILEGET static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::GET)
+#define FILELINK static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::ACTIVATE_LINK)
 
 //per finalità di debug e testing
 #define CONNECT_TO_SERVER 1
@@ -56,10 +57,10 @@ void GuiWrapper::run() {
   _window = OpenWindow::LANDING;
   _landing->show();
 #else
-  _login->show();
+  //_login->show();
   //_fileSelector->show();
-  //_textEdit->setUser(33, "bob");
-  //_textEdit->show();
+  _textEdit->setUser(33, "bob");
+  _textEdit->show();
 #endif
 
 #if USE_TESTS
@@ -114,6 +115,7 @@ void GuiWrapper::connectWidgets() {
   // browser file
   connect(_fileSelector, &FileSelector::newFileQuery, this, &GuiWrapper::newFileQuery);
   connect(_fileSelector, &FileSelector::getFileQuery, this, &GuiWrapper::getFileQuery);
+  connect(_fileSelector, &FileSelector::activateLinkQuery, this, &GuiWrapper::activateLinkQuery);
 
   // TextEdit -> GuiWrapper (Client -> Server)
   connect(_textEdit, &TextEdit::closeFileQuery, this, &GuiWrapper::closeFileQuery);
@@ -121,6 +123,7 @@ void GuiWrapper::connectWidgets() {
   connect(_textEdit, &TextEdit::localDeleteQuery, this, &GuiWrapper::localDeleteQuery);
   connect(_textEdit, &TextEdit::localUpdateQuery, this, &GuiWrapper::localUpdateQuery);
   connect(_textEdit, &TextEdit::localMoveQuery, this, &GuiWrapper::localMoveQuery);
+  connect(_textEdit, &TextEdit::getLinkQuery, this, &GuiWrapper::getLinkQuery);
 
   // GuiWrapper -> TextEdit (Server -> Client)
   connect(this, &GuiWrapper::remoteInsertQuery, _textEdit, &TextEdit::remoteInsertQuery);
@@ -142,6 +145,8 @@ void GuiWrapper::initClientToServer() {
   connect(this, &GuiWrapper::sendLocalDeleteQuery, _manager.get(), &MessageManager::localDeleteQuery);
   connect(this, &GuiWrapper::sendLocalUpdateQuery, _manager.get(), &MessageManager::localUpdateQuery);
   connect(this, &GuiWrapper::sendLocalMoveQuery, _manager.get(), &MessageManager::localMoveQuery);
+  connect(this, &GuiWrapper::sendGetLinkQuery, _manager.get(), &MessageManager::getLinkQuery);
+  connect(this, &GuiWrapper::sendActivateLinkQuery, _manager.get(), &MessageManager::activateLinkQuery);
 }
 
 void GuiWrapper::initServerToClient() {
@@ -157,6 +162,8 @@ void GuiWrapper::initServerToClient() {
   connect(_manager.get(), &MessageManager::userConnectedQuery, this, &GuiWrapper::userConnectedQueryReceived);
   connect(_manager.get(), &MessageManager::userDisconnectedQuery, this, &GuiWrapper::userDisconnectedQueryReceived);
   connect(_manager.get(), &MessageManager::remoteMoveQuery, this, &GuiWrapper::remoteMoveQueryReceived);
+  connect(_manager.get(), &MessageManager::getLinkResponse, this, &GuiWrapper::getLinkResponseReceived);
+  connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiWrapper::activateLinkResponseReceived);
 }
 
 void GuiWrapper::checkWaiting(bool shouldBe) {
@@ -205,7 +212,19 @@ void GuiWrapper::getFileQuery(int id) {
 
   info("Invio get file query");
 
+  //setto file ID per quando arriverà la risposta e aprirò l'editor
+  _textEdit->setFileId(id);
+
   emit sendGetFileQuery(_account.token, id);
+}
+
+void GuiWrapper::activateLinkQuery(QString link) {
+  checkWaiting(false);
+  _lastMessageSent = FILELINK;
+
+  info("Invio activate link query");
+
+  emit sendActivateLinkQuery(_account.token, link);
 }
 
 void GuiWrapper::newFileQuery() {
@@ -250,6 +269,12 @@ void GuiWrapper::localMoveQuery(int fileId, SymbolId symbolId, int cursorPositio
   //debug("Invio local move query");
 
   emit sendLocalMoveQuery(_account.token, fileId, symbolId, cursorPosition);
+}
+
+void GuiWrapper::getLinkQuery(int fileId) {
+  //debug("Invio share query");
+
+  emit sendGetLinkQuery(_account.token, fileId);
 }
 
 // SLOT MM
@@ -347,8 +372,9 @@ void GuiWrapper::newFileResponseReceived(int id) {
   _fileSelector->close();
   //INFO nella versione definitiva, qua bisogna aggiornare la view del browser
 
-  File f(id);
+  File f;
   _textEdit->setFile(f);
+  _textEdit->setFileId(id);
 
   _window = OpenWindow::EDITOR;
   _textEdit->show();
@@ -368,6 +394,7 @@ void GuiWrapper::getFileResponseReceived(File file, int charId) {
   _fileSelector->close();
 
   _textEdit->setFile(file, charId);
+  //l'id è settato quando faccio la query
 
   _window = OpenWindow::EDITOR;
   _textEdit->show();
@@ -410,4 +437,28 @@ void GuiWrapper::remoteMoveQueryReceived(int fileId, int clientId, SymbolId symb
   debug("Client id: " + QString::number(clientId));
 
   emit remoteMoveQuery(fileId, clientId, symbolId, cursorPosition);
+}
+
+void GuiWrapper::getLinkResponseReceived(QString link) {
+  debug("Ricevuto share link");
+  debug("Link: " + link);
+}
+
+void GuiWrapper::activateLinkResponseReceived(FSElement element, File file) {
+  checkWaiting(true);
+  if(_lastMessageSent != FILELINK) {
+      debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(FILELINK));
+      throw SE_Exception("Errore, mi aspettavo un messaggio diverso");
+  }
+
+  debug("Ricevuto activate link response");
+
+  _fileSelector->unblock();
+  _fileSelector->close();
+
+  _textEdit->setFile(file);
+  _textEdit->setFileId(element.getId());
+
+  _window = OpenWindow::EDITOR;
+  _textEdit->show();
 }

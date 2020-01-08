@@ -52,6 +52,20 @@
     </layout>
    </item>
    <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label2">
+       <property name="text">
+        <string>Share link:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="shareLinkForm" />
+     </item>
+    </layout>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -77,6 +91,11 @@
      <widget class="QPushButton" name="openButton">
       <property name="text">
        <string>Open</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="openLinkButton">
+      <property name="text">
+       <string>Open Link</string>
       </property>
      </widget>
     </widget>
@@ -117,9 +136,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>openLinkButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FileSelector</receiver>
+   <slot>openLink()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>117</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>getFile()</slot>
   <slot>newFile()</slot>
+  <slot>openLink()</slot>
  </slots>
 </ui>

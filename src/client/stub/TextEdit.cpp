@@ -44,6 +44,14 @@ TextEdit::TextEdit(QWidget *parent)
 
   // _dock right
   initDock();
+
+  // set background color iniziale trasparente
+  // perchè stranamente all'inizio il background color settato è nero
+  QTextCursor cursor{_textEdit->document()};
+  auto fmt = cursor.charFormat();
+  fmt.setBackground(QColor("#00000000"));
+  cursor.setCharFormat(fmt);
+  _textEdit->setTextCursor(cursor);
 }
 
 void TextEdit::setFile(const File &f, int charId) {
@@ -73,6 +81,14 @@ File &TextEdit::getFile() {
   return _file;
 }
 
+void TextEdit::setFileId(int id) {
+  _fileId = id;
+}
+
+int TextEdit::getFileId() const {
+  return _fileId;
+}
+
 void TextEdit::refresh(bool changeFile) {
   //salvo pos del cursore mio
   std::pair<SymbolId, int> pos;
@@ -100,6 +116,10 @@ void TextEdit::refresh(bool changeFile) {
   }
 
   _blockSignals = false;
+}
+
+void TextEdit::share() {
+  emit getLinkQuery(_fileId);
 }
 
 void TextEdit::clear() {
@@ -167,6 +187,10 @@ void TextEdit::setupFileActions() {
   const QIcon refreshIcon(":/buttons/refresh.png");
   QAction *refresh = menu->addAction(refreshIcon,  tr("&Refresh document"), this, &TextEdit::refresh);
   tb->addAction(refresh);
+
+  const QIcon shareIcon(":/buttons/share.png");
+  QAction *share = menu->addAction(shareIcon,  tr("&Share document"), this, &TextEdit::share);
+  tb->addAction(share);
 }
 
 void TextEdit::setupEditActions() {
@@ -257,6 +281,9 @@ void TextEdit::printTextFile() {
 void TextEdit::change(int pos, int removed, int added) {
   if(_blockSignals) return;
 
+  // a volte capita non so perchè che viene triggerato a caso.
+  if(_file.numSymbols() < removed) return;
+
   //TODO se removed == added -> UPDATE
   //TODO si potrebbe fare anche una cosa più elaborata,
   //    tipo 2 rem e 3 added significa 2 update e 1 added, ma non so se vale la pena
@@ -272,7 +299,7 @@ void TextEdit::change(int pos, int removed, int added) {
       _file.localDelete(pos);
       symRemoved.push_back(id);
     }
-    emit localDeleteQuery(_file.getId(), symRemoved);
+    emit localDeleteQuery(_fileId, symRemoved);
 }
 
   // aggiunte
@@ -286,12 +313,11 @@ void TextEdit::change(int pos, int removed, int added) {
 
       cursor.movePosition(QTextCursor::NextCharacter);
       auto fmt = cursor.charFormat();
-
       Symbol s{{_user.userId, _user.charId++}, chr, fmt};
       _file.localInsert(s, pos+i);
       symAdded.push_back(s);
     }
-    emit localInsertQuery(_file.getId(), symAdded);
+    emit localInsertQuery(_fileId, symAdded);
   }
 
   for(auto &user : _users) {
@@ -313,7 +339,7 @@ void TextEdit::cursorChanged() {
 
   auto pos = saveCursorPosition(cursor);
 
-  emit localMoveQuery(_file.getId(), pos.first, pos.second);
+  emit localMoveQuery(_fileId, pos.first, pos.second);
 
   debug("Cursore spostato in posizione " + QString::number(pos.second));
   debug("SymbolId alla sx: " + QString::fromStdString(pos.first.to_string()));
@@ -337,7 +363,7 @@ void TextEdit::updateActions() {
 void TextEdit::closeEvent(QCloseEvent *event) {
   debug("Chiusura editor");
 
-  emit closeFileQuery(_file.getId());
+  emit closeFileQuery(_fileId);
 
   reset();
 

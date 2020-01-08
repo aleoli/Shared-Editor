@@ -26,10 +26,12 @@ public:
 public slots:
   void getFile();
   void newFile();
+  void openLink();
 
 signals:
   void newFileQuery();
   void getFileQuery(int);
+  void activateLinkQuery(QString);
 
 private:
   void initLoading();
@@ -38,8 +40,8 @@ private:
   void startLoading();
   void stopLoading();
 
-  QLineEdit *_id;
-  QPushButton *_btnOpen, *_btnNew;
+  QLineEdit *_id, *_shareLink;
+  QPushButton *_btnOpen, *_btnNew, *_btnLink;
   Ui::FileSelector *ui;
 
   QLabel *_loading;

@@ -40,6 +40,8 @@ public:
 
   void setFile(const File &f, int charId = 0);
   File& getFile();
+  void setFileId(int id);
+  int getFileId() const;
   void setUser(int userId, QString username);
 
 public slots:
@@ -57,6 +59,7 @@ signals:
   void localDeleteQuery(int fileId, std::vector<SymbolId> ids);
   void localUpdateQuery(int fileId, std::vector<Symbol> symbols);
   void localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition);
+  void getLinkQuery(int fileId);
 
 private slots:
   void textBold();
@@ -75,6 +78,7 @@ private:
   void refresh(bool changeFile = false);
   void clear();
   void reset();
+  void share();
 
   std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
   int getCursorPosition(SymbolId id, int position);
@@ -84,6 +88,7 @@ private:
   QListWidget *_dock;
 
   File _file;
+  int _fileId;
   localUser _user; // TODO si può fare un check su questo attributo per vedere se ci sono errori
 
   //struttura dati per cursori etc
