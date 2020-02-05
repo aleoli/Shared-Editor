@@ -231,17 +231,11 @@ void ClientMessageProcessor::login() {
     auto token = _m.getString("token");
     auto userId = _m.getInt("userId");
 
-    //TODO usa opt
-    try {
-      nickname = _m.getString("nickname");
-    }
-    catch(MessageDataException e) {}
+    auto optNick = _m.getStringOpt("nickname");
+    if(optNick.has_value()) nickname = optNick.value();
 
-    //TODO usa opt
-    try {
-      icon = _m.getString("icon");
-    }
-    catch(MessageDataException e) {}
+    auto optIcon = _m.getStringOpt("icon");
+    if(optIcon.has_value()) icon = optIcon.value();
 
     emit _manager->loginResponse(token, userId, nickname, icon);
   }
