@@ -4,6 +4,7 @@
 #include <QJsonValue>
 #include <QString>
 #include <QJsonArray>
+#include <optional>
 
 class Message {
 public:
@@ -90,6 +91,12 @@ public:
   QString getString(const QString &key) const;
   QJsonObject getObject(const QString &key) const;
   QJsonArray getArray(const QString &key) const;
+
+  // getters with optional (to avoid exceptions)
+  std::optional<int> getIntOpt(const QString &key) const;
+  std::optional<QString> getStringOpt(const QString &key) const;
+  std::optional<QJsonObject> getObjectOpt(const QString &key) const;
+  std::optional<QJsonArray> getArrayOpt(const QString &key) const;
 
   void setValue(const QString &key, int value);
   void setValue(const QString &key, const QString &value);

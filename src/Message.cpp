@@ -201,6 +201,64 @@ QJsonArray Message::getArray(const QString &key) const {
   return value.toArray();
 }
 
+std::optional<int> Message::getIntOpt(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    return std::nullopt;
+  }
+
+  int val = value.toInt(-1);
+
+  if(val == -1) {
+    return std::nullopt;
+  }
+
+  return std::optional<int>(val);
+}
+
+std::optional<QString> Message::getStringOpt(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    return std::nullopt;
+  }
+
+  if(!value.isString()) {
+    return std::nullopt;
+  }
+
+  return std::optional<QString>(value.toString());
+}
+
+std::optional<QJsonObject> Message::getObjectOpt(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    return std::nullopt;
+  }
+
+  if(!value.isObject()) {
+    return std::nullopt;
+  }
+
+  return std::optional<QJsonObject>(value.toObject());
+}
+
+std::optional<QJsonArray> Message::getArrayOpt(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    return std::nullopt;
+  }
+
+  if(!value.isArray()) {
+    return std::nullopt;
+  }
+
+  return std::optional<QJsonArray>(value.toArray());
+}
+
 void Message::setValue(const QString &key, int value) {
   if(!_data.value(key).isUndefined()) {
     throw MessageDataException{"Key is already present in data"};
