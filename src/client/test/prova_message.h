@@ -4,6 +4,7 @@
 #include <QString>
 #include <QJsonDocument>
 #include <QFile>
+#include <optional>
 
 #include <iostream>
 #include "FifoMap.h"
@@ -121,6 +122,66 @@ void testDataGetters() {
 
 }
 
+void testDataGettersOpt() {
+  Message m(Message::Type::FILE, 4, Message::Status::QUERY);
+  QJsonObject obj;
+  obj["pizza"] = 4;
+  auto array = QJsonArray{1,2,3};
+
+  m.setValue("int", 5);
+  m.setValue("string", "ciao");
+  m.setValue("obj", obj);
+  m.setValue("arr", array);
+
+  if(!m.getIntOpt("int").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getIntOpt("aaa").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getIntOpt("int").value() != 5) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(!m.getStringOpt("string").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getStringOpt("aaa").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getStringOpt("string").value() != "ciao") {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(!m.getObjectOpt("obj").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getObjectOpt("aaa").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getObjectOpt("obj").value() != obj) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(!m.getArrayOpt("arr").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getArrayOpt("aaa").has_value()) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+
+  if(m.getArrayOpt("arr").value() != array) {
+    throw TestException{"testDataGettersOpt fallito"};
+  }
+}
+
 Message readMessage(QString path) {
   // leggo da file
   QFile file(path);
@@ -160,6 +221,8 @@ void prova_message() {
   }
 
   testDataGetters();
+
+  testDataGettersOpt();
 
   std::cout << "Test passato" << std::endl;
 }
