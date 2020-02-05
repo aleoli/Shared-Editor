@@ -214,7 +214,7 @@ std::optional<int> Message::getIntOpt(const QString &key) const {
     return std::nullopt;
   }
 
-  return val;
+  return std::optional<int>(val);
 }
 
 std::optional<QString> Message::getStringOpt(const QString &key) const {
@@ -228,7 +228,7 @@ std::optional<QString> Message::getStringOpt(const QString &key) const {
     return std::nullopt;
   }
 
-  return value.toString();
+  return std::optional<QString>(value.toString());
 }
 
 std::optional<QJsonObject> Message::getObjectOpt(const QString &key) const {
@@ -242,7 +242,7 @@ std::optional<QJsonObject> Message::getObjectOpt(const QString &key) const {
     return std::nullopt;
   }
 
-  return value.toObject();
+  return std::optional<QJsonObject>(value.toObject());
 }
 
 std::optional<QJsonArray> Message::getArrayOpt(const QString &key) const {
@@ -256,7 +256,7 @@ std::optional<QJsonArray> Message::getArrayOpt(const QString &key) const {
     return std::nullopt;
   }
 
-  return value.toArray();
+  return std::optional<QJsonArray>(value.toArray());
 }
 
 void Message::setValue(const QString &key, int value) {
