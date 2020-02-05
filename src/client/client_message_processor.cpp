@@ -12,12 +12,16 @@ ClientMessageProcessor::ClientMessageProcessor(const Message &m): MessageProcess
 
 void ClientMessageProcessor::process_error() {
   info("ERROR message received");
+  try {
+    auto reason = _m.getString("reason");
 
-  auto reason = _m.getString("reason");
+    debug(reason);
 
-  debug(reason);
-
-  emit _manager->errorResponse(reason);
+    emit _manager->errorResponse(reason);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::process_user() {
@@ -223,29 +227,41 @@ void ClientMessageProcessor::login() {
   info("Login response received");
   QString nickname = nullptr, icon = nullptr;
 
-  auto token = _m.getString("token");
-  auto userId = _m.getInt("userId");
-
   try {
-    nickname = _m.getString("nickname");
-  }
-  catch(MessageDataException e) {}
+    auto token = _m.getString("token");
+    auto userId = _m.getInt("userId");
 
-  try {
-    icon = _m.getString("icon");
-  }
-  catch(MessageDataException e) {}
+    //TODO usa opt
+    try {
+      nickname = _m.getString("nickname");
+    }
+    catch(MessageDataException e) {}
 
-  emit _manager->loginResponse(token, userId, nickname, icon);
+    //TODO usa opt
+    try {
+      icon = _m.getString("icon");
+    }
+    catch(MessageDataException e) {}
+
+    emit _manager->loginResponse(token, userId, nickname, icon);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::newUser() {
   info("USER::NEW response received");
 
-  auto token = _m.getString("token");
-  auto userId = _m.getInt("userId");
+  try {
+    auto token = _m.getString("token");
+    auto userId = _m.getInt("userId");
 
-  emit _manager->newUserResponse(token, userId);
+    emit _manager->newUserResponse(token, userId);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::editUser() {
@@ -263,18 +279,28 @@ void ClientMessageProcessor::deleteUser() {
 void ClientMessageProcessor::newFile() {
   info("FILE::NEW response received");
 
-  auto fileId = _m.getInt("fileId");
+  try {
+    auto fileId = _m.getInt("fileId");
 
-  emit _manager->newFileResponse(fileId);
+    emit _manager->newFileResponse(fileId);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::getFile() {
   info("FILE::GET response received");
 
-  auto file = _m.getObject("file");
-  auto charId = _m.getInt("charId");
+  try {
+    auto file = _m.getObject("file");
+    auto charId = _m.getInt("charId");
 
-  emit _manager->getFileResponse(File::fromJsonObject(file), charId);
+    emit _manager->getFileResponse(File::fromJsonObject(file), charId);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::editFile() {
@@ -292,94 +318,144 @@ void ClientMessageProcessor::deleteFile() {
 void ClientMessageProcessor::fileDeleted() {
   info("FILE::FILE_DELETED query received");
 
-  auto fileId = _m.getInt("fileId");
+  try {
+    auto fileId = _m.getInt("fileId");
 
-  emit _manager->fileDeletedQuery(fileId);
+    emit _manager->fileDeletedQuery(fileId);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::getLink() {
   info("FILE::GET_LINK response received");
 
-  auto link = _m.getString("link");
+  try {
+    auto link = _m.getString("link");
 
-  emit _manager->getLinkResponse(link);
+    emit _manager->getLinkResponse(link);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::activateLink() {
   info("FILE::ACTIVATE_LINK response received");
 
-  auto element = _m.getObject("element");
-  auto file = _m.getObject("file");
+  try {
+    auto element = _m.getObject("element");
+    auto file = _m.getObject("file");
 
-  emit _manager->activateLinkResponse(FSElement::fromJsonObject(element), File::fromJsonObject(file));
+    emit _manager->activateLinkResponse(FSElement::fromJsonObject(element), File::fromJsonObject(file));
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::remoteInsert() {
   info("FILE_EDIT::REMOTE_INSERT query received");
 
-  auto fileId = _m.getInt("fileId");
-  auto clientId = _m.getInt("clientId");
-  auto symbols = _m.getArray("symbols");
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto clientId = _m.getInt("clientId");
+    auto symbols = _m.getArray("symbols");
 
-  emit _manager->remoteInsertQuery(fileId, clientId, utils::jsonArrayToVector<Symbol>(symbols));
+    emit _manager->remoteInsertQuery(fileId, clientId, utils::jsonArrayToVector<Symbol>(symbols));
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::remoteDelete() {
   info("FILE_EDIT::REMOTE_DELETE query received");
 
-  auto fileId = _m.getInt("fileId");
-  auto clientId = _m.getInt("clientId");
-  auto ids = _m.getArray("ids");
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto clientId = _m.getInt("clientId");
+    auto ids = _m.getArray("ids");
 
-  emit _manager->remoteDeleteQuery(fileId, clientId, utils::jsonArrayToVector<SymbolId>(ids));
+    emit _manager->remoteDeleteQuery(fileId, clientId, utils::jsonArrayToVector<SymbolId>(ids));
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::remoteUpdate() {
   info("FILE_EDIT::REMOTE_UPDATE query received");
 
-  auto fileId = _m.getInt("fileId");
-  auto clientId = _m.getInt("clientId");
-  auto symbols = _m.getArray("symbols");
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto clientId = _m.getInt("clientId");
+    auto symbols = _m.getArray("symbols");
 
-  emit _manager->remoteUpdateQuery(fileId, clientId, utils::jsonArrayToVector<Symbol>(symbols));
+    emit _manager->remoteUpdateQuery(fileId, clientId, utils::jsonArrayToVector<Symbol>(symbols));
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::userConnected() {
   info("FILE_EDIT::USER_CONNECTED query received");
 
-  auto fileId = _m.getInt("fileId");
-  auto clientId = _m.getInt("clientId");
-  auto username = _m.getString("username");
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto clientId = _m.getInt("clientId");
+    auto username = _m.getString("username");
 
-  emit _manager->userConnectedQuery(fileId, clientId, username);
+    emit _manager->userConnectedQuery(fileId, clientId, username);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::userDisconnected() {
   info("FILE_EDIT::USER_DISCONNECTED query received");
 
-  auto fileId = _m.getInt("fileId");
-  auto clientId = _m.getInt("clientId");
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto clientId = _m.getInt("clientId");
 
-  emit _manager->userDisconnectedQuery(fileId, clientId);
+    emit _manager->userDisconnectedQuery(fileId, clientId);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::remoteMove() {
   info("FILE_EDIT::REMOTE_MOVE query received");
 
-  auto fileId = _m.getInt("fileId");
-  auto clientId = _m.getInt("clientId");
-  auto symbolId = _m.getObject("symbolId");
-  auto cursorPosition = _m.getInt("cursorPosition");
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto clientId = _m.getInt("clientId");
+    auto symbolId = _m.getObject("symbolId");
+    auto cursorPosition = _m.getInt("cursorPosition");
 
-  emit _manager->remoteMoveQuery(fileId, clientId, SymbolId::fromJsonObject(symbolId), cursorPosition);
+    emit _manager->remoteMoveQuery(fileId, clientId, SymbolId::fromJsonObject(symbolId), cursorPosition);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::newDir() {
   info("FILESYSTEM::NEW_DIR response received");
 
-  auto dirId = _m.getInt("dirId");
+  try {
+    auto dirId = _m.getInt("dirId");
 
-  emit _manager->newDirResponse(dirId);
+    emit _manager->newDirResponse(dirId);
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::editDir() {
@@ -397,9 +473,14 @@ void ClientMessageProcessor::deleteDir() {
 void ClientMessageProcessor::getDir() {
   info("FILESYSTEM::GET_DIR response received");
 
-  auto elements = _m.getArray("elements");
+  try {
+    auto elements = _m.getArray("elements");
 
-  emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements));
+    emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements));
+  }
+  catch(SE_Exception e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::moveFile() {
