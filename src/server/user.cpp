@@ -22,7 +22,8 @@ User::User(const User& u): Persistent(u) {
   this->_password = u._password;
 }
 
-User::User(QString nickname, QString email, QString password): Persistent(), _nickname(nickname), _email(email) {
+User::User(QString nickname, std::optional<QString> email, QString password): Persistent(), _nickname(nickname) {
+  this->_email = (email ? *email : "");
   this->_password = User::encrypt(password);
 }
 
@@ -65,7 +66,7 @@ void User::remove() {
   this->_remove<User>();
 }
 
-User User::registra(QString nickname, QString email, QString password) {
+User User::registra(QString nickname, std::optional<QString> email, QString password) {
   User u{nickname, email, password};
   u.save();   // lancia un'eccezione se non ci riesce
   FSElement_db::mkroot(u.id);

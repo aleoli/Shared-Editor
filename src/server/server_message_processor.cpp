@@ -4,10 +4,26 @@
 #include "session.h"
 #include "FSElement_db.h"
 
+#include "exceptions.h"
+#include "errors.h"
+
+using namespace se_exceptions;
+
 ServerMessageProcessor::ServerMessageProcessor(const Message &m, quint64 clientId)
     : MessageProcessor(m), _clientId(clientId), _to_all(false) {
   _manager = MessageManager::get();
-  this->process_message();
+  try {
+    this->process_message();
+  } catch(MessageDataException ex) {
+    error(ex.what());
+    this->sendErrorMsg(ex.what());
+  } catch(SE_Exception ex) {
+    error(ex.what());
+    this->sendErrorMsg(ex.what());
+  } catch(...) {
+    error(GENERIC_ERROR);
+    this->sendErrorMsg(GENERIC_ERROR);
+  }
 }
 
 bool ServerMessageProcessor::shouldSendToAll() const {
@@ -214,6 +230,14 @@ void ServerMessageProcessor::disconnect(QString why) {
   // emit _manager->connection_error();
 }
 
+void ServerMessageProcessor::sendErrorMsg(QString reason) {
+  QJsonObject data;
+  data["reason"] = reason;
+
+  this->_res = Message{Message::Type::ERROR, 0, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
 
 
 
@@ -239,9 +263,12 @@ void ServerMessageProcessor::login() {
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::LOGIN, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(...) {
-    // TODO
-    error("EXCEPTION: TODO");
+  } catch(SQLNoElementSelectException) {
+    warn(ERROR_1);
+    this->sendErrorMsg(ERROR_1);
+  } catch(ClientLoginException) {
+    warn(ERROR_2);
+    this->sendErrorMsg(ERROR_2);
   }
 }
 
@@ -256,9 +283,9 @@ void ServerMessageProcessor::logout() {
     this->_manager->clientDisconnected(this->_clientId);
 
     this->_has_resp = false;
-  } catch(...) {
-    // TODO
-    error("EXCEPTION: TODO");
+  } catch(SQLNoElementSelectException) {
+    warn(ERROR_NO_SESSION);
+    this->sendErrorMsg(ERROR_NO_SESSION);
   }
 }
 
@@ -266,28 +293,27 @@ void ServerMessageProcessor::newUser() {
   info("NewUser query received");
 
   try {
-    QString email = "";
-    try {
-      email = _m.getString("email");
-			if(!User::check_email(email)) {
-				// TODO
-				throw 1;
-			}
-    } catch(MessageDataException ex) {
-      // TODO: vedi come fare per email vuota
+    auto email = _m.getStringOpt("email");
+    if(email) {
+      if(!User::check_email(*email)) {
+        debug(*email+" not valid email address");
+        this->sendErrorMsg(*email+" not valid email address");
+        return;
+      }
     }
     auto nickname = _m.getString("username");
     auto password = _m.getString("password");
 		auto pswRepeat = _m.getString("pswRepeat");
 		if(password != pswRepeat) {
-			debug("Password and PswRepeat does not match");
-			// TODO
-			throw 1;
+			debug(PASSWORD_NOT_MATCH);
+      this->sendErrorMsg(PASSWORD_NOT_MATCH);
+      return;
 		}
 
 		if(!User::check_pass(password)) {
-			// TODO
-			throw 1;
+      debug(PASSWORD_REQUIREMENTS);
+      this->sendErrorMsg(PASSWORD_REQUIREMENTS);
+      return;
 		}
 
     auto u = User::registra(nickname, email, password);
@@ -303,9 +329,9 @@ void ServerMessageProcessor::newUser() {
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::NEW, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(...) {
-    // TODO
-    error("EXCEPTION: TODO");
+  } catch(SQLInsertException) {
+    error(ERROR_3);
+    this->sendErrorMsg(ERROR_3);
   }
 }
 
@@ -318,36 +344,45 @@ void ServerMessageProcessor::editUser() {
 
     auto user = session.getUser();
 
-    try {
-      auto old_password = _m.getString("oldPassword");
-      auto password = _m.getString("password");
-      if(password == _m.getString("pswRepeat")) {
-				if(!User::check_pass(password)) {
-					// TODO
-					throw 1;
-				}
-        bool res = user.setPassword(old_password, password);
-        if(!res) {
-          // TODO: va mandato un messaggio di errore
-        }
+    auto old_password = _m.getStringOpt("oldPassword");
+    auto password = _m.getStringOpt("password");
+    auto pswRepeat = _m.getStringOpt("pswRepeat");
+
+    if(old_password && password && pswRepeat) {
+      if(*password != *pswRepeat) {
+        debug(PASSWORD_NOT_MATCH);
+        this->sendErrorMsg(PASSWORD_NOT_MATCH);
+        return;
       }
-    } catch(MessageDataException ex) {
+      if(!User::check_pass(*password)) {
+        debug(PASSWORD_REQUIREMENTS);
+        this->sendErrorMsg(PASSWORD_REQUIREMENTS);
+        return;
+      }
+
+      bool res = user.setPassword(*old_password, *password);
+      if(!res) {
+        debug(ERROR_4);
+        this->sendErrorMsg(ERROR_4);
+        return;
+      }
+    } else {
       debug("No pass change required");
     }
 
 
-    try {
-      auto nickname = _m.getString("nickname");
-      user.setNickname(nickname);
-    } catch(MessageDataException ex) {
+    auto nickname = _m.getStringOpt("nickname");
+    if(nickname) {
+      user.setNickname(*nickname);
+    } else {
       debug("No nickname change required");
     }
 
 
-    try {
-      auto icon = _m.getString("icon");
-      user.setIcon(icon);
-    } catch(MessageDataException ex) {
+    auto icon = _m.getStringOpt("icon");
+    if(icon) {
+      user.setIcon(*icon);
+    } else {
       debug("No icon change required");
     }
 
@@ -356,14 +391,15 @@ void ServerMessageProcessor::editUser() {
     QJsonObject data;
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::EDIT, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(...) {
-    // TODO
-    error("EXCEPTION: TODO");
+  } catch(SQLNoElementUpdateException) {
+    error(ERROR_5);
+    this->sendErrorMsg(ERROR_5);
   }
 }
 
 void ServerMessageProcessor::deleteUser() {
   // TODO: l'utente può solo cancellarsi da solo, quindi devo anche farne il logout
+  // TODO: disconnetti tutti i client collegati con questo account
   info("DeleteUser query received");
 
   try {
@@ -377,9 +413,9 @@ void ServerMessageProcessor::deleteUser() {
     QJsonObject data;
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::DELETE, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(...) {
-    // TODO
-    error("EXCEPTION: TODO");
+  } catch(SQLNoElementDeleteException) {
+    error(ERROR_6);
+    this->sendErrorMsg(ERROR_6);
   }
 }
 

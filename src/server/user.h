@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include <optional>
 
 #include "persistence_global.h"
 
@@ -19,7 +20,7 @@ public:
 
   virtual User& operator=(const User& u);
 
-  static User registra(QString nickname, QString email, QString password);
+  static User registra(QString nickname, std::optional<QString> email, QString password);
   static Session login(QString username, QString password);
 
   virtual void save();
@@ -39,7 +40,7 @@ public:
 	static bool check_email(QString email);
 
 private:
-  User(QString nickname, QString email, QString password);
+  User(QString nickname, std::optional<QString> email, QString password);
 
   static QString encrypt(QString str);
   static bool check_pass(QString pass, QString db_pass);

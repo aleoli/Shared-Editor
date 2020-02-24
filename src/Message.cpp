@@ -147,13 +147,13 @@ int Message::getInt(const QString &key) const {
   auto value = _data[key];
 
   if(value.isUndefined()) {
-    throw MessageDataException{"Data object has no value with that key"};
+    throw MessageDataException{"Data object has no value with key "+key};
   }
 
   int val = value.toInt(-1);
 
   if(val == -1) {
-    throw MessageDataException{"Value is not an integer"};
+    throw MessageDataException{key+" value is not an integer"};
   }
 
   return val;
@@ -163,11 +163,11 @@ QString Message::getString(const QString &key) const {
   auto value = _data[key];
 
   if(value.isUndefined()) {
-    throw MessageDataException{"Data object has no value with that key"};
+    throw MessageDataException{"Data object has no value with key "+key};
   }
 
   if(!value.isString()) {
-    throw MessageDataException{"Value is not a string"};
+    throw MessageDataException{key+" value is not a string"};
   }
 
   return value.toString();
@@ -177,11 +177,11 @@ QJsonObject Message::getObject(const QString &key) const {
   auto value = _data[key];
 
   if(value.isUndefined()) {
-    throw MessageDataException{"Data object has no value with that key"};
+    throw MessageDataException{"Data object has no value with key "+key};
   }
 
   if(!value.isObject()) {
-    throw MessageDataException{"Value is not an object"};
+    throw MessageDataException{key+" value is not an object"};
   }
 
   return value.toObject();
@@ -191,11 +191,11 @@ QJsonArray Message::getArray(const QString &key) const {
   auto value = _data[key];
 
   if(value.isUndefined()) {
-    throw MessageDataException{"Data object has no value with that key"};
+    throw MessageDataException{"Data object has no value with key "+key};
   }
 
   if(!value.isArray()) {
-    throw MessageDataException{"Value is not an array"};
+    throw MessageDataException{key+" value is not an array"};
   }
 
   return value.toArray();

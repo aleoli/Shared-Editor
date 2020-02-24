@@ -27,6 +27,8 @@ private:
 
   void disconnect(QString why);
 
+  void sendErrorMsg(QString reason);
+
   // handlers
 
   void login();
