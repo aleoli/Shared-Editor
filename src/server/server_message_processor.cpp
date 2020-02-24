@@ -571,6 +571,7 @@ void ServerMessageProcessor::localInsert() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["symbols"] = _m.getArray("symbols");
+    data["clientId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -602,6 +603,7 @@ void ServerMessageProcessor::localDelete() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["ids"] = _m.getArray("ids");
+    data["clientId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -635,6 +637,7 @@ void ServerMessageProcessor::localUpdate() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["symbols"] = _m.getArray("symbols");
+    data["clientId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());

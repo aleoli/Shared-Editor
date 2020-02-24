@@ -156,7 +156,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
       error("cannot open file "+fs_e._path);
       throw se_exceptions::NoFileOnDiskException{"cannot open file "+fs_e._path};
     }
-    File el{fs_e.id};
+    File el{};
     f.write(el.toQByteArray());
     f.close();
     info("New File ID: "+QString::number(fs_e.id)+" path "+fs_e._path+" parent_id: "+QString::number(fs_e._parent_id));
