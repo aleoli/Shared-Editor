@@ -6,8 +6,6 @@
 #include "utils.h"
 
 #include <iostream>
-#include <optional>
-
 
 std::shared_ptr<MessageManager> MessageManager::instance = nullptr;
 
