@@ -451,27 +451,32 @@ void ServerMessageProcessor::newFile() {
 void ServerMessageProcessor::getFile() {
   info("GetFile query received");
 
-  auto token = _m.getString("token");
-  auto session = Session::get(token);
+  try {
+    auto token = _m.getString("token");
+    auto session = Session::get(token);
 
-  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
-  auto file = this->_manager->getFile(this->_clientId, fileId);
+    auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
+    auto file = this->_manager->getFile(this->_clientId, fileId);
 
-  QJsonObject data;
-  data["file"] = file.toJsonObject();
-  // TODO
-  data["charId"] = 0;
+    QJsonObject data;
+    data["file"] = file.toJsonObject();
+    // TODO: non mi ricordo cosa ci devo mettere / a cosa serve
+    data["charId"] = 0;
 
-  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
-  this->_has_resp = true;
+    this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
+    this->_has_resp = true;
 
-  QJsonObject data2;
-  data2["fileId"] = _m.getInt("fileId");
-  data2["clientId"] = (int) this->_clientId;
-  data2["username"] = this->_manager->getUsername(this->_clientId);
+    QJsonObject data2;
+    data2["fileId"] = _m.getInt("fileId");
+    data2["clientId"] = (int) this->_clientId;
+    data2["username"] = this->_manager->getUsername(this->_clientId);
 
-  auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data2};
-  this->_manager->sendToAll(this->_clientId, fileId, msg.toQByteArray());
+    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data2};
+    this->_manager->sendToAll(this->_clientId, fileId, msg.toQByteArray());
+  } catch(IllegalAccessException) {
+    warn(ACCESS_DENIED);
+    this->sendErrorMsg(ACCESS_DENIED);
+  }
 }
 
 void ServerMessageProcessor::closeFile() {
@@ -560,26 +565,31 @@ void ServerMessageProcessor::getLink() {
 void ServerMessageProcessor::activateLink() {
   info("ActivateLink query received");
 
-  auto token = _m.getString("token");
-  auto session = Session::get(token);
+  try {
+    auto token = _m.getString("token");
+    auto session = Session::get(token);
 
-  auto link_token = _m.getString("link");
-  auto user_root = FSElement_db::root(session.getUserId());
+    auto link_token = _m.getString("link");
+    auto user_root = FSElement_db::root(session.getUserId());
 
-  auto file = FSElement_db::link(session, link_token);
-  file.mv(session, user_root);
+    auto file = FSElement_db::link(session, link_token);
+    file.mv(session, user_root);
 
-	this->_manager->getFile(this->_clientId, file.getId());
+  	this->_manager->getFile(this->_clientId, file.getId());
 
-  QJsonObject data;
-  QJsonObject element;
-  element["fileId"] = file.getId();
-  element["name"] = file.getName();
-  data["element"] = element;
-  data["file"] = file.getFSElement().toJsonObject();
+    QJsonObject data;
+    QJsonObject element;
+    element["fileId"] = file.getId();
+    element["name"] = file.getName();
+    data["element"] = element;
+    data["file"] = file.getFSElement().toJsonObject();
 
-  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
-  this->_has_resp = true;
+    this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
+    this->_has_resp = true;
+  } catch(ShareException) {
+    warn(ERROR_7);
+    this->sendErrorMsg(ERROR_7);
+  }
 }
 
 
