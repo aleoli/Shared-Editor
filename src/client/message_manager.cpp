@@ -81,17 +81,17 @@ void MessageManager::editUserQuery(QString token, std::optional<QString> nicknam
 
       m.setValue("token", token);
 
-      if(nickname.has_value())
-        m.setValue("nickname", nickname.value());
+      if(nickname)
+        m.setValue("nickname", *nickname);
 
-      if(oldPassword.has_value() && password.has_value() && pswRepeat.has_value()) {
-        m.setValue("oldPassword", oldPassword.value());
-        m.setValue("password", password.value());
-        m.setValue("pswRepeat", pswRepeat.value());
+      if(oldPassword && password && pswRepeat) {
+        m.setValue("oldPassword", *oldPassword);
+        m.setValue("password", *password);
+        m.setValue("pswRepeat", *pswRepeat);
       }
 
-      if(icon.has_value())
-        m.setValue("icon", icon.value());
+      if(icon)
+        m.setValue("icon", *icon);
 
       emit send_data(m.toQByteArray());
 }
@@ -112,8 +112,8 @@ void MessageManager::newFileQuery(QString token, QString name, std::optional<int
     m.setValue("token", token);
     m.setValue("name", name);
 
-    if(dirId.has_value())
-      m.setValue("dirId", dirId.value());
+    if(dirId)
+      m.setValue("dirId", *dirId);
 
     emit send_data(m.toQByteArray());
 }
@@ -145,8 +145,8 @@ void MessageManager::editFileQuery(QString token, int fileId, std::optional<QStr
     m.setValue("token", token);
     m.setValue("fileId", fileId);
 
-    if(name.has_value())
-      m.setValue("name", name.value());
+    if(name)
+      m.setValue("name", *name);
 
     emit send_data(m.toQByteArray());
 }
@@ -234,8 +234,8 @@ void MessageManager::newDirQuery(QString token, QString name, std::optional<int>
     m.setValue("token", token);
     m.setValue("name", name);
 
-    if(parentId.has_value())
-      m.setValue("parentId", parentId.value());
+    if(parentId)
+      m.setValue("parentId", *parentId);
 
     emit send_data(m.toQByteArray());
 }
@@ -247,11 +247,11 @@ void MessageManager::editDirQuery(QString token, int dirId, std::optional<QStrin
     m.setValue("token", token);
     m.setValue("dirId", dirId);
 
-    if(name.has_value())
-      m.setValue("name", name.value());
+    if(name)
+      m.setValue("name", *name);
 
-    if(parentId.has_value())
-      m.setValue("parentId", parentId.value());
+    if(parentId)
+      m.setValue("parentId", *parentId);
 
     emit send_data(m.toQByteArray());
 }
