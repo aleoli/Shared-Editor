@@ -225,17 +225,13 @@ void ClientMessageProcessor::disconnect(QString why) {
 
 void ClientMessageProcessor::login() {
   info("Login response received");
-  QString nickname = nullptr, icon = nullptr;
 
   try {
     auto token = _m.getString("token");
     auto userId = _m.getInt("userId");
 
-    auto optNick = _m.getStringOpt("nickname");
-    if(optNick.has_value()) nickname = optNick.value();
-
-    auto optIcon = _m.getStringOpt("icon");
-    if(optIcon.has_value()) icon = optIcon.value();
+    auto nickname = _m.getStringOpt("nickname");
+    auto icon = _m.getStringOpt("icon");
 
     emit _manager->loginResponse(token, userId, nickname, icon);
   }
