@@ -187,7 +187,7 @@ void GuiWrapper::loginQuery(QString username, QString psw) {
   _account.username = username;
   _account.psw = psw;
   _account.userId = -1;
-  _account.token = nullptr;
+  _account.token = std::nullopt;
 
   emit sendLoginQuery(username, psw);
 }
@@ -201,7 +201,7 @@ void GuiWrapper::newUserQuery(QString username, QString psw, QString pswRepeat) 
   _account.username = username;
   _account.psw = psw;
   _account.userId = -1;
-  _account.token = nullptr;
+  _account.token = std::nullopt;
 
   emit sendNewUserQuery(username, psw, pswRepeat);
 }
@@ -215,7 +215,7 @@ void GuiWrapper::getFileQuery(int id) {
   //setto file ID per quando arriverà la risposta e aprirò l'editor
   _textEdit->setFileId(id);
 
-  emit sendGetFileQuery(_account.token, id);
+  emit sendGetFileQuery(*_account.token, id);
 }
 
 void GuiWrapper::activateLinkQuery(QString link) {
@@ -224,7 +224,7 @@ void GuiWrapper::activateLinkQuery(QString link) {
 
   info("Invio activate link query");
 
-  emit sendActivateLinkQuery(_account.token, link);
+  emit sendActivateLinkQuery(*_account.token, link);
 }
 
 void GuiWrapper::newFileQuery() {
@@ -234,13 +234,13 @@ void GuiWrapper::newFileQuery() {
   info("Invio new file query");
 
   //INFO il nome del file nel client definitivo deve essere ricevuto come parametro e salvato da qualche parte
-  emit sendNewFileQuery(_account.token, "questoeunnomeautentico");
+  emit sendNewFileQuery(*_account.token, "questoeunnomeautentico");
 }
 
 void GuiWrapper::closeFileQuery(int fileId) {
   info("Invio close file query");
 
-  emit sendCloseFileQuery(_account.token, fileId);
+  emit sendCloseFileQuery(*_account.token, fileId);
 
   // riapro browser
   _window = OpenWindow::BROWSER;
@@ -250,31 +250,31 @@ void GuiWrapper::closeFileQuery(int fileId) {
 void GuiWrapper::localInsertQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local insert query");
 
-  emit sendLocalInsertQuery(_account.token, fileId, symbols);
+  emit sendLocalInsertQuery(*_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localDeleteQuery(int fileId, std::vector<SymbolId> ids) {
   //debug("Invio local delete query");
 
-  emit sendLocalDeleteQuery(_account.token, fileId, ids);
+  emit sendLocalDeleteQuery(*_account.token, fileId, ids);
 }
 
 void GuiWrapper::localUpdateQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local update query");
 
-  emit sendLocalUpdateQuery(_account.token, fileId, symbols);
+  emit sendLocalUpdateQuery(*_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition) {
   //debug("Invio local move query");
 
-  emit sendLocalMoveQuery(_account.token, fileId, symbolId, cursorPosition);
+  emit sendLocalMoveQuery(*_account.token, fileId, symbolId, cursorPosition);
 }
 
 void GuiWrapper::getLinkQuery(int fileId) {
   //debug("Invio share query");
 
-  emit sendGetLinkQuery(_account.token, fileId);
+  emit sendGetLinkQuery(*_account.token, fileId);
 }
 
 // SLOT MM
@@ -311,7 +311,7 @@ void GuiWrapper::errorResponseReceived(QString reason) {
   }
 }
 
-void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickname, QString icon) {
+void GuiWrapper::loginResponseReceived(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon) {
   checkWaiting(true);
   if(_lastMessageSent != USERLOGIN) {
       debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
@@ -322,7 +322,7 @@ void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickna
   debug("Token: " + token);
   debug("User id: " + QString::number(userId));
 
-  _account.token = token;
+  *_account.token = token;
   _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
   //INFO nella versione definitiva settare nickname e icona
@@ -346,7 +346,7 @@ void GuiWrapper::newUserResponseReceived(QString token, int userId) {
   debug("Token: " + token);
   debug("User id: " + QString::number(userId));
 
-  _account.token = token;
+  *_account.token = token;
   _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
 

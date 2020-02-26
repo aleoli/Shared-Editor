@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <memory>
+#include <optional>
 
 #include "landing.h"
 #include "login.h"
@@ -21,7 +22,7 @@ class GuiWrapper : public QWidget
       QString username;
       QString psw;
       int userId;
-      QString token;
+      std::optional<QString> token;
     } account;
 
 public:
@@ -71,7 +72,7 @@ public slots:
 
   // slot di ricezione messaggi dal mm
   void errorResponseReceived(QString reason);
-  void loginResponseReceived(QString token, int userId, QString nickname, QString icon);
+  void loginResponseReceived(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon);
   void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
   void getFileResponseReceived(File file, int charId);
