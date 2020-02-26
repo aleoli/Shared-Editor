@@ -74,24 +74,24 @@ void MessageManager::newUserQuery(QString username, QString password, QString ps
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::editUserQuery(QString token, QString nickname, QString oldPassword,
-  QString password, QString pswRepeat, QString icon) {
+void MessageManager::editUserQuery(QString token, std::optional<QString> nickname, std::optional<QString> oldPassword,
+  std::optional<QString> password, std::optional<QString> pswRepeat, std::optional<QString> icon) {
     Message m{Message::Type::USER, static_cast<int>(Message::UserAction::EDIT),
       Message::Status::QUERY};
 
       m.setValue("token", token);
 
-      if(nickname != nullptr)
-        m.setValue("nickname", nickname);
+      if(nickname)
+        m.setValue("nickname", *nickname);
 
-      if(oldPassword != nullptr && password != nullptr && pswRepeat != nullptr) {
-        m.setValue("oldPassword", oldPassword);
-        m.setValue("password", password);
-        m.setValue("pswRepeat", pswRepeat);
+      if(oldPassword && password && pswRepeat) {
+        m.setValue("oldPassword", *oldPassword);
+        m.setValue("password", *password);
+        m.setValue("pswRepeat", *pswRepeat);
       }
 
-      if(icon != nullptr)
-        m.setValue("icon", icon);
+      if(icon)
+        m.setValue("icon", *icon);
 
       emit send_data(m.toQByteArray());
 }
@@ -105,15 +105,15 @@ void MessageManager::deleteUserQuery(QString token) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::newFileQuery(QString token, QString name, int dirId) {
+void MessageManager::newFileQuery(QString token, QString name, std::optional<int> dirId) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::NEW),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("name", name);
 
-    if(dirId != 0)
-      m.setValue("dirId", dirId);
+    if(dirId)
+      m.setValue("dirId", *dirId);
 
     emit send_data(m.toQByteArray());
 }
@@ -138,15 +138,15 @@ void MessageManager::closeFileQuery(QString token, int fileId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::editFileQuery(QString token, int fileId, QString name) {
+void MessageManager::editFileQuery(QString token, int fileId, std::optional<QString> name) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::EDIT),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
 
-    if(name != nullptr)
-      m.setValue("name", name);
+    if(name)
+      m.setValue("name", *name);
 
     emit send_data(m.toQByteArray());
 }
@@ -227,31 +227,31 @@ void MessageManager::localMoveQuery(QString token, int fileId, SymbolId symbolId
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::newDirQuery(QString token, QString name, int parentId) {
+void MessageManager::newDirQuery(QString token, QString name, std::optional<int> parentId) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::NEW_DIR),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("name", name);
 
-    if(parentId != 0)
-      m.setValue("parentId", parentId);
+    if(parentId)
+      m.setValue("parentId", *parentId);
 
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::editDirQuery(QString token, int dirId, QString name, int parentId = -1) {
+void MessageManager::editDirQuery(QString token, int dirId, std::optional<QString> name, std::optional<int> parentId = std::nullopt) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::EDIT_DIR),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("dirId", dirId);
 
-    if(name != nullptr)
-      m.setValue("name", name);
+    if(name)
+      m.setValue("name", *name);
 
-    if(parentId != -1)
-      m.setValue("parentId", parentId);
+    if(parentId)
+      m.setValue("parentId", *parentId);
 
     emit send_data(m.toQByteArray());
 }

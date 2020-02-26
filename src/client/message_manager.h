@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <vector>
+#include <optional>
 
 class MessageManager: public QObject {
   Q_OBJECT
@@ -26,7 +27,7 @@ signals:
   // messaggi Server -> Client. La GUI deve collegarci gli slot
   void errorResponse(QString reason);
 
-  void loginResponse(QString token, int userId, QString nickname, QString icon); //ATTENZIONE nickname e icon possono essere nullptr!
+  void loginResponse(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon);
   void newUserResponse(QString token, int userId);
   void editUserResponse();
   void deleteUserResponse();
@@ -58,17 +59,15 @@ public slots:
   void loginQuery(QString username, QString password);
   void logoutQuery(QString token);
   void newUserQuery(QString username, QString password, QString pswRepeat);
-  // editUserQuery: impostare a nullptr i campi che non si vogliono modificare
-  void editUserQuery(QString token, QString nickname, QString oldPassword,
-    QString password, QString pswRepeat, QString icon);
+  void editUserQuery(QString token, std::optional<QString> nickname, std::optional<QString> oldPassword,
+    std::optional<QString> password, std::optional<QString> pswRepeat, std::optional<QString> icon);
   void deleteUserQuery(QString token);
 
-  // newFileQuery: se il file è creato nella root, impostare dirId = 0 oppure non settare proprio
-  void newFileQuery(QString token, QString name, int dirId = 0);
+  // newFileQuery: se il file è creato nella root, il dirId non è necessario
+  void newFileQuery(QString token, QString name, std::optional<int> dirId = std::nullopt);
   void getFileQuery(QString token, int fileId);
   void closeFileQuery(QString token, int fileId);
-  // editFileQuery: impostare a nullptr i campi che non si vogliono modificare
-  void editFileQuery(QString token, int fileId, QString name);
+  void editFileQuery(QString token, int fileId, std::optional<QString> name);
   void deleteFileQuery(QString token, int fileId);
   void getLinkQuery(QString token, int fileId);
   void activateLinkQuery(QString token, QString link);
@@ -78,10 +77,9 @@ public slots:
   void localUpdateQuery(QString token, int fileId, std::vector<Symbol> symbols);
   void localMoveQuery(QString token, int fileId, SymbolId symbolId, int cursorPosition);
 
-  // newDirQuery: se la dir è creata nella root, impostare parentId = 0 oppure non settare proprio
-  void newDirQuery(QString token, QString name, int parentId = 0);
-  // editDirQuery: se non modifico il nome -> name = nullptr, se non modifico la cartella -> parentId = -1
-  void editDirQuery(QString token, int dirId, QString name, int parentId);
+  // newDirQuery: se la dir è creata nella root, il parentId non è necessario
+  void newDirQuery(QString token, QString name, std::optional<int> parentId = std::nullopt);
+  void editDirQuery(QString token, int dirId, std::optional<QString> name, std::optional<int> parentId);
   void deleteDirQuery(QString token, int dirId);
   void getDirQuery(QString token, int dirId);
   void moveFileQuery(QString token, int fileId, int dirId);

@@ -133,51 +133,51 @@ void testDataGettersOpt() {
   m.setValue("obj", obj);
   m.setValue("arr", array);
 
-  if(!m.getIntOpt("int").has_value()) {
+  if(!m.getIntOpt("int")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getIntOpt("aaa").has_value()) {
+  if(m.getIntOpt("aaa")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getIntOpt("int").value() != 5) {
+  if(*m.getIntOpt("int") != 5) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(!m.getStringOpt("string").has_value()) {
+  if(!m.getStringOpt("string")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getStringOpt("aaa").has_value()) {
+  if(m.getStringOpt("aaa")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getStringOpt("string").value() != "ciao") {
+  if(*m.getStringOpt("string") != "ciao") {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(!m.getObjectOpt("obj").has_value()) {
+  if(!m.getObjectOpt("obj")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getObjectOpt("aaa").has_value()) {
+  if(m.getObjectOpt("aaa")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getObjectOpt("obj").value() != obj) {
+  if(*m.getObjectOpt("obj") != obj) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(!m.getArrayOpt("arr").has_value()) {
+  if(!m.getArrayOpt("arr")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getArrayOpt("aaa").has_value()) {
+  if(m.getArrayOpt("aaa")) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 
-  if(m.getArrayOpt("arr").value() != array) {
+  if(*m.getArrayOpt("arr") != array) {
     throw TestException{"testDataGettersOpt fallito"};
   }
 }
