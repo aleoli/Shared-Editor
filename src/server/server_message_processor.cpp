@@ -570,9 +570,6 @@ void ServerMessageProcessor::activateLink() {
     file.mv(session, user_root);
 
     QJsonObject data;
-    QJsonObject element;
-    element["fileId"] = file.getId();
-    element["name"] = file.getName();
     data["element"] = file.getFSElement().toJsonObject();
     data["file"] = this->_manager->getFile(this->_clientId, file.getId()).toJsonObject();
 
