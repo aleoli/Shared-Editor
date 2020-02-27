@@ -18,6 +18,7 @@ FSElement_db::FSElement_db(): Persistent() {
   this->_type = FSElement::Type::FILE;
   this->_parent_id = -1;
   this->_owner_id = -1;
+  this->_char_id = 0;
   this->_creator = Lazy<User>{-1};
   this->_original = Lazy<FSElement_db>{-1};
 	this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+QString::number(this->id)};
@@ -29,6 +30,7 @@ FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
   this->_type = e._type;
   this->_parent_id = e._parent_id;
   this->_owner_id = e._owner_id;
+  this->_char_id = e._char_id;
   this->_creator = e._creator;
   this->_children = e._children;
   this->_original = e._original;
@@ -42,6 +44,7 @@ FSElement_db::FSElement_db(FSElement_db &&e): Persistent(e) {
   this->_type = e._type;
   this->_parent_id = e._parent_id;
   this->_owner_id = e._owner_id;
+  this->_char_id = e._char_id;
   this->_creator = e._creator;
   this->_children = e._children;
   this->_original = e._original;
@@ -55,6 +58,7 @@ FSElement_db::FSElement_db(QSqlRecord r): Persistent(r) {
   this->_type = static_cast<FSElement::Type>(r.value("type").toInt());
   this->_parent_id = r.value("parent_id").toInt();
   this->_owner_id = r.value("owner_id").toInt();
+  this->_char_id = r.value("char_id").toInt();
   this->_creator = Lazy<User>{r.value("creator_id").toInt()};
   this->_children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+r.value("id").toString()};
   this->_original = Lazy<FSElement_db>{r.value("linked_from").toInt()};
@@ -74,6 +78,7 @@ FSElement_db& FSElement_db::operator=(const FSElement_db& e) {
   this->_type = e._type;
   this->_parent_id = e._parent_id;
   this->_owner_id = e._owner_id;
+  this->_char_id = e._char_id;
   this->_creator = e._creator;
   this->_children = e._children;
   this->_original = e._original;
@@ -93,6 +98,7 @@ void FSElement_db::save_record(QSqlRecord &r) {
   r.setValue("type", static_cast<int>(this->_type));
   r.setValue("parent_id", this->_parent_id);
   r.setValue("owner_id", this->_owner_id);
+  r.setValue("char_id", this->_char_id);
   r.setValue("creator_id", this->_creator.getId());
   r.setValue("linked_from", this->_original.getId());
 }
@@ -179,6 +185,7 @@ FSElement_db FSElement_db::clone(const Session &s) {
   fs_e.id = 0;
   fs_e._parent_id = -1;
   fs_e._owner_id = s.getUserId();
+  fs_e._char_id = 0;
   fs_e._original = Lazy<FSElement_db>{this->id};
   fs_e.save();
   fs_e._children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+QString::number(fs_e.id)};
@@ -406,4 +413,13 @@ User FSElement_db::getCreator() {
 
 bool FSElement_db::path_on_disk_available() {
   return !QFileInfo::exists(this->getPath());
+}
+
+int FSElement_db::getCharId() const {
+  return this->_char_id;
+}
+
+void FSElement_db::addCharId(int v) {
+  this->_char_id += v;
+  this->save();
 }

@@ -449,13 +449,13 @@ void ServerMessageProcessor::getFile() {
     auto token = _m.getString("token");
     auto session = Session::get(token);
 
-    auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
+    auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
+    auto fileId = file_db.getPhysicalId();
     auto file = this->_manager->getFile(this->_clientId, fileId);
 
     QJsonObject data;
     data["file"] = file.toJsonObject();
-    // TODO: non mi ricordo cosa ci devo mettere / a cosa serve
-    data["charId"] = 0;
+    data["charId"] = file_db.getCharId();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -589,12 +589,15 @@ void ServerMessageProcessor::localInsert() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
+  auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
+  auto fileId = file_db.getPhysicalId();
 
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
     this->_manager->addSymbol(this->_clientId, fileId, Symbol::fromJsonObject(symb.toObject()));
   }
+
+  file_db.addCharId(symbols.count());
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {

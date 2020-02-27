@@ -40,6 +40,9 @@ public:
   QString getName() const;
   int getPhysicalId();
   static int getIdForUser(const Session &s, int file_id, int user_id);
+  int getCharId() const;
+
+  void addCharId(int v);
 
   static FSElement_db get(const Session &s, int id);
   static FSElement_db mkroot(int user_id);
@@ -80,6 +83,7 @@ private:
   FSElement::Type _type;
   int _parent_id;
   int _owner_id;
+  int _char_id;
 
 	Lazy<User> _creator;
   Lazy<FSElement_db> _original;
