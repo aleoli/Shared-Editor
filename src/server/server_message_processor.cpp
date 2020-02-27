@@ -686,8 +686,6 @@ void ServerMessageProcessor::localMove() {
   auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto symbolId = SymbolId::fromJsonObject(_m.getObject("symbolId"));
-  auto cursorPosition = _m.getInt("cursorPosition");
-  // TODO: sposta il cursore nel file
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {
