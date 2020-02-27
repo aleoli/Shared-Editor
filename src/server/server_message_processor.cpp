@@ -429,14 +429,9 @@ void ServerMessageProcessor::newFile() {
 
   auto name = _m.getString("name");
 
-  int dirId = 0;
-  try {
-    dirId = _m.getInt("dirId");
-  } catch(MessageDataException ex) {
-    // use root dir
-  }
+  auto dirId = _m.getIntOpt("dirId");
 
-  FSElement_db dir = dirId == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, dirId);
+  FSElement_db dir = dirId ? FSElement_db::get(session, *dirId) : FSElement_db::root(session.getUserId());
   auto file = dir.mkfile(session, name);
 
   QJsonObject data;
@@ -516,10 +511,10 @@ void ServerMessageProcessor::editFile() {
   auto fileId = _m.getInt("fileId");
   auto file = FSElement_db::get(session, fileId);
 
-  try {
-    auto name = _m.getString("name");
-    file.rename(session, name);
-  } catch(MessageDataException ex) {
+  auto name = _m.getStringOpt("name");
+  if(name) {
+    file.rename(session, *name);
+  } else {
     debug("No name change required");
   }
 
@@ -733,14 +728,9 @@ void ServerMessageProcessor::newDir() {
   auto session = Session::get(token);
 
   auto name = _m.getString("name");
-  int parent_id = 0;
-  try {
-    parent_id = _m.getInt("parentId");
-  } catch(MessageDataException ex) {
-    // use root directory
-  }
+  auto parent_id = _m.getIntOpt("parentId");
 
-  auto dir = parent_id == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, parent_id);
+  auto dir = parent_id ? FSElement_db::get(session, *parent_id) : FSElement_db::root(session.getUserId());
   auto new_dir = dir.mkdir(session, name);
 
   QJsonObject data;
@@ -759,17 +749,17 @@ void ServerMessageProcessor::editDir() {
   auto dir_id = _m.getInt("dirId");
   auto dir = FSElement_db::get(session, dir_id);
 
-  try {
-    auto name = _m.getString("name");
-    dir.rename(session, name);
-  } catch(MessageDataException ex) {
+  auto name = _m.getStringOpt("name");
+  if(name) {
+    dir.rename(session, *name);
+  } else {
     debug("No name change required");
   }
 
-  try {
-    auto parent_id = _m.getInt("parentId");
-    dir.mv(session, parent_id);
-  } catch(MessageDataException ex) {
+  auto parent_id = _m.getIntOpt("parentId");
+  if(parent_id) {
+    dir.mv(session, *parent_id);
+  } else {
     debug("No parentId change required");
   }
 
@@ -802,14 +792,9 @@ void ServerMessageProcessor::getDir() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto dir_id = 0;
-  try {
-    dir_id = _m.getInt("dirId");
-  } catch(MessageDataException ex) {
-    // use root directory
-  }
+  auto dir_id = _m.getIntOpt("dirId");
 
-  auto dir = dir_id == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, dir_id);
+  auto dir = dir_id ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
 
   QJsonArray arr;
   for(auto& f: dir.ls(session)) {
@@ -832,15 +817,10 @@ void ServerMessageProcessor::moveFile() {
 
   auto file_id = _m.getInt("fileId");
 
-  auto dir_id = 0;
-  try {
-    dir_id = _m.getInt("dirId");
-  } catch(MessageDataException ex) {
-    // use root directory
-  }
+  auto dir_id = _m.getIntOpt("dirId");
 
   auto file = FSElement_db::get(session, file_id);
-  auto dir = dir_id == 0 ? FSElement_db::root(session.getUserId()) : FSElement_db::get(session, dir_id);
+  auto dir = dir_id ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
 
   file.mv(session, dir);
 
