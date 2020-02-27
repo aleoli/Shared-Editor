@@ -38,7 +38,7 @@ public:
   static const QString table_name;
 
   QString getName() const;
-  int getPhisicalId();
+  int getPhysicalId();
   static int getIdForUser(const Session &s, int file_id, int user_id);
 
   static FSElement_db get(const Session &s, int id);

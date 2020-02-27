@@ -369,7 +369,7 @@ QString FSElement_db::getName() const {
   return this->_name;
 }
 
-int FSElement_db::getPhisicalId() {
+int FSElement_db::getPhysicalId() {
   if(this->is_link()) {
     return this->_original.getId();
   } else {

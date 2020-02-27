@@ -101,12 +101,12 @@ void ServerMessageProcessor::process_file() {
         getFile();
       break;
 
-		case Message::FileAction::CLOSE:
-			if(isResponse)
-				disconnect("Ricevuto messaggio con status non valido");
-			else
-				closeFile();
-			break;
+    case Message::FileAction::CLOSE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        closeFile();
+      break;
 
     case Message::FileAction::EDIT:
       if(isResponse)
@@ -455,7 +455,7 @@ void ServerMessageProcessor::getFile() {
     auto token = _m.getString("token");
     auto session = Session::get(token);
 
-    auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
+    auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
     auto file = this->_manager->getFile(this->_clientId, fileId);
 
     QJsonObject data;
@@ -485,7 +485,7 @@ void ServerMessageProcessor::closeFile() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   this->_manager->closeFile(this->_clientId, fileId);
 
@@ -600,7 +600,7 @@ void ServerMessageProcessor::localInsert() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
@@ -632,7 +632,7 @@ void ServerMessageProcessor::localDelete() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto ids = _m.getArray("ids");
   for(const auto &id: ids) {
@@ -648,7 +648,7 @@ void ServerMessageProcessor::localDelete() {
 
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-    data["ids"] = _m.getArray("ids");
+    data["ids"] = ids;
     data["clientId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
@@ -664,7 +664,7 @@ void ServerMessageProcessor::localUpdate() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
@@ -698,7 +698,7 @@ void ServerMessageProcessor::localMove() {
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
-  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhisicalId();
+  auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto symbolId = SymbolId::fromJsonObject(_m.getObject("symbolId"));
   auto cursorPosition = _m.getInt("cursorPosition");
