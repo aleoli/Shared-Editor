@@ -76,7 +76,6 @@ QString User::encrypt(QString str) {
 Session User::login(QString username, QString password) {
   QSqlQuery query("SELECT id, password FROM "+User::table_name+" WHERE username=?");
   query.addBindValue(username);
-  query.addBindValue(username);
   if(query.exec()) {
     while(query.next()) {
       auto r = query.record();

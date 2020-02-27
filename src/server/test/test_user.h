@@ -7,12 +7,12 @@ void test_user() {
   auto users{DB::getAll<User>()};
   if(users.empty()) {
     std::cout << "Inserisco Utente" << std::endl;
-    User u = User::registra("aleoli", "aleoli96@gmail.com", "ciao");
+    User u = User::registra("aleoli", "ciao");
     users = DB::getAll<User>();
   }
   std::cout << "LISTA UTENTI" << std::endl;
   for(auto& u: users) {
-    std::cout << "\t" << u.getNickname().toStdString() << std::endl;
+    std::cout << "\t" << u.getUsername().toStdString() << std::endl;
   }
   std::cout << std::endl << std::endl;
 
@@ -22,7 +22,7 @@ void test_user() {
   try {
     //auto s = User::login("' OR 1 OR '", "ciao");
     auto s = User::login("aleoli", "ciao");
-    std::cout << "\t" << s.getUser().getNickname().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
+    std::cout << "\t" << s.getUser().getUsername().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
     token = s.getToken();
   } catch(SQLException e) {
     std::cout << "EXCEPTION: " << e.what() << std::endl;
@@ -34,7 +34,7 @@ void test_user() {
   std::cout << "VERIFICA LOGIN" << std::endl;
   try {
     auto s = Session::get(token);
-    std::cout << "\t" << s.getUser().getNickname().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
+    std::cout << "\t" << s.getUser().getUsername().toStdString() << std::endl << "\tToken: " << s.getToken().toStdString() << std::endl;
   } catch(SQLException e) {
     std::cout << "EXCEPTION: " << e.what() << std::endl;
     throw e;
