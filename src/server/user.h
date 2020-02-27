@@ -20,7 +20,7 @@ public:
 
   virtual User& operator=(const User& u);
 
-  static User registra(QString nickname, std::optional<QString> email, QString password);
+  static User registra(QString username, QString password);
   static Session login(QString username, QString password);
 
   virtual void save();
@@ -29,24 +29,21 @@ public:
 
   const static QString table_name;
 
-  QString getNickname() const;
-  QString getEmail() const;
+  QString getUsername() const;
 
   bool setPassword(QString old_passwork, QString password);
-  void setNickname(QString nickname);
+  void setUsername(QString username);
   void setIcon(QString icon);
 
 	static bool check_pass(QString pass);
-	static bool check_email(QString email);
 
 private:
-  User(QString nickname, std::optional<QString> email, QString password);
+  User(QString username, QString password);
 
   static QString encrypt(QString str);
   static bool check_pass(QString pass, QString db_pass);
 
-  QString _nickname;
-  QString _email;
+  QString _username;
   QString _password;
 
 };

@@ -293,15 +293,7 @@ void ServerMessageProcessor::newUser() {
   info("NewUser query received");
 
   try {
-    auto email = _m.getStringOpt("email");
-    if(email) {
-      if(!User::check_email(*email)) {
-        debug(*email+" not valid email address");
-        this->sendErrorMsg(*email+" not valid email address");
-        return;
-      }
-    }
-    auto nickname = _m.getString("username");
+    auto username = _m.getString("username");
     auto password = _m.getString("password");
 		auto pswRepeat = _m.getString("pswRepeat");
 		if(password != pswRepeat) {
@@ -316,8 +308,8 @@ void ServerMessageProcessor::newUser() {
       return;
 		}
 
-    auto u = User::registra(nickname, email, password);
-    auto s = std::make_shared<Session>(User::login(nickname, password));
+    auto u = User::registra(username, password);
+    auto s = std::make_shared<Session>(User::login(username, password));
 
     QJsonObject data;
     data["token"] = s->getToken();
@@ -325,7 +317,7 @@ void ServerMessageProcessor::newUser() {
 
     // TODO: set other fields
 
-    this->_manager->addClient(this->_clientId, s, nickname);
+    this->_manager->addClient(this->_clientId, s, username);
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::NEW, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -371,11 +363,11 @@ void ServerMessageProcessor::editUser() {
     }
 
 
-    auto nickname = _m.getStringOpt("nickname");
-    if(nickname) {
-      user.setNickname(*nickname);
+    auto username = _m.getStringOpt("username");
+    if(username) {
+      user.setUsername(*username);
     } else {
-      debug("No nickname change required");
+      debug("No username change required");
     }
 
 

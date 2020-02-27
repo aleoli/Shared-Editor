@@ -7,8 +7,8 @@
 #include "../SharedLink.h"
 
 void test_fs() {
-  User u = User::registra("fs_tester", "fs_tester@localhost", "ciao");
-  User u2 = User::registra("fs_tester2", "fs_tester2@localhost", "ciao");
+  User u = User::registra("fs_tester", "ciao");
+  User u2 = User::registra("fs_tester2", "ciao");
   Session s = User::login("fs_tester", "ciao");
 
   {
