@@ -202,6 +202,10 @@ std::string Symbol::to_string() const{
   return ss.str();
 }
 
+void Symbol::update(const Symbol &s) {
+  // TODO: copia il formato e lo stile dall'altro Symbol
+}
+
 void Symbol::setFormat(QTextCharFormat fmt) {
   _fmt = fmt;
 }

@@ -117,6 +117,11 @@ namespace se_exceptions {
       ClientLoginException(QString str): MessageManagerException(str) {}
   };
 
+  class ClientMultipleLoginException : public MessageManagerException {
+  public:
+      ClientMultipleLoginException(QString str): MessageManagerException(str) {}
+  };
+
   class ClientFileException : public MessageManagerException {
   public:
       ClientFileException(QString str): MessageManagerException(str) {}
@@ -150,7 +155,7 @@ namespace se_exceptions {
       TestException(QString str): SE_Exception(str) {}
   };
 
-  // File SYstem exceptions
+  // File System exceptions
   class FileSystemException: public SE_Exception {
   public:
       FileSystemException(QString str): SE_Exception(str) {}

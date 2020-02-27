@@ -122,9 +122,9 @@ private:
 
     QSqlDatabase db;
     QStringList create_db = {
-      "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, nickname VARCHAR(255) UNIQUE, email VARCHAR(255) UNIQUE, password VARCHAR(255));",
+      "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(255) UNIQUE, password VARCHAR(255));",
       "CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY AUTOINCREMENT, token VARCHAR(255) UNIQUE, active INT, user_id INT, FOREIGN KEY(user_id) REFERENCES user(id));",
-      "CREATE TABLE IF NOT EXISTS fs_element (id INTEGER PRIMARY KEY AUTOINCREMENT, path VARCHAR(255), name VARCHAR(255), type INT, parent_id INT, owner_id INT, creator_id INT, linked_from INT, FOREIGN KEY(owner_id) REFERENCES user(id), FOREIGN KEY(creator_id) REFERENCES user(id), FOREIGN KEY(parent_id) REFERENCES fs_element(id), FOREIGN KEY(linked_from) REFERENCES fs_element(id))",
+      "CREATE TABLE IF NOT EXISTS fs_element (id INTEGER PRIMARY KEY AUTOINCREMENT, path VARCHAR(255), name VARCHAR(255), type INT, parent_id INT, owner_id INT, creator_id INT, linked_from INT, char_id INT DEFAULT(0), FOREIGN KEY(owner_id) REFERENCES user(id), FOREIGN KEY(creator_id) REFERENCES user(id), FOREIGN KEY(parent_id) REFERENCES fs_element(id), FOREIGN KEY(linked_from) REFERENCES fs_element(id))",
       "CREATE TABLE IF NOT EXISTS shared_link (id INTEGER PRIMARY KEY AUTOINCREMENT, token VARCHAR(128) UNIQUE, element_id INT, FOREIGN KEY(element_id) REFERENCES fs_element(id))"
     };
 };

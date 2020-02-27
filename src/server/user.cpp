@@ -14,27 +14,24 @@ using namespace se_exceptions;
 
 const QString User::table_name = "user";
 
-User::User(): Persistent(), _nickname(""), _email(""), _password("") {}
+User::User(): Persistent(), _username(""), _password("") {}
 
 User::User(const User& u): Persistent(u) {
-  this->_nickname = u._nickname;
-  this->_email = u._email;
+  this->_username = u._username;
   this->_password = u._password;
 }
 
-User::User(QString nickname, QString email, QString password): Persistent(), _nickname(nickname), _email(email) {
+User::User(QString username, QString password): Persistent(), _username(username) {
   this->_password = User::encrypt(password);
 }
 
 User::User(User&& u): Persistent(u) {
-  this->_nickname = u._nickname;
-  this->_email = u._email;
+  this->_username = u._username;
   this->_password = u._password;
 }
 
 User::User(QSqlRecord r): Persistent(r) {
-  this->_nickname = r.value("nickname").toString();
-  this->_email = r.value("email").toString();
+  this->_username = r.value("username").toString();
   this->_password = r.value("password").toString();
 }
 
@@ -45,8 +42,7 @@ User& User::operator=(const User &u) {
     return *this;
   }
   Persistent::operator=(u);
-  this->_nickname = u._nickname;
-  this->_email = u._email;
+  this->_username = u._username;
   this->_password = u._password;
   return *this;
 }
@@ -56,8 +52,7 @@ void User::save() {
 }
 
 void User::save_record(QSqlRecord &r) {
-  r.setValue("nickname", this->_nickname);
-  r.setValue("email", this->_email);
+  r.setValue("username", this->_username);
   r.setValue("password", this->_password);
 }
 
@@ -65,8 +60,8 @@ void User::remove() {
   this->_remove<User>();
 }
 
-User User::registra(QString nickname, QString email, QString password) {
-  User u{nickname, email, password};
+User User::registra(QString username, QString password) {
+  User u{username, password};
   u.save();   // lancia un'eccezione se non ci riesce
   FSElement_db::mkroot(u.id);
   return u;
@@ -79,8 +74,7 @@ QString User::encrypt(QString str) {
 }
 
 Session User::login(QString username, QString password) {
-  QSqlQuery query("SELECT id, password FROM "+User::table_name+" WHERE nickname=? OR email=?");
-  query.addBindValue(username);
+  QSqlQuery query("SELECT id, password FROM "+User::table_name+" WHERE username=?");
   query.addBindValue(username);
   if(query.exec()) {
     while(query.next()) {
@@ -104,10 +98,39 @@ bool User::check_pass(QString pass, QString db_pass) {
   return encr == str;
 }
 
-QString User::getNickname() const {
-  return this->_nickname;
+QString User::getUsername() const {
+  return this->_username;
 }
 
-QString User::getEmail() const {
-  return this->_email;
+bool User::setPassword(QString old_password, QString password) {
+  QSqlQuery query("SELECT password FROM "+User::table_name+" WHERE id=?");
+  query.addBindValue(this->id);
+  if(query.exec()) {
+    while(query.next()) {
+      auto r = query.record();
+      if(User::check_pass(old_password, r.value("password").toString())) {
+        this->_password = User::encrypt(password);
+        return true;
+      } else {
+        return false;
+      }
+    }
+    throw SQLNoElementSelectException{"No element found in table '"+User::table_name+"'"};
+  } else {
+    throw SQLException{"No query exec on '"+User::table_name+"'"};
+  }
+}
+
+void User::setUsername(QString username) {
+  this->_username = username;
+}
+
+void User::setIcon(QString icon) {
+  // TODO: set icon
+  warn("TODO: set icon");
+}
+
+bool User::check_pass(QString pass) {
+	// TODO: controlla che la pass rispetti le specifiche
+	return true;
 }

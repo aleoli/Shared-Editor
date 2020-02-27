@@ -7,8 +7,8 @@
 #include "../SharedLink.h"
 
 void test_fs() {
-  User u = User::registra("fs_tester", "fs_tester@localhost", "ciao");
-  User u2 = User::registra("fs_tester2", "fs_tester2@localhost", "ciao");
+  User u = User::registra("fs_tester", "ciao");
+  User u2 = User::registra("fs_tester2", "ciao");
   Session s = User::login("fs_tester", "ciao");
 
   {
@@ -39,7 +39,7 @@ void test_fs() {
     if(list.size() == 2) {
       info("Tree test PASSED");
     } else {
-      warn("There are "+QString::number(list.size())+" elements in list");
+      error("There are "+QString::number(list.size())+" elements in list");
     }
   }
 
@@ -80,7 +80,7 @@ void test_fs() {
     if(match && t1 && t2 && t3) {
       info("Share Test PASSED");
     } else {
-      warn("Share Test FAILED");
+      error("Share Test FAILED");
     }
 
     s2.close();
@@ -121,7 +121,7 @@ void test_fs() {
 		if(d1.ls(s).size() == 2 && d2.ls(s).size() == 0) {
 			info("Move Test PASSED");
 		} else {
-			warn("Move Test FAILED");
+			error("Move Test FAILED");
 		}
 
 		d1.remove();

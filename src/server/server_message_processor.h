@@ -19,7 +19,40 @@ protected:
   virtual void process_filesystem();
 
 private:
-  bool _to_all;
+  bool _to_all = false;
   quint64 _clientId;
   std::shared_ptr<MessageManager> _manager;
+
+  static void delete_lambda(int link_id, int owner_id);
+
+  void disconnect(QString why);
+
+  void sendErrorMsg(QString reason);
+
+  // handlers
+
+  void login();
+  void logout();
+  void newUser();
+  void editUser();
+  void deleteUser();
+
+  void newFile();
+  void getFile();
+  void closeFile();
+  void editFile();
+  void deleteFile();
+  void getLink();
+  void activateLink();
+
+  void localInsert();
+  void localDelete();
+  void localUpdate();
+  void localMove();
+
+  void newDir();
+  void editDir();
+  void deleteDir();
+  void getDir();
+  void moveFile();
 };
