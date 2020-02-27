@@ -13,3 +13,4 @@
 #define ERROR_5 "Error updating user"
 #define ERROR_6 "User does not exists"
 #define ERROR_7 "Link not valid"
+#define ERROR_8 "This user is already logged with another client"

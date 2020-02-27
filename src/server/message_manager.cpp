@@ -53,6 +53,11 @@ void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> sessio
   if(clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is already logged in"};
   }
+  for(auto& cl: this->_clients) {
+    if(cl.second.session->getUserId() == session->getUserId()) {
+      throw ClientMultipleLoginException{"User already logged with other client"};
+    }
+  }
 
   Data data;
   data.clientId = clientId;
@@ -67,14 +72,13 @@ QString MessageManager::getUsername(quint64 clientId) {
   return this->_clients[clientId].username;
 }
 
-std::list<quint64> MessageManager::getClients(int userId) {
-  std::list<quint64> l;
+std::optional<quint64> MessageManager::getClient(int userId) {
   for(auto &i: this->_clients) {
     if(i.second.session->getUserId() == userId) {
-      l.push_back(i.second.clientId);
+      return i.second.clientId;
     }
   }
-  return l;
+  return std::nullopt;
 }
 
 std::list<quint64> MessageManager::getClientsInFile(int fileId) {
@@ -92,6 +96,9 @@ void MessageManager::clientDisconnected(quint64 clientId) {
   auto data = _clients[clientId];
   if(data.fileIsOpen) {
     closeFile(clientId, data.fileId);
+  }
+  if(data.session) {
+    data.session->close();
   }
 
   _clients.erase(clientId);

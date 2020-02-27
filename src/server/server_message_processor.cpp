@@ -247,11 +247,13 @@ void ServerMessageProcessor::sendErrorMsg(QString reason) {
 void ServerMessageProcessor::login() {
   info("Login query received");
 
+  std::shared_ptr<Session> s;
+
   try {
     auto username = _m.getString("username");
     auto password = _m.getString("password");
 
-    auto s = std::make_shared<Session>(User::login(username, password));
+    s = std::make_shared<Session>(User::login(username, password));
 
     QJsonObject data;
     data["token"] = s->getToken();
@@ -267,8 +269,13 @@ void ServerMessageProcessor::login() {
     warn(ERROR_1);
     this->sendErrorMsg(ERROR_1);
   } catch(ClientLoginException) {
+    s->close();
     warn(ERROR_2);
     this->sendErrorMsg(ERROR_2);
+  } catch(ClientMultipleLoginException) {
+    s->close();
+    warn(ERROR_8);
+    this->sendErrorMsg(ERROR_8);
   }
 }
 
@@ -828,8 +835,8 @@ void ServerMessageProcessor::delete_lambda(int link_id, int owner_id) {
   auto byte_data = msg.toQByteArray();
 
   auto manager = MessageManager::get();
-  auto clients = manager->getClients(owner_id);
-  for(auto &cl: clients) {
-    manager->send_data(cl, byte_data);
+  auto client = manager->getClient(owner_id);
+  if(client) {
+    manager->send_data(*client, byte_data);
   }
 }

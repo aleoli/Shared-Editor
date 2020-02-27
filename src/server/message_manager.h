@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <list>
 #include <memory>
+#include <optional>
 
 class MessageManager: public QObject {
   Q_OBJECT
@@ -29,7 +30,7 @@ public:
   //quando il processor processa un msg di login, va aggiunto a _clients
   void addClient(quint64 clientId, std::shared_ptr<Session> session, QString username);
   QString getUsername(quint64 clientId);
-  std::list<quint64> getClients(int userId);    // tutti i client in cui è connesso l'utente
+  std::optional<quint64> getClient(int userId);             // il client in cui è connesso l'utente
   std::list<quint64> getClientsInFile(int fileId);      // tutti i client che stanno lavorando su un file
   int getUserId(quint64 client_id);
 
