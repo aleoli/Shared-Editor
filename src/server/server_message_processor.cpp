@@ -425,8 +425,6 @@ void ServerMessageProcessor::deleteUser() {
 void ServerMessageProcessor::newFile() {
   info("NewFile query received");
 
-  std::cout << _m.toQByteArray().data() << std::endl;
-
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
@@ -592,21 +590,27 @@ void ServerMessageProcessor::activateLink() {
 void ServerMessageProcessor::localInsert() {
   info("LocalInsert query received");
 
+  std::cout << _m.toQByteArray().data() << std::endl;
+
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
   auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
   auto fileId = file_db.getPhysicalId();
 
+  debug("FileID: "+QString::number(fileId));
+
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
     this->_manager->addSymbol(this->_clientId, fileId, Symbol::fromJsonObject(symb.toObject()));
   }
 
+  debug("addCharId");
   file_db.addCharId(symbols.count());
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {
+    debug("Send to Client");
     if(cl == this->_clientId) {
       continue;
     }
