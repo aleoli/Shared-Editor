@@ -727,7 +727,7 @@ void ServerMessageProcessor::newDir() {
   auto name = _m.getString("name");
   auto parent_id = _m.getIntOpt("parentId");
 
-  auto dir = parent_id ? FSElement_db::get(session, *parent_id) : FSElement_db::root(session.getUserId());
+  auto dir = (parent_id && (*parent_id!=0)) ? FSElement_db::get(session, *parent_id) : FSElement_db::root(session.getUserId());
   auto new_dir = dir.mkdir(session, name);
 
   QJsonObject data;
@@ -791,7 +791,7 @@ void ServerMessageProcessor::getDir() {
 
   auto dir_id = _m.getIntOpt("dirId");
 
-  auto dir = dir_id ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
+  auto dir = (dir_id && (*dir_id!=0)) ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
 
   QJsonArray arr;
   for(auto& f: dir.ls(session)) {
@@ -817,7 +817,7 @@ void ServerMessageProcessor::moveFile() {
   auto dir_id = _m.getIntOpt("dirId");
 
   auto file = FSElement_db::get(session, file_id);
-  auto dir = dir_id ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
+  auto dir = (dir_id && (*dir_id!=0)) ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
 
   file.mv(session, dir);
 
