@@ -476,6 +476,7 @@ void ServerMessageProcessor::getFile() {
       data["username"] = this->_manager->getUsername(this->_clientId);
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
+      std::cout << std::endl << "USER_CONNECTED" << std::endl << std::endl << QString{msg.toQByteArray()}.toStdString() << std::endl << std::endl;
       this->_manager->send_data(cl, msg.toQByteArray());
     }
   } catch(IllegalAccessException) {
