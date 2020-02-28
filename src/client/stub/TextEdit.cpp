@@ -60,6 +60,7 @@ void TextEdit::setFile(const File &f, int charId) {
 
   //setto gli utenti connessi
   for(auto &client : f.getClients()) {
+    //TODO filtrare me stesso
     remoteUser user;
     user.userId = client.second.clientId;
     user.username = client.second.username;
@@ -409,6 +410,8 @@ void TextEdit::reset() {
 
 void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols) {
   int pos;
+
+  //TODO non deve succedere, ma se il clientId non esiste crasha tutto.. idem delete e update
   auto cursor = _users.at(clientId).cursor;
 
   debug("Inserimento remoto di " + QString::number(symbols.size())
@@ -502,7 +505,7 @@ std::pair<SymbolId, int> TextEdit::saveCursorPosition(const QTextCursor &cursor)
     id = {-1,-1}; //TODO magari si può fare meglio
   }
   else {
-    id = _file.symbolAt(position-1).getSymbolId();
+    id = _file.symbolAt(position-1).getSymbolId(); //TODO potenziale EXCEPTION
   }
 
   return {id, position};
