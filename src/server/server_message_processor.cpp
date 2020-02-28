@@ -1,6 +1,7 @@
 #include "server_message_processor.h"
 
 #include <iostream>
+#include <QJsonDocument>
 
 #include "user.h"
 #include "session.h"
@@ -614,15 +615,20 @@ void ServerMessageProcessor::localInsert() {
     if(cl == this->_clientId) {
       continue;
     }
+    debug("getUserId");
     auto userId = this->_manager->getUserId(cl);
+    debug("userId: "+QString::number(userId));
 
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["symbols"] = _m.getArray("symbols");
     data["clientId"] = session.getUserId();
+    debug(QString(QJsonDocument{data}.toJson()));
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
+    debug(msg.toQByteArray());
     this->_manager->send_data(cl, msg.toQByteArray());
+    debug("fatto");
   }
 
   this->_has_resp = false;
