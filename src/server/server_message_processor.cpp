@@ -1,5 +1,7 @@
 #include "server_message_processor.h"
 
+#include <iostream>
+
 #include "user.h"
 #include "session.h"
 #include "FSElement_db.h"
@@ -423,6 +425,8 @@ void ServerMessageProcessor::deleteUser() {
 void ServerMessageProcessor::newFile() {
   info("NewFile query received");
 
+  std::cout << _m.toQByteArray().data() << std::endl;
+
   auto token = _m.getString("token");
   auto session = Session::get(token);
 
@@ -430,7 +434,7 @@ void ServerMessageProcessor::newFile() {
 
   auto dirId = _m.getIntOpt("dirId");
 
-  FSElement_db dir = dirId ? FSElement_db::get(session, *dirId) : FSElement_db::root(session.getUserId());
+  FSElement_db dir = (dirId && (*dirId!=0)) ? FSElement_db::get(session, *dirId) : FSElement_db::root(session.getUserId());
   auto file = dir.mkfile(session, name);
 
   QJsonObject data;
