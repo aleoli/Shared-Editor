@@ -208,6 +208,7 @@ void GuiWrapper::newUserQuery(QString username, QString psw, QString pswRepeat) 
 
 void GuiWrapper::getFileQuery(int id) {
   checkWaiting(false);
+  checkToken();
   _lastMessageSent = FILEGET;
 
   info("Invio get file query");
@@ -220,6 +221,7 @@ void GuiWrapper::getFileQuery(int id) {
 
 void GuiWrapper::activateLinkQuery(QString link) {
   checkWaiting(false);
+  checkToken();
   _lastMessageSent = FILELINK;
 
   info("Invio activate link query");
@@ -229,6 +231,7 @@ void GuiWrapper::activateLinkQuery(QString link) {
 
 void GuiWrapper::newFileQuery() {
   checkWaiting(false);
+  checkToken();
   _lastMessageSent = FILENEW;
 
   info("Invio new file query");
@@ -239,6 +242,7 @@ void GuiWrapper::newFileQuery() {
 
 void GuiWrapper::closeFileQuery(int fileId) {
   info("Invio close file query");
+  checkToken();
 
   emit sendCloseFileQuery(*_account.token, fileId);
 
@@ -249,30 +253,35 @@ void GuiWrapper::closeFileQuery(int fileId) {
 
 void GuiWrapper::localInsertQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local insert query");
+  checkToken();
 
   emit sendLocalInsertQuery(*_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localDeleteQuery(int fileId, std::vector<SymbolId> ids) {
   //debug("Invio local delete query");
+  checkToken();
 
   emit sendLocalDeleteQuery(*_account.token, fileId, ids);
 }
 
 void GuiWrapper::localUpdateQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local update query");
+  checkToken();
 
   emit sendLocalUpdateQuery(*_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition) {
   //debug("Invio local move query");
+  checkToken();
 
   emit sendLocalMoveQuery(*_account.token, fileId, symbolId, cursorPosition);
 }
 
 void GuiWrapper::getLinkQuery(int fileId) {
   //debug("Invio share query");
+  checkToken();
 
   emit sendGetLinkQuery(*_account.token, fileId);
 }
@@ -346,7 +355,7 @@ void GuiWrapper::newUserResponseReceived(QString token, int userId) {
   debug("Token: " + token);
   debug("User id: " + QString::number(userId));
 
-  *_account.token = token;
+  _account.token = std::optional<QString>(token);
   _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
 
@@ -461,4 +470,10 @@ void GuiWrapper::activateLinkResponseReceived(FSElement element, File file) {
 
   _window = OpenWindow::EDITOR;
   _textEdit->show();
+}
+
+void GuiWrapper::checkToken() {
+  if(!_account.token) {
+    throw SE_Exception("token non inizializzato!");
+  }
 }

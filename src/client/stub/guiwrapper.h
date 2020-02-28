@@ -22,7 +22,7 @@ class GuiWrapper : public QWidget
       QString username;
       QString psw;
       int userId;
-      std::optional<QString> token;
+      std::optional<QString> token = std::nullopt;
     } account;
 
 public:
@@ -99,6 +99,7 @@ private:
   void testEditor();
   void testCRDT();
   void initThreads(const SysConf &conf);
+  void checkToken();
 
   //ENUM per tenere traccia di quale finestra è aperta al momento (serve per sapere dove stampare i msg di errore)
   //si può anche usare per rinforzare i controlli sui msg ricevuti
