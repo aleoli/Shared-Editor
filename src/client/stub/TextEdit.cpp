@@ -47,6 +47,8 @@ TextEdit::TextEdit(QWidget *parent)
 }
 
 void TextEdit::setInitialBackground() {
+  debug("Setting initial background");
+
   QTextCursor cursor = _textEdit->textCursor();
   auto fmt = cursor.charFormat();
   fmt.setBackground(QColor("#00000000"));
@@ -61,6 +63,9 @@ void TextEdit::setFile(const File &f, int charId) {
   //setto gli utenti connessi
   for(auto &client : f.getClients()) {
     //TODO filtrare me stesso
+
+    if (client.second.username == _user.username) continue; //TODO check userId dopo refactor
+
     remoteUser user;
     user.userId = client.second.clientId;
     user.username = client.second.username;
@@ -291,6 +296,7 @@ void TextEdit::change(int pos, int removed, int added) {
   //TODO si potrebbe fare anche una cosa più elaborata,
   //    tipo 2 rem e 3 added significa 2 update e 1 added, ma non so se vale la pena
 
+  debug("symbols: " + QString::number(_file.numSymbols()));
   debug("contentsChange: position: " + QString::number(pos) +
     " rimossi " + QString::number(removed) + " aggiunti " + QString::number(added));
 
@@ -303,6 +309,12 @@ void TextEdit::change(int pos, int removed, int added) {
       symRemoved.push_back(id);
     }
     emit localDeleteQuery(_fileId, symRemoved);
+
+    // fix: setting transparent background if file is empty
+    // perchè di default il bck color è nero (!)
+    if(_file.numSymbols() == 0) {
+      setInitialBackground();
+    }
 }
 
   // aggiunte

@@ -302,7 +302,7 @@ void GuiWrapper::errorResponseReceived(QString reason) {
     case OpenWindow::LOGIN:
       ErrorDialog::showDialog(_login, reason);
       _login->unblock();
-      _login->clear();
+      //_login->clear();
       break;
 
     case OpenWindow::EDITOR:
@@ -312,7 +312,7 @@ void GuiWrapper::errorResponseReceived(QString reason) {
     case OpenWindow::BROWSER:
       ErrorDialog::showDialog(_fileSelector, reason);
       _fileSelector->unblock();
-      _fileSelector->clear();
+      //_fileSelector->clear();
       break;
 
     case OpenWindow::REGISTRATION:
