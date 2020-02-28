@@ -62,7 +62,7 @@ FSElement_db::FSElement_db(QSqlRecord r): Persistent(r) {
   this->_creator = Lazy<User>{r.value("creator_id").toInt()};
   this->_children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+r.value("id").toString()};
   this->_original = Lazy<FSElement_db>{r.value("linked_from").toInt()};
-  this->_links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+r.value("id").toString()};
+  this->_links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+r.value("id").toString()+" OR id = "+r.value("id").toString()};
 	this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+r.value("id").toString()};
 }
 
