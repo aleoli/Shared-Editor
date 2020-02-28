@@ -387,13 +387,20 @@ int FSElement_db::getPhysicalId() {
 }
 
 int FSElement_db::getIdForUser(const Session &s, int file_id, int user_id) {
+  debug("inizio");
   auto file = FSElement_db::get(s, file_id);
+  debug("file ottenuto");
   if(file.is_link()) {
+    debug("è un link");
     file = file._original.getValue();
+  } else {
+    debug("non è un link");
   }
   auto links = file._links.getValues();
   for(auto &l: links) {
+    debug("ciao "+QString::number(l->getId()));
     if(l->_owner_id == user_id) {
+      debug(QString::number(l->getId()));
       return l->getId();
     }
   }
