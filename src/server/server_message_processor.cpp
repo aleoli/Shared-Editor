@@ -589,6 +589,23 @@ void ServerMessageProcessor::activateLink() {
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
     this->_has_resp = true;
+
+    auto clients = this->_manager->getClientsInFile(fileId);
+    for(auto &cl: clients) {
+      if(cl == this->_clientId) {
+        continue;
+      }
+      auto userId = this->_manager->getUserId(cl);
+
+      QJsonObject data;
+      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+      data["clientId"] = (int) this->_clientId;
+      data["username"] = this->_manager->getUsername(this->_clientId);
+
+      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
+      std::cout << std::endl << "USER_CONNECTED" << std::endl << std::endl << QString{msg.toQByteArray()}.toStdString() << std::endl << std::endl;
+      this->_manager->send_data(cl, msg.toQByteArray());
+    }
   } catch(ShareException) {
     warn(ERROR_7);
     this->sendErrorMsg(ERROR_7);
