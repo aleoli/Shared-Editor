@@ -598,7 +598,7 @@ void ServerMessageProcessor::activateLink() {
       auto userId = this->_manager->getUserId(cl);
 
       QJsonObject data;
-      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+      data["fileId"] = FSElement_db::getIdForUser(session, file.getId(), userId);
       data["clientId"] = (int) this->_clientId;
       data["username"] = this->_manager->getUsername(this->_clientId);
 
