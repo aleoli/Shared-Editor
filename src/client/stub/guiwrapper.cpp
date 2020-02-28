@@ -335,7 +335,7 @@ void GuiWrapper::loginResponseReceived(QString token, int userId, std::optional<
   debug("Token: " + token);
   debug("User id: " + QString::number(userId));
 
-  *_account.token = token;
+  _account.token = std::optional<QString>(token);
   _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
   //INFO nella versione definitiva settare nickname e icona
