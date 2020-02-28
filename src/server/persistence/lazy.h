@@ -25,8 +25,8 @@ public:
     }
 
     ~Lazy() {
-        if(this->value)
-            delete this->value;
+        //if(this->value)
+        //    delete this->value;
     }
 
     Lazy& operator =(const Lazy& e) {

@@ -58,9 +58,9 @@ public:
     }
 
     ~LazyList() {
-        for(int i=0; i<this->values.size(); i++) {
+        /*for(int i=0; i<this->values.size(); i++) {
             delete this->values[i];
-        }
+        }*/
     }
 
     LazyList& operator =(const LazyList &e) {
