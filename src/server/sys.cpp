@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QDir>
 #include <QTime>
@@ -12,11 +12,11 @@
 #include "exceptions.h"
 #include "sets.h"
 
-SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app);
+SysConf parse_arguments(QCommandLineParser &parser, const QCoreApplication &app);
 
-SysConf initiate_system(const QApplication &app) {
-  QApplication::setApplicationVersion("1.0");
-  QApplication::setApplicationName("Shared Editor - Server");
+SysConf initiate_system(const QCoreApplication &app) {
+  QCoreApplication::setApplicationVersion("1.0");
+  QCoreApplication::setApplicationName("Shared Editor - Server");
 
   QCommandLineParser parser;
   parser.setApplicationDescription("Server for Shared-Editor application");
@@ -47,7 +47,7 @@ SysConf initiate_system(const QApplication &app) {
   return conf;
 }
 
-SysConf parse_arguments(QCommandLineParser &parser, const QApplication &app) {
+SysConf parse_arguments(QCommandLineParser &parser, const QCoreApplication &app) {
   const QCommandLineOption helpOption = parser.addHelpOption();
   const QCommandLineOption versionOption = parser.addVersionOption();
   parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
