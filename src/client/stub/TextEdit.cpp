@@ -308,7 +308,7 @@ void TextEdit::change(int pos, int removed, int added) {
   if(added > 0) {
     QTextCursor cursor(_textEdit->document());
 
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos+1);
 
     std::vector<Symbol> symAdded;
     for(int i=0; i<added; i++) {
