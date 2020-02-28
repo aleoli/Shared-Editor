@@ -463,13 +463,21 @@ void ServerMessageProcessor::getFile() {
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
     this->_has_resp = true;
 
-    QJsonObject data2;
-    data2["fileId"] = _m.getInt("fileId");
-    data2["clientId"] = (int) this->_clientId;
-    data2["username"] = this->_manager->getUsername(this->_clientId);
+    auto clients = this->_manager->getClientsInFile(fileId);
+    for(auto &cl: clients) {
+      if(cl == this->_clientId) {
+        continue;
+      }
+      auto userId = this->_manager->getUserId(cl);
 
-    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data2};
-    this->_manager->sendToAll(this->_clientId, fileId, msg.toQByteArray());
+      QJsonObject data;
+      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+      data["clientId"] = (int) this->_clientId;
+      data["username"] = this->_manager->getUsername(this->_clientId);
+
+      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
+      this->_manager->send_data(cl, msg.toQByteArray());
+    }
   } catch(IllegalAccessException) {
     warn(ACCESS_DENIED);
     this->sendErrorMsg(ACCESS_DENIED);
