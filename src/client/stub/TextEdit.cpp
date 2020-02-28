@@ -47,11 +47,15 @@ TextEdit::TextEdit(QWidget *parent)
 
   // set background color iniziale trasparente
   // perchè stranamente all'inizio il background color settato è nero
-  QTextCursor cursor{_textEdit->document()};
+  setInitialBackground();
+}
+
+void TextEdit::setInitialBackground() {
+  QTextCursor cursor = _textEdit->textCursor();
   auto fmt = cursor.charFormat();
   fmt.setBackground(QColor("#00000000"));
-  cursor.setCharFormat(fmt);
-  _textEdit->setTextCursor(cursor);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
 }
 
 void TextEdit::setFile(const File &f, int charId) {
@@ -281,6 +285,9 @@ void TextEdit::printTextFile() {
 void TextEdit::change(int pos, int removed, int added) {
   if(_blockSignals) return;
 
+  auto fmt = _textEdit->textCursor().charFormat();
+  fmt.setBackground(QColor("#00000000")); // TODO!!!!
+
   // a volte capita non so perchè che viene triggerato a caso.
   if(_file.numSymbols() < removed) return;
 
@@ -305,6 +312,7 @@ void TextEdit::change(int pos, int removed, int added) {
   // aggiunte
   if(added > 0) {
     QTextCursor cursor(_textEdit->document());
+
     cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
 
     std::vector<Symbol> symAdded;
@@ -312,8 +320,10 @@ void TextEdit::change(int pos, int removed, int added) {
       auto chr = _textEdit->document()->characterAt(pos + i);
 
       cursor.movePosition(QTextCursor::NextCharacter);
-      auto fmt = cursor.charFormat();
       Symbol s{{_user.userId, _user.charId++}, chr, fmt};
+
+      //debug(QString::fromStdString(s.to_string()));
+
       _file.localInsert(s, pos+i);
       symAdded.push_back(s);
     }
@@ -383,6 +393,8 @@ void TextEdit::reset() {
 
   //elimino caratteri
   clear();
+
+  setInitialBackground();
 
   //elimino users
   for(auto &user : _users) {
