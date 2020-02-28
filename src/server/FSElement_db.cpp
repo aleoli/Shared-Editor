@@ -358,7 +358,9 @@ SharedLink FSElement_db::share(const Session &s) {
 
 FSElement_db FSElement_db::link(const Session &s, const QString &token) {
   auto orig = SharedLink::get(token).element();
-  return orig.clone(s);
+  auto tmp = orig.clone(s);
+  debug("Linked "+QString::number(orig.getId())+" into "+QString::number(tmp.getId()));
+  return tmp;
 }
 
 void FSElement_db::clearCache() {
