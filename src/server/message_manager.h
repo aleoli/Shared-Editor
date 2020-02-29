@@ -36,7 +36,7 @@ public:
 
   /* gestione file */
   // richiesta di un file da parte di un client
-  File getFile(quint64 clientId, int fileId);
+  File getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser);
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
   void addSymbol(quint64 clientId, int fileId, const Symbol& sym);
   void deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId);
@@ -72,6 +72,7 @@ private:
   typedef struct Data {
     quint64 clientId;
     int fileId;
+    int fileIdUser;
     std::shared_ptr<Session> session;
     bool fileIsOpen;
     QString username;
