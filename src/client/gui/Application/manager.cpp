@@ -161,7 +161,7 @@ void Manager::connectWidgets() {
   connect(docsBrowser, &DocsBrowser::getFolderQuery, this, &Manager::getFolderQuery);
 
   // TextEdit -> Manager (Client -> Server)
-  connect(textEditor, &TextEditor::closeFileQuery, this, &Manager::closeFileQuery);
+  /*connect(textEditor, &TextEditor::closeFileQuery, this, &Manager::closeFileQuery);
   connect(textEditor, &TextEditor::localInsertQuery, this, &Manager::localInsertQuery);
   connect(textEditor, &TextEditor::localDeleteQuery, this, &Manager::localDeleteQuery);
   connect(textEditor, &TextEditor::localUpdateQuery, this, &Manager::localUpdateQuery);
@@ -174,9 +174,9 @@ void Manager::connectWidgets() {
   connect(this, &Manager::remoteUpdateQuery, textEditor, &TextEditor::remoteUpdateQuery);
   connect(this, &Manager::userConnectedQuery, textEditor, &TextEditor::userConnectedQuery);
   connect(this, &Manager::userDisconnectedQuery, textEditor, &TextEditor::userDisconnectedQuery);
-  connect(this, &Manager::remoteMoveQuery, textEditor, &TextEditor::remoteMoveQuery);
+  connect(this, &Manager::remoteMoveQuery, textEditor, &TextEditor::remoteMoveQuery);*/
 }
-
+QString
 shared_ptr<Manager> Manager::get(const SysConf conf) {
     if(instance == nullptr) {
         instance.reset(new Manager{conf, nullptr});
