@@ -14,32 +14,67 @@ public:
 
     Lazy(const Lazy& e) {
         if(this != &e) {
-            if(this->value)
-                delete this->value;
+            if(this->value) {
+              delete this->value;
+              this->value = nullptr;
+            }
             if(e.value) {
                 this->value = new T{e.value};
+            } else {
+                this->value = nullptr;
             }
             this->id = e.id;
             this->has_value = e.has_value;
         }
     }
 
+    Lazy(Lazy && e) {
+      if(this != &e) {
+        if(this->value) {
+          delete this->value;
+        }
+        this->value = e.value;
+        e.value = nullptr;
+        this->id = e.id;
+        this->has_value = e.has_value;
+        e.has_value = false;
+      }
+    }
+
     ~Lazy() {
-        //if(this->value)
-        //    delete this->value;
+        if(this->value)
+            delete this->value;
     }
 
     Lazy& operator =(const Lazy& e) {
         if(this != &e) {
-            if(this->value)
-                delete this->value;
+            if(this->value) {
+              delete this->value;
+              this->value = nullptr;
+            }
             if(e.value) {
                 this->value = new T{*e.value};
+            } else {
+                this->value = nullptr;
             }
             this->id = e.id;
             this->has_value = e.has_value;
         }
         return *this;
+    }
+
+    Lazy& operator =(Lazy && e) {
+      if(this != &e) {
+        if(this->value) {
+          delete this->value;
+        }
+        this->value = e.value;
+        e.value = nullptr;
+        this->id = e.id;
+        this->has_value = e.has_value;
+        e.has_value = false;
+      }
+      return *this;
     }
 
     T operator ->() {
@@ -61,6 +96,7 @@ public:
 		void clear() {
 				if(this->value)
 						delete this->value;
+            this->value = nullptr;
 				this->value = nullptr;
 				this->has_value = false;
 		}

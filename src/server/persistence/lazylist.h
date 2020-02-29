@@ -21,8 +21,9 @@ public:
 
     LazyList(const LazyList &e) {
         if(this != &e) {
-            for(int i=0; i<this->values.length(); i++) {
+            for(int i=0; i<this->values.size(); i++) {
                 delete this->values[i];
+                this->values[i] = nullptr;
             }
             this->values.clear();
             this->ids.clear();
@@ -39,8 +40,9 @@ public:
 
     LazyList(LazyList &&e) {
         if(this != &e) {
-            for(int i=0; i<this->values.length(); i++) {
+            for(int i=0; i<this->values.size(); i++) {
                 delete this->values[i];
+                this->values[i] = nullptr;
             }
             this->values.clear();
             this->ids.clear();
@@ -51,6 +53,7 @@ public:
             e.ids.clear();
             e.values.clear();
             this->has_values = e.has_values;
+            e.has_values = false;
             this->has_query = e.has_query;
             this->table_name = e.table_name;
             this->filter = e.filter;
@@ -58,15 +61,17 @@ public:
     }
 
     ~LazyList() {
-        /*for(int i=0; i<this->values.size(); i++) {
+        for(int i=0; i<this->values.size(); i++) {
             delete this->values[i];
-        }*/
+            this->values[i] = nullptr;
+        }
     }
 
     LazyList& operator =(const LazyList &e) {
         if(this != &e) {
             for(int i=0; i<this->values.size(); i++) {
                 delete this->values[i];
+                this->values[i] = nullptr;
             }
             this->values.clear();
             this->ids.clear();
@@ -80,6 +85,28 @@ public:
             this->filter = e.filter;
         }
         return *this;
+    }
+
+    LazyList& operator =(LazyList &&e) {
+        if(this != &e) {
+            for(int i=0; i<this->values.size(); i++) {
+                delete this->values[i];
+                this->values[i] = nullptr;
+            }
+            this->values.clear();
+            this->ids.clear();
+            this->ids = e.ids;
+            for(T* it: e.values) {
+                this->values.push_back(it);
+            }
+            e.ids.clear();
+            e.values.clear();
+            this->has_values = e.has_values;
+            e.has_values = false;
+            this->has_query = e.has_query;
+            this->table_name = e.table_name;
+            this->filter = e.filter;
+        }
     }
 
     std::vector<T*> operator ->() {
