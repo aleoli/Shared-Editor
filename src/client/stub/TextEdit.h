@@ -69,6 +69,7 @@ private slots:
   void printTextFile();
   void change(int pos, int removed, int added);
   void cursorChanged();
+  void formatChanged();
 
 private:
   void setupFileActions();

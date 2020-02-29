@@ -43,6 +43,7 @@ TextEdit::TextEdit(QWidget *parent)
   // signal/slot aggiunta / rimozione / modifica caratteri
   QObject::connect(_textEdit->document(), &QTextDocument::contentsChange, this, &TextEdit::change);
   QObject::connect(_textEdit, &QTextEdit::cursorPositionChanged, this, &TextEdit::cursorChanged);
+  QObject::connect(_textEdit, &QTextEdit::currentCharFormatChanged, this, &TextEdit::formatChanged);
 
   // _dock right
   initDock();
@@ -413,6 +414,10 @@ void TextEdit::cursorChanged() {
     warn("cursorChanged ha lanciato una FileSymbolsException");
     return;
   }
+}
+
+void TextEdit::formatChanged() {
+  debug("Format changed");
 }
 
 void TextEdit::updateActions() {
