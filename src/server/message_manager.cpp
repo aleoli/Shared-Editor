@@ -95,27 +95,21 @@ void MessageManager::clientDisconnected(quint64 clientId) {
   //se aveva un file aperto, lo rimuovo da _fileClients
   auto data = _clients[clientId];
   if(data.fileIsOpen) {
-    try {
-      auto fileId = data.fileId;
+    auto fileId = data.fileId;
 
-      auto clients = this->getClientsInFile(fileId);
-      for(auto &cl: clients) {
-        if(cl == clientId) {
-          continue;
-        }
-        auto userId = this->getUserId(cl);
-
-        QJsonObject _data;
-        _data["fileId"] = data.fileIdUser;
-        _data["clientId"] = (int) clientId;
-
-        auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, _data};
-        this->send_data(cl, msg.toQByteArray());
+    auto clients = this->getClientsInFile(fileId);
+    for(auto &cl: clients) {
+      if(cl == clientId) {
+        continue;
       }
-    } catch(SE_Exception exc) {
-      std::cout << exc.what() << std::endl;
-      std::cout << data.fileId << std::endl;
-      std::cout << "sono qua" << std::endl;
+      auto userId = this->getUserId(cl);
+
+      QJsonObject _data;
+      _data["fileId"] = data.fileIdUser;
+      _data["clientId"] = (int) clientId;
+
+      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, _data};
+      this->send_data(cl, msg.toQByteArray());
     }
 
     closeFile(clientId, data.fileId);
