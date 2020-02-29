@@ -16,15 +16,17 @@
 #include <QPushButton>
 #include <QListView>
 #include <vector>
+#include <optional>
 
 #include "Symbol.h"
 #include "utils.h"
 #include "exceptions.h"
+#include "errordialog.h"
 
 using namespace se_exceptions;
 
 TextEdit::TextEdit(QWidget *parent)
-        : QMainWindow(parent), _blockSignals(false)
+        : QMainWindow(parent), _blockSignals(false), _cursorPosition(0), _shareLink(std::nullopt)
 {
   // QTextEdit sarà il nostro widget principale, contiene un box in cui inserire testo.
   // Inoltre avremo un menu, in cui ci saranno tutte le varie opzioni, e una toolbar che ne avrà un set
@@ -58,7 +60,9 @@ void TextEdit::setInitialBackground() {
 
 void TextEdit::setFile(const File &f, int charId) {
   _file = f;
+  _shareLink = std::nullopt; //TODO quando sarà salvato nel file rimuovere
   _user.charId = charId;
+
 
   //setto gli utenti connessi
   for(auto &client : f.getClients()) {
@@ -96,6 +100,8 @@ int TextEdit::getFileId() const {
 }
 
 void TextEdit::refresh(bool changeFile) {
+  _blockSignals = true;
+
   //salvo pos del cursore mio
   std::pair<SymbolId, int> pos;
 
@@ -103,7 +109,6 @@ void TextEdit::refresh(bool changeFile) {
     pos = saveCursorPosition(_textEdit->textCursor());
 
   //cancello
-  _blockSignals = true;
   _textEdit->document()->clear();
 
   setInitialBackground();
@@ -111,23 +116,40 @@ void TextEdit::refresh(bool changeFile) {
   //refresh
   QTextCursor cursor{_textEdit->document()};
   for(auto &sym : _file.getSymbols()) {
-    _blockSignals = true;
     cursor.setCharFormat(sym.getFormat());
     cursor.insertText(sym.getChar());
   }
 
   //ripristino posizione
   if(!changeFile) {
-    _blockSignals = true;
     cursor.setPosition(getCursorPosition(pos.first, pos.second));
     _textEdit->setTextCursor(cursor);
+    _cursorPosition = pos.second;
   }
 
   _blockSignals = false;
 }
 
 void TextEdit::share() {
-  emit getLinkQuery(_fileId);
+  if(!_shareLink) { //TODO quando sarà nella classe file cambiare
+    emit getLinkQuery(_fileId);
+  }
+  else {
+    showShareLink();
+  }
+}
+
+void TextEdit::setShareLink(QString shareLink) {
+  _shareLink = std::optional<QString>(shareLink);
+}
+
+void TextEdit::showShareLink() {
+  if(!_shareLink) {
+    error("chiamato showShareLink ma _shareLink non settato");
+  }
+  else {
+    ErrorDialog::showDialog(this, *_shareLink); //TODO non errordialog ma dialog normale..
+  }
 }
 
 void TextEdit::clear() {
@@ -140,6 +162,7 @@ void TextEdit::clear() {
     user.second.cursor->updateCursorView();
   }
 
+  _cursorPosition = 0;
   _blockSignals = false;
 }
 
@@ -289,8 +312,13 @@ void TextEdit::printTextFile() {
 void TextEdit::change(int pos, int removed, int added) {
   if(_blockSignals) return;
 
-  // a volte capita non so perchè che viene triggerato a caso.
-  if(_file.numSymbols() < removed) return;
+  // fix: a volte capita non so perchè questa cosa.
+  // viene segnalato un numero di caratteri rimossi maggiore dei caratteri presenti
+  int nsym = _file.numSymbols();
+  if(nsym < removed) {
+    added -= removed - nsym;
+    removed = nsym;
+  }
 
   //TODO se removed == added -> UPDATE
   //TODO si potrebbe fare anche una cosa più elaborata,
@@ -309,19 +337,22 @@ void TextEdit::change(int pos, int removed, int added) {
       symRemoved.push_back(id);
     }
     emit localDeleteQuery(_fileId, symRemoved);
+  }
 
-    // fix: setting transparent background if file is empty
-    // perchè di default il bck color è nero (!)
-    if(_file.numSymbols() == 0) {
-      setInitialBackground();
-    }
-}
+  //TODO non basta. se seleziono tutto e poi faccio incolla del link, l'altro vede nero
+  // fix: setting transparent background if file is empty
+  // perchè di default il bck color è nero (!)
+  if(_file.numSymbols() == 0) {
+    setInitialBackground(); //TODO set initial everything
+  }
 
   // aggiunte
   if(added > 0) {
     QTextCursor cursor(_textEdit->document());
 
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos+1);
+    if(!cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos+1)) {
+      setInitialBackground();
+    }
 
     std::vector<Symbol> symAdded;
     for(int i=0; i<added; i++) {
@@ -339,35 +370,49 @@ void TextEdit::change(int pos, int removed, int added) {
     emit localInsertQuery(_fileId, symAdded);
   }
 
+  // update cursors of other users
   for(auto &user : _users) {
     user.second.cursor->updateCursorView();
   }
 
-  _blockSignals = true; // per bloccare lo slot cursorChanged
+  // update _cursorPosition
+  _cursorPosition = pos + added;
 }
 
 void TextEdit::cursorChanged() {
-  if(_blockSignals) {
-    _blockSignals = false;
-    return;
+  auto cursor = _textEdit->textCursor();
+
+  // fix: se il cursore va in posizione 0 e la riga è vuota si "resetta"
+  if(cursor.position() == 0) {
+    setInitialBackground(); // TODO set initial everything
   }
 
-  auto cursor = _textEdit->textCursor();
+  if(_blockSignals) return;
 
   if(cursor.hasSelection()) return; //non mando nulla se sto selezionando
 
-  auto pos = saveCursorPosition(cursor);
+  // TODO a volte crasha a causa di contentsChange triggerati a cazzo
+  try {
+    auto pos = saveCursorPosition(cursor);
 
-  emit localMoveQuery(_fileId, pos.first, pos.second);
+    if(_cursorPosition == pos.second) return; // ho già registrato questo spostamento, non mando nulla
 
-  debug("Cursore spostato in posizione " + QString::number(pos.second));
-  debug("SymbolId alla sx: " + QString::fromStdString(pos.first.to_string()));
+    emit localMoveQuery(_fileId, pos.first, pos.second);
 
-  // se sposto il cursore, devo modificare le azioni di conseguenza
-  // esempio se mi sposto dove c'è il grassetto selezionato, deve esserci il pulsante cliccato
-  _blockSignals = true;
-  updateActions();
-  _blockSignals = false;
+    debug("Cursore spostato in posizione " + QString::number(pos.second));
+    debug("SymbolId alla sx: " + QString::fromStdString(pos.first.to_string()));
+
+    // se sposto il cursore, devo modificare le azioni di conseguenza
+    // esempio se mi sposto dove c'è il grassetto selezionato, deve esserci il pulsante cliccato
+    _blockSignals = true;
+    updateActions();
+    _blockSignals = false;
+
+  }
+  catch (FileSymbolsException e) {
+    warn("cursorChanged ha lanciato una FileSymbolsException");
+    return;
+  }
 }
 
 void TextEdit::updateActions() {
@@ -411,7 +456,9 @@ void TextEdit::reset() {
   }
   _users.clear();
 
+  // reset value
   _blockSignals = false;
+  _cursorPosition = 0;
   _gen.reset();
 }
 
@@ -421,6 +468,7 @@ void TextEdit::reset() {
 //INFO ipotizzo che i vettori non siano vuoti (check fatto nelle localXXX e lato server)
 
 void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols) {
+  _blockSignals = true;
   int pos;
 
   //TODO non deve succedere, ma se il clientId non esiste crasha tutto.. idem delete e update
@@ -430,14 +478,16 @@ void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> s
         + " caratteri dell'user " + QString::number(clientId));
 
   for(auto &sym : symbols) {
-    _blockSignals = true;
     pos = _file.remoteInsert(sym);
     cursor->insert(sym, pos);
   }
+
   _blockSignals = false;
 }
 
 void TextEdit::remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId> ids) {
+  _blockSignals = true;
+
   int pos;
   auto cursor = _users.at(clientId).cursor;
 
@@ -445,14 +495,15 @@ void TextEdit::remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId>
         + " caratteri dell'user " + QString::number(clientId));
 
   for(auto &id : ids) {
-    _blockSignals = true;
     pos = _file.remoteDelete(id);
     if(pos != -1) cursor->remove(pos);
   }
+
   _blockSignals = false;
 }
 
 void TextEdit::remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> symbols) {
+  _blockSignals = true;
   int pos;
   auto cursor = _users.at(clientId).cursor;
 
@@ -462,12 +513,11 @@ void TextEdit::remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> s
   for(auto &sym : symbols) {
     pos = _file.remoteUpdate(sym);
     if(pos != -1) {
-      _blockSignals = true;
       cursor->remove(pos);
-      _blockSignals = true;
       cursor->insert(sym, pos);
     }
   }
+
   _blockSignals = false;
 }
 

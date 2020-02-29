@@ -43,6 +43,7 @@ public:
   void setFileId(int id);
   int getFileId() const;
   void setUser(int userId, QString username);
+  void showShareLink();
 
 public slots:
   // messaggi dal server
@@ -52,6 +53,7 @@ public slots:
   void userConnectedQuery(int fileId, int clientId, QString username);
   void userDisconnectedQuery(int fileId, int clientId);
   void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+  void setShareLink(QString shareLink);
 
 signals:
   void closeFileQuery(int fileId);
@@ -89,6 +91,7 @@ private:
   QListWidget *_dock;
 
   File _file;
+  std::optional<QString> _shareLink;
   int _fileId;
   localUser _user; // TODO si può fare un check su questo attributo per vedere se ci sono errori
 
@@ -98,5 +101,6 @@ private:
   //booleano che utilizzo per evitare che certi slot vengano emessi quando non voglio
   //esempio: faccio clear -> non voglio che venga eseguito lo slot change()
   bool _blockSignals;
+  int _cursorPosition;
   ColorGenerator _gen;
 };

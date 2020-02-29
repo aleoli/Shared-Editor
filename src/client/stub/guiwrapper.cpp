@@ -455,6 +455,13 @@ void GuiWrapper::remoteMoveQueryReceived(int fileId, int clientId, SymbolId symb
 void GuiWrapper::getLinkResponseReceived(QString link) {
   debug("Ricevuto share link");
   debug("Link: " + link);
+
+  if(_window != OpenWindow::EDITOR) {
+    throw SE_Exception("Ricevuta getLinkResponse ma la finestra aperta non è l'editor");
+  }
+
+  _textEdit->setShareLink(link);
+  _textEdit->showShareLink();
 }
 
 void GuiWrapper::activateLinkResponseReceived(FSElement element, File file) {

@@ -11,9 +11,12 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="errorMsg">
+    <widget class="QLineEdit" name="errorMsg">
      <property name="text">
       <string>ErrorMsg</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
