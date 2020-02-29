@@ -130,7 +130,7 @@ public slots:
   void getFileQuery(int id);
   void closeFileQuery(int fileId);
   void newFolderQuery(QString foldername);
-  void getFolderQuery(QString foldername);
+  void getFolderQuery(int folderid);
   void localInsertQuery(int fileId, std::vector<Symbol> symbols);
   void localDeleteQuery(int fileId, std::vector<SymbolId> ids);
   void localUpdateQuery(int fileId, std::vector<Symbol> symbols);

@@ -337,7 +337,7 @@ void Manager::newFolderQuery(QString foldername) {
 
     emit sendNewFolderQuery(main_user->getToken(), foldername);
 }
-void Manager::getFolderQuery(QString foldername) {
+void Manager::getFolderQuery(int folderid) {
     /*checkWaiting(false);*/
     //TODO
     //_lastMessageSent = OPENFOLDER;
