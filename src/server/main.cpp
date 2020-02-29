@@ -3,7 +3,7 @@
 #define TEST_MESSAGE 1
 #define TEST_FS 1
 
-#include <QApplication>
+#include <QCoreApplication>
 
 #include <iostream>
 
@@ -36,7 +36,7 @@
 using namespace se_exceptions;
 
 int main(int argc, char *argv[]) {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   SysConf conf = initiate_system(app);
   info("System successfully started");
 

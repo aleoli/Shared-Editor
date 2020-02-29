@@ -1,5 +1,8 @@
 #include "server_message_processor.h"
 
+#include <iostream>
+#include <QJsonDocument>
+
 #include "user.h"
 #include "session.h"
 #include "FSElement_db.h"
@@ -430,7 +433,7 @@ void ServerMessageProcessor::newFile() {
 
   auto dirId = _m.getIntOpt("dirId");
 
-  FSElement_db dir = dirId ? FSElement_db::get(session, *dirId) : FSElement_db::root(session.getUserId());
+  FSElement_db dir = (dirId && (*dirId!=0)) ? FSElement_db::get(session, *dirId) : FSElement_db::root(session.getUserId());
   auto file = dir.mkfile(session, name);
 
   QJsonObject data;
@@ -460,13 +463,21 @@ void ServerMessageProcessor::getFile() {
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
     this->_has_resp = true;
 
-    QJsonObject data2;
-    data2["fileId"] = _m.getInt("fileId");
-    data2["clientId"] = (int) this->_clientId;
-    data2["username"] = this->_manager->getUsername(this->_clientId);
+    auto clients = this->_manager->getClientsInFile(fileId);
+    for(auto &cl: clients) {
+      if(cl == this->_clientId) {
+        continue;
+      }
+      auto userId = this->_manager->getUserId(cl);
 
-    auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data2};
-    this->_manager->sendToAll(this->_clientId, fileId, msg.toQByteArray());
+      QJsonObject data;
+      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+      data["clientId"] = (int) this->_clientId;
+      data["username"] = this->_manager->getUsername(this->_clientId);
+
+      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
+      this->_manager->send_data(cl, msg.toQByteArray());
+    }
   } catch(IllegalAccessException) {
     warn(ACCESS_DENIED);
     this->sendErrorMsg(ACCESS_DENIED);
@@ -569,12 +580,31 @@ void ServerMessageProcessor::activateLink() {
     auto file = FSElement_db::link(session, link_token);
     file.mv(session, user_root);
 
+    auto fileId = file.getPhysicalId();
+
     QJsonObject data;
     data["element"] = file.getFSElement().toJsonObject();
-    data["file"] = this->_manager->getFile(this->_clientId, file.getId()).toJsonObject();
+    data["file"] = this->_manager->getFile(this->_clientId, fileId).toJsonObject();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
     this->_has_resp = true;
+
+    auto clients = this->_manager->getClientsInFile(fileId);
+    for(auto &cl: clients) {
+      if(cl == this->_clientId) {
+        continue;
+      }
+      auto userId = this->_manager->getUserId(cl);
+
+      QJsonObject data;
+      data["fileId"] = FSElement_db::getIdForUser(session, file.getId(), userId);
+      data["clientId"] = (int) this->_clientId;
+      data["username"] = this->_manager->getUsername(this->_clientId);
+
+      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
+      std::cout << std::endl << "USER_CONNECTED" << std::endl << std::endl << QString{msg.toQByteArray()}.toStdString() << std::endl << std::endl;
+      this->_manager->send_data(cl, msg.toQByteArray());
+    }
   } catch(ShareException) {
     warn(ERROR_7);
     this->sendErrorMsg(ERROR_7);
@@ -609,7 +639,8 @@ void ServerMessageProcessor::localInsert() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["symbols"] = _m.getArray("symbols");
-    data["clientId"] = session.getUserId();
+    // TODO
+    data["clientId"] = (int) this->_clientId;
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -641,7 +672,8 @@ void ServerMessageProcessor::localDelete() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["ids"] = ids;
-    data["clientId"] = session.getUserId();
+    // TODO
+    data["clientId"] = (int) this->_clientId;
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -675,7 +707,8 @@ void ServerMessageProcessor::localUpdate() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["symbols"] = _m.getArray("symbols");
-    data["clientId"] = session.getUserId();
+    // TODO
+    data["clientId"] = (int) this->_clientId;
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -701,6 +734,7 @@ void ServerMessageProcessor::localMove() {
 
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    // TODO
     data["clientId"] = (int) this->_clientId;
     data["symbolId"] = _m.getObject("symbolId");
     data["cursorPosition"] = _m.getInt("cursorPosition");
@@ -723,7 +757,7 @@ void ServerMessageProcessor::newDir() {
   auto name = _m.getString("name");
   auto parent_id = _m.getIntOpt("parentId");
 
-  auto dir = parent_id ? FSElement_db::get(session, *parent_id) : FSElement_db::root(session.getUserId());
+  auto dir = (parent_id && (*parent_id!=0)) ? FSElement_db::get(session, *parent_id) : FSElement_db::root(session.getUserId());
   auto new_dir = dir.mkdir(session, name);
 
   QJsonObject data;
@@ -787,7 +821,7 @@ void ServerMessageProcessor::getDir() {
 
   auto dir_id = _m.getIntOpt("dirId");
 
-  auto dir = dir_id ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
+  auto dir = (dir_id && (*dir_id!=0)) ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
 
   QJsonArray arr;
   for(auto& f: dir.ls(session)) {
@@ -813,7 +847,7 @@ void ServerMessageProcessor::moveFile() {
   auto dir_id = _m.getIntOpt("dirId");
 
   auto file = FSElement_db::get(session, file_id);
-  auto dir = dir_id ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
+  auto dir = (dir_id && (*dir_id!=0)) ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
 
   file.mv(session, dir);
 

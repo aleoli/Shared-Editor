@@ -389,6 +389,9 @@ int FSElement_db::getIdForUser(const Session &s, int file_id, int user_id) {
   if(file.is_link()) {
     file = file._original.getValue();
   }
+  if(file._owner_id == user_id) {
+    return file.getId();
+  }
   auto links = file._links.getValues();
   for(auto &l: links) {
     if(l->_owner_id == user_id) {
