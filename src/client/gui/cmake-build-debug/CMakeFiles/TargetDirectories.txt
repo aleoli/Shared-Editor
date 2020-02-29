@@ -1,0 +1,4 @@
+/home/xx1/Desktop/Shared-Editor/src/client/gui/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/xx1/Desktop/Shared-Editor/src/client/gui/cmake-build-debug/CMakeFiles/client.dir
+/home/xx1/Desktop/Shared-Editor/src/client/gui/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/xx1/Desktop/Shared-Editor/src/client/gui/cmake-build-debug/CMakeFiles/client_autogen.dir

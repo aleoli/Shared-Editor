@@ -15,13 +15,13 @@
 #include <memory>
 
 //#include "landing.h"
-#include "login.h"
+#include "../login/login.h"
 //#include "fileselector.h"
 //#include "TextEdit.h"
-#include "../message_manager.h"
-#include "../server.h"
-#include "../sys.h"
-#include "Message.h"
+#include "../../message_manager.h"
+#include "../../server.h"
+#include "../../sys.h"
+#include "../Message.h"
 
 class Account;
 class Document;

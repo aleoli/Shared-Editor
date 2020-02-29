@@ -14,6 +14,7 @@ include_directories(landing)
 include_directories(login)
 include_directories(other)
 include_directories(registration)
+include_directories(Application)
 
 file(GLOB src_files
     "*.h"
@@ -45,6 +46,9 @@ file(GLOB src_files
     "registration/*.h"
     "registration/*.cpp"
     "registration/*.ui"
+    "Application/*.h"
+    "Application/*.cpp"
+    "Application/*.ui"
 )
 
 add_executable(client ${src_files})

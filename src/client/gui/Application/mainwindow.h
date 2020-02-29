@@ -20,13 +20,14 @@
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
-#include "login.h"
-#include "record.h"
-#include "docsbrowser.h"
-#include "texteditor.h"
+#include "../login/login.h"
+#include "../registration/record.h"
+#include "../registration/edit.h"
+#include "../browser/docsbrowser.h"
+#include "../editor/texteditor.h"
 #include <list>
 #include <QActionGroup>
-#include "File.h"
+#include "../../../File.h"
 #include <QDockWidget>
 
 class Manager;
@@ -145,6 +146,7 @@ public slots:
     void showRecordPage();
     void showTextEditorPage();
     void showDocsBrowserPage();
+    void showEditPage();
     void back();
     void forward();
 
