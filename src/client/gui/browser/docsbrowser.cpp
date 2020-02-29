@@ -22,3 +22,20 @@ void DocsBrowser::showDocsAvailable(){
         //appendDocWidget(dw);
     //}
 }
+
+QString DocsBrowser::newFileQuery(){
+    return "ciao"; //numero inventato per testare
+}
+
+void DocsBrowser::getFileQuery(int num){
+
+}
+
+QString DocsBrowser::newFolderQuery(){
+    return "ciao2"; //numero inventato per testare
+}
+
+void DocsBrowser::getFolderQuery(int num){
+
+}
+

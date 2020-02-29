@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <list>
+#include <QString>
 
 class Manager;
 //class DocWidget;
@@ -27,9 +28,14 @@ private:
     Ui::DocsBrowser *ui;
    //QList<Document> *userDocs;
     Manager *m;
+    QString newFileQuery();
+    void getFileQuery(int num);
+    QString newFolderQuery();
+    void getFolderQuery(int num);
 signals:
     void showLoginPage();
     void open_file();
+
 };
 
 #endif // DOCSBROWSER_H
