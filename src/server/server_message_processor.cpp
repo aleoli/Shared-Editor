@@ -439,7 +439,7 @@ void ServerMessageProcessor::newFile() {
   QJsonObject data;
   data["fileId"] = file.getId();
 
-	this->_manager->getFile(this->_clientId, file.getId());
+	this->_manager->getFile(this->_clientId, file.getId(), std::nullopt);
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
   this->_has_resp = true;
@@ -454,7 +454,7 @@ void ServerMessageProcessor::getFile() {
 
     auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
     auto fileId = file_db.getPhysicalId();
-    auto file = this->_manager->getFile(this->_clientId, fileId);
+    auto file = this->_manager->getFile(this->_clientId, fileId, file_db.getId());
 
     QJsonObject data;
     data["file"] = file.toJsonObject();
@@ -584,7 +584,7 @@ void ServerMessageProcessor::activateLink() {
 
     QJsonObject data;
     data["element"] = file.getFSElement().toJsonObject();
-    data["file"] = this->_manager->getFile(this->_clientId, fileId).toJsonObject();
+    data["file"] = this->_manager->getFile(this->_clientId, fileId, file.getId()).toJsonObject();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -602,7 +602,6 @@ void ServerMessageProcessor::activateLink() {
       data["username"] = this->_manager->getUsername(this->_clientId);
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
-      std::cout << std::endl << "USER_CONNECTED" << std::endl << std::endl << QString{msg.toQByteArray()}.toStdString() << std::endl << std::endl;
       this->_manager->send_data(cl, msg.toQByteArray());
     }
   } catch(ShareException) {

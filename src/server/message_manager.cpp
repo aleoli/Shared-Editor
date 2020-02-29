@@ -95,6 +95,29 @@ void MessageManager::clientDisconnected(quint64 clientId) {
   //se aveva un file aperto, lo rimuovo da _fileClients
   auto data = _clients[clientId];
   if(data.fileIsOpen) {
+    try {
+      auto fileId = data.fileId;
+
+      auto clients = this->getClientsInFile(fileId);
+      for(auto &cl: clients) {
+        if(cl == clientId) {
+          continue;
+        }
+        auto userId = this->getUserId(cl);
+
+        QJsonObject _data;
+        _data["fileId"] = data.fileIdUser;
+        _data["clientId"] = (int) clientId;
+
+        auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, _data};
+        this->send_data(cl, msg.toQByteArray());
+      }
+    } catch(SE_Exception exc) {
+      std::cout << exc.what() << std::endl;
+      std::cout << data.fileId << std::endl;
+      std::cout << "sono qua" << std::endl;
+    }
+
     closeFile(clientId, data.fileId);
   }
   if(data.session) {
@@ -113,7 +136,7 @@ void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
   }
 }
 
-File MessageManager::getFile(quint64 clientId, int fileId) {
+File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -134,6 +157,7 @@ File MessageManager::getFile(quint64 clientId, int fileId) {
   File& f = _openFiles[fileId];
   _clients[clientId].fileId = fileId;
   _clients[clientId].fileIsOpen = true;
+  _clients[clientId].fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
   f.addClient(clientId, this->getUsername(clientId));
 
