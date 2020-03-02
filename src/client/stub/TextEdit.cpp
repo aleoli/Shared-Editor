@@ -49,16 +49,6 @@ TextEdit::TextEdit(QWidget *parent)
   initDock();
 }
 
-void TextEdit::setInitialBackground() {
-  debug("Setting initial background");
-
-  QTextCursor cursor = _textEdit->textCursor();
-  auto fmt = cursor.charFormat();
-  fmt.setBackground(QColor("#00000000"));
-
-  _textEdit->mergeCurrentCharFormat(fmt);
-}
-
 void TextEdit::setFile(const File &f, int charId) {
   _file = f;
   _shareLink = std::nullopt; //TODO quando sarà salvato nel file rimuovere
@@ -111,8 +101,6 @@ void TextEdit::refresh(bool changeFile) {
 
   //cancello
   _textEdit->document()->clear();
-
-  setInitialBackground();
 
   //refresh
   QTextCursor cursor{_textEdit->document()};
@@ -340,20 +328,9 @@ void TextEdit::change(int pos, int removed, int added) {
     emit localDeleteQuery(_fileId, symRemoved);
   }
 
-  //TODO non basta. se seleziono tutto e poi faccio incolla del link, l'altro vede nero
-  // fix: setting transparent background if file is empty
-  // perchè di default il bck color è nero (!)
-  if(_file.numSymbols() == 0) {
-    setInitialBackground(); //TODO set initial everything
-  }
-
   // aggiunte
   if(added > 0) {
     QTextCursor cursor(_textEdit->document());
-
-    if(!cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos+1)) {
-      setInitialBackground();
-    }
 
     std::vector<Symbol> symAdded;
     for(int i=0; i<added; i++) {
@@ -382,11 +359,6 @@ void TextEdit::change(int pos, int removed, int added) {
 
 void TextEdit::cursorChanged() {
   auto cursor = _textEdit->textCursor();
-
-  // fix: se il cursore va in posizione 0 e la riga è vuota si "resetta"
-  if(cursor.position() == 0) {
-    setInitialBackground(); // TODO set initial everything
-  }
 
   if(_blockSignals) return;
 

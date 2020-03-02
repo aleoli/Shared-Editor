@@ -82,7 +82,6 @@ private:
   void clear();
   void reset();
   void share();
-  void setInitialBackground();
 
   std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
   int getCursorPosition(SymbolId id, int position);
