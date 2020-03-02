@@ -388,8 +388,7 @@ int File::remoteUpdate(const Symbol &sym) {
     auto pos = symbolById(sym.getSymbolId());
     auto &symbol = pos.second;
 
-    symbol.setChar(sym.getChar());
-    symbol.setFormat(sym.getFormat());
+    symbol.update(sym);
 
     return pos.first;
   }
