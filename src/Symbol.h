@@ -86,6 +86,8 @@ public:
 private:
   void checkAndAssign(const QJsonObject &json, bool readPos = true);
   std::string posToString() const; //TODO vedi se rimuovere
+  static QBrush jsonArrayToBrush(const QJsonArray &array);
+  static QJsonArray brushToJsonArray(const QBrush &b);
 
   SymbolId _id;
   QChar _char;

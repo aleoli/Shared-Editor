@@ -57,7 +57,7 @@ void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
 
   auto charUnicode = charValue.toInt(-1);
 
-  if(charUnicode <= 0) {
+  if(charUnicode < 0) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -108,8 +108,8 @@ QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt) {
   QJsonObject json;
 
   json["font"] = QJsonValue(fmt.font().toString());
-  json["color"] = QJsonValue(fmt.foreground().color().name(QColor::HexArgb));
-  json["backgroundColor"] = QJsonValue(fmt.background().color().name(QColor::HexArgb));
+  json["color"] = QJsonValue(brushToJsonArray(fmt.foreground()));
+  json["backgroundColor"] = QJsonValue(brushToJsonArray(fmt.background()));
 
   return json;
 }
@@ -117,7 +117,6 @@ QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt) {
 QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
   QTextCharFormat fmt;
   QFont font;
-  QColor color, backgroundColor;
 
   auto fontValue = json["font"];
   auto colorValue = json["color"];
@@ -128,8 +127,7 @@ QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!fontValue.isString() || !colorValue.isString()
-      || !backgroundColorValue.isString()) {
+  if(!fontValue.isString()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -138,23 +136,45 @@ QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
-  auto colorString = colorValue.toString();
-  if(!QColor::isValidColor(colorString)) {
+  if(!colorValue.isArray() || !backgroundColorValue.isArray()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
-  color.setNamedColor(colorString);
-
-  auto backgroundColorString = backgroundColorValue.toString();
-  if(!QColor::isValidColor(backgroundColorString)) {
-    throw SymbolFromJsonException{"One or more fields are not valid"};
-  }
-  backgroundColor.setNamedColor(backgroundColorString);
 
   fmt.setFont(font);
-  fmt.setForeground(color);
-  fmt.setBackground(backgroundColor);
+  fmt.setForeground(jsonArrayToBrush(colorValue.toArray()));
+  fmt.setBackground(jsonArrayToBrush(backgroundColorValue.toArray()));
 
   return fmt;
+}
+
+QJsonArray Symbol::brushToJsonArray(const QBrush &b) {
+  QByteArray data;
+  QJsonArray array;
+
+  QDataStream ds(&data, QIODevice::WriteOnly);
+  ds.setByteOrder(QDataStream::BigEndian);
+  ds << b;
+
+  for(auto by : data) {
+    array.push_back(by);
+  }
+
+  return array;
+}
+
+QBrush Symbol::jsonArrayToBrush(const QJsonArray &array) {
+  QByteArray data;
+  QBrush brush;
+
+  for(auto a : array) {
+    data.append(static_cast<char>(a.toInt()));
+  }
+
+  QDataStream ds(&data, QIODevice::ReadOnly);
+  ds.setByteOrder(QDataStream::BigEndian);
+  ds >> brush;
+
+  return brush;
 }
 
 std::string Symbol::posToString() const {
