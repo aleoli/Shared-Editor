@@ -346,13 +346,19 @@ void TextEdit::change(int pos, int removed, int added) {
       auto chr = _textEdit->document()->characterAt(pos + i);
       auto fmt = cursor.charFormat();
 
-      cursor.movePosition(QTextCursor::NextCharacter);
-      Symbol s{{_user.userId, _user.charId++}, chr, fmt};
+      if(chr == 0) {
+        cursor.deleteChar(); //TODO check. delete null characters
+      }
+      else {
+        cursor.movePosition(QTextCursor::NextCharacter);
+        Symbol s{{_user.userId, _user.charId++}, chr, fmt};
 
-      //debug(QString::fromStdString(s.to_string()));
+        //debug(QString::fromStdString(s.to_string()));
 
-      _file.localInsert(s, pos+i);
-      symAdded.push_back(s);
+        _file.localInsert(s, pos+i);
+        symAdded.push_back(s);        
+      }
+
     }
     emit localInsertQuery(_fileId, symAdded);
   }
