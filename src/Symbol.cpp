@@ -57,7 +57,7 @@ void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
 
   auto charUnicode = charValue.toInt(-1);
 
-  if(charUnicode <= 0) {
+  if(charUnicode < 0) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -107,17 +107,15 @@ QJsonObject Symbol::toJsonObject(bool writePos) const {
 QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt) {
   QJsonObject json;
 
-  json["font"] = QJsonValue(fmt.font().toString());
-  json["color"] = QJsonValue(fmt.foreground().color().name(QColor::HexArgb));
-  json["backgroundColor"] = QJsonValue(fmt.background().color().name(QColor::HexArgb));
+  json["font"] = QJsonValue(fontToJsonArray(fmt.font()));
+  json["color"] = QJsonValue(brushToJsonArray(fmt.foreground()));
+  json["backgroundColor"] = QJsonValue(brushToJsonArray(fmt.background()));
 
   return json;
 }
 
 QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
   QTextCharFormat fmt;
-  QFont font;
-  QColor color, backgroundColor;
 
   auto fontValue = json["font"];
   auto colorValue = json["color"];
@@ -128,34 +126,77 @@ QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!fontValue.isString() || !colorValue.isString()
-      || !backgroundColorValue.isString()) {
+  if(!fontValue.isArray() || !colorValue.isArray() || !backgroundColorValue.isArray()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
-  auto fontString = fontValue.toString();
-  if(!font.fromString(fontString)) {
-    throw SymbolFromJsonException{"One or more fields are not valid"};
-  }
-
-  auto colorString = colorValue.toString();
-  if(!QColor::isValidColor(colorString)) {
-    throw SymbolFromJsonException{"One or more fields are not valid"};
-  }
-  color.setNamedColor(colorString);
-
-  auto backgroundColorString = backgroundColorValue.toString();
-  if(!QColor::isValidColor(backgroundColorString)) {
-    throw SymbolFromJsonException{"One or more fields are not valid"};
-  }
-  backgroundColor.setNamedColor(backgroundColorString);
-
-  fmt.setFont(font);
-  fmt.setForeground(color);
-  fmt.setBackground(backgroundColor);
+  fmt.setFont(jsonArrayToFont(fontValue.toArray()));
+  fmt.setForeground(jsonArrayToBrush(colorValue.toArray()));
+  fmt.setBackground(jsonArrayToBrush(backgroundColorValue.toArray()));
 
   return fmt;
 }
+
+QJsonArray Symbol::brushToJsonArray(const QBrush &b) {
+  QByteArray data;
+  QJsonArray array;
+
+  QDataStream ds(&data, QIODevice::WriteOnly);
+  ds.setByteOrder(QDataStream::BigEndian);
+  ds << b;
+
+  for(auto by : data) {
+    array.push_back(by);
+  }
+
+  return array;
+}
+
+QBrush Symbol::jsonArrayToBrush(const QJsonArray &array) {
+  QByteArray data;
+  QBrush brush;
+
+  for(auto a : array) {
+    data.append(static_cast<char>(a.toInt()));
+  }
+
+  QDataStream ds(&data, QIODevice::ReadOnly);
+  ds.setByteOrder(QDataStream::BigEndian);
+  ds >> brush;
+
+  return brush;
+}
+
+QJsonArray Symbol::fontToJsonArray(const QFont &f) {
+  QByteArray data;
+  QJsonArray array;
+
+  QDataStream ds(&data, QIODevice::WriteOnly);
+  ds.setByteOrder(QDataStream::BigEndian);
+  ds << f;
+
+  for(auto by : data) {
+    array.push_back(by);
+  }
+
+  return array;
+}
+
+QFont Symbol::jsonArrayToFont(const QJsonArray &array) {
+  QByteArray data;
+  QFont font;
+
+  for(auto a : array) {
+    data.append(static_cast<char>(a.toInt()));
+  }
+
+  QDataStream ds(&data, QIODevice::ReadOnly);
+  ds.setByteOrder(QDataStream::BigEndian);
+  ds >> font;
+
+  return font;
+}
+
 
 std::string Symbol::posToString() const {
   std::stringstream ss;
@@ -203,7 +244,8 @@ std::string Symbol::to_string() const{
 }
 
 void Symbol::update(const Symbol &s) {
-  // TODO: copia il formato e lo stile dall'altro Symbol
+  _char = s._char;
+  _fmt = s._fmt;
 }
 
 void Symbol::setFormat(QTextCharFormat fmt) {
