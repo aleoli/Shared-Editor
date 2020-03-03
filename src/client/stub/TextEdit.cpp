@@ -304,9 +304,13 @@ void TextEdit::change(int pos, int removed, int added) {
   // fix: a volte capita non so perchè questa cosa.
   // viene segnalato un numero di caratteri rimossi maggiore dei caratteri presenti
   int nsym = _file.numSymbols();
-  if(nsym < removed) {
-    added -= removed - nsym;
-    removed = nsym;
+  if(nsym < removed + pos) {
+    int shift = removed - (nsym - pos);
+
+    if(shift > 0) {
+      removed -= shift;
+      added -= shift;
+    }
   }
 
   //TODO se removed == added -> UPDATE
@@ -321,9 +325,14 @@ void TextEdit::change(int pos, int removed, int added) {
   if(removed > 0) {
     std::vector<SymbolId> symRemoved;
     for(int i=0; i<removed; i++) {
-      auto id = _file.symbolAt(pos).getSymbolId();
-      _file.localDelete(pos);
-      symRemoved.push_back(id);
+        try {
+          auto id = _file.symbolAt(pos).getSymbolId();
+          _file.localDelete(pos);
+          symRemoved.push_back(id);
+        }
+        catch(...) {
+          throw SE_Exception("Provata rimozione del simbolo alla pos " + QString::number(pos) + " ma non presente nel file. File size: " + QString::number(_file.numSymbols()));
+        }
     }
     emit localDeleteQuery(_fileId, symRemoved);
   }
@@ -348,10 +357,7 @@ void TextEdit::change(int pos, int removed, int added) {
     emit localInsertQuery(_fileId, symAdded);
   }
 
-  // update cursors of other users
-  for(auto &user : _users) {
-    user.second.cursor->updateCursorView();
-  }
+  updateCursors();
 
   // update _cursorPosition
   _cursorPosition = pos + added;
@@ -459,6 +465,8 @@ void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> s
     cursor->insert(sym, pos);
   }
 
+  updateCursors();
+
   _blockSignals = false;
 }
 
@@ -475,6 +483,8 @@ void TextEdit::remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId>
     pos = _file.remoteDelete(id);
     if(pos != -1) cursor->remove(pos);
   }
+
+  updateCursors();
 
   _blockSignals = false;
 }
@@ -495,7 +505,15 @@ void TextEdit::remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> s
     }
   }
 
+  updateCursors();
+
   _blockSignals = false;
+}
+
+void TextEdit::updateCursors() {
+  for(auto &user : _users) {
+    user.second.cursor->updateCursorView();
+  }
 }
 
 void TextEdit::userConnectedQuery(int fileId, int clientId, QString username) {

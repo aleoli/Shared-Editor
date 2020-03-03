@@ -76,6 +76,7 @@ private:
   void setupEditActions();
   void setupTextActions();
   void updateActions();
+  void updateCursors();
 
   void initDock();
   void refresh(bool changeFile = false);
