@@ -28,10 +28,14 @@ private:
     Ui::DocsBrowser *ui;
    //QList<Document> *userDocs;
     Manager *m;
+    
+    
+public slots:
     QString newFileQuery();
     void getFileQuery(int num);
     QString newFolderQuery();
     void getFolderQuery(int num);
+    
 signals:
     void showLoginPage();
     void open_file();

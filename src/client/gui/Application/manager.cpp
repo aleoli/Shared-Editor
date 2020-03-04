@@ -1,16 +1,13 @@
 #include "manager.h"
 #include "QObject"
-#include "login.h"
+/*#include "login.h"
 #include "record.h"
 #include "docsbrowser.h"
 #include "texteditor.h"
-#include "mainwindow.h"
+#include "mainwindow.h"*/
 #include <iostream>
 //#include <string>
 #include <QThread>
-#include "errordialog.h"
-#include "exceptions.h"
-#include "def.h"
 
 using namespace se_exceptions;
 
@@ -60,6 +57,10 @@ Manager::~Manager()
 
   _serverThread->wait();
   _managerThread->wait();
+  
+  //TODO 
+  // quit also mainwindow??
+  // da gestire
 }
 
 void Manager::run() {
@@ -122,7 +123,7 @@ void Manager::connectionLost() {
 
 void Manager::initClientToServer() {
   //Comunicazioni Client -> Server
-  connect(this, &Manager::sendLoginQuery, _manager.get(), &MessageManager::loginQuery);
+  /*connect(this, &Manager::sendLoginQuery, _manager.get(), &MessageManager::loginQuery);
   connect(this, &Manager::sendNewUserQuery, _manager.get(), &MessageManager::newUserQuery);
   connect(this, &Manager::sendNewFileQuery, _manager.get(), &MessageManager::newFileQuery);
   connect(this, &Manager::sendGetFileQuery, _manager.get(), &MessageManager::getFileQuery);
@@ -130,12 +131,12 @@ void Manager::initClientToServer() {
   connect(this, &Manager::sendLocalInsertQuery, _manager.get(), &MessageManager::localInsertQuery);
   connect(this, &Manager::sendLocalDeleteQuery, _manager.get(), &MessageManager::localDeleteQuery);
   connect(this, &Manager::sendLocalUpdateQuery, _manager.get(), &MessageManager::localUpdateQuery);
-  connect(this, &Manager::sendLocalMoveQuery, _manager.get(), &MessageManager::localMoveQuery);
+  connect(this, &Manager::sendLocalMoveQuery, _manager.get(), &MessageManager::localMoveQuery);*/
 }
 
 void Manager::initServerToClient() {
   //Comunicazioni Server -> Client
-  connect(_manager.get(), &MessageManager::errorResponse, this, &Manager::errorResponseReceived);
+  /*connect(_manager.get(), &MessageManager::errorResponse, this, &Manager::errorResponseReceived);
   connect(_manager.get(), &MessageManager::loginResponse, this, &Manager::loginResponseReceived);
   connect(_manager.get(), &MessageManager::newUserResponse, this, &Manager::newUserResponseReceived);
   connect(_manager.get(), &MessageManager::newFileResponse, this, &Manager::newFileResponseReceived);
@@ -145,12 +146,12 @@ void Manager::initServerToClient() {
   connect(_manager.get(), &MessageManager::remoteUpdateQuery, this, &Manager::remoteUpdateQueryReceived);
   connect(_manager.get(), &MessageManager::userConnectedQuery, this, &Manager::userConnectedQueryReceived);
   connect(_manager.get(), &MessageManager::userDisconnectedQuery, this, &Manager::userDisconnectedQueryReceived);
-  connect(_manager.get(), &MessageManager::remoteMoveQuery, this, &Manager::remoteMoveQueryReceived);
+  connect(_manager.get(), &MessageManager::remoteMoveQuery, this, &Manager::remoteMoveQueryReceived);*/
 }
 
 void Manager::connectWidgets() {
   // login
-  connect(login, &Login::access, this, &Manager::checkLogin);
+  /*connect(login, &Login::access, this, &Manager::checkLogin);
   //record
   connect(record, &Record::record_try, this, &Manager::checkRecord);
 
@@ -176,7 +177,7 @@ void Manager::connectWidgets() {
   connect(this, &Manager::userDisconnectedQuery, textEditor, &TextEditor::userDisconnectedQuery);
   connect(this, &Manager::remoteMoveQuery, textEditor, &TextEditor::remoteMoveQuery);*/
 }
-QString
+
 shared_ptr<Manager> Manager::get(const SysConf conf) {
     if(instance == nullptr) {
         instance.reset(new Manager{conf, nullptr});
@@ -345,7 +346,7 @@ void Manager::getFolderQuery(int folderid) {
     info("Invio open folder query");
 
     //INFO il nome del file nel client definitivo deve essere ricevuto come parametro e salvato da qualche parte*/
-    emit sendOpenFolderQuery(main_user->getToken(), foldername);
+    emit sendOpenFolderQuery(main_user->getToken(), folderid);
 
 }
 
@@ -418,8 +419,7 @@ void Manager::newFileResponseReceived(int id) {
     //_fileSelector->unblock();
     //_fileSelector->close();
     //INFO nella versione definitiva, qua GuiWrapperbisogna aggiornare la view del browser
-
-    File f(id);
+    File f;
     this->setTEFile(f,id);
 
     /*_window = OpenWindow::EDITOR;

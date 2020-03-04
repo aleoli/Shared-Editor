@@ -1,11 +1,11 @@
 #include <iostream>
 
-//#include <QApplication>
-#include "manager.h"
-#include "mainwindow.h"
+#include <QApplication>
+#include "Application/manager.h"
+//#include "Application/mainwindow.h"
 
-//#include "sys.h"
-//#include "utils.h"
+#include "../../sys.h"
+#include "../../utils.h"
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);

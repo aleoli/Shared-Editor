@@ -270,7 +270,7 @@ void TextEditor::change(int pos, int removed, int added) {
             _file.localDelete(pos);
             symRemoved.push_back(id);
         }
-        emit localDeleteQuery(_file.getId(), symRemoved);
+        //emit localDeleteQuery(_file.getId(), symRemoved);
     }
 
     // aggiunte
@@ -289,7 +289,7 @@ void TextEditor::change(int pos, int removed, int added) {
             _file.localInsert(s, pos+i);
             symAdded.push_back(s);
         }
-        emit localInsertQuery(_file.getId(), symAdded);
+        //emit localInsertQuery(_file.getId(), symAdded);
     }
 
     for(auto &user : _users) {
@@ -311,7 +311,7 @@ void TextEditor::cursorChanged() {
 
     auto pos = saveCursorPosition(cursor);
 
-    emit localMoveQuery(_file.getId(), pos.first, pos.second);
+    //emit localMoveQuery(_file.getId(), pos.first, pos.second);
 
     debug("Cursore spostato in posizione " + QString::number(pos.second));
     debug("SymbolId alla sx: " + QString::fromStdString(pos.first.to_string()));
@@ -335,7 +335,7 @@ void TextEditor::updateActions() {
 void TextEditor::closeEvent(QCloseEvent *event) {
     debug("Chiusura editor");
 
-    emit closeFileQuery(_file.getId());
+    //emit closeFileQuery(_file.getId());
 
     reset();
 

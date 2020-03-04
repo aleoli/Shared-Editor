@@ -18,7 +18,7 @@ class Record : public QWidget
 public:
     explicit Record(QWidget *parent = nullptr);
     ~Record();
-    void setManagerClass(Manager *m){this->m=m;}
+    //void setManagerClass(Manager *m){this->m=m;}
 
 
     string getUsername() const;
@@ -53,7 +53,7 @@ private:
     string password;
     string repeat_password;
     string nickname;
-    Manager *m;
+    //Manager *m;
 signals:
     void showLoginPage();
     void record_try(string nickname, string username, string password, string repeat_password);
