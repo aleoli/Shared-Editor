@@ -341,21 +341,32 @@ void TextEdit::change(int pos, int removed, int added) {
 void TextEdit::handleUpdate(int pos, int nchars) {
   QTextCursor cursor(_textEdit->document());
   std::vector<Symbol> symUpdated;
+  bool real = false;
 
+  cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
   for(int i=0; i<nchars; i++) {
+    cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
+
     auto chr = _textEdit->document()->characterAt(pos + i);
     auto fmt = cursor.charFormat();
 
-    auto sym = _file.symbolAt(pos + i);
-    sym.setFormat(fmt);
-    sym.setChar(chr);
+    auto &sym = _file.symbolAt(pos + i);
+
+    if(!sym.hasSameAttributes(chr, fmt)) {
+      sym.setFormat(fmt);
+      sym.setChar(chr);
+      real = true;
+    }
 
     symUpdated.push_back(sym);
-
-    cursor.movePosition(QTextCursor::NextCharacter);
   }
 
-  emit localUpdateQuery(_fileId, symUpdated);
+  if(real) {
+    emit localUpdateQuery(_fileId, symUpdated);
+  }
+  else {
+    debug("Fake update");
+  }
 }
 
 void TextEdit::handleDelete(int pos, int removed) {
@@ -379,12 +390,15 @@ void TextEdit::handleInsert(int pos, int added) {
   QTextCursor cursor(_textEdit->document());
   std::vector<Symbol> symAdded;
 
+  cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
   for(int i=0; i<added; i++) {
+    cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
+
     auto chr = _textEdit->document()->characterAt(pos + i);
     auto fmt = cursor.charFormat();
 
     if(chr == 0) {
-      cursor.deleteChar(); //TODO check. delete null characters
+      cursor.deletePreviousChar(); //TODO check. delete null characters
     }
     else {
       Symbol s{{_user.userId, _user.charId++}, chr, fmt};
@@ -392,8 +406,6 @@ void TextEdit::handleInsert(int pos, int added) {
 
       _file.localInsert(s, pos+i);
       symAdded.push_back(s);
-
-      cursor.movePosition(QTextCursor::NextCharacter);
     }
   }
 
