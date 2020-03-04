@@ -78,6 +78,10 @@ private:
   void updateActions();
   void updateCursors();
 
+  void handleUpdate(int pos, int nchars);
+  void handleDelete(int pos, int removed);
+  void handleInsert(int pos, int added);
+
   void initDock();
   void refresh(bool changeFile = false);
   void clear();

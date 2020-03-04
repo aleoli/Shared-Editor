@@ -301,72 +301,103 @@ void TextEdit::printTextFile() {
 void TextEdit::change(int pos, int removed, int added) {
   if(_blockSignals) return;
 
+  int nsym = _file.numSymbols();
+  debug("contentsChange triggered");
+  debug("Num symbols before change: " + QString::number(nsym));
+  debug("pos: " + QString::number(pos) + " removed: " + QString::number(removed) + " added: " + QString::number(added));
+
   // fix: a volte capita non so perchè questa cosa.
   // viene segnalato un numero di caratteri rimossi maggiore dei caratteri presenti
-  int nsym = _file.numSymbols();
   if(nsym < removed + pos) {
+    debug("ANOMALY detected!");
     int shift = removed - (nsym - pos);
 
     if(shift > 0) {
       removed -= shift;
       added -= shift;
     }
+
+    debug("New Values: removed: " + QString::number(removed) + " added: " + QString::number(added));
   }
 
   //TODO se removed == added -> UPDATE
   //TODO si potrebbe fare anche una cosa più elaborata,
   //    tipo 2 rem e 3 added significa 2 update e 1 added, ma non so se vale la pena
-
-  debug("symbols: " + QString::number(_file.numSymbols()));
-  debug("contentsChange: position: " + QString::number(pos) +
-    " rimossi " + QString::number(removed) + " aggiunti " + QString::number(added));
-
-  // rimozioni
-  if(removed > 0) {
-    std::vector<SymbolId> symRemoved;
-    for(int i=0; i<removed; i++) {
-        try {
-          auto id = _file.symbolAt(pos).getSymbolId();
-          _file.localDelete(pos);
-          symRemoved.push_back(id);
-        }
-        catch(...) {
-          throw SE_Exception("Provata rimozione del simbolo alla pos " + QString::number(pos) + " ma non presente nel file. File size: " + QString::number(_file.numSymbols()));
-        }
-    }
-    emit localDeleteQuery(_fileId, symRemoved);
+  if(removed == added) {
+    debug("Handling update");
+    handleUpdate(pos, removed);
+  }
+  else {
+    handleDelete(pos, removed);
+    handleInsert(pos, added);
   }
 
-  // aggiunte
-  if(added > 0) {
-    QTextCursor cursor(_textEdit->document());
-
-    std::vector<Symbol> symAdded;
-    for(int i=0; i<added; i++) {
-      auto chr = _textEdit->document()->characterAt(pos + i);
-      auto fmt = cursor.charFormat();
-
-      if(chr == 0) {
-        cursor.deleteChar(); //TODO check. delete null characters
-      }
-      else {
-        cursor.movePosition(QTextCursor::NextCharacter);
-        Symbol s{{_user.userId, _user.charId++}, chr, fmt};
-
-        //debug(QString::fromStdString(s.to_string()));
-
-        _file.localInsert(s, pos+i);
-        symAdded.push_back(s);        
-      }
-
-    }
-    emit localInsertQuery(_fileId, symAdded);
-  }
-
+  // update remote cursors
   updateCursors();
-
   // update _cursorPosition
   _cursorPosition = pos + added;
+}
+
+void TextEdit::handleUpdate(int pos, int nchars) {
+  QTextCursor cursor(_textEdit->document());
+  std::vector<Symbol> symUpdated;
+
+  for(int i=0; i<nchars; i++) {
+    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto fmt = cursor.charFormat();
+
+    auto sym = _file.symbolAt(pos + i);
+    sym.setFormat(fmt);
+    sym.setChar(chr);
+
+    symUpdated.push_back(sym);
+
+    cursor.movePosition(QTextCursor::NextCharacter);
+  }
+
+  emit localUpdateQuery(_fileId, symUpdated);
+}
+
+void TextEdit::handleDelete(int pos, int removed) {
+  std::vector<SymbolId> symRemoved;
+
+  for(int i=0; i<removed; i++) {
+      try {
+        auto id = _file.symbolAt(pos).getSymbolId();
+        _file.localDelete(pos);
+        symRemoved.push_back(id);
+      }
+      catch(...) {
+        throw SE_Exception("handleDelete: tentata rimozione di un carattere a una posizione non valida nel file");
+      }
+  }
+
+  emit localDeleteQuery(_fileId, symRemoved);
+}
+
+void TextEdit::handleInsert(int pos, int added) {
+  QTextCursor cursor(_textEdit->document());
+  std::vector<Symbol> symAdded;
+
+  for(int i=0; i<added; i++) {
+    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto fmt = cursor.charFormat();
+
+    if(chr == 0) {
+      cursor.deleteChar(); //TODO check. delete null characters
+    }
+    else {
+      Symbol s{{_user.userId, _user.charId++}, chr, fmt};
+      //debug(QString::fromStdString(s.to_string()));
+
+      _file.localInsert(s, pos+i);
+      symAdded.push_back(s);
+
+      cursor.movePosition(QTextCursor::NextCharacter);
+    }
+  }
+
+  emit localInsertQuery(_fileId, symAdded);
 }
 
 void TextEdit::cursorChanged() {
