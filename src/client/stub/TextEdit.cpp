@@ -17,6 +17,8 @@
 #include <QListView>
 #include <vector>
 #include <optional>
+#include <QColorDialog>
+#include <QApplication>
 
 #include "Symbol.h"
 #include "utils.h"
@@ -24,6 +26,12 @@
 #include "errordialog.h"
 
 using namespace se_exceptions;
+
+#ifdef Q_OS_MAC
+const QString rsrcPath = ":/images/mac";
+#else
+const QString rsrcPath = ":/images/win";
+#endif
 
 TextEdit::TextEdit(QWidget *parent)
         : QMainWindow(parent), _blockSignals(false), _cursorPosition(0), _shareLink(std::nullopt)
@@ -200,10 +208,6 @@ void TextEdit::setupFileActions() {
   QAction *info = menu->addAction(getInfoIcon,  tr("&Get infos"), this, &TextEdit::printTextFile);
   tb->addAction(info);
 
-  const QIcon clearIcon(":/buttons/clear.png");
-  QAction *clear = menu->addAction(clearIcon,  tr("&Clear document"), this, &TextEdit::clear);
-  tb->addAction(clear);
-
   const QIcon refreshIcon(":/buttons/refresh.png");
   QAction *refresh = menu->addAction(refreshIcon,  tr("&Refresh document"), this, &TextEdit::refresh);
   tb->addAction(refresh);
@@ -251,20 +255,76 @@ void TextEdit::setupTextActions() {
   QMenu *menu = menuBar()->addMenu(tr("F&ormat"));
 
   // AZIONE GRASSETTO
-  // aggiungo un'azione per il grassetto, e ci associo uno slot (implementato da me)
-  const QIcon boldIcon(":/buttons/bold.png");
+  const QIcon boldIcon = QIcon::fromTheme("format-text-bold", QIcon(rsrcPath + "/textbold.png"));
   _actionTextBold = menu->addAction(boldIcon, tr("&Bold"), this, &TextEdit::textBold);
-  // shortcut: CTRL+B
   _actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
   _actionTextBold->setPriority(QAction::LowPriority);
-
-  //questo è solo per dare il grassetto alla voce nel menu file.. non mette in grassetto il testo ovviamente
   QFont bold;
   bold.setBold(true);
   _actionTextBold->setFont(bold);
-
   tb->addAction(_actionTextBold);
   _actionTextBold->setCheckable(true);
+
+
+  // AZIONE CORSIVO
+  const QIcon italicIcon = QIcon::fromTheme("format-text-italic", QIcon(rsrcPath + "/textitalic.png"));
+  _actionTextItalic = menu->addAction(italicIcon, tr("&Italic"), this, &TextEdit::textItalic);
+  _actionTextItalic->setPriority(QAction::LowPriority);
+  _actionTextItalic->setShortcut(Qt::CTRL + Qt::Key_I);
+  QFont italic;
+  italic.setItalic(true);
+  _actionTextItalic->setFont(italic);
+  tb->addAction(_actionTextItalic);
+  _actionTextItalic->setCheckable(true);
+
+
+  // AZIONE SOTTOLINEATO
+  const QIcon underlineIcon = QIcon::fromTheme("format-text-underline", QIcon(rsrcPath + "/textunder.png"));
+  _actionTextUnderline = menu->addAction(underlineIcon, tr("&Underline"), this, &TextEdit::textUnderline);
+  _actionTextUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
+  _actionTextUnderline->setPriority(QAction::LowPriority);
+  QFont underline;
+  underline.setUnderline(true);
+  _actionTextUnderline->setFont(underline);
+  tb->addAction(_actionTextUnderline);
+  _actionTextUnderline->setCheckable(true);
+
+
+  menu->addSeparator();
+
+
+  // COLOR
+  QPixmap pix(16, 16);
+  pix.fill(Qt::black);
+  _actionTextColor = menu->addAction(pix, tr("&Color..."), this, &TextEdit::textColor);
+  tb->addAction(_actionTextColor);
+
+
+  // BACKGROUND COLOR
+  pix.fill(Qt::white);
+  _actionTextBackgroundColor = menu->addAction(pix, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
+  tb->addAction(_actionTextBackgroundColor);
+
+
+  // FONT
+  _comboFont = new QFontComboBox(tb);
+  _comboFont->setEditable(false);
+  tb->addWidget(_comboFont);
+  connect(_comboFont, QOverload<const QString &>::of(&QComboBox::activated), this, &TextEdit::textFamily);
+
+
+  // FONT SIZE
+  _comboSize = new QComboBox(tb);
+  _comboSize->setObjectName("comboSize");
+  tb->addWidget(_comboSize);
+  _comboSize->setEditable(true);
+
+  const QList<int> standardSizes = QFontDatabase::standardSizes();
+  for (int size : standardSizes)
+      _comboSize->addItem(QString::number(size));
+  _comboSize->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
+
+  connect(_comboSize, QOverload<const QString &>::of(&QComboBox::activated), this, &TextEdit::textSize);
 }
 
 void TextEdit::textBold() {
@@ -276,8 +336,92 @@ void TextEdit::textBold() {
   auto fmt = cursor.charFormat();
   fmt.setFontWeight(_actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
 
-  //setto in grassetto
   _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textItalic() {
+  if(_blockSignals) return;
+
+  debug("Premuto tasto corsivo");
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setFontItalic(_actionTextItalic->isChecked() ? true : false);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textUnderline() {
+  if(_blockSignals) return;
+
+  debug("Premuto tasto sottolineato");
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setFontUnderline(_actionTextUnderline->isChecked() ? true : false);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textColor() {
+  if(_blockSignals) return;
+
+  debug("Cambiato colore");
+  QColor col = QColorDialog::getColor(_textEdit->textColor(), this);
+  if (!col.isValid())
+      return;
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setForeground(col);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textBackgroundColor() {
+  if(_blockSignals) return;
+
+  debug("Cambiato colore sfondo");
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+
+  QColor col = QColorDialog::getColor(fmt.background().color(), this);
+  if (!col.isValid())
+      return;
+
+  fmt.setBackground(col);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textFamily(const QString &f) {
+  if(_blockSignals) return;
+
+  debug("Cambiato font");
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setFontFamily(f);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+  _textEdit->setFocus();
+}
+
+void TextEdit::textSize(const QString &p) {
+  if(_blockSignals) return;
+
+  debug("Cambiato font size");
+
+  qreal pointSize = p.toFloat();
+  if (pointSize > 0) {
+    QTextCursor cursor = _textEdit->textCursor();
+    auto fmt = cursor.charFormat();
+    fmt.setFontPointSize(pointSize);
+
+    _textEdit->mergeCurrentCharFormat(fmt);
+  }
+
+  _textEdit->setFocus();
 }
 
 void TextEdit::addLetter() {
@@ -330,6 +474,9 @@ void TextEdit::change(int pos, int removed, int added) {
   else {
     handleDelete(pos, removed);
     handleInsert(pos, added);
+
+    // update actions
+    updateActions();
   }
 
   // update remote cursors
@@ -413,13 +560,14 @@ void TextEdit::handleInsert(int pos, int added) {
 }
 
 void TextEdit::cursorChanged() {
+  debug("cursorChanged triggered");
   auto cursor = _textEdit->textCursor();
 
   if(_blockSignals) return;
 
   if(cursor.hasSelection()) return; //non mando nulla se sto selezionando
 
-  // TODO a volte crasha a causa di contentsChange triggerati a cazzo
+  // TODO se crasha vuol dire che c'è un problema da qualche parte da risolvere
   try {
     auto pos = saveCursorPosition(cursor);
 
@@ -432,10 +580,8 @@ void TextEdit::cursorChanged() {
 
     // se sposto il cursore, devo modificare le azioni di conseguenza
     // esempio se mi sposto dove c'è il grassetto selezionato, deve esserci il pulsante cliccato
-    _blockSignals = true;
     updateActions();
-    _blockSignals = false;
-
+    _cursorPosition = pos.second;
   }
   catch (FileSymbolsException e) {
     warn("cursorChanged ha lanciato una FileSymbolsException");
@@ -448,12 +594,24 @@ void TextEdit::formatChanged() {
 }
 
 void TextEdit::updateActions() {
-  //TODO rivedere qua se si può fare meglio, considerando che ci sono più pulsanti poi
-  // (grassetto, corsivo..) ed è oneroso/brutto gestirli tutti così
-  auto font = _textEdit->currentFont();
-  if(font.bold() != _actionTextBold->isChecked()) {
-    _actionTextBold->activate(QAction::Trigger);
-  }
+  _blockSignals = true;
+
+  auto fmt = _textEdit->currentCharFormat();
+  _actionTextBold->setChecked(fmt.font().bold());
+  _actionTextItalic->setChecked(fmt.fontItalic());
+  _actionTextUnderline->setChecked(fmt.fontUnderline());
+
+  QPixmap pix(16, 16);
+  pix.fill(fmt.foreground().color());
+  _actionTextColor->setIcon(pix);
+
+  pix.fill(fmt.background().color());
+  _actionTextBackgroundColor->setIcon(pix);
+
+  _comboFont->setCurrentText(fmt.font().family());
+  _comboSize->setCurrentIndex(QFontDatabase::standardSizes().indexOf(fmt.font().pointSize()));
+
+  _blockSignals = false;
 }
 
 void TextEdit::closeEvent(QCloseEvent *event) {

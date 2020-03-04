@@ -9,6 +9,8 @@
 #include <QListWidgetItem>
 #include <QString>
 #include <unordered_map>
+#include <QFontComboBox>
+#include <QComboBox>
 
 #include "File.h"
 #include "Cursor.h"
@@ -65,6 +67,13 @@ signals:
 
 private slots:
   void textBold();
+  void textItalic();
+  void textUnderline();
+  void textColor();
+  void textBackgroundColor();
+  void textFamily(const QString &f);
+  void textSize(const QString &p);
+
   void addLetter();
   void printTextFile();
   void change(int pos, int removed, int added);
@@ -92,7 +101,15 @@ private:
   int getCursorPosition(SymbolId id, int position);
 
   QTextEdit *_textEdit;
+
   QAction *_actionTextBold;
+  QAction *_actionTextItalic;
+  QAction *_actionTextUnderline;
+  QAction *_actionTextColor;
+  QAction *_actionTextBackgroundColor;
+  QFontComboBox *_comboFont;
+  QComboBox *_comboSize;
+
   QListWidget *_dock;
 
   File _file;
