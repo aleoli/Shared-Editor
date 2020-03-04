@@ -41,13 +41,13 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
 }
 
 bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2) {
-  fmt1.font() == fmt2.font() &&
+  return fmt1.font() == fmt2.font() &&
   fmt1.foreground() == fmt2.foreground() &&
   fmt1.background() == fmt2.background();
 }
 
 bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt) const {
-  _char == chr && compareFormats(_fmt, fmt);
+  return _char == chr && compareFormats(_fmt, fmt);
 }
 
 
