@@ -33,9 +33,9 @@ bool operator<(const Symbol& lhs, const Symbol& rhs) {
 bool operator==(const Symbol& lhs, const Symbol& rhs) {
   return lhs._id == rhs._id && lhs._char == rhs._char &&
     lhs._pos == rhs._pos &&
-    lhs.getFont() == rhs.getFont() &&
-    lhs.getColor() == rhs.getColor() &&
-    lhs.getBackgroundColor() == rhs.getBackgroundColor();
+    lhs._fmt.font() == rhs._fmt.font() &&
+    lhs._fmt.foreground() == rhs._fmt.foreground() &&
+    lhs._fmt.background() == rhs._fmt.background();
 }
 
 bool operator!=(const Symbol& lhs, const Symbol& rhs) {
