@@ -33,14 +33,23 @@ bool operator<(const Symbol& lhs, const Symbol& rhs) {
 bool operator==(const Symbol& lhs, const Symbol& rhs) {
   return lhs._id == rhs._id && lhs._char == rhs._char &&
     lhs._pos == rhs._pos &&
-    lhs.getFont() == rhs.getFont() &&
-    lhs.getColor() == rhs.getColor() &&
-    lhs.getBackgroundColor() == rhs.getBackgroundColor();
+    Symbol::compareFormats(lhs._fmt, rhs._fmt);
 }
 
 bool operator!=(const Symbol& lhs, const Symbol& rhs) {
   return !operator==(lhs, rhs);
 }
+
+bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2) {
+  return fmt1.font() == fmt2.font() &&
+  fmt1.foreground() == fmt2.foreground() &&
+  fmt1.background() == fmt2.background();
+}
+
+bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt) const {
+  return _char == chr && compareFormats(_fmt, fmt);
+}
+
 
 void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
   auto idValue = json["id"];
