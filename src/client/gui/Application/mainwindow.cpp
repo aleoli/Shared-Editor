@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     } else {
         this->showDocsBrowserPage();
     }
-
+    qDebug("main window instantiated");
 }
 
 MainWindow::~MainWindow()
@@ -110,6 +110,7 @@ void MainWindow::connectWidgets() {
 
 void MainWindow::showFeasibleActions()
 {
+    /*
     foreach (QAction* action, menuActions->actions()){
         action->setCheckable(false);
     }
@@ -139,11 +140,12 @@ void MainWindow::showFeasibleActions()
             break;
         }
     }
-
+    */
 }
 
 void MainWindow::enumerateMenu(QMenu *menu)
 {
+        /*
     foreach (QAction *action, menu->actions()) {
         if (action->isSeparator()) {
             qDebug("this action is a separator");
@@ -157,15 +159,17 @@ void MainWindow::enumerateMenu(QMenu *menu)
             menuActions->addAction(action);
         }
     }
+    */
 }
 
 void MainWindow::showLoginPage(){
     auto login = new Login{this};
     //login possibilities to change page (login successful -> docs browser | wanna register -> register )
-    //connect(login, SIGNAL(access()), this, SLOT(checkLogin()));
-    //connect(login, &Login::showRecordPage, this, &MainWindow::showRecordPage);
-    //connect(login, SIGNAL(showRecordPage()), this, SLOT(showRecordPage()));
-    this->_setCentral(login);
+    emit new_login_widget(login);
+    /*connect(login, SIGNAL(access()), this, SLOT(checkLogin()));
+    connect(login, &Login::showRecordPage, this, &MainWindow::showRecordPage);
+    connect(login, SIGNAL(showRecordPage()), this, SLOT(showRecordPage()));
+    this->_setCentral(login);*/
 }
 
 void MainWindow::showRecordPage(){

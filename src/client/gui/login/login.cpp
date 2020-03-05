@@ -1,6 +1,6 @@
 #include "login.h"
 #include "ui_login.h"
-#include "string.h"
+//#include "QString.h"
 #include <QObject>
 #include <iostream>
 
@@ -8,8 +8,8 @@ class Account;
 
 using namespace std;
 
-bool rightAccess(string u, string p);
-Account getAccountFromServer(string u,string p);
+//bool rightAccess(QString u, QString p);
+//Account getAccountFromServer(QString u,QString p);
 
 Login::Login(QWidget *parent) :
     QWidget(parent),
@@ -25,8 +25,8 @@ Login::~Login()
 
 void Login::on_btn_loginButton_clicked()
 {
-    username = ui->ledit_loginUsername->text().toStdString();
-    password = ui->ledit_loginPassword->text().toStdString();
+    username = ui->ledit_loginUsername->text();//.toStdQString();
+    password = ui->ledit_loginPassword->text();//.toStdQString();
     emit access(username,password);
 }
 
@@ -35,12 +35,12 @@ void Login::on_btn_RegisterForm_clicked()
     emit showRecordPage();
 }
 
-string Login::getUsername() const
+QString Login::getUsername() const
 {
     return username;
 }
 
-string Login::getPassword() const
+QString Login::getPassword() const
 {
     return password;
 }

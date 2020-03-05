@@ -52,10 +52,10 @@ public:
 
     static shared_ptr<Manager> get(const SysConf sc);
 
-    string getUsername() const;
-    void setUsername(const string &value);
-    string getPassword() const;
-    void setPassword(const string &value);
+    QString getUsername() const;
+    void setUsername(const QString &value);
+    QString getPassword() const;
+    void setPassword(const QString &value);
     //altri threads
     std::shared_ptr<MessageManager> _manager;
     std::shared_ptr<Server> _server;
@@ -78,7 +78,7 @@ private:
     Record *record;
     DocsBrowser *docsBrowser;
     //DocWidget *d;
-    void connectWidgets();
+    void connectWidget();
     void initGUI();
 
     //gestione pagine

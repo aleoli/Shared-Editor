@@ -2,8 +2,8 @@
 #define RECORD_H
 
 #include <QWidget>
-#include <QString>
-#include "string.h"
+//#include <QString>
+//#include "QString.h"
 
 using namespace std;
 
@@ -21,20 +21,20 @@ public:
     //void setManagerClass(Manager *m){this->m=m;}
 
 
-    string getUsername() const;
-    void setUsername(const string &value);
+    QString getUsername() const;
+    void setUsername(const QString &value);
 
-    string getPassword() const;
-    void setPassword(const string &value);
+    QString getPassword() const;
+    void setPassword(const QString &value);
 
-    string getRepeat_password() const;
-    void setRepeat_password(const string &value);
+    QString getRepeat_password() const;
+    void setRepeat_password(const QString &value);
 
-    string getNickname() const;
-    void setNickname(const string &value);
+    QString getNickname() const;
+    void setNickname(const QString &value);
 
-    string getRepeat_username() const;
-    void setRepeat_username(const string &value);
+    QString getRepeat_username() const;
+    void setRepeat_username(const QString &value);
 
 private slots:
 
@@ -42,21 +42,21 @@ private slots:
 
     void on_pushButton_logIn_clicked();
 
-    //void on_lineEdit_nickname_textEdited(const QString &arg1);
+    //void on_lineEdit_nickname_textEdited(const QQString &arg1);
 
     void on_checkBox_2_toggled(bool checked);
 
 private:
     Ui::Record *ui;
-    string username;
-    //string repeat_username;*/
-    string password;
-    string repeat_password;
-    string nickname;
+    QString username;
+    //QString repeat_username;*/
+    QString password;
+    QString repeat_password;
+    QString nickname;
     //Manager *m;
 signals:
     void showLoginPage();
-    void record_try(string nickname, string username, string password, string repeat_password);
+    void record_try(QString nickname, QString username, QString password, QString repeat_password);
 };
 
 #endif // RECORD_H

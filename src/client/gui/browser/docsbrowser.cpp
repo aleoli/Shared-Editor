@@ -23,11 +23,13 @@ void DocsBrowser::showDocsAvailable(){
     //}
 }
 
+/*
 QString DocsBrowser::newFileQuery(){
-    return "ciao"; //numero inventato per testare
+    //return "ciao"; //numero inventato per testare
+    emit
 }
 
-void DocsBrowser::getFileQuery(int num){
+int DocsBrowser::getFileQuery(int num){
 
 }
 
@@ -35,7 +37,8 @@ QString DocsBrowser::newFolderQuery(){
     return "ciao2"; //numero inventato per testare
 }
 
-void DocsBrowser::getFolderQuery(int num){
+int DocsBrowser::getFolderQuery(int num){
 
 }
 
+*/

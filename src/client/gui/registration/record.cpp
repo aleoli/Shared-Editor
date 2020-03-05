@@ -1,6 +1,5 @@
 #include "record.h"
 #include "ui_record.h"
-#include "string.h"
 
 using namespace std;
 
@@ -24,63 +23,63 @@ void Record::on_pushButton_logIn_clicked()
     showLoginPage();
 }
 
-/*string Record::getRepeat_username() const
+/*QString Record::getRepeat_username() const
 {
     return repeat_username;
 }
 
-void Record::setRepeat_username(const string &value)
+void Record::setRepeat_username(const QString &value)
 {
     repeat_username = value;
 }*/
 
-string Record::getNickname() const
+QString Record::getNickname() const
 {
     return nickname;
 }
 
-void Record::setNickname(const string &value)
+void Record::setNickname(const QString &value)
 {
     nickname = value;
 }
 
-string Record::getRepeat_password() const
+QString Record::getRepeat_password() const
 {
     return repeat_password;
 }
 
-void Record::setRepeat_password(const string &value)
+void Record::setRepeat_password(const QString &value)
 {
     repeat_password = value;
 }
 
-string Record::getPassword() const
+QString Record::getPassword() const
 {
     return password;
 }
 
-void Record::setPassword(const string &value)
+void Record::setPassword(const QString &value)
 {
     password = value;
 }
 
-string Record::getUsername() const
+QString Record::getUsername() const
 {
     return username;
 }
 
-void Record::setUsername(const string &value)
+void Record::setUsername(const QString &value)
 {
     username = value;
 }
 
 void Record::on_pushButton_signUp_clicked()
 {
-    setUsername(ui->lineEdit_nickname->text().toStdString());
-    //setRepeat_username(ui->lineEdit_email->text().toStdString());
-    //setNickname(ui->lineEdit_repeat_email->text().toStdString());
-    setPassword(ui->lineEdit_password->text().toStdString());
-    setRepeat_password(ui->lineEdit_repeat_password->text().toStdString());
+    setUsername(ui->lineEdit_nickname->text());//.toStdQString());
+    //setRepeat_username(ui->lineEdit_email->text().toStdQString());
+    //setNickname(ui->lineEdit_repeat_email->text().toStdQString());
+    setPassword(ui->lineEdit_password->text());//.toStdQString());
+    setRepeat_password(ui->lineEdit_repeat_password->text());//.toStdQString());
     emit record_try(this->getNickname(),this->getUsername(),this->getPassword(), this->getRepeat_password());
 }
 

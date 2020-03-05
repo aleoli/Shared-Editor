@@ -30,15 +30,16 @@ private:
     Manager *m;
     
     
-public slots:
-    QString newFileQuery();
-    void getFileQuery(int num);
-    QString newFolderQuery();
-    void getFolderQuery(int num);
+//public slots:
+    
     
 signals:
     void showLoginPage();
     void open_file();
+    void newFileQuery(QString);
+    void getFileQuery(int);
+    void newFolderQuery(QString);
+    void getFolderQuery(int);
 
 };
 

@@ -22,14 +22,14 @@ using namespace se_exceptions;
 
 shared_ptr<Manager> Manager::instance = nullptr;
 
-Manager::Manager() {}
+//Manager::Manager() {}
 
 Manager::Manager(const SysConf &conf, QObject *parent)
     : QObject(parent)
 {
 
-    MainWindow w{};
-    w.show();
+    this->mw = new MainWindow{};
+    this->mw->show();
 
     // inizializzazione threads
   initThreads(conf);
@@ -45,7 +45,7 @@ Manager::Manager(const SysConf &conf, QObject *parent)
   _waiting = false;
 */
   // connessione signal / slot della gui
-  connectWidgets();
+  //connectWidget();
   initClientToServer();
   initServerToClient();
 }
@@ -71,7 +71,8 @@ void Manager::run() {
  // _window = OpenWindow::LANDING;
  // _landing->show();
 #else
-  login->show();
+  //login->show();
+  this->showLoginPage();
   //docsBrowser->show();
   //_textEdit->setUser(33, "bob");
   //_textEdit->show();
@@ -149,17 +150,20 @@ void Manager::initServerToClient() {
   connect(_manager.get(), &MessageManager::remoteMoveQuery, this, &Manager::remoteMoveQueryReceived);*/
 }
 
-void Manager::connectWidgets() {
+void Manager::connectWidget() {
+/*
   // login
-  /*connect(login, &Login::access, this, &Manager::checkLogin);
+  connect(login, &Login::access, this, &Manager::checkLogin);
   //record
   connect(record, &Record::record_try, this, &Manager::checkRecord);
+
 
   // browser file
   connect(docsBrowser, &DocsBrowser::newFileQuery, this, &Manager::newFileQuery);
   connect(docsBrowser, &DocsBrowser::getFileQuery, this, &Manager::getFileQuery);
   connect(docsBrowser, &DocsBrowser::newFolderQuery, this, &Manager::newFolderQuery);
   connect(docsBrowser, &DocsBrowser::getFolderQuery, this, &Manager::getFolderQuery);
+*/ 
 
   // TextEdit -> Manager (Client -> Server)
   /*connect(textEditor, &TextEditor::closeFileQuery, this, &Manager::closeFileQuery);
@@ -182,6 +186,7 @@ shared_ptr<Manager> Manager::get(const SysConf conf) {
     if(instance == nullptr) {
         instance.reset(new Manager{conf, nullptr});
     }
+    qDebug("manager instantiated");
     return instance;
 }
 

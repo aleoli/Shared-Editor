@@ -174,6 +174,8 @@ signals:
     //void openedNewPage();
     void goBack();
     void goForward();
+    
+    void new_login_widget(Login*);
 };
 
 //QT_END_NAMESPACE

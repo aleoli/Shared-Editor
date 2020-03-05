@@ -4,9 +4,9 @@
 #include <QWidget>
 #include <QMainWindow>
 #include "account.h"
-#include "string.h"
+//#include "string.h"
 
-class Manager;
+//class Manager;
 class Account;
 
 using namespace std;
@@ -22,9 +22,9 @@ class Login : public QWidget
 public:
     explicit Login(QWidget *parent = nullptr);
     ~Login();
-    string getPassword() const;
-    string getUsername() const;
-    void setManagerClass(Manager *m){this->m=m;}
+    QString getPassword() const;
+    QString getUsername() const;
+    //void setManagerClass(Manager *m){this->m=m;}
 
 private slots:
     void on_btn_loginButton_clicked();
@@ -34,13 +34,13 @@ private slots:
 
 signals:
     void showRecordPage();
-    void access(string username,string password);
+    void access(QString username,QString password);
 
 private:
     Ui::Login *ui;
-    string username;
-    string password;
-    Manager *m;
+    QString username;
+    QString password;
+    //Manager *m;
 
 };
 
