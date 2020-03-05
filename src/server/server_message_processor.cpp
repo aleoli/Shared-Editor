@@ -693,8 +693,7 @@ void ServerMessageProcessor::localUpdate() {
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
     auto s = Symbol::fromJsonObject(symb.toObject());
-    auto to_mod = this->_manager->getSymbol(this->_clientId, fileId, s.getSymbolId());
-    to_mod.update(s);
+    this->_manager->updateSymbol(this->_clientId, fileId, s);
   }
 
   auto clients = this->_manager->getClientsInFile(fileId);
