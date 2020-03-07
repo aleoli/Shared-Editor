@@ -165,19 +165,27 @@ void MainWindow::enumerateMenu(QMenu *menu)
 void MainWindow::showLoginPage(){
     auto login = new Login{this};
     //login possibilities to change page (login successful -> docs browser | wanna register -> register )
-    emit new_login_widget(login);
-    /*connect(login, SIGNAL(access()), this, SLOT(checkLogin()));
+    //emit new_login_widget(login);
+    //connect(login, SIGNAL(access()), this, SLOT(checkLogin()));
     connect(login, &Login::showRecordPage, this, &MainWindow::showRecordPage);
-    connect(login, SIGNAL(showRecordPage()), this, SLOT(showRecordPage()));
-    this->_setCentral(login);*/
+    connect(login, &Login::access, this, &MainWindow::checkLogin);
+    this->_setCentral(login);
+}
+
+void MainWindow::checkLogin(QString user,QString pwd){
+    emit sendCheckLogin(user,pwd);
 }
 
 void MainWindow::showRecordPage(){
     auto record = new Record{this};
     //record possibilities to change page (go back to login page -> login page| successful registered -> docs browser)
-    //connect(record, SIGNAL(rec_successful()), this, SLOT(checkRecord()));
-    //connect(record, SIGNAL(showLoginPage()), this, SLOT(showLoginPage()));
+    //connect(record, &Record::record_try, this, &MainWindow::checkRecord);
+    connect(record, &Record::showLoginPage, this, &MainWindow::showLoginPage);
     this->_setCentral(record);
+}
+
+void MainWindow::checkRecord(QString nickname, QString username, QString password, QString repeat_password){
+    emit sendCheckRecord(username,password,repeat_password);
 }
 
 
@@ -200,14 +208,20 @@ void MainWindow::userIsLogged(bool result){
 }
 
 void MainWindow::showDocsBrowserPage(){
-    emit isUserLogged();
-    if(this->logged){
+    qDebug("creating new docs browser page");
+    auto db = new DocsBrowser{this};
+    //textEditor possibilities to change page (go back to login page -> login page| back to documentBrowser -> docBrowser)
+    //connect(textEditor, SIGNAL(showTextBrowserPage()), this, SLOT(showTextBrowserPage()));
+    //connect(textEditor, SIGNAL(showLoginPage()), this, SLOT(userLogOut()));
+    this->_setCentral(db);
+    //emit isUserLogged();
+    /*if(this->logged){
         auto db = new DocsBrowser{this};
         //textEditor possibilities to change page (go back to login page -> login page| back to documentBrowser -> docBrowser)
         //connect(textEditor, SIGNAL(showTextBrowserPage()), this, SLOT(showTextBrowserPage()));
         //connect(textEditor, SIGNAL(showLoginPage()), this, SLOT(userLogOut()));
         this->_setCentral(db);
-    }
+    }*/
 }
 
 void MainWindow::showEditPage(){
@@ -347,7 +361,7 @@ void MainWindow::setupUi(QMainWindow *MainWindow){
         toolBar = new QToolBar(MainWindow);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
         MainWindow->addToolBar(Qt::TopToolBarArea, toolBar);
-
+        
 
         menuBar->addAction(menumenu->menuAction());
         menuBar->addAction(menuFile->menuAction());

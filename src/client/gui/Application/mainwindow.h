@@ -125,6 +125,7 @@ private:
     QActionGroup *docsBrowsFActions = new QActionGroup{this};;
     QActionGroup *menuActions = new QActionGroup{this};;
     int centralWidgetIndex = -1;
+    
 public:
     int getCentralWidgetIndex() const;
 
@@ -149,6 +150,8 @@ public slots:
     void showEditPage();
     void back();
     void forward();
+    void checkLogin(QString u,QString p);
+    void checkRecord(QString nickname, QString username, QString password, QString repeat_password);
 
 private slots:
     void userIsLogged(bool res);
@@ -162,6 +165,8 @@ private slots:
     void on_actionlogout_triggered();
     void on_actionGo_forward_triggered();//fatta e controllata
     void on_actionLogin_triggered();
+    
+
 
 signals:
 
@@ -174,7 +179,8 @@ signals:
     //void openedNewPage();
     void goBack();
     void goForward();
-    
+    void sendCheckLogin(QString u,QString p);
+    void sendCheckRecord(QString username, QString password, QString repeat_password);
     void new_login_widget(Login*);
 };
 

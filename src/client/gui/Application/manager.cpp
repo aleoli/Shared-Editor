@@ -45,7 +45,7 @@ Manager::Manager(const SysConf &conf, QObject *parent)
   _waiting = false;
 */
   // connessione signal / slot della gui
-  //connectWidget();
+  connectWidget();
   initClientToServer();
   initServerToClient();
 }
@@ -151,6 +151,7 @@ void Manager::initServerToClient() {
 }
 
 void Manager::connectWidget() {
+    connect(this->mw, &MainWindow::sendCheckLogin, this, &Manager::checkLogin);
 /*
   // login
   connect(login, &Login::access, this, &Manager::checkLogin);
@@ -219,6 +220,7 @@ void Manager::setPassword(const string &value)
 
 void Manager::checkLogin(QString username, QString password)
 {
+    this->loginResponseReceived("erich",777,"arizona","#@#@#@#");
     if(logged || this->main_user!=nullptr){
         //print alert already logged user, wanna login into another account?
         if(true)
