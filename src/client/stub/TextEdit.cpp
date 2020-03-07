@@ -62,11 +62,12 @@ void TextEdit::setFile(const File &f, int charId) {
   _shareLink = std::nullopt; //TODO quando sarà salvato nel file rimuovere
   _user.charId = charId;
 
+  refresh(true);
+}
 
+void TextEdit::setConnectedUsers() {
   //setto gli utenti connessi
-  for(auto &client : f.getClients()) {
-    //TODO filtrare me stesso
-
+  for(auto &client : _file.getClients()) {
     if (client.second.username == _user.username) continue; //TODO check userId dopo refactor
 
     remoteUser user;
@@ -82,8 +83,6 @@ void TextEdit::setFile(const File &f, int charId) {
     //TODO check nella mappa per vedere che non ci sia già
     _users[client.second.clientId] = user;
   }
-
-  refresh(true);
 }
 
 File &TextEdit::getFile() {

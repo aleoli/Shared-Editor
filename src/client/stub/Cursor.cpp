@@ -9,12 +9,13 @@
 
 Cursor::Cursor(QTextEdit *parent, QColor color) : QLabel(parent), textEdit_(parent), _color(color) {
   //TODO rivedere questi parametri
-  //_color.setAlpha(128);
+  _color.setAlpha(192);
   setFixedWidth(2);
 
   setStyleSheet("background-color : " + _color.name(QColor::HexArgb) + ";");
 
   cursor_ = new QTextCursor(parent->document());
+  updateCursorPosition(0);
 
   timer_ = new QTimer(this);
   QObject::connect(timer_, &QTimer::timeout, this, &Cursor::changeVisibility);

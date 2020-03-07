@@ -46,6 +46,7 @@ public:
   int getFileId() const;
   void setUser(int userId, QString username);
   void showShareLink();
+  void setConnectedUsers();
 
 public slots:
   // messaggi dal server

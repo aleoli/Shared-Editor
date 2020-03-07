@@ -411,6 +411,8 @@ void GuiWrapper::getFileResponseReceived(File file, int charId) {
 
   _window = OpenWindow::EDITOR;
   _textEdit->show();
+
+  _textEdit->setConnectedUsers(); //fix: i cursori si visualizzano correttamente solo DOPO che il texteditor è visibile
 }
 
 void GuiWrapper::remoteInsertQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols) {
@@ -481,6 +483,7 @@ void GuiWrapper::activateLinkResponseReceived(FSElement element, File file) {
 
   _window = OpenWindow::EDITOR;
   _textEdit->show();
+  _textEdit->setConnectedUsers(); //fix: i cursori si visualizzano correttamente solo DOPO che il texteditor è visibile
 }
 
 void GuiWrapper::checkToken() {
