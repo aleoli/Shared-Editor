@@ -183,7 +183,7 @@ void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& 
   f.remoteDelete(symId);
 }
 
-Symbol& MessageManager::getSymbol(quint64 clientId, int fileId, const SymbolId& symId) {
+void MessageManager::updateSymbol(quint64 clientId, int fileId, const Symbol& sym) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -197,7 +197,7 @@ Symbol& MessageManager::getSymbol(quint64 clientId, int fileId, const SymbolId& 
   loadFile(clientId, fileId);
 
   File& f = _openFiles[fileId];
-  return f.symbolById(symId).second;
+  f.remoteUpdate(sym);
 }
 
 void MessageManager::closeFile(quint64 clientId, int fileId) {
