@@ -305,8 +305,8 @@ void TextEdit::setupTextActions() {
 
 
   // BACKGROUND COLOR
-  pix.fill(Qt::white);
-  _actionTextBackgroundColor = menu->addAction(pix, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
+  const QIcon backgroundColorIcon(":/buttons/fill.png");
+  _actionTextBackgroundColor = menu->addAction(backgroundColorIcon, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
   tb->addAction(_actionTextBackgroundColor);
 
 
@@ -605,9 +605,6 @@ void TextEdit::updateActions() {
   QPixmap pix(16, 16);
   pix.fill(fmt.foreground().color());
   _actionTextColor->setIcon(pix);
-
-  pix.fill(fmt.background().color());
-  _actionTextBackgroundColor->setIcon(fmt.background().texture());
 
   _comboFont->setCurrentText(fmt.font().family());
   _comboSize->setCurrentIndex(QFontDatabase::standardSizes().indexOf(fmt.font().pointSize()));
