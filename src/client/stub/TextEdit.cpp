@@ -52,12 +52,17 @@ TextEdit::TextEdit(QWidget *parent)
   QObject::connect(_textEdit->document(), &QTextDocument::contentsChange, this, &TextEdit::change);
   QObject::connect(_textEdit, &QTextEdit::cursorPositionChanged, this, &TextEdit::cursorChanged);
   QObject::connect(_textEdit, &QTextEdit::currentCharFormatChanged, this, &TextEdit::formatChanged);
+  QObject::connect(_textEdit, &QTextEdit::textChanged, this, &TextEdit::updateCursors);
 
   // _dock right
   initDock();
 }
 
 void TextEdit::setFile(const File &f, int charId) {
+  if(!_user.initialized) {
+    throw SE_Exception{"Utente non settato."};
+  }
+
   _file = f;
   _shareLink = std::nullopt; //TODO quando sarà salvato nel file rimuovere
   _user.charId = charId;
@@ -366,7 +371,7 @@ void TextEdit::textColor() {
   if(_blockSignals) return;
 
   debug("Cambiato colore");
-  QColor col = QColorDialog::getColor(_textEdit->textColor(), this);
+  QColor col = QColorDialog::getColor(_textEdit->textColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
   if (!col.isValid())
       return;
 
@@ -384,7 +389,7 @@ void TextEdit::textBackgroundColor() {
   QTextCursor cursor = _textEdit->textCursor();
   auto fmt = cursor.charFormat();
 
-  QColor col = QColorDialog::getColor(fmt.background().color(), this);
+  QColor col = QColorDialog::getColor(_textEdit->textColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
   if (!col.isValid())
       return;
 
@@ -478,8 +483,6 @@ void TextEdit::change(int pos, int removed, int added) {
     updateActions();
   }
 
-  // update remote cursors
-  updateCursors();
   // update _cursorPosition
   _cursorPosition = pos + added;
 }
@@ -584,7 +587,6 @@ void TextEdit::cursorChanged() {
   }
   catch (FileSymbolsException e) {
     warn("cursorChanged ha lanciato una FileSymbolsException");
-    return;
   }
 }
 
@@ -605,7 +607,7 @@ void TextEdit::updateActions() {
   _actionTextColor->setIcon(pix);
 
   pix.fill(fmt.background().color());
-  _actionTextBackgroundColor->setIcon(pix);
+  _actionTextBackgroundColor->setIcon(fmt.background().texture());
 
   _comboFont->setCurrentText(fmt.font().family());
   _comboSize->setCurrentIndex(QFontDatabase::standardSizes().indexOf(fmt.font().pointSize()));
@@ -621,14 +623,6 @@ void TextEdit::closeEvent(QCloseEvent *event) {
   reset();
 
   QWidget::closeEvent(event);
-}
-
-void TextEdit::showEvent(QShowEvent* event) {
-  QWidget::showEvent(event);
-
-  if(!_user.initialized) {
-    throw SE_Exception{"Utente non settato."};
-  }
 }
 
 void TextEdit::reset() {
@@ -671,8 +665,7 @@ void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> s
     cursor->insert(sym, pos);
   }
 
-  updateCursors();
-
+  cursor->show();
   _blockSignals = false;
 }
 
@@ -690,8 +683,7 @@ void TextEdit::remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId>
     if(pos != -1) cursor->remove(pos);
   }
 
-  updateCursors();
-
+  cursor->show();
   _blockSignals = false;
 }
 
@@ -711,8 +703,7 @@ void TextEdit::remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> s
     }
   }
 
-  updateCursors();
-
+  cursor->show();
   _blockSignals = false;
 }
 
@@ -730,6 +721,7 @@ void TextEdit::userConnectedQuery(int fileId, int clientId, QString username) {
   user.username = username;
   user.color = _gen.getColor();
   user.cursor = new Cursor(_textEdit, user.color);
+  user.cursor->show();
 
   user.item = new QListWidgetItem(username, _dock);
   user.item->setFlags(Qt::NoItemFlags);
@@ -756,8 +748,9 @@ void TextEdit::remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int 
   debug("User: " + QString::number(clientId) + " moved cursor");
 
   //TODO check nella mappa per vedere che ci sia
-  auto user = _users[clientId];
-  user.cursor->updateCursorPosition(getCursorPosition(symbolId, cursorPosition));
+  auto cursor = _users[clientId].cursor;
+  cursor->updateCursorPosition(getCursorPosition(symbolId, cursorPosition));
+  cursor->show();
 }
 
 std::pair<SymbolId, int> TextEdit::saveCursorPosition(const QTextCursor &cursor) {

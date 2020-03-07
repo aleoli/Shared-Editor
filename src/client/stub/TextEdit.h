@@ -38,7 +38,6 @@ class TextEdit : public QMainWindow {
 public:
   explicit TextEdit(QWidget *parent = nullptr);
   void closeEvent (QCloseEvent *event) override;
-  void showEvent(QShowEvent* event) override;
 
   void setFile(const File &f, int charId = 0);
   File& getFile();
