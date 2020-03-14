@@ -14,8 +14,8 @@ using namespace se_exceptions;
 
 File::File() {}
 
-File::File(std::unordered_map<int, File::ClientInfo> clients, std::vector<Symbol> symbols)
-  : _clients(clients), _symbols(symbols) {}
+File::File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> symbols)
+  : _users(users), _symbols(symbols) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -26,21 +26,21 @@ File::File(QJsonObject &&json){
 }
 
 void File::checkAndAssign(const QJsonObject &json) {
-  auto clientsValue = json["clients"];
+  auto usersValue = json["users"];
   auto symbolsValue = json["symbols"];
 
-  if(clientsValue.isUndefined() || symbolsValue.isUndefined()) {
+  if(usersValue.isUndefined() || symbolsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!clientsValue.isArray() || !symbolsValue.isArray()) {
+  if(!usersValue.isArray() || !symbolsValue.isArray()) {
     throw FileFromJsonException{"One or more fields are not valid"};
   }
 
-  auto clients = clientsValue.toArray();
+  auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
 
-  _clients = jsonArrayToclients(clients);
+  _users = jsonArrayTousers(users);
   _symbols = utils::jsonArrayToVector<Symbol>(symbols);
 }
 
@@ -75,7 +75,7 @@ File File::fromQByteArray(QByteArray &&array) {
 QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
-  json["clients"] = QJsonValue(clientsToJsonArray());
+  json["users"] = QJsonValue(usersToJsonArray());
   json["symbols"] = QJsonValue(utils::vectorToJsonArray(_symbols));
 
   return json;
@@ -91,10 +91,10 @@ QByteArray File::toQByteArray() const {
 #endif
 }
 
-QJsonArray File::clientsToJsonArray() const {
+QJsonArray File::usersToJsonArray() const {
   QJsonArray array;
 
-  for(auto &el : _clients) {
+  for(auto &el : _users) {
     QJsonObject value;
 
     value["userId"] = el.second.userId;
@@ -106,10 +106,10 @@ QJsonArray File::clientsToJsonArray() const {
   return array;
 }
 
-std::string File::clientsToString() const {
+std::string File::usersToString() const {
   std::stringstream ss;
 
-  for(auto &el : _clients) {
+  for(auto &el : _users) {
     ss << "\tuserId: " << el.second.userId << std::endl;
     ss << "\t\tusername: " << el.second.username.toStdString() << std::endl;
   }
@@ -117,12 +117,12 @@ std::string File::clientsToString() const {
   return ss.str();
 }
 
-std::unordered_map<int, File::ClientInfo> File::jsonArrayToclients(const QJsonArray &array) {
-  std::unordered_map<int, File::ClientInfo> clients;
+std::unordered_map<int, File::UserInfo> File::jsonArrayTousers(const QJsonArray &array) {
+  std::unordered_map<int, File::UserInfo> users;
 
   for(auto&& el : array) {
     if(!el.isObject()) {
-      throw FileFromJsonException{"One or more fields in clients array are not valid"};
+      throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
     auto obj = el.toObject();
@@ -136,19 +136,19 @@ std::unordered_map<int, File::ClientInfo> File::jsonArrayToclients(const QJsonAr
     auto userId = userIdValue.toInt(-1);
 
     if(userId == -1) {
-      throw FileFromJsonException{"One or more fields in clients array are not valid"};
+      throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
     if(!usernameValue.isString()) {
-      throw FileFromJsonException{"One or more fields in clients array are not valid"};
+      throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
-    File::ClientInfo info { userId, usernameValue.toString() };
+    File::UserInfo info { userId, usernameValue.toString() };
 
-    clients[userId] = info;
+    users[userId] = info;
   }
 
-  return clients;
+  return users;
 }
 
 std::string File::symbolsToString() const {
@@ -166,8 +166,8 @@ std::string File::symbolsToString() const {
   return ss.str();
 }
 
-std::unordered_map<int, File::ClientInfo> File::getClients() const {
-  return _clients;
+std::unordered_map<int, File::UserInfo> File::getUsers() const {
+  return _users;
 }
 
 std::vector<Symbol> File::getSymbols() const {
@@ -219,7 +219,7 @@ int File::numSymbols() const {
 std::string File::to_string() const {
   std::stringstream ss;
 
-  ss << "User IDs: " << std::endl << clientsToString() << std::endl;
+  ss << "User IDs: " << std::endl << usersToString() << std::endl;
   ss << "Symbols:" << std::endl << symbolsToString();
 
   return ss.str();
@@ -239,20 +239,20 @@ void File::clear() {
   _symbols.clear();
 }
 
-void File::addClient(int userId, QString username) {
-  if(_clients.count(userId) != 0) {
-    throw FileClientException{"Client already exists"};
+void File::addUser(int userId, QString username) {
+  if(_users.count(userId) != 0) {
+    throw FileUserException{"User already exists"};
   }
 
-  _clients[userId] = { userId, username };
+  _users[userId] = { userId, username };
 }
 
-void File::removeClient(int userId) {
-  if(_clients.count(userId) == 0) {
-    throw FileClientException{"Client does not exist"};
+void File::removeUser(int userId) {
+  if(_users.count(userId) == 0) {
+    throw FileUserException{"User does not exist"};
   }
 
-  _clients.erase(userId);
+  _users.erase(userId);
 }
 
 void File::localInsert(Symbol &sym, int pos) {
@@ -399,13 +399,13 @@ int File::remoteUpdate(const Symbol &sym) {
 }
 
 bool operator==(const File& lhs, const File& rhs) {
-  return lhs._clients == rhs._clients && lhs._symbols == rhs._symbols;
+  return lhs._users == rhs._users && lhs._symbols == rhs._symbols;
 }
 
 bool operator!=(const File& lhs, const File& rhs) {
   return !operator==(lhs, rhs);
 }
 
-bool operator==(const File::ClientInfo& lhs, const File::ClientInfo& rhs) {
+bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs) {
   return lhs.userId == rhs.userId && lhs.username == rhs.username;
 }

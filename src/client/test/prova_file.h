@@ -77,10 +77,10 @@ void prova_file() {
   f1.localInsert(s3, 0);
   f1.localInsert(s4, 1);
   f1.localInsert(s5, 1);
-  f1.addClient(1, "bob");
-  f1.addClient(2, "ale");
-  f1.addClient(3, "klajdi");
-  f1.addClient(4, "erich");
+  f1.addUser(1, "bob");
+  f1.addUser(2, "ale");
+  f1.addUser(3, "klajdi");
+  f1.addUser(4, "erich");
 
   std::cout << f1.to_string() << std::endl;
 
@@ -99,18 +99,18 @@ void prova_file() {
 
   // chiamate che devono generano eccezioni
   try {
-    f1.addClient(1, "pippo");
-    throw TestException{"test addClient fallito"};
+    f1.addUser(1, "pippo");
+    throw TestException{"test addUser fallito"};
   }
-  catch(FileClientException e) {}
+  catch(FileUserException e) {}
 
   try {
-    f1.removeClient(5);
-    throw TestException{"test removeClient fallito"};
+    f1.removeUser(5);
+    throw TestException{"test removeUser fallito"};
   }
-  catch(FileClientException e) {}
+  catch(FileUserException e) {}
 
-  f1.removeClient(2);
+  f1.removeUser(2);
 
   File f2(f1.toJsonObject());
   if(f1 != f2) {

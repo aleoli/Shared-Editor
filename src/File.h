@@ -15,10 +15,10 @@ public:
   typedef struct {
     int userId;
     QString username;
-  } ClientInfo;
+  } UserInfo;
 
   File();
-  File(std::unordered_map<int, File::ClientInfo> clients, std::vector<Symbol> _symbols);
+  File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -31,9 +31,9 @@ public:
 
   friend bool operator==(const File& lhs, const File& rhs);
   friend bool operator!=(const File& lhs, const File& rhs);
-  friend bool operator==(const File::ClientInfo& lhs, const File::ClientInfo& rhs);
+  friend bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs);
 
-  std::unordered_map<int, File::ClientInfo> getClients() const;
+  std::unordered_map<int, File::UserInfo> getUsers() const;
   std::vector<Symbol> getSymbols() const;
   Symbol& symbolAt(int pos);
   std::pair<int, Symbol&> symbolById(SymbolId id);
@@ -43,8 +43,8 @@ public:
   std::string text() const;
   void clear();
 
-  void addClient(int userId, QString username);
-  void removeClient(int userId);
+  void addUser(int userId, QString username);
+  void removeUser(int userId);
 
   //CRDT
   void localInsert(Symbol &sym, int pos);
@@ -60,12 +60,12 @@ private:
     std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
     int level = 0);
 
-  QJsonArray clientsToJsonArray() const;
-  std::string clientsToString() const; //TODO vedi se rimuovere
-  static std::unordered_map<int, File::ClientInfo> jsonArrayToclients(const QJsonArray &array);
+  QJsonArray usersToJsonArray() const;
+  std::string usersToString() const; //TODO vedi se rimuovere
+  static std::unordered_map<int, File::UserInfo> jsonArrayTousers(const QJsonArray &array);
 
   std::string symbolsToString() const; //TODO vedi se rimuovere
 
-  std::unordered_map<int, ClientInfo> _clients;
+  std::unordered_map<int, UserInfo> _users;
   std::vector<Symbol> _symbols;
 };
