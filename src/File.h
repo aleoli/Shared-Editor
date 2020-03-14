@@ -13,7 +13,7 @@
 class File {
 public:
   typedef struct {
-    int clientId;
+    int userId;
     QString username;
   } ClientInfo;
 
@@ -43,8 +43,8 @@ public:
   std::string text() const;
   void clear();
 
-  void addClient(int clientId, QString username);
-  void removeClient(int clientId);
+  void addClient(int userId, QString username);
+  void removeClient(int userId);
 
   //CRDT
   void localInsert(Symbol &sym, int pos);
@@ -56,7 +56,7 @@ public:
 private:
   void checkAndAssign(const QJsonObject &json);
 
-  static void findPosition(int clientId, std::vector<Symbol::Identifier> v1,
+  static void findPosition(int userId, std::vector<Symbol::Identifier> v1,
     std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
     int level = 0);
 
