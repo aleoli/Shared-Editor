@@ -181,6 +181,11 @@ namespace se_exceptions {
       LinkException(QString str): FileSystemException(str) {}
   };
 
+  class DoubleLinkException: public FileSystemException {
+  public:
+      DoubleLinkException(QString str): FileSystemException(str) {}
+  };
+
   class ReadException: public IllegalAccessException {
   public:
       ReadException(QString str): IllegalAccessException(str) {}

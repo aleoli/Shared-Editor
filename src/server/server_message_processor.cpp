@@ -607,6 +607,9 @@ void ServerMessageProcessor::activateLink() {
   } catch(ShareException) {
     warn(ERROR_7);
     this->sendErrorMsg(ERROR_7);
+  } catch(DoubleLinkException) {
+    warn(ERROR_9);
+    this->sendErrorMsg(ERROR_9);
   }
 }
 
