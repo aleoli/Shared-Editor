@@ -181,6 +181,10 @@ FSElement_db FSElement_db::clone(const Session &s) {
     error("Cannot create a link of a link");
     throw se_exceptions::LinkException{"Cannot create a link of a link"};
   }
+  if(this->availableForUser(s.getUserId())) {
+    error("Double creation of link");
+    throw se_exceptions::DoubleLinkException{"Double creation of link"};
+  }
   FSElement_db fs_e{*this};
   fs_e.id = 0;
   fs_e._parent_id = -1;
@@ -353,6 +357,9 @@ SharedLink FSElement_db::share(const Session &s) {
 		warn("Trying to share a shared file");
 		throw se_exceptions::ShareException{"Trying to share a shared file"};
 	}
+  if(!this->_shared_links.getValues().empty()) {
+    return this->_shared_links[0];
+  }
   return SharedLink::create(this->id);
 }
 
@@ -400,6 +407,15 @@ int FSElement_db::getIdForUser(const Session &s, int file_id, int user_id) {
   }
   // TODO
   throw 1;
+}
+
+bool FSElement_db::availableForUser(int user_id) {
+  for(auto &l: this->_links.getValues()) {
+    if(l->_owner_id == user_id) {
+      return true;
+    }
+  }
+  return false;
 }
 
 std::vector<FSElement_db*> FSElement_db::getChildren() {

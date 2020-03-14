@@ -439,7 +439,7 @@ void ServerMessageProcessor::newFile() {
   QJsonObject data;
   data["fileId"] = file.getId();
 
-	this->_manager->getFile(this->_clientId, file.getId());
+	this->_manager->getFile(this->_clientId, file.getId(), std::nullopt);
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
   this->_has_resp = true;
@@ -454,7 +454,7 @@ void ServerMessageProcessor::getFile() {
 
     auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
     auto fileId = file_db.getPhysicalId();
-    auto file = this->_manager->getFile(this->_clientId, fileId);
+    auto file = this->_manager->getFile(this->_clientId, fileId, file_db.getId());
 
     QJsonObject data;
     data["file"] = file.toJsonObject();
@@ -472,7 +472,7 @@ void ServerMessageProcessor::getFile() {
 
       QJsonObject data;
       data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-      data["clientId"] = (int) this->_clientId;
+      data["userId"] = session.getUserId();
       data["username"] = this->_manager->getUsername(this->_clientId);
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
@@ -503,7 +503,7 @@ void ServerMessageProcessor::closeFile() {
 
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-    data["clientId"] = (int) this->_clientId;
+    data["userId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -584,7 +584,7 @@ void ServerMessageProcessor::activateLink() {
 
     QJsonObject data;
     data["element"] = file.getFSElement().toJsonObject();
-    data["file"] = this->_manager->getFile(this->_clientId, fileId).toJsonObject();
+    data["file"] = this->_manager->getFile(this->_clientId, fileId, file.getId()).toJsonObject();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -598,16 +598,18 @@ void ServerMessageProcessor::activateLink() {
 
       QJsonObject data;
       data["fileId"] = FSElement_db::getIdForUser(session, file.getId(), userId);
-      data["clientId"] = (int) this->_clientId;
+      data["userId"] = session.getUserId();
       data["username"] = this->_manager->getUsername(this->_clientId);
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
-      std::cout << std::endl << "USER_CONNECTED" << std::endl << std::endl << QString{msg.toQByteArray()}.toStdString() << std::endl << std::endl;
       this->_manager->send_data(cl, msg.toQByteArray());
     }
   } catch(ShareException) {
     warn(ERROR_7);
     this->sendErrorMsg(ERROR_7);
+  } catch(DoubleLinkException) {
+    warn(ERROR_9);
+    this->sendErrorMsg(ERROR_9);
   }
 }
 
@@ -639,8 +641,7 @@ void ServerMessageProcessor::localInsert() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["symbols"] = _m.getArray("symbols");
-    // TODO
-    data["clientId"] = (int) this->_clientId;
+    data["userId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -672,8 +673,7 @@ void ServerMessageProcessor::localDelete() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["ids"] = ids;
-    // TODO
-    data["clientId"] = (int) this->_clientId;
+    data["userId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -706,8 +706,7 @@ void ServerMessageProcessor::localUpdate() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["symbols"] = _m.getArray("symbols");
-    // TODO
-    data["clientId"] = (int) this->_clientId;
+    data["userId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
@@ -733,8 +732,7 @@ void ServerMessageProcessor::localMove() {
 
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-    // TODO
-    data["clientId"] = (int) this->_clientId;
+    data["userId"] = session.getUserId();
     data["symbolId"] = _m.getObject("symbolId");
     data["cursorPosition"] = _m.getInt("cursorPosition");
 

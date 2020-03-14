@@ -107,6 +107,7 @@ public:
             this->table_name = e.table_name;
             this->filter = e.filter;
         }
+        return *this;
     }
 
     std::vector<T*> operator ->() {

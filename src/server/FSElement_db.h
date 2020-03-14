@@ -72,6 +72,8 @@ private:
   FSElement_db clone(const Session &s);
   std::vector<FSElement_db*> getChildren();
 
+  bool availableForUser(int user_id);
+
   FSElement load_dir() const;
   void del_file();
 
