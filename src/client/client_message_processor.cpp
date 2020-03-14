@@ -350,10 +350,10 @@ void ClientMessageProcessor::remoteInsert() {
 
   try {
     auto fileId = _m.getInt("fileId");
-    auto clientId = _m.getInt("clientId");
+    auto userId = _m.getInt("userId");
     auto symbols = _m.getArray("symbols");
 
-    emit _manager->remoteInsertQuery(fileId, clientId, utils::jsonArrayToVector<Symbol>(symbols));
+    emit _manager->remoteInsertQuery(fileId, userId, utils::jsonArrayToVector<Symbol>(symbols));
   }
   catch(SE_Exception e) {
     disconnect(e.what());
@@ -365,10 +365,10 @@ void ClientMessageProcessor::remoteDelete() {
 
   try {
     auto fileId = _m.getInt("fileId");
-    auto clientId = _m.getInt("clientId");
+    auto userId = _m.getInt("userId");
     auto ids = _m.getArray("ids");
 
-    emit _manager->remoteDeleteQuery(fileId, clientId, utils::jsonArrayToVector<SymbolId>(ids));
+    emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToVector<SymbolId>(ids));
   }
   catch(SE_Exception e) {
     disconnect(e.what());
@@ -380,10 +380,10 @@ void ClientMessageProcessor::remoteUpdate() {
 
   try {
     auto fileId = _m.getInt("fileId");
-    auto clientId = _m.getInt("clientId");
+    auto userId = _m.getInt("userId");
     auto symbols = _m.getArray("symbols");
 
-    emit _manager->remoteUpdateQuery(fileId, clientId, utils::jsonArrayToVector<Symbol>(symbols));
+    emit _manager->remoteUpdateQuery(fileId, userId, utils::jsonArrayToVector<Symbol>(symbols));
   }
   catch(SE_Exception e) {
     disconnect(e.what());
@@ -395,10 +395,10 @@ void ClientMessageProcessor::userConnected() {
 
   try {
     auto fileId = _m.getInt("fileId");
-    auto clientId = _m.getInt("clientId");
+    auto userId = _m.getInt("userId");
     auto username = _m.getString("username");
 
-    emit _manager->userConnectedQuery(fileId, clientId, username);
+    emit _manager->userConnectedQuery(fileId, userId, username);
   }
   catch(SE_Exception e) {
     disconnect(e.what());
@@ -410,9 +410,9 @@ void ClientMessageProcessor::userDisconnected() {
 
   try {
     auto fileId = _m.getInt("fileId");
-    auto clientId = _m.getInt("clientId");
+    auto userId = _m.getInt("userId");
 
-    emit _manager->userDisconnectedQuery(fileId, clientId);
+    emit _manager->userDisconnectedQuery(fileId, userId);
   }
   catch(SE_Exception e) {
     disconnect(e.what());
@@ -424,11 +424,11 @@ void ClientMessageProcessor::remoteMove() {
 
   try {
     auto fileId = _m.getInt("fileId");
-    auto clientId = _m.getInt("clientId");
+    auto userId = _m.getInt("userId");
     auto symbolId = _m.getObject("symbolId");
     auto cursorPosition = _m.getInt("cursorPosition");
 
-    emit _manager->remoteMoveQuery(fileId, clientId, SymbolId::fromJsonObject(symbolId), cursorPosition);
+    emit _manager->remoteMoveQuery(fileId, userId, SymbolId::fromJsonObject(symbolId), cursorPosition);
   }
   catch(SE_Exception e) {
     disconnect(e.what());
