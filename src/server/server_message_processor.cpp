@@ -598,7 +598,7 @@ void ServerMessageProcessor::activateLink() {
 
       QJsonObject data;
       data["fileId"] = FSElement_db::getIdForUser(session, file.getId(), userId);
-      data["clientId"] = session.getUserId();
+      data["userId"] = session.getUserId();
       data["username"] = this->_manager->getUsername(this->_clientId);
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
