@@ -357,6 +357,9 @@ SharedLink FSElement_db::share(const Session &s) {
 		warn("Trying to share a shared file");
 		throw se_exceptions::ShareException{"Trying to share a shared file"};
 	}
+  if(!this->_shared_links.getValues().empty()) {
+    return this->_shared_links[0];
+  }
   return SharedLink::create(this->id);
 }
 
