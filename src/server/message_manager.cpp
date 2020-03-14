@@ -153,7 +153,7 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
   _clients[clientId].fileIsOpen = true;
   _clients[clientId].fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
-  f.addClient(clientId, this->getUsername(clientId));
+  f.addUser(clientId, this->getUsername(clientId));
 
   return f;
 }
@@ -235,7 +235,7 @@ void MessageManager::closeFile(quint64 clientId, int fileId) {
   //rimuovo da _clients
   _clients[clientId].fileIsOpen = false;
 
-  _openFiles[fileId].removeClient(clientId);
+  _openFiles[fileId].removeUser(clientId);
 }
 
 bool MessageManager::clientIsLogged(quint64 clientId) {
