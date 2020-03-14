@@ -106,7 +106,7 @@ void MessageManager::clientDisconnected(quint64 clientId) {
 
       QJsonObject _data;
       _data["fileId"] = data.fileIdUser;
-      _data["clientId"] = (int) clientId;
+      _data["userId"] = userId;
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, _data};
       this->send_data(cl, msg.toQByteArray());
