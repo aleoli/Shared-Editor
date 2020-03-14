@@ -144,7 +144,7 @@ File MessageManager::getFile(int userId, int fileId, std::optional<int> fileIdUs
   _clients[userId].fileIsOpen = true;
   _clients[userId].fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
-  f.addClient(userId, this->getUsername(userId));
+  f.addUser(userId, this->getUsername(userId));
 
   return f;
 }
@@ -226,7 +226,7 @@ void MessageManager::closeFile(int userId, int fileId) {
   //rimuovo da _clients
   _clients[userId].fileIsOpen = false;
 
-  _openFiles[fileId].removeClient(userId);
+  _openFiles[fileId].removeUser(userId);
 }
 
 bool MessageManager::userIsLogged(int userId) {
