@@ -12,8 +12,8 @@
 
 using namespace se_exceptions;
 
-ServerMessageProcessor::ServerMessageProcessor(const Message &m, quint64 clientId)
-    : MessageProcessor(m), _clientId(clientId), _to_all(false) {
+ServerMessageProcessor::ServerMessageProcessor(const Message &m, int userId)
+    : MessageProcessor(m), _userId(userId), _to_all(false) {
   _manager = MessageManager::get();
   try {
     this->process_message();
@@ -264,7 +264,7 @@ void ServerMessageProcessor::login() {
 
     // TODO: set other fields
 
-    this->_manager->addClient(this->_clientId, s, username);
+    this->_manager->addUser(s, username);
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::LOGIN, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -290,7 +290,7 @@ void ServerMessageProcessor::logout() {
     auto session = Session::get(token);
     session.close();
 
-    this->_manager->clientDisconnected(this->_clientId);
+    this->_manager->userDisconnected(this->_userId);
 
     this->_has_resp = false;
   } catch(SQLNoElementSelectException) {
@@ -327,7 +327,7 @@ void ServerMessageProcessor::newUser() {
 
     // TODO: set other fields
 
-    this->_manager->addClient(this->_clientId, s, username);
+    this->_manager->addUser(s, username);
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::NEW, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -439,7 +439,7 @@ void ServerMessageProcessor::newFile() {
   QJsonObject data;
   data["fileId"] = file.getId();
 
-	this->_manager->getFile(this->_clientId, file.getId(), std::nullopt);
+	this->_manager->getFile(this->_userId, file.getId(), std::nullopt);
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
   this->_has_resp = true;
@@ -454,7 +454,7 @@ void ServerMessageProcessor::getFile() {
 
     auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
     auto fileId = file_db.getPhysicalId();
-    auto file = this->_manager->getFile(this->_clientId, fileId, file_db.getId());
+    auto file = this->_manager->getFile(this->_userId, fileId, file_db.getId());
 
     QJsonObject data;
     data["file"] = file.toJsonObject();
@@ -463,17 +463,16 @@ void ServerMessageProcessor::getFile() {
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
     this->_has_resp = true;
 
-    auto clients = this->_manager->getClientsInFile(fileId);
+    auto clients = this->_manager->getUsersInFile(fileId);
     for(auto &cl: clients) {
-      if(cl == this->_clientId) {
+      if(cl == this->_userId) {
         continue;
       }
-      auto userId = this->_manager->getUserId(cl);
 
       QJsonObject data;
-      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), cl);
       data["userId"] = session.getUserId();
-      data["username"] = this->_manager->getUsername(this->_clientId);
+      data["username"] = this->_manager->getUsername(this->_userId);
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
       this->_manager->send_data(cl, msg.toQByteArray());
@@ -492,17 +491,16 @@ void ServerMessageProcessor::closeFile() {
 
   auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
-  this->_manager->closeFile(this->_clientId, fileId);
+  this->_manager->closeFile(this->_userId, fileId);
 
-  auto clients = this->_manager->getClientsInFile(fileId);
+  auto clients = this->_manager->getUsersInFile(fileId);
   for(auto &cl: clients) {
-    if(cl == this->_clientId) {
+    if(cl == this->_userId) {
       continue;
     }
-    auto userId = this->_manager->getUserId(cl);
 
     QJsonObject data;
-    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), cl);
     data["userId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, data};
@@ -584,22 +582,21 @@ void ServerMessageProcessor::activateLink() {
 
     QJsonObject data;
     data["element"] = file.getFSElement().toJsonObject();
-    data["file"] = this->_manager->getFile(this->_clientId, fileId, file.getId()).toJsonObject();
+    data["file"] = this->_manager->getFile(this->_userId, fileId, file.getId()).toJsonObject();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
     this->_has_resp = true;
 
-    auto clients = this->_manager->getClientsInFile(fileId);
+    auto clients = this->_manager->getUsersInFile(fileId);
     for(auto &cl: clients) {
-      if(cl == this->_clientId) {
+      if(cl == this->_userId) {
         continue;
       }
-      auto userId = this->_manager->getUserId(cl);
 
       QJsonObject data;
-      data["fileId"] = FSElement_db::getIdForUser(session, file.getId(), userId);
+      data["fileId"] = FSElement_db::getIdForUser(session, file.getId(), cl);
       data["userId"] = session.getUserId();
-      data["username"] = this->_manager->getUsername(this->_clientId);
+      data["username"] = this->_manager->getUsername(this->_userId);
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
       this->_manager->send_data(cl, msg.toQByteArray());
@@ -626,20 +623,19 @@ void ServerMessageProcessor::localInsert() {
 
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
-    this->_manager->addSymbol(this->_clientId, fileId, Symbol::fromJsonObject(symb.toObject()));
+    this->_manager->addSymbol(this->_userId, fileId, Symbol::fromJsonObject(symb.toObject()));
   }
 
   file_db.addCharId(symbols.count());
 
-  auto clients = this->_manager->getClientsInFile(fileId);
+  auto clients = this->_manager->getUsersInFile(fileId);
   for(auto &cl: clients) {
-    if(cl == this->_clientId) {
+    if(cl == this->_userId) {
       continue;
     }
-    auto userId = this->_manager->getUserId(cl);
 
     QJsonObject data;
-    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), cl);
     data["symbols"] = _m.getArray("symbols");
     data["userId"] = session.getUserId();
 
@@ -660,18 +656,17 @@ void ServerMessageProcessor::localDelete() {
 
   auto ids = _m.getArray("ids");
   for(const auto &id: ids) {
-    this->_manager->deleteSymbol(this->_clientId, fileId, SymbolId::fromJsonObject(id.toObject()));
+    this->_manager->deleteSymbol(this->_userId, fileId, SymbolId::fromJsonObject(id.toObject()));
   }
 
-  auto clients = this->_manager->getClientsInFile(fileId);
+  auto clients = this->_manager->getUsersInFile(fileId);
   for(auto &cl: clients) {
-    if(cl == this->_clientId) {
+    if(cl == this->_userId) {
       continue;
     }
-    auto userId = this->_manager->getUserId(cl);
 
     QJsonObject data;
-    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), cl);
     data["ids"] = ids;
     data["userId"] = session.getUserId();
 
@@ -693,18 +688,17 @@ void ServerMessageProcessor::localUpdate() {
   auto symbols = _m.getArray("symbols");
   for(const auto &symb: symbols) {
     auto s = Symbol::fromJsonObject(symb.toObject());
-    this->_manager->updateSymbol(this->_clientId, fileId, s);
+    this->_manager->updateSymbol(this->_userId, fileId, s);
   }
 
-  auto clients = this->_manager->getClientsInFile(fileId);
+  auto clients = this->_manager->getUsersInFile(fileId);
   for(auto &cl: clients) {
-    if(cl == this->_clientId) {
+    if(cl == this->_userId) {
       continue;
     }
-    auto userId = this->_manager->getUserId(cl);
 
     QJsonObject data;
-    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), cl);
     data["symbols"] = _m.getArray("symbols");
     data["userId"] = session.getUserId();
 
@@ -723,15 +717,14 @@ void ServerMessageProcessor::localMove() {
 
   auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
-  auto clients = this->_manager->getClientsInFile(fileId);
+  auto clients = this->_manager->getUsersInFile(fileId);
   for(auto &cl: clients) {
-    if(cl == this->_clientId) {
+    if(cl == this->_userId) {
       continue;
     }
-    auto userId = this->_manager->getUserId(cl);
 
     QJsonObject data;
-    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), cl);
     data["userId"] = session.getUserId();
     data["symbolId"] = _m.getObject("symbolId");
     data["cursorPosition"] = _m.getInt("cursorPosition");
@@ -864,8 +857,7 @@ void ServerMessageProcessor::delete_lambda(int link_id, int owner_id) {
   auto byte_data = msg.toQByteArray();
 
   auto manager = MessageManager::get();
-  auto client = manager->getClient(owner_id);
-  if(client) {
-    manager->send_data(*client, byte_data);
+  if(manager->isConnected(owner_id)) {
+    manager->send_data(owner_id, byte_data);
   }
 }

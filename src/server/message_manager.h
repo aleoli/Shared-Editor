@@ -28,48 +28,47 @@ public:
 
   /* gestione utenti */
   //quando il processor processa un msg di login, va aggiunto a _clients
-  void addClient(quint64 clientId, std::shared_ptr<Session> session, QString username);
-  QString getUsername(quint64 clientId);
-  std::optional<quint64> getClient(int userId);             // il client in cui è connesso l'utente
-  std::list<quint64> getClientsInFile(int fileId);      // tutti i client che stanno lavorando su un file
-  int getUserId(quint64 client_id);
+  void addUser(std::shared_ptr<Session> session, QString username);
+  QString getUsername(int userId);
+  bool isConnected(int userId);             // il client in cui è connesso l'utente
+  std::list<int> getUsersInFile(int fileId);      // tutti gli user che stanno lavorando su un file
 
   /* gestione file */
   // richiesta di un file da parte di un client
-  File getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser);
+  File getFile(int userId, int fileId, std::optional<int> fileIdUser);
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
-  void addSymbol(quint64 clientId, int fileId, const Symbol& sym);
-  void deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId);
+  void addSymbol(int userId, int fileId, const Symbol& sym);
+  void deleteSymbol(int userId, int fileId, const SymbolId& symId);
   // per la modifica di un simbolo
-  void updateSymbol(quint64 clientId, int fileId, const Symbol& sym);
+  void updateSymbol(int userId, int fileId, const Symbol& sym);
 
   // chiusura fiel da parte del client -> rimozione da fileClients, NON dalla FifoMap
-  void closeFile(quint64 clientId, int fileId);
+  void closeFile(int userId, int fileId);
 
-  void sendToAll(quint64 clientId, int fileId, QByteArray data);
+  void sendToAll(int userId, int fileId, QByteArray data);
 
 signals:
-  void send_data(quint64 client_id, QByteArray data);
-  void send_data(std::list<quint64> client_list, QByteArray data);
-  void connection_error(quint64 client_id);
+  void send_data(int userId, QByteArray data);
+  void send_data(std::list<int> user_list, QByteArray data);
+  void connection_error(int userId);
 
 public slots:
-  void process_data(quint64 client_id, QByteArray data);
-  void clientDisconnected(quint64 clientId);
+  void process_data(int userId, QByteArray data);
+  void userDisconnected(int userId);
 
 private:
   static std::shared_ptr<MessageManager> instance;
   explicit MessageManager(QObject *parent = nullptr);
 
   //caricamento in memoria del file nella FifoMap, se non c'è già
-  void loadFile(int clientId, int fileId);
+  void loadFile(int userId, int fileId);
 
-  bool clientIsLogged(quint64 clientId);
-  bool clientHasFileOpen(quint64 clientId); // voglio sapere se ha aperto un qualunque file
-  bool clientHasFileOpen(quint64 clientId, int fileId); // voglio sapere se ha aperto uno specifico file
+  bool userIsLogged(int userId);
+  bool userHasFileOpen(int userId); // voglio sapere se ha aperto un qualunque file
+  bool userHasFileOpen(int userId, int fileId); // voglio sapere se ha aperto uno specifico file
 
   typedef struct Data {
-    quint64 clientId;
+    int userId;
     int fileId;
     int fileIdUser;
     std::shared_ptr<Session> session;
@@ -77,7 +76,7 @@ private:
     QString username;
   } Data;
 
-  std::unordered_map<quint64, Data> _clients;                // mappa client_id -> Data
-  std::unordered_map<int, std::list<quint64>> _fileClients;    // mappa file_id -> lista di client_id che lo stanno usando
+  std::unordered_map<int, Data> _clients;                // mappa client_id -> Data
+  std::unordered_map<int, std::list<int>> _fileClients;    // mappa file_id -> lista di client_id che lo stanno usando
   FifoMap<int, File> _openFiles{MAX_OPEN_FILES};   //un unico posto in cui sono presenti i file, con l'aggiunta di qualche handler per gestirli
 };

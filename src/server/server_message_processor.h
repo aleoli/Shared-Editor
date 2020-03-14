@@ -7,7 +7,7 @@
 
 class ServerMessageProcessor: public MessageProcessor {
 public:
-  ServerMessageProcessor(const Message &m, quint64 clientId);
+  ServerMessageProcessor(const Message &m, int userId);
 
   bool shouldSendToAll() const;
 
@@ -20,7 +20,7 @@ protected:
 
 private:
   bool _to_all = false;
-  quint64 _clientId;
+  quint64 _userId;
   std::shared_ptr<MessageManager> _manager;
 
   static void delete_lambda(int link_id, int owner_id);

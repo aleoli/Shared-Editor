@@ -24,10 +24,10 @@ std::shared_ptr<MessageManager> MessageManager::get() {
   return instance;
 }
 
-void MessageManager::process_data(quint64 client_id, QByteArray data) {
+void MessageManager::process_data(int userId, QByteArray data) {
   try {
     auto msg = Message::fromQByteArray(data);
-    auto mp = ServerMessageProcessor{msg, client_id};
+    auto mp = ServerMessageProcessor{msg, userId};
 
     if(!mp.hasResponse()) {
       return;
@@ -37,217 +37,208 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
 
     std::cout << "OUT: " << array.data() << std::endl;
     if(mp.shouldSendToAll()) {
-      this->sendToAll(client_id, _clients[client_id].fileId, array);
+      this->sendToAll(userId, _clients[userId].fileId, array);
     } else {
-      emit this->send_data(client_id, array);
+      emit this->send_data(userId, array);
     }
 
   } catch(se_exceptions::SE_Exception ex) {
     std::cerr << ex.what() << std::endl;
-    emit this->connection_error(client_id);
-    clientDisconnected(client_id);
+    emit this->connection_error(userId);
+    userDisconnected(userId);
   }
 }
 
-void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> session, QString username) {
-  if(clientIsLogged(clientId)) {
-    throw ClientLoginException{"Client is already logged in"};
-  }
-  for(auto& cl: this->_clients) {
-    if(cl.second.session->getUserId() == session->getUserId()) {
-      throw ClientMultipleLoginException{"User already logged with other client"};
-    }
+void MessageManager::addUser(std::shared_ptr<Session> session, QString username) {
+  auto userId = session->getUserId();
+  if(userIsLogged(userId)) {
+    throw ClientLoginException{"User is already logged in"};
   }
 
   Data data;
-  data.clientId = clientId;
+  data.userId = userId;
   data.session = session;
   data.fileIsOpen = false;
   data.username = username;
 
-  _clients[clientId] = data;
+  _clients[userId] = data;
 }
 
-QString MessageManager::getUsername(quint64 clientId) {
-  return this->_clients[clientId].username;
+QString MessageManager::getUsername(int userId) {
+  return this->_clients[userId].username;
 }
 
-std::optional<quint64> MessageManager::getClient(int userId) {
+bool MessageManager::isConnected(int userId) {
   for(auto &i: this->_clients) {
     if(i.second.session->getUserId() == userId) {
-      return i.second.clientId;
+      return true;
     }
   }
-  return std::nullopt;
+  return false;
 }
 
-std::list<quint64> MessageManager::getClientsInFile(int fileId) {
+std::list<int> MessageManager::getUsersInFile(int fileId) {
   return this->_fileClients[fileId];
 }
 
-int MessageManager::getUserId(quint64 client_id) {
-  return this->_clients[client_id].session->getUserId();
-}
-
-void MessageManager::clientDisconnected(quint64 clientId) {
-  if(_clients.count(clientId) == 0) return; //no exception here
+void MessageManager::userDisconnected(int userId) {
+  if(_clients.count(userId) == 0) return; //no exception here
 
   //se aveva un file aperto, lo rimuovo da _fileClients
-  auto data = _clients[clientId];
+  auto data = _clients[userId];
   if(data.fileIsOpen) {
     auto fileId = data.fileId;
 
-    auto clients = this->getClientsInFile(fileId);
-    for(auto &cl: clients) {
-      if(cl == clientId) {
+    auto clients = this->getUsersInFile(fileId);
+    for(auto &u_id: clients) {
+      if(u_id == userId) {
         continue;
       }
-      auto userId = this->getUserId(cl);
 
       QJsonObject _data;
       _data["fileId"] = data.fileIdUser;
-      _data["userId"] = userId;
+      _data["userId"] = u_id;
 
       auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_DISCONNECTED, Message::Status::QUERY, _data};
-      this->send_data(cl, msg.toQByteArray());
+      this->send_data(u_id, msg.toQByteArray());
     }
 
-    closeFile(clientId, data.fileId);
+    closeFile(userId, data.fileId);
   }
   if(data.session) {
     data.session->close();
   }
 
-  _clients.erase(clientId);
+  _clients.erase(userId);
 }
 
-void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
+void MessageManager::sendToAll(int userId, int fileId, QByteArray data) {
   auto list = _fileClients[fileId]; //per copia
-  list.remove(clientId);
+  list.remove(userId);
 
   if(!list.empty()) {
     emit this->send_data(list, data);
   }
 }
 
-File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser) {
-  if(!clientIsLogged(clientId)) {
-    throw ClientLoginException{"Client is not logged in"};
+File MessageManager::getFile(int userId, int fileId, std::optional<int> fileIdUser) {
+  if(!userIsLogged(userId)) {
+    throw ClientLoginException{"User is not logged in"};
   }
 
-  if(clientHasFileOpen(clientId)) {
-    throw ClientFileException{"Client has a file opened"};
+  if(userHasFileOpen(userId)) {
+    throw ClientFileException{"User has a file opened"};
   }
 
   //carico file in memoria se non c'è già
-  loadFile(clientId, fileId);
+  loadFile(userId, fileId);
 
   if(_fileClients.count(fileId) == 0) {
-    _fileClients[fileId] = std::list<quint64>{clientId};
+    _fileClients[fileId] = std::list<int>{userId};
   } else {
-    _fileClients[fileId].push_back(clientId);
+    _fileClients[fileId].push_back(userId);
   }
 
   File& f = _openFiles[fileId];
-  _clients[clientId].fileId = fileId;
-  _clients[clientId].fileIsOpen = true;
-  _clients[clientId].fileIdUser = fileIdUser ? *fileIdUser : fileId;
+  _clients[userId].fileId = fileId;
+  _clients[userId].fileIsOpen = true;
+  _clients[userId].fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
-  f.addClient(clientId, this->getUsername(clientId));
+  f.addClient(userId, this->getUsername(userId));
 
   return f;
 }
 
-void MessageManager::loadFile(int clientId, int fileId) {
+void MessageManager::loadFile(int userId, int fileId) {
   if(_openFiles.count(fileId) != 0) return;
 
-  auto f_db = FSElement_db::get(*_clients[clientId].session, fileId);
+  auto f_db = FSElement_db::get(*_clients[userId].session, fileId);
 
   File f = f_db.load();
   _openFiles[fileId] = f;
 }
 
-void MessageManager::addSymbol(quint64 clientId, int fileId, const Symbol& sym) {
-  if(!clientIsLogged(clientId)) {
-    throw ClientLoginException{"Client is not logged in"};
+void MessageManager::addSymbol(int userId, int fileId, const Symbol& sym) {
+  if(!userIsLogged(userId)) {
+    throw ClientLoginException{"User is not logged in"};
   }
 
-  if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+  if(!userHasFileOpen(userId, fileId)) {
+    throw ClientFileException{"User has not opened the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
-  loadFile(clientId, fileId);
+  loadFile(userId, fileId);
 
   File& f = _openFiles[fileId];
   f.remoteInsert(sym);
 }
 
-void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId) {
-  if(!clientIsLogged(clientId)) {
-    throw ClientLoginException{"Client is not logged in"};
+void MessageManager::deleteSymbol(int userId, int fileId, const SymbolId& symId) {
+  if(!userIsLogged(userId)) {
+    throw ClientLoginException{"User is not logged in"};
   }
 
-  if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+  if(!userHasFileOpen(userId, fileId)) {
+    throw ClientFileException{"User has not opened the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
-  loadFile(clientId, fileId);
+  loadFile(userId, fileId);
 
   File& f = _openFiles[fileId];
   f.remoteDelete(symId);
 }
 
-void MessageManager::updateSymbol(quint64 clientId, int fileId, const Symbol& sym) {
-  if(!clientIsLogged(clientId)) {
-    throw ClientLoginException{"Client is not logged in"};
+void MessageManager::updateSymbol(int userId, int fileId, const Symbol& sym) {
+  if(!userIsLogged(userId)) {
+    throw ClientLoginException{"User is not logged in"};
   }
 
-  if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+  if(!userHasFileOpen(userId, fileId)) {
+    throw ClientFileException{"User has not opened the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
-  loadFile(clientId, fileId);
+  loadFile(userId, fileId);
 
   File& f = _openFiles[fileId];
   f.remoteUpdate(sym);
 }
 
-void MessageManager::closeFile(quint64 clientId, int fileId) {
-  if(!clientIsLogged(clientId)) {
-    throw ClientLoginException{"Client is not logged in"};
+void MessageManager::closeFile(int userId, int fileId) {
+  if(!userIsLogged(userId)) {
+    throw ClientLoginException{"User is not logged in"};
   }
 
-  if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+  if(!userHasFileOpen(userId, fileId)) {
+    throw ClientFileException{"User has not opened the file"};
   }
 
   //rimuovo da fileClients
   auto &list = _fileClients[fileId];
-  list.remove(clientId);
+  list.remove(userId);
   if(list.empty()) _fileClients.erase(fileId);
 
   //rimuovo da _clients
-  _clients[clientId].fileIsOpen = false;
+  _clients[userId].fileIsOpen = false;
 
-  _openFiles[fileId].removeClient(clientId);
+  _openFiles[fileId].removeClient(userId);
 }
 
-bool MessageManager::clientIsLogged(quint64 clientId) {
-  return _clients.count(clientId) != 0;
+bool MessageManager::userIsLogged(int userId) {
+  return _clients.count(userId) != 0;
 }
 
-bool MessageManager::clientHasFileOpen(quint64 clientId, int fileId) {
-  auto data = _clients[clientId];
+bool MessageManager::userHasFileOpen(int userId, int fileId) {
+  auto data = _clients[userId];
 
   return data.fileIsOpen && data.fileId == fileId;
 }
 
-bool MessageManager::clientHasFileOpen(quint64 clientId) {
-  return _clients[clientId].fileIsOpen;
+bool MessageManager::userHasFileOpen(int userId) {
+  return _clients[userId].fileIsOpen;
 }
