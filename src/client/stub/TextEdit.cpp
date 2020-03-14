@@ -38,7 +38,7 @@ TextEdit::TextEdit(QWidget *parent)
 {
   // QTextEdit sarà il nostro widget principale, contiene un box in cui inserire testo.
   // Inoltre avremo un menu, in cui ci saranno tutte le varie opzioni, e una toolbar che ne avrà un set
-  _textEdit = new QTextEdit(this);
+  _textEdit = new QTextEditImpl(this);
   setCentralWidget(_textEdit);
 
   // inizializzo tutte le varie azioni. Un'azione può essere "Nuovo File", "Copia", "Incolla", "Grassetto", ...
@@ -53,6 +53,8 @@ TextEdit::TextEdit(QWidget *parent)
   QObject::connect(_textEdit, &QTextEdit::cursorPositionChanged, this, &TextEdit::cursorChanged);
   QObject::connect(_textEdit, &QTextEdit::currentCharFormatChanged, this, &TextEdit::formatChanged);
   QObject::connect(_textEdit, &QTextEdit::textChanged, this, &TextEdit::updateCursors);
+  QObject::connect(_textEdit, &QTextEditImpl::resized, this, &TextEdit::updateCursors);
+  QObject::connect(_textEdit, &QTextEditImpl::scrolled, this, &TextEdit::updateCursors);
 
   // _dock right
   initDock();
@@ -488,6 +490,8 @@ void TextEdit::change(int pos, int removed, int added) {
 }
 
 void TextEdit::handleUpdate(int pos, int nchars) {
+  if(nchars == 0) return;
+
   QTextCursor cursor(_textEdit->document());
   std::vector<Symbol> symUpdated;
   bool real = false;
@@ -519,6 +523,8 @@ void TextEdit::handleUpdate(int pos, int nchars) {
 }
 
 void TextEdit::handleDelete(int pos, int removed) {
+  if(removed == 0) return;
+
   std::vector<SymbolId> symRemoved;
 
   for(int i=0; i<removed; i++) {
@@ -536,6 +542,8 @@ void TextEdit::handleDelete(int pos, int removed) {
 }
 
 void TextEdit::handleInsert(int pos, int added) {
+  if(added == 0) return;
+
   QTextCursor cursor(_textEdit->document());
   std::vector<Symbol> symAdded;
 
@@ -652,6 +660,7 @@ void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> s
   int pos;
 
   //TODO non deve succedere, ma se il clientId non esiste crasha tutto.. idem delete e update
+  debug("clientid: " + QString::number(clientId));
   auto cursor = _users.at(clientId).cursor;
 
   debug("Inserimento remoto di " + QString::number(symbols.size())

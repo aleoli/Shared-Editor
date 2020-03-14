@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QTextEdit>
 #include <vector>
 #include <QChar>
 #include <QListWidget>
@@ -15,6 +14,7 @@
 #include "File.h"
 #include "Cursor.h"
 #include "ColorGenerator.h"
+#include "QTextEditImpl.h"
 
 class TextEdit : public QMainWindow {
     Q_OBJECT
@@ -56,6 +56,7 @@ public slots:
   void userDisconnectedQuery(int fileId, int clientId);
   void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
   void setShareLink(QString shareLink);
+  void updateCursors();
 
 signals:
   void closeFileQuery(int fileId);
@@ -85,7 +86,6 @@ private:
   void setupEditActions();
   void setupTextActions();
   void updateActions();
-  void updateCursors();
 
   void handleUpdate(int pos, int nchars);
   void handleDelete(int pos, int removed);
@@ -100,7 +100,7 @@ private:
   std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
   int getCursorPosition(SymbolId id, int position);
 
-  QTextEdit *_textEdit;
+  QTextEditImpl *_textEdit;
 
   QAction *_actionTextBold;
   QAction *_actionTextItalic;
