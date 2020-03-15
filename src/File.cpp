@@ -244,7 +244,7 @@ void File::addUser(int userId, QString username) {
     throw FileUserException{"User already exists"};
   }
 
-  _users[userId] = { userId, username };
+  _users[userId] = { userId, username, true };
 }
 
 void File::removeUser(int userId) {
@@ -253,6 +253,22 @@ void File::removeUser(int userId) {
   }
 
   _users.erase(userId);
+}
+
+void File::setOnline(int userId, bool val) {
+  if(_users.count(userId) != 0) {
+    throw FileUserException{"User is not in map"};
+  }
+
+  _users[userId].online = val;
+}
+
+bool File::isOnline(int userId) {
+  if(_users.count(userId) != 0) {
+    throw FileUserException{"User is not in map"};
+  }
+
+  return _users[userId].online;
 }
 
 void File::localInsert(Symbol &sym, int pos) {
