@@ -74,21 +74,21 @@ void TextEdit::setFile(const File &f, int charId) {
 
 void TextEdit::setConnectedUsers() {
   //setto gli utenti connessi
-  for(auto &client : _file.getClients()) {
-    if (client.second.username == _user.username) continue; //TODO check userId dopo refactor
+  for(auto &user : _file.getUsers()) {
+    if (user.second.userId == _user.userId) continue;
 
-    remoteUser user;
-    user.userId = client.second.clientId;
-    user.username = client.second.username;
-    user.color = _gen.getColor();
-    user.cursor = new Cursor(_textEdit, user.color);
+    remoteUser rUser;
+    rUser.userId = user.second.userId;
+    rUser.username = user.second.username;
+    rUser.color = _gen.getColor();
+    rUser.cursor = new Cursor(_textEdit, rUser.color);
 
-    user.item = new QListWidgetItem(user.username, _dock);
-    user.item->setFlags(Qt::NoItemFlags);
-    user.item->setForeground(user.color);
+    rUser.item = new QListWidgetItem(rUser.username, _dock);
+    rUser.item->setFlags(Qt::NoItemFlags);
+    rUser.item->setForeground(rUser.color);
 
     //TODO check nella mappa per vedere che non ci sia già
-    _users[client.second.clientId] = user;
+    _users[user.second.userId] = rUser;
   }
 }
 
@@ -655,16 +655,16 @@ void TextEdit::reset() {
 // Serve soprattutto nel caso in cui l'app supporti più files aperti
 //INFO ipotizzo che i vettori non siano vuoti (check fatto nelle localXXX e lato server)
 
-void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols) {
+void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols) {
   _blockSignals = true;
   int pos;
 
-  //TODO non deve succedere, ma se il clientId non esiste crasha tutto.. idem delete e update
-  debug("clientid: " + QString::number(clientId));
-  auto cursor = _users.at(clientId).cursor;
+  //TODO non deve succedere, ma se il userId non esiste crasha tutto.. idem delete e update
+  debug("userid: " + QString::number(userId));
+  auto cursor = _users.at(userId).cursor;
 
   debug("Inserimento remoto di " + QString::number(symbols.size())
-        + " caratteri dell'user " + QString::number(clientId));
+        + " caratteri dell'user " + QString::number(userId));
 
   for(auto &sym : symbols) {
     pos = _file.remoteInsert(sym);
@@ -675,14 +675,14 @@ void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> s
   _blockSignals = false;
 }
 
-void TextEdit::remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId> ids) {
+void TextEdit::remoteDeleteQuery(int fileId, int userId, std::vector<SymbolId> ids) {
   _blockSignals = true;
 
   int pos;
-  auto cursor = _users.at(clientId).cursor;
+  auto cursor = _users.at(userId).cursor;
 
   debug("Cancellazione remota di " + QString::number(ids.size())
-        + " caratteri dell'user " + QString::number(clientId));
+        + " caratteri dell'user " + QString::number(userId));
 
   for(auto &id : ids) {
     pos = _file.remoteDelete(id);
@@ -693,13 +693,13 @@ void TextEdit::remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId>
   _blockSignals = false;
 }
 
-void TextEdit::remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> symbols) {
+void TextEdit::remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> symbols) {
   _blockSignals = true;
   int pos;
-  auto cursor = _users.at(clientId).cursor;
+  auto cursor = _users.at(userId).cursor;
 
   debug("Update remoto di " + QString::number(symbols.size())
-        + " caratteri dell'user " + QString::number(clientId));
+        + " caratteri dell'user " + QString::number(userId));
 
   for(auto &sym : symbols) {
     pos = _file.remoteUpdate(sym);
@@ -719,11 +719,11 @@ void TextEdit::updateCursors() {
   }
 }
 
-void TextEdit::userConnectedQuery(int fileId, int clientId, QString username) {
-  info("New remote user: " + username + " " + QString::number(clientId));
+void TextEdit::userConnectedQuery(int fileId, int userId, QString username) {
+  info("New remote user: " + username + " " + QString::number(userId));
 
   remoteUser user;
-  user.userId = clientId;
+  user.userId = userId;
   user.username = username;
   user.color = _gen.getColor();
   user.cursor = new Cursor(_textEdit, user.color);
@@ -734,27 +734,27 @@ void TextEdit::userConnectedQuery(int fileId, int clientId, QString username) {
   user.item->setForeground(user.color);
 
   //TODO check nella mappa per vedere che non ci sia già
-  _users[clientId] = user;
+  _users[userId] = user;
 }
 
-void TextEdit::userDisconnectedQuery(int fileId, int clientId) {
-  info("User " + QString::number(clientId) + " disconnected");
+void TextEdit::userDisconnectedQuery(int fileId, int userId) {
+  info("User " + QString::number(userId) + " disconnected");
 
   //TODO check nella mappa per vedere che ci sia
-  auto user = _users[clientId];
+  auto user = _users[userId];
 
   delete user.cursor;
   _dock->takeItem(_dock->row(user.item));
   delete user.item;
 
-  _users.erase(clientId);
+  _users.erase(userId);
 }
 
-void TextEdit::remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
-  debug("User: " + QString::number(clientId) + " moved cursor");
+void TextEdit::remoteMoveQuery(int fileId, int userId, SymbolId symbolId, int cursorPosition) {
+  debug("User: " + QString::number(userId) + " moved cursor");
 
   //TODO check nella mappa per vedere che ci sia
-  auto cursor = _users[clientId].cursor;
+  auto cursor = _users[userId].cursor;
   cursor->updateCursorPosition(getCursorPosition(symbolId, cursorPosition));
   cursor->show();
 }

@@ -415,43 +415,43 @@ void GuiWrapper::getFileResponseReceived(File file, int charId) {
   _textEdit->setConnectedUsers(); //fix: i cursori si visualizzano correttamente solo DOPO che il texteditor è visibile
 }
 
-void GuiWrapper::remoteInsertQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols) {
+void GuiWrapper::remoteInsertQueryReceived(int fileId, int userId, std::vector<Symbol> symbols) {
   //debug("Ricevuto remote insert query");
 
-  emit remoteInsertQuery(fileId, clientId, symbols);
+  emit remoteInsertQuery(fileId, userId, symbols);
 }
 
-void GuiWrapper::remoteDeleteQueryReceived(int fileId, int clientId, std::vector<SymbolId> ids) {
+void GuiWrapper::remoteDeleteQueryReceived(int fileId, int userId, std::vector<SymbolId> ids) {
   //debug("Ricevuto remote delete query");
 
-  emit remoteDeleteQuery(fileId, clientId, ids);
+  emit remoteDeleteQuery(fileId, userId, ids);
 }
 
-void GuiWrapper::remoteUpdateQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols) {
+void GuiWrapper::remoteUpdateQueryReceived(int fileId, int userId, std::vector<Symbol> symbols) {
   //debug("Ricevuto remote update query");
 
-  emit remoteUpdateQuery(fileId, clientId, symbols);
+  emit remoteUpdateQuery(fileId, userId, symbols);
 }
 
-void GuiWrapper::userConnectedQueryReceived(int fileId, int clientId, QString username) {
+void GuiWrapper::userConnectedQueryReceived(int fileId, int userId, QString username) {
   info("Ricevuto user connected query");
-  debug("Client id: " + QString::number(clientId));
+  debug("User id: " + QString::number(userId));
 
-  emit userConnectedQuery(fileId, clientId, username);
+  emit userConnectedQuery(fileId, userId, username);
 }
 
-void GuiWrapper::userDisconnectedQueryReceived(int fileId, int clientId) {
+void GuiWrapper::userDisconnectedQueryReceived(int fileId, int userId) {
   info("Ricevuto user disconnected query");
-  debug("Client id: " + QString::number(clientId));
+  debug("User id: " + QString::number(userId));
 
-  emit userDisconnectedQuery(fileId, clientId);
+  emit userDisconnectedQuery(fileId, userId);
 }
 
-void GuiWrapper::remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
+void GuiWrapper::remoteMoveQueryReceived(int fileId, int userId, SymbolId symbolId, int cursorPosition) {
   debug("Ricevuto remote move query");
-  debug("Client id: " + QString::number(clientId));
+  debug("User id: " + QString::number(userId));
 
-  emit remoteMoveQuery(fileId, clientId, symbolId, cursorPosition);
+  emit remoteMoveQuery(fileId, userId, symbolId, cursorPosition);
 }
 
 void GuiWrapper::getLinkResponseReceived(QString link) {

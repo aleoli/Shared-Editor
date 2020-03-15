@@ -45,12 +45,12 @@ signals:
   void sendActivateLinkQuery(QString token, QString link);
 
   //segnali per il TextEdit
-  void remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols);
-  void remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId> ids);
-  void remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> symbols);
-  void userConnectedQuery(int fileId, int clientId, QString username);
-  void userDisconnectedQuery(int fileId, int clientId);
-  void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+  void remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols);
+  void remoteDeleteQuery(int fileId, int userId, std::vector<SymbolId> ids);
+  void remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> symbols);
+  void userConnectedQuery(int fileId, int userId, QString username);
+  void userDisconnectedQuery(int fileId, int userId);
+  void remoteMoveQuery(int fileId, int userId, SymbolId symbolId, int cursorPosition);
 
   void quit();
 
@@ -76,12 +76,12 @@ public slots:
   void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
   void getFileResponseReceived(File file, int charId);
-  void remoteInsertQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols);
-  void remoteDeleteQueryReceived(int fileId, int clientId, std::vector<SymbolId> ids);
-  void remoteUpdateQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols);
-  void userConnectedQueryReceived(int fileId, int clientId, QString username);
-  void userDisconnectedQueryReceived(int fileId, int clientId);
-  void remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+  void remoteInsertQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);
+  void remoteDeleteQueryReceived(int fileId, int userId, std::vector<SymbolId> ids);
+  void remoteUpdateQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);
+  void userConnectedQueryReceived(int fileId, int userId, QString username);
+  void userDisconnectedQueryReceived(int fileId, int userId);
+  void remoteMoveQueryReceived(int fileId, int userId, SymbolId symbolId, int cursorPosition);
   void getLinkResponseReceived(QString link);
   void activateLinkResponseReceived(FSElement element, File file);
 
