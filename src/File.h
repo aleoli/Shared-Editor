@@ -15,6 +15,7 @@ public:
   typedef struct {
     int userId;
     QString username;
+    bool online;
   } UserInfo;
 
   File();
@@ -45,6 +46,9 @@ public:
 
   void addUser(int userId, QString username);
   void removeUser(int userId);
+
+  void setOnline(int userId, bool val);
+  bool isOnline(int userId);
 
   //CRDT
   void localInsert(Symbol &sym, int pos);
