@@ -344,10 +344,10 @@ QColor Symbol::getBackgroundColor() const {
 }
 
 //IDENTIFIER
-Symbol::Identifier::Identifier() : _digit(-1), _clientId(-1) {}
+Symbol::Identifier::Identifier() : _digit(-1), _userId(-1) {}
 
-Symbol::Identifier::Identifier(int digit, int clientId)
-  : _digit(digit), _clientId(clientId) {}
+Symbol::Identifier::Identifier(int digit, int userId)
+  : _digit(digit), _userId(userId) {}
 
 Symbol::Identifier::Identifier(const QJsonObject &json) {
   checkAndAssign(json);
@@ -359,21 +359,21 @@ Symbol::Identifier::Identifier(QJsonObject &&json) {
 
 void Symbol::Identifier::checkAndAssign(const QJsonObject &json) {
   auto digitValue = json["digit"];
-  auto clientIdValue = json["clientId"];
+  auto userIdValue = json["userId"];
 
-  if(digitValue.isUndefined() || clientIdValue.isUndefined()) {
+  if(digitValue.isUndefined() || userIdValue.isUndefined()) {
     throw SymbolIdentifierFromJsonException{"The QJsonObject has some fields missing"};
   }
 
   auto digit = digitValue.toInt(-1);
-  auto clientId = clientIdValue.toInt(-1);
+  auto userId = userIdValue.toInt(-1);
 
-  if(digit < 0 || clientId < 0) {
+  if(digit < 0 || userId < 0) {
     throw SymbolIdentifierFromJsonException{"One or more fields are not valid"};
   }
 
   _digit = digit;
-  _clientId = clientId;
+  _userId = userId;
 }
 
 Symbol::Identifier Symbol::Identifier::fromJsonObject(const QJsonObject &json) {
@@ -388,18 +388,18 @@ QJsonObject Symbol::Identifier::toJsonObject() const {
   QJsonObject json;
 
   json["digit"] = QJsonValue(_digit);
-  json["clientId"] = QJsonValue(_clientId);
+  json["userId"] = QJsonValue(_userId);
 
   return json;
 }
 
 bool operator==(const Symbol::Identifier& lhs, const Symbol::Identifier& rhs) {
-  return lhs._digit == rhs._digit && lhs._clientId == rhs._clientId;
+  return lhs._digit == rhs._digit && lhs._userId == rhs._userId;
 }
 
 bool operator<(const Symbol::Identifier& lhs, const Symbol::Identifier& rhs) {
   if(lhs._digit == rhs._digit)
-    return lhs._clientId < rhs._clientId;
+    return lhs._userId < rhs._userId;
 
   return lhs._digit < rhs._digit;
 }
@@ -408,12 +408,12 @@ int Symbol::Identifier::getDigit() const {
   return _digit;
 }
 
-int Symbol::Identifier::getClientId() const {
-  return _clientId;
+int Symbol::Identifier::getUserId() const {
+  return _userId;
 }
 
 std::string Symbol::Identifier::to_string() const {
   std::stringstream ss;
-  ss << _digit << "-" << _clientId;
+  ss << _digit << "-" << _userId;
   return ss.str();
 }

@@ -15,7 +15,7 @@ public:
   class Identifier {
   public:
     Identifier();
-    Identifier(int digit, int clientId);
+    Identifier(int digit, int userId);
     explicit Identifier(const QJsonObject &json);
     explicit Identifier(QJsonObject &&json);
 
@@ -27,13 +27,13 @@ public:
     friend bool operator<(const Identifier& lhs, const Identifier& rhs);
 
     int getDigit() const;
-    int getClientId() const;
+    int getUserId() const;
     std::string to_string() const;
 
   private:
     void checkAndAssign(const QJsonObject &json);
 
-    int _digit, _clientId;
+    int _digit, _userId;
   };
 
   Symbol();

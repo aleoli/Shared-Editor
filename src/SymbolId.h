@@ -6,7 +6,7 @@
 class SymbolId {
 public:
   SymbolId();
-  SymbolId(int clientId, int charId);
+  SymbolId(int userId, int charId);
   explicit SymbolId(const QJsonObject &json);
   explicit SymbolId(QJsonObject &&json);
 
@@ -17,12 +17,12 @@ public:
   static SymbolId fromJsonObject(QJsonObject &&json);
   QJsonObject toJsonObject() const;
 
-  int getClientId() const;
+  int getUserId() const;
   int getCharId() const;
   std::string to_string() const;
 
 private:
   void checkAndAssign(const QJsonObject &json);
 
-  int _clientId, _charId;
+  int _userId, _charId;
 };
