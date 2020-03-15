@@ -167,7 +167,7 @@ void MessageManager::loadFile(int clientId, int fileId) {
   _openFiles[fileId] = f;
 }
 
-void MessageManager::addSymbol(quint64 clientId, int fileId, const Symbol& sym) {
+void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& syms) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -181,10 +181,12 @@ void MessageManager::addSymbol(quint64 clientId, int fileId, const Symbol& sym) 
   loadFile(clientId, fileId);
 
   File& f = _openFiles[fileId];
-  f.remoteInsert(sym);
+  for(const auto& sym: syms) {
+    f.remoteInsert(Symbol::fromJsonObject(sym.toObject()));
+  }
 }
 
-void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& symId) {
+void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -198,10 +200,12 @@ void MessageManager::deleteSymbol(quint64 clientId, int fileId, const SymbolId& 
   loadFile(clientId, fileId);
 
   File& f = _openFiles[fileId];
-  f.remoteDelete(symId);
+  for(const auto& sym: syms) {
+    f.remoteDelete(SymbolId::fromJsonObject(sym.toObject()));
+  }
 }
 
-void MessageManager::updateSymbol(quint64 clientId, int fileId, const Symbol& sym) {
+void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -215,7 +219,9 @@ void MessageManager::updateSymbol(quint64 clientId, int fileId, const Symbol& sy
   loadFile(clientId, fileId);
 
   File& f = _openFiles[fileId];
-  f.remoteUpdate(sym);
+  for(const auto& sym: syms) {
+    f.remoteUpdate(Symbol::fromJsonObject(sym.toObject()));
+  }
 }
 
 void MessageManager::closeFile(quint64 clientId, int fileId) {

@@ -625,9 +625,7 @@ void ServerMessageProcessor::localInsert() {
   auto fileId = file_db.getPhysicalId();
 
   auto symbols = _m.getArray("symbols");
-  for(const auto &symb: symbols) {
-    this->_manager->addSymbol(this->_clientId, fileId, Symbol::fromJsonObject(symb.toObject()));
-  }
+  this->_manager->addSymbols(this->_clientId, fileId, symbols);
 
   file_db.addCharId(symbols.count());
 
@@ -659,9 +657,7 @@ void ServerMessageProcessor::localDelete() {
   auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto ids = _m.getArray("ids");
-  for(const auto &id: ids) {
-    this->_manager->deleteSymbol(this->_clientId, fileId, SymbolId::fromJsonObject(id.toObject()));
-  }
+  this->_manager->deleteSymbols(this->_clientId, fileId, ids);
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {
@@ -691,10 +687,7 @@ void ServerMessageProcessor::localUpdate() {
   auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto symbols = _m.getArray("symbols");
-  for(const auto &symb: symbols) {
-    auto s = Symbol::fromJsonObject(symb.toObject());
-    this->_manager->updateSymbol(this->_clientId, fileId, s);
-  }
+  this->_manager->updateSymbols(this->_clientId, fileId, symbols);
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {
