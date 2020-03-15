@@ -20,6 +20,7 @@ public:
   void updateCursorPosition(int position);
   void insert(const Symbol &sym, int position);
   void remove(int position);
+  void show();
 
 public slots:
   void updateCursorView();
@@ -28,10 +29,11 @@ private slots:
   void changeVisibility();
 
 private:
-  QTextEdit *textEdit_;
-  QTextCursor *cursor_;
-  QTimer *timer_;
-  bool isVisible_ = true;
+  QTextEdit *_textEdit;
+  QTextCursor *_cursor;
+  QTimer *_timer;
+  bool _isVisible;
+  bool _isActive;
   QColor _color;
 };
 

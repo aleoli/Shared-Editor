@@ -12,6 +12,7 @@ using namespace se_exceptions;
 #define USERNEW static_cast<int>(Message::Type::USER) * 100 + static_cast<int>(Message::UserAction::NEW)
 #define FILENEW static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::NEW)
 #define FILEGET static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::GET)
+#define FILELINK static_cast<int>(Message::Type::FILE) * 100 + static_cast<int>(Message::FileAction::ACTIVATE_LINK)
 
 //per finalità di debug e testing
 #define CONNECT_TO_SERVER 1
@@ -56,10 +57,10 @@ void GuiWrapper::run() {
   _window = OpenWindow::LANDING;
   _landing->show();
 #else
-  _login->show();
+  //_login->show();
   //_fileSelector->show();
-  //_textEdit->setUser(33, "bob");
-  //_textEdit->show();
+  _textEdit->setUser(33, "bob");
+  _textEdit->show();
 #endif
 
 #if USE_TESTS
@@ -114,6 +115,7 @@ void GuiWrapper::connectWidgets() {
   // browser file
   connect(_fileSelector, &FileSelector::newFileQuery, this, &GuiWrapper::newFileQuery);
   connect(_fileSelector, &FileSelector::getFileQuery, this, &GuiWrapper::getFileQuery);
+  connect(_fileSelector, &FileSelector::activateLinkQuery, this, &GuiWrapper::activateLinkQuery);
 
   // TextEdit -> GuiWrapper (Client -> Server)
   connect(_textEdit, &TextEdit::closeFileQuery, this, &GuiWrapper::closeFileQuery);
@@ -121,6 +123,7 @@ void GuiWrapper::connectWidgets() {
   connect(_textEdit, &TextEdit::localDeleteQuery, this, &GuiWrapper::localDeleteQuery);
   connect(_textEdit, &TextEdit::localUpdateQuery, this, &GuiWrapper::localUpdateQuery);
   connect(_textEdit, &TextEdit::localMoveQuery, this, &GuiWrapper::localMoveQuery);
+  connect(_textEdit, &TextEdit::getLinkQuery, this, &GuiWrapper::getLinkQuery);
 
   // GuiWrapper -> TextEdit (Server -> Client)
   connect(this, &GuiWrapper::remoteInsertQuery, _textEdit, &TextEdit::remoteInsertQuery);
@@ -142,6 +145,8 @@ void GuiWrapper::initClientToServer() {
   connect(this, &GuiWrapper::sendLocalDeleteQuery, _manager.get(), &MessageManager::localDeleteQuery);
   connect(this, &GuiWrapper::sendLocalUpdateQuery, _manager.get(), &MessageManager::localUpdateQuery);
   connect(this, &GuiWrapper::sendLocalMoveQuery, _manager.get(), &MessageManager::localMoveQuery);
+  connect(this, &GuiWrapper::sendGetLinkQuery, _manager.get(), &MessageManager::getLinkQuery);
+  connect(this, &GuiWrapper::sendActivateLinkQuery, _manager.get(), &MessageManager::activateLinkQuery);
 }
 
 void GuiWrapper::initServerToClient() {
@@ -157,6 +162,8 @@ void GuiWrapper::initServerToClient() {
   connect(_manager.get(), &MessageManager::userConnectedQuery, this, &GuiWrapper::userConnectedQueryReceived);
   connect(_manager.get(), &MessageManager::userDisconnectedQuery, this, &GuiWrapper::userDisconnectedQueryReceived);
   connect(_manager.get(), &MessageManager::remoteMoveQuery, this, &GuiWrapper::remoteMoveQueryReceived);
+  connect(_manager.get(), &MessageManager::getLinkResponse, this, &GuiWrapper::getLinkResponseReceived);
+  connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiWrapper::activateLinkResponseReceived);
 }
 
 void GuiWrapper::checkWaiting(bool shouldBe) {
@@ -180,7 +187,7 @@ void GuiWrapper::loginQuery(QString username, QString psw) {
   _account.username = username;
   _account.psw = psw;
   _account.userId = -1;
-  _account.token = nullptr;
+  _account.token = std::nullopt;
 
   emit sendLoginQuery(username, psw);
 }
@@ -194,34 +201,50 @@ void GuiWrapper::newUserQuery(QString username, QString psw, QString pswRepeat) 
   _account.username = username;
   _account.psw = psw;
   _account.userId = -1;
-  _account.token = nullptr;
+  _account.token = std::nullopt;
 
   emit sendNewUserQuery(username, psw, pswRepeat);
 }
 
 void GuiWrapper::getFileQuery(int id) {
   checkWaiting(false);
+  checkToken();
   _lastMessageSent = FILEGET;
 
   info("Invio get file query");
 
-  emit sendGetFileQuery(_account.token, id);
+  //setto file ID per quando arriverà la risposta e aprirò l'editor
+  _textEdit->setFileId(id);
+
+  emit sendGetFileQuery(*_account.token, id);
+}
+
+void GuiWrapper::activateLinkQuery(QString link) {
+  checkWaiting(false);
+  checkToken();
+  _lastMessageSent = FILELINK;
+
+  info("Invio activate link query");
+
+  emit sendActivateLinkQuery(*_account.token, link);
 }
 
 void GuiWrapper::newFileQuery() {
   checkWaiting(false);
+  checkToken();
   _lastMessageSent = FILENEW;
 
   info("Invio new file query");
 
   //INFO il nome del file nel client definitivo deve essere ricevuto come parametro e salvato da qualche parte
-  emit sendNewFileQuery(_account.token, "questoeunnomeautentico");
+  emit sendNewFileQuery(*_account.token, "questoeunnomeautentico");
 }
 
 void GuiWrapper::closeFileQuery(int fileId) {
   info("Invio close file query");
+  checkToken();
 
-  emit sendCloseFileQuery(_account.token, fileId);
+  emit sendCloseFileQuery(*_account.token, fileId);
 
   // riapro browser
   _window = OpenWindow::BROWSER;
@@ -230,26 +253,37 @@ void GuiWrapper::closeFileQuery(int fileId) {
 
 void GuiWrapper::localInsertQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local insert query");
+  checkToken();
 
-  emit sendLocalInsertQuery(_account.token, fileId, symbols);
+  emit sendLocalInsertQuery(*_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localDeleteQuery(int fileId, std::vector<SymbolId> ids) {
   //debug("Invio local delete query");
+  checkToken();
 
-  emit sendLocalDeleteQuery(_account.token, fileId, ids);
+  emit sendLocalDeleteQuery(*_account.token, fileId, ids);
 }
 
 void GuiWrapper::localUpdateQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local update query");
+  checkToken();
 
-  emit sendLocalUpdateQuery(_account.token, fileId, symbols);
+  emit sendLocalUpdateQuery(*_account.token, fileId, symbols);
 }
 
 void GuiWrapper::localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition) {
   //debug("Invio local move query");
+  checkToken();
 
-  emit sendLocalMoveQuery(_account.token, fileId, symbolId, cursorPosition);
+  emit sendLocalMoveQuery(*_account.token, fileId, symbolId, cursorPosition);
+}
+
+void GuiWrapper::getLinkQuery(int fileId) {
+  //debug("Invio share query");
+  checkToken();
+
+  emit sendGetLinkQuery(*_account.token, fileId);
 }
 
 // SLOT MM
@@ -267,6 +301,8 @@ void GuiWrapper::errorResponseReceived(QString reason) {
 
     case OpenWindow::LOGIN:
       ErrorDialog::showDialog(_login, reason);
+      _login->unblock();
+      //_login->clear();
       break;
 
     case OpenWindow::EDITOR:
@@ -275,6 +311,8 @@ void GuiWrapper::errorResponseReceived(QString reason) {
 
     case OpenWindow::BROWSER:
       ErrorDialog::showDialog(_fileSelector, reason);
+      _fileSelector->unblock();
+      //_fileSelector->clear();
       break;
 
     case OpenWindow::REGISTRATION:
@@ -286,7 +324,7 @@ void GuiWrapper::errorResponseReceived(QString reason) {
   }
 }
 
-void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickname, QString icon) {
+void GuiWrapper::loginResponseReceived(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon) {
   checkWaiting(true);
   if(_lastMessageSent != USERLOGIN) {
       debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
@@ -297,7 +335,7 @@ void GuiWrapper::loginResponseReceived(QString token, int userId, QString nickna
   debug("Token: " + token);
   debug("User id: " + QString::number(userId));
 
-  _account.token = token;
+  _account.token = std::optional<QString>(token);
   _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
   //INFO nella versione definitiva settare nickname e icona
@@ -321,7 +359,7 @@ void GuiWrapper::newUserResponseReceived(QString token, int userId) {
   debug("Token: " + token);
   debug("User id: " + QString::number(userId));
 
-  _account.token = token;
+  _account.token = std::optional<QString>(token);
   _account.userId = userId;
   _textEdit->setUser(userId, _account.username);
 
@@ -347,8 +385,9 @@ void GuiWrapper::newFileResponseReceived(int id) {
   _fileSelector->close();
   //INFO nella versione definitiva, qua bisogna aggiornare la view del browser
 
-  File f(id);
+  File f;
   _textEdit->setFile(f);
+  _textEdit->setFileId(id);
 
   _window = OpenWindow::EDITOR;
   _textEdit->show();
@@ -368,46 +407,87 @@ void GuiWrapper::getFileResponseReceived(File file, int charId) {
   _fileSelector->close();
 
   _textEdit->setFile(file, charId);
+  //l'id è settato quando faccio la query
 
   _window = OpenWindow::EDITOR;
   _textEdit->show();
+
+  _textEdit->setConnectedUsers(); //fix: i cursori si visualizzano correttamente solo DOPO che il texteditor è visibile
 }
 
-void GuiWrapper::remoteInsertQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols) {
+void GuiWrapper::remoteInsertQueryReceived(int fileId, int userId, std::vector<Symbol> symbols) {
   //debug("Ricevuto remote insert query");
 
-  emit remoteInsertQuery(fileId, clientId, symbols);
+  emit remoteInsertQuery(fileId, userId, symbols);
 }
 
-void GuiWrapper::remoteDeleteQueryReceived(int fileId, int clientId, std::vector<SymbolId> ids) {
+void GuiWrapper::remoteDeleteQueryReceived(int fileId, int userId, std::vector<SymbolId> ids) {
   //debug("Ricevuto remote delete query");
 
-  emit remoteDeleteQuery(fileId, clientId, ids);
+  emit remoteDeleteQuery(fileId, userId, ids);
 }
 
-void GuiWrapper::remoteUpdateQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols) {
+void GuiWrapper::remoteUpdateQueryReceived(int fileId, int userId, std::vector<Symbol> symbols) {
   //debug("Ricevuto remote update query");
 
-  emit remoteUpdateQuery(fileId, clientId, symbols);
+  emit remoteUpdateQuery(fileId, userId, symbols);
 }
 
-void GuiWrapper::userConnectedQueryReceived(int fileId, int clientId, QString username) {
+void GuiWrapper::userConnectedQueryReceived(int fileId, int userId, QString username) {
   info("Ricevuto user connected query");
-  debug("Client id: " + QString::number(clientId));
+  debug("User id: " + QString::number(userId));
 
-  emit userConnectedQuery(fileId, clientId, username);
+  emit userConnectedQuery(fileId, userId, username);
 }
 
-void GuiWrapper::userDisconnectedQueryReceived(int fileId, int clientId) {
+void GuiWrapper::userDisconnectedQueryReceived(int fileId, int userId) {
   info("Ricevuto user disconnected query");
-  debug("Client id: " + QString::number(clientId));
+  debug("User id: " + QString::number(userId));
 
-  emit userDisconnectedQuery(fileId, clientId);
+  emit userDisconnectedQuery(fileId, userId);
 }
 
-void GuiWrapper::remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
+void GuiWrapper::remoteMoveQueryReceived(int fileId, int userId, SymbolId symbolId, int cursorPosition) {
   debug("Ricevuto remote move query");
-  debug("Client id: " + QString::number(clientId));
+  debug("User id: " + QString::number(userId));
 
-  emit remoteMoveQuery(fileId, clientId, symbolId, cursorPosition);
+  emit remoteMoveQuery(fileId, userId, symbolId, cursorPosition);
+}
+
+void GuiWrapper::getLinkResponseReceived(QString link) {
+  debug("Ricevuto share link");
+  debug("Link: " + link);
+
+  if(_window != OpenWindow::EDITOR) {
+    throw SE_Exception("Ricevuta getLinkResponse ma la finestra aperta non è l'editor");
+  }
+
+  _textEdit->setShareLink(link);
+  _textEdit->showShareLink();
+}
+
+void GuiWrapper::activateLinkResponseReceived(FSElement element, File file) {
+  checkWaiting(true);
+  if(_lastMessageSent != FILELINK) {
+      debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(FILELINK));
+      throw SE_Exception("Errore, mi aspettavo un messaggio diverso");
+  }
+
+  debug("Ricevuto activate link response");
+
+  _fileSelector->unblock();
+  _fileSelector->close();
+
+  _textEdit->setFile(file);
+  _textEdit->setFileId(element.getId());
+
+  _window = OpenWindow::EDITOR;
+  _textEdit->show();
+  _textEdit->setConnectedUsers(); //fix: i cursori si visualizzano correttamente solo DOPO che il texteditor è visibile
+}
+
+void GuiWrapper::checkToken() {
+  if(!_account.token) {
+    throw SE_Exception("token non inizializzato!");
+  }
 }

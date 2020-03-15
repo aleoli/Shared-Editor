@@ -13,8 +13,10 @@ FileSelector::FileSelector(QWidget *parent) :
   ui->setupUi(this);
 
   _id = findChild<QLineEdit *>("fileIdForm");
+  _shareLink = findChild<QLineEdit *>("shareLinkForm");
   _btnOpen = findChild<QPushButton *>("openButton");
   _btnNew = findChild<QPushButton *>("newButton");
+  _btnLink = findChild<QPushButton *>("openLinkButton");
 
   initLoading();
 
@@ -66,6 +68,17 @@ void FileSelector::newFile() {
   debug("Premuto btnNew");
 
   emit newFileQuery();
+}
+
+void FileSelector::openLink() {
+  disable();
+  startLoading();
+
+  auto link = _shareLink->text();
+
+  debug("Premuto btnLink");
+
+  emit activateLinkQuery(link);
 }
 
 void FileSelector::disable() {

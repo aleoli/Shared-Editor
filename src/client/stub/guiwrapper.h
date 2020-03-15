@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <memory>
+#include <optional>
 
 #include "landing.h"
 #include "login.h"
@@ -21,7 +22,7 @@ class GuiWrapper : public QWidget
       QString username;
       QString psw;
       int userId;
-      QString token;
+      std::optional<QString> token = std::nullopt;
     } account;
 
 public:
@@ -40,14 +41,16 @@ signals:
   void sendLocalDeleteQuery(QString token, int fileId, std::vector<SymbolId> ids);
   void sendLocalUpdateQuery(QString token, int fileId, std::vector<Symbol> symbols);
   void sendLocalMoveQuery(QString token, int fileId, SymbolId symbolId, int cursorPosition);
+  void sendGetLinkQuery(QString token, int fileId);
+  void sendActivateLinkQuery(QString token, QString link);
 
   //segnali per il TextEdit
-  void remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols);
-  void remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId> ids);
-  void remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> symbols);
-  void userConnectedQuery(int fileId, int clientId, QString username);
-  void userDisconnectedQuery(int fileId, int clientId);
-  void remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+  void remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols);
+  void remoteDeleteQuery(int fileId, int userId, std::vector<SymbolId> ids);
+  void remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> symbols);
+  void userConnectedQuery(int fileId, int userId, QString username);
+  void userDisconnectedQuery(int fileId, int userId);
+  void remoteMoveQuery(int fileId, int userId, SymbolId symbolId, int cursorPosition);
 
   void quit();
 
@@ -58,25 +61,29 @@ public slots:
 
   void newFileQuery();
   void getFileQuery(int id);
+  void activateLinkQuery(QString link);
 
   void closeFileQuery(int fileId);
   void localInsertQuery(int fileId, std::vector<Symbol> symbols);
   void localDeleteQuery(int fileId, std::vector<SymbolId> ids);
   void localUpdateQuery(int fileId, std::vector<Symbol> symbols);
   void localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition);
+  void getLinkQuery(int fileId);
 
   // slot di ricezione messaggi dal mm
   void errorResponseReceived(QString reason);
-  void loginResponseReceived(QString token, int userId, QString nickname, QString icon);
+  void loginResponseReceived(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon);
   void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
   void getFileResponseReceived(File file, int charId);
-  void remoteInsertQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols);
-  void remoteDeleteQueryReceived(int fileId, int clientId, std::vector<SymbolId> ids);
-  void remoteUpdateQueryReceived(int fileId, int clientId, std::vector<Symbol> symbols);
-  void userConnectedQueryReceived(int fileId, int clientId, QString username);
-  void userDisconnectedQueryReceived(int fileId, int clientId);
-  void remoteMoveQueryReceived(int fileId, int clientId, SymbolId symbolId, int cursorPosition);
+  void remoteInsertQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);
+  void remoteDeleteQueryReceived(int fileId, int userId, std::vector<SymbolId> ids);
+  void remoteUpdateQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);
+  void userConnectedQueryReceived(int fileId, int userId, QString username);
+  void userDisconnectedQueryReceived(int fileId, int userId);
+  void remoteMoveQueryReceived(int fileId, int userId, SymbolId symbolId, int cursorPosition);
+  void getLinkResponseReceived(QString link);
+  void activateLinkResponseReceived(FSElement element, File file);
 
 private slots:
   // connessione del server
@@ -92,6 +99,7 @@ private:
   void testEditor();
   void testCRDT();
   void initThreads(const SysConf &conf);
+  void checkToken();
 
   //ENUM per tenere traccia di quale finestra è aperta al momento (serve per sapere dove stampare i msg di errore)
   //si può anche usare per rinforzare i controlli sui msg ricevuti

@@ -39,10 +39,11 @@ void SymbolId::checkAndAssign(const QJsonObject &json) {
     throw SymbolIdFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  auto userId = userIdValue.toInt(-1);
-  auto charId = charIdValue.toInt(-1);
+  //TODO remote_move se mi muovo all'inizio il symbolId alla sinistra è il {-1, -1}, quindi qua crasha
+  auto userId = userIdValue.toInt(-10);
+  auto charId = charIdValue.toInt(-10);
 
-  if(userId == -1 || charId == -1) {
+  if(userId == -10 || charId == -10) {
     throw SymbolIdFromJsonException{"One or more fields are not valid"};
   }
 

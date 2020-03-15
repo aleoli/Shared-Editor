@@ -16,19 +16,29 @@
 #include <QPushButton>
 #include <QListView>
 #include <vector>
+#include <optional>
+#include <QColorDialog>
+#include <QApplication>
 
 #include "Symbol.h"
 #include "utils.h"
 #include "exceptions.h"
+#include "errordialog.h"
 
 using namespace se_exceptions;
 
+#ifdef Q_OS_MAC
+const QString rsrcPath = ":/images/mac";
+#else
+const QString rsrcPath = ":/images/win";
+#endif
+
 TextEdit::TextEdit(QWidget *parent)
-        : QMainWindow(parent), _blockSignals(false)
+        : QMainWindow(parent), _blockSignals(false), _cursorPosition(0), _shareLink(std::nullopt)
 {
   // QTextEdit sarà il nostro widget principale, contiene un box in cui inserire testo.
   // Inoltre avremo un menu, in cui ci saranno tutte le varie opzioni, e una toolbar che ne avrà un set
-  _textEdit = new QTextEdit(this);
+  _textEdit = new QTextEditImpl(this);
   setCentralWidget(_textEdit);
 
   // inizializzo tutte le varie azioni. Un'azione può essere "Nuovo File", "Copia", "Incolla", "Grassetto", ...
@@ -41,39 +51,62 @@ TextEdit::TextEdit(QWidget *parent)
   // signal/slot aggiunta / rimozione / modifica caratteri
   QObject::connect(_textEdit->document(), &QTextDocument::contentsChange, this, &TextEdit::change);
   QObject::connect(_textEdit, &QTextEdit::cursorPositionChanged, this, &TextEdit::cursorChanged);
+  QObject::connect(_textEdit, &QTextEdit::currentCharFormatChanged, this, &TextEdit::formatChanged);
+  QObject::connect(_textEdit, &QTextEdit::textChanged, this, &TextEdit::updateCursors);
+  QObject::connect(_textEdit, &QTextEditImpl::resized, this, &TextEdit::updateCursors);
+  QObject::connect(_textEdit, &QTextEditImpl::scrolled, this, &TextEdit::updateCursors);
 
   // _dock right
   initDock();
 }
 
 void TextEdit::setFile(const File &f, int charId) {
-  _file = f;
-  _user.charId = charId;
-
-  //setto gli utenti connessi
-  for(auto &client : f.getClients()) {
-    remoteUser user;
-    user.userId = client.second.clientId;
-    user.username = client.second.username;
-    user.color = _gen.getColor();
-    user.cursor = new Cursor(_textEdit, user.color);
-
-    user.item = new QListWidgetItem(user.username, _dock);
-    user.item->setFlags(Qt::NoItemFlags);
-    user.item->setForeground(user.color);
-
-    //TODO check nella mappa per vedere che non ci sia già
-    _users[client.second.clientId] = user;
+  if(!_user.initialized) {
+    throw SE_Exception{"Utente non settato."};
   }
 
+  _file = f;
+  _shareLink = std::nullopt; //TODO quando sarà salvato nel file rimuovere
+  _user.charId = charId;
+
   refresh(true);
+}
+
+void TextEdit::setConnectedUsers() {
+  //setto gli utenti connessi
+  for(auto &user : _file.getUsers()) {
+    if (user.second.userId == _user.userId) continue;
+
+    remoteUser rUser;
+    rUser.userId = user.second.userId;
+    rUser.username = user.second.username;
+    rUser.color = _gen.getColor();
+    rUser.cursor = new Cursor(_textEdit, rUser.color);
+
+    rUser.item = new QListWidgetItem(rUser.username, _dock);
+    rUser.item->setFlags(Qt::NoItemFlags);
+    rUser.item->setForeground(rUser.color);
+
+    //TODO check nella mappa per vedere che non ci sia già
+    _users[user.second.userId] = rUser;
+  }
 }
 
 File &TextEdit::getFile() {
   return _file;
 }
 
+void TextEdit::setFileId(int id) {
+  _fileId = id;
+}
+
+int TextEdit::getFileId() const {
+  return _fileId;
+}
+
 void TextEdit::refresh(bool changeFile) {
+  _blockSignals = true;
+
   //salvo pos del cursore mio
   std::pair<SymbolId, int> pos;
 
@@ -81,25 +114,45 @@ void TextEdit::refresh(bool changeFile) {
     pos = saveCursorPosition(_textEdit->textCursor());
 
   //cancello
-  _blockSignals = true;
   _textEdit->document()->clear();
 
   //refresh
   QTextCursor cursor{_textEdit->document()};
   for(auto &sym : _file.getSymbols()) {
-    _blockSignals = true;
     cursor.setCharFormat(sym.getFormat());
     cursor.insertText(sym.getChar());
   }
 
   //ripristino posizione
   if(!changeFile) {
-    _blockSignals = true;
     cursor.setPosition(getCursorPosition(pos.first, pos.second));
     _textEdit->setTextCursor(cursor);
+    _cursorPosition = pos.second;
   }
 
   _blockSignals = false;
+}
+
+void TextEdit::share() {
+  if(!_shareLink) { //TODO quando sarà nella classe file cambiare
+    emit getLinkQuery(_fileId);
+  }
+  else {
+    showShareLink();
+  }
+}
+
+void TextEdit::setShareLink(QString shareLink) {
+  _shareLink = std::optional<QString>(shareLink);
+}
+
+void TextEdit::showShareLink() {
+  if(!_shareLink) {
+    error("chiamato showShareLink ma _shareLink non settato");
+  }
+  else {
+    ErrorDialog::showDialog(this, *_shareLink); //TODO non errordialog ma dialog normale..
+  }
 }
 
 void TextEdit::clear() {
@@ -112,6 +165,7 @@ void TextEdit::clear() {
     user.second.cursor->updateCursorView();
   }
 
+  _cursorPosition = 0;
   _blockSignals = false;
 }
 
@@ -160,13 +214,13 @@ void TextEdit::setupFileActions() {
   QAction *info = menu->addAction(getInfoIcon,  tr("&Get infos"), this, &TextEdit::printTextFile);
   tb->addAction(info);
 
-  const QIcon clearIcon(":/buttons/clear.png");
-  QAction *clear = menu->addAction(clearIcon,  tr("&Clear document"), this, &TextEdit::clear);
-  tb->addAction(clear);
-
   const QIcon refreshIcon(":/buttons/refresh.png");
   QAction *refresh = menu->addAction(refreshIcon,  tr("&Refresh document"), this, &TextEdit::refresh);
   tb->addAction(refresh);
+
+  const QIcon shareIcon(":/buttons/share.png");
+  QAction *share = menu->addAction(shareIcon,  tr("&Share document"), this, &TextEdit::share);
+  tb->addAction(share);
 }
 
 void TextEdit::setupEditActions() {
@@ -207,20 +261,76 @@ void TextEdit::setupTextActions() {
   QMenu *menu = menuBar()->addMenu(tr("F&ormat"));
 
   // AZIONE GRASSETTO
-  // aggiungo un'azione per il grassetto, e ci associo uno slot (implementato da me)
-  const QIcon boldIcon(":/buttons/bold.png");
+  const QIcon boldIcon = QIcon::fromTheme("format-text-bold", QIcon(rsrcPath + "/textbold.png"));
   _actionTextBold = menu->addAction(boldIcon, tr("&Bold"), this, &TextEdit::textBold);
-  // shortcut: CTRL+B
   _actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
   _actionTextBold->setPriority(QAction::LowPriority);
-
-  //questo è solo per dare il grassetto alla voce nel menu file.. non mette in grassetto il testo ovviamente
   QFont bold;
   bold.setBold(true);
   _actionTextBold->setFont(bold);
-
   tb->addAction(_actionTextBold);
   _actionTextBold->setCheckable(true);
+
+
+  // AZIONE CORSIVO
+  const QIcon italicIcon = QIcon::fromTheme("format-text-italic", QIcon(rsrcPath + "/textitalic.png"));
+  _actionTextItalic = menu->addAction(italicIcon, tr("&Italic"), this, &TextEdit::textItalic);
+  _actionTextItalic->setPriority(QAction::LowPriority);
+  _actionTextItalic->setShortcut(Qt::CTRL + Qt::Key_I);
+  QFont italic;
+  italic.setItalic(true);
+  _actionTextItalic->setFont(italic);
+  tb->addAction(_actionTextItalic);
+  _actionTextItalic->setCheckable(true);
+
+
+  // AZIONE SOTTOLINEATO
+  const QIcon underlineIcon = QIcon::fromTheme("format-text-underline", QIcon(rsrcPath + "/textunder.png"));
+  _actionTextUnderline = menu->addAction(underlineIcon, tr("&Underline"), this, &TextEdit::textUnderline);
+  _actionTextUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
+  _actionTextUnderline->setPriority(QAction::LowPriority);
+  QFont underline;
+  underline.setUnderline(true);
+  _actionTextUnderline->setFont(underline);
+  tb->addAction(_actionTextUnderline);
+  _actionTextUnderline->setCheckable(true);
+
+
+  menu->addSeparator();
+
+
+  // COLOR
+  QPixmap pix(16, 16);
+  pix.fill(Qt::black);
+  _actionTextColor = menu->addAction(pix, tr("&Color..."), this, &TextEdit::textColor);
+  tb->addAction(_actionTextColor);
+
+
+  // BACKGROUND COLOR
+  const QIcon backgroundColorIcon(":/buttons/fill.png");
+  _actionTextBackgroundColor = menu->addAction(backgroundColorIcon, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
+  tb->addAction(_actionTextBackgroundColor);
+
+
+  // FONT
+  _comboFont = new QFontComboBox(tb);
+  _comboFont->setEditable(false);
+  tb->addWidget(_comboFont);
+  connect(_comboFont, QOverload<const QString &>::of(&QComboBox::activated), this, &TextEdit::textFamily);
+
+
+  // FONT SIZE
+  _comboSize = new QComboBox(tb);
+  _comboSize->setObjectName("comboSize");
+  tb->addWidget(_comboSize);
+  _comboSize->setEditable(true);
+
+  const QList<int> standardSizes = QFontDatabase::standardSizes();
+  for (int size : standardSizes)
+      _comboSize->addItem(QString::number(size));
+  _comboSize->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
+
+  connect(_comboSize, QOverload<const QString &>::of(&QComboBox::activated), this, &TextEdit::textSize);
 }
 
 void TextEdit::textBold() {
@@ -232,8 +342,92 @@ void TextEdit::textBold() {
   auto fmt = cursor.charFormat();
   fmt.setFontWeight(_actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
 
-  //setto in grassetto
   _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textItalic() {
+  if(_blockSignals) return;
+
+  debug("Premuto tasto corsivo");
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setFontItalic(_actionTextItalic->isChecked() ? true : false);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textUnderline() {
+  if(_blockSignals) return;
+
+  debug("Premuto tasto sottolineato");
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setFontUnderline(_actionTextUnderline->isChecked() ? true : false);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textColor() {
+  if(_blockSignals) return;
+
+  debug("Cambiato colore");
+  QColor col = QColorDialog::getColor(_textEdit->textColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
+  if (!col.isValid())
+      return;
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setForeground(col);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textBackgroundColor() {
+  if(_blockSignals) return;
+
+  debug("Cambiato colore sfondo");
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+
+  QColor col = QColorDialog::getColor(_textEdit->textColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
+  if (!col.isValid())
+      return;
+
+  fmt.setBackground(col);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+}
+
+void TextEdit::textFamily(const QString &f) {
+  if(_blockSignals) return;
+
+  debug("Cambiato font");
+
+  QTextCursor cursor = _textEdit->textCursor();
+  auto fmt = cursor.charFormat();
+  fmt.setFontFamily(f);
+
+  _textEdit->mergeCurrentCharFormat(fmt);
+  _textEdit->setFocus();
+}
+
+void TextEdit::textSize(const QString &p) {
+  if(_blockSignals) return;
+
+  debug("Cambiato font size");
+
+  qreal pointSize = p.toFloat();
+  if (pointSize > 0) {
+    QTextCursor cursor = _textEdit->textCursor();
+    auto fmt = cursor.charFormat();
+    fmt.setFontPointSize(pointSize);
+
+    _textEdit->mergeCurrentCharFormat(fmt);
+  }
+
+  _textEdit->setFocus();
 }
 
 void TextEdit::addLetter() {
@@ -257,99 +451,183 @@ void TextEdit::printTextFile() {
 void TextEdit::change(int pos, int removed, int added) {
   if(_blockSignals) return;
 
+  int nsym = _file.numSymbols();
+  debug("contentsChange triggered");
+  debug("Num symbols before change: " + QString::number(nsym));
+  debug("pos: " + QString::number(pos) + " removed: " + QString::number(removed) + " added: " + QString::number(added));
+
+  // fix: a volte capita non so perchè questa cosa.
+  // viene segnalato un numero di caratteri rimossi maggiore dei caratteri presenti
+  if(nsym < removed + pos) {
+    debug("ANOMALY detected!");
+    int shift = removed - (nsym - pos);
+
+    if(shift > 0) {
+      removed -= shift;
+      added -= shift;
+    }
+
+    debug("New Values: removed: " + QString::number(removed) + " added: " + QString::number(added));
+  }
+
   //TODO se removed == added -> UPDATE
   //TODO si potrebbe fare anche una cosa più elaborata,
   //    tipo 2 rem e 3 added significa 2 update e 1 added, ma non so se vale la pena
+  if(removed == added) {
+    debug("Handling update");
+    handleUpdate(pos, removed);
+  }
+  else {
+    handleDelete(pos, removed);
+    handleInsert(pos, added);
 
-  debug("contentsChange: position: " + QString::number(pos) +
-    " rimossi " + QString::number(removed) + " aggiunti " + QString::number(added));
+    // update actions
+    updateActions();
+  }
 
-  // rimozioni
-  if(removed > 0) {
-    std::vector<SymbolId> symRemoved;
-    for(int i=0; i<removed; i++) {
-      auto id = _file.symbolAt(pos).getSymbolId();
-      _file.localDelete(pos);
-      symRemoved.push_back(id);
-    }
-    emit localDeleteQuery(_file.getId(), symRemoved);
+  // update _cursorPosition
+  _cursorPosition = pos + added;
 }
 
-  // aggiunte
-  if(added > 0) {
-    QTextCursor cursor(_textEdit->document());
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
+void TextEdit::handleUpdate(int pos, int nchars) {
+  if(nchars == 0) return;
 
-    std::vector<Symbol> symAdded;
-    for(int i=0; i<added; i++) {
-      auto chr = _textEdit->document()->characterAt(pos + i);
+  QTextCursor cursor(_textEdit->document());
+  std::vector<Symbol> symUpdated;
+  bool real = false;
 
-      cursor.movePosition(QTextCursor::NextCharacter);
-      auto fmt = cursor.charFormat();
+  cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
+  for(int i=0; i<nchars; i++) {
+    cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
 
+    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto fmt = cursor.charFormat();
+
+    auto &sym = _file.symbolAt(pos + i);
+
+    if(!sym.hasSameAttributes(chr, fmt)) {
+      sym.setFormat(fmt);
+      sym.setChar(chr);
+      real = true;
+    }
+
+    symUpdated.push_back(sym);
+  }
+
+  if(real) {
+    emit localUpdateQuery(_fileId, symUpdated);
+  }
+  else {
+    debug("Fake update");
+  }
+}
+
+void TextEdit::handleDelete(int pos, int removed) {
+  if(removed == 0) return;
+
+  std::vector<SymbolId> symRemoved;
+
+  for(int i=0; i<removed; i++) {
+      try {
+        auto id = _file.symbolAt(pos).getSymbolId();
+        _file.localDelete(pos);
+        symRemoved.push_back(id);
+      }
+      catch(...) {
+        throw SE_Exception("handleDelete: tentata rimozione di un carattere a una posizione non valida nel file");
+      }
+  }
+
+  emit localDeleteQuery(_fileId, symRemoved);
+}
+
+void TextEdit::handleInsert(int pos, int added) {
+  if(added == 0) return;
+
+  QTextCursor cursor(_textEdit->document());
+  std::vector<Symbol> symAdded;
+
+  cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, pos);
+  for(int i=0; i<added; i++) {
+    cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
+
+    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto fmt = cursor.charFormat();
+
+    if(chr == 0) {
+      cursor.deletePreviousChar(); //TODO check. delete null characters
+    }
+    else {
       Symbol s{{_user.userId, _user.charId++}, chr, fmt};
+      //debug(QString::fromStdString(s.to_string()));
+
       _file.localInsert(s, pos+i);
       symAdded.push_back(s);
     }
-    emit localInsertQuery(_file.getId(), symAdded);
   }
 
-  for(auto &user : _users) {
-    user.second.cursor->updateCursorView();
-  }
-
-  _blockSignals = true; // per bloccare lo slot cursorChanged
+  emit localInsertQuery(_fileId, symAdded);
 }
 
 void TextEdit::cursorChanged() {
-  if(_blockSignals) {
-    _blockSignals = false;
-    return;
-  }
-
+  debug("cursorChanged triggered");
   auto cursor = _textEdit->textCursor();
+
+  if(_blockSignals) return;
 
   if(cursor.hasSelection()) return; //non mando nulla se sto selezionando
 
-  auto pos = saveCursorPosition(cursor);
+  // TODO se crasha vuol dire che c'è un problema da qualche parte da risolvere
+  try {
+    auto pos = saveCursorPosition(cursor);
 
-  emit localMoveQuery(_file.getId(), pos.first, pos.second);
+    if(_cursorPosition == pos.second) return; // ho già registrato questo spostamento, non mando nulla
 
-  debug("Cursore spostato in posizione " + QString::number(pos.second));
-  debug("SymbolId alla sx: " + QString::fromStdString(pos.first.to_string()));
+    emit localMoveQuery(_fileId, pos.first, pos.second);
 
-  // se sposto il cursore, devo modificare le azioni di conseguenza
-  // esempio se mi sposto dove c'è il grassetto selezionato, deve esserci il pulsante cliccato
-  _blockSignals = true;
-  updateActions();
-  _blockSignals = false;
+    debug("Cursore spostato in posizione " + QString::number(pos.second));
+    debug("SymbolId alla sx: " + QString::fromStdString(pos.first.to_string()));
+
+    // se sposto il cursore, devo modificare le azioni di conseguenza
+    // esempio se mi sposto dove c'è il grassetto selezionato, deve esserci il pulsante cliccato
+    updateActions();
+    _cursorPosition = pos.second;
+  }
+  catch (FileSymbolsException e) {
+    warn("cursorChanged ha lanciato una FileSymbolsException");
+  }
+}
+
+void TextEdit::formatChanged() {
+  debug("Format changed");
 }
 
 void TextEdit::updateActions() {
-  //TODO rivedere qua se si può fare meglio, considerando che ci sono più pulsanti poi
-  // (grassetto, corsivo..) ed è oneroso/brutto gestirli tutti così
-  auto font = _textEdit->currentFont();
-  if(font.bold() != _actionTextBold->isChecked()) {
-    _actionTextBold->activate(QAction::Trigger);
-  }
+  _blockSignals = true;
+
+  auto fmt = _textEdit->currentCharFormat();
+  _actionTextBold->setChecked(fmt.font().bold());
+  _actionTextItalic->setChecked(fmt.fontItalic());
+  _actionTextUnderline->setChecked(fmt.fontUnderline());
+
+  QPixmap pix(16, 16);
+  pix.fill(fmt.foreground().color());
+  _actionTextColor->setIcon(pix);
+
+  _comboFont->setCurrentText(fmt.font().family());
+  _comboSize->setCurrentIndex(QFontDatabase::standardSizes().indexOf(fmt.font().pointSize()));
+
+  _blockSignals = false;
 }
 
 void TextEdit::closeEvent(QCloseEvent *event) {
   debug("Chiusura editor");
 
-  emit closeFileQuery(_file.getId());
+  emit closeFileQuery(_fileId);
 
   reset();
 
   QWidget::closeEvent(event);
-}
-
-void TextEdit::showEvent(QShowEvent* event) {
-  QWidget::showEvent(event);
-
-  if(!_user.initialized) {
-    throw SE_Exception{"Utente non settato."};
-  }
 }
 
 void TextEdit::reset() {
@@ -366,7 +644,9 @@ void TextEdit::reset() {
   }
   _users.clear();
 
+  // reset value
   _blockSignals = false;
+  _cursorPosition = 0;
   _gen.reset();
 }
 
@@ -375,91 +655,108 @@ void TextEdit::reset() {
 // Serve soprattutto nel caso in cui l'app supporti più files aperti
 //INFO ipotizzo che i vettori non siano vuoti (check fatto nelle localXXX e lato server)
 
-void TextEdit::remoteInsertQuery(int fileId, int clientId, std::vector<Symbol> symbols) {
+void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols) {
+  _blockSignals = true;
   int pos;
-  auto cursor = _users.at(clientId).cursor;
+
+  //TODO non deve succedere, ma se il userId non esiste crasha tutto.. idem delete e update
+  debug("userid: " + QString::number(userId));
+  auto cursor = _users.at(userId).cursor;
 
   debug("Inserimento remoto di " + QString::number(symbols.size())
-        + " caratteri dell'user " + QString::number(clientId));
+        + " caratteri dell'user " + QString::number(userId));
 
   for(auto &sym : symbols) {
-    _blockSignals = true;
     pos = _file.remoteInsert(sym);
     cursor->insert(sym, pos);
   }
+
+  cursor->show();
   _blockSignals = false;
 }
 
-void TextEdit::remoteDeleteQuery(int fileId, int clientId, std::vector<SymbolId> ids) {
+void TextEdit::remoteDeleteQuery(int fileId, int userId, std::vector<SymbolId> ids) {
+  _blockSignals = true;
+
   int pos;
-  auto cursor = _users.at(clientId).cursor;
+  auto cursor = _users.at(userId).cursor;
 
   debug("Cancellazione remota di " + QString::number(ids.size())
-        + " caratteri dell'user " + QString::number(clientId));
+        + " caratteri dell'user " + QString::number(userId));
 
   for(auto &id : ids) {
-    _blockSignals = true;
     pos = _file.remoteDelete(id);
     if(pos != -1) cursor->remove(pos);
   }
+
+  cursor->show();
   _blockSignals = false;
 }
 
-void TextEdit::remoteUpdateQuery(int fileId, int clientId, std::vector<Symbol> symbols) {
+void TextEdit::remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> symbols) {
+  _blockSignals = true;
   int pos;
-  auto cursor = _users.at(clientId).cursor;
+  auto cursor = _users.at(userId).cursor;
 
   debug("Update remoto di " + QString::number(symbols.size())
-        + " caratteri dell'user " + QString::number(clientId));
+        + " caratteri dell'user " + QString::number(userId));
 
   for(auto &sym : symbols) {
     pos = _file.remoteUpdate(sym);
     if(pos != -1) {
-      _blockSignals = true;
       cursor->remove(pos);
-      _blockSignals = true;
       cursor->insert(sym, pos);
     }
   }
+
+  cursor->show();
   _blockSignals = false;
 }
 
-void TextEdit::userConnectedQuery(int fileId, int clientId, QString username) {
-  info("New remote user: " + username + " " + QString::number(clientId));
+void TextEdit::updateCursors() {
+  for(auto &user : _users) {
+    user.second.cursor->updateCursorView();
+  }
+}
+
+void TextEdit::userConnectedQuery(int fileId, int userId, QString username) {
+  info("New remote user: " + username + " " + QString::number(userId));
 
   remoteUser user;
-  user.userId = clientId;
+  user.userId = userId;
   user.username = username;
   user.color = _gen.getColor();
   user.cursor = new Cursor(_textEdit, user.color);
+  user.cursor->show();
 
   user.item = new QListWidgetItem(username, _dock);
   user.item->setFlags(Qt::NoItemFlags);
   user.item->setForeground(user.color);
 
   //TODO check nella mappa per vedere che non ci sia già
-  _users[clientId] = user;
+  _users[userId] = user;
 }
 
-void TextEdit::userDisconnectedQuery(int fileId, int clientId) {
-  info("User " + QString::number(clientId) + " disconnected");
+void TextEdit::userDisconnectedQuery(int fileId, int userId) {
+  info("User " + QString::number(userId) + " disconnected");
 
   //TODO check nella mappa per vedere che ci sia
-  auto user = _users[clientId];
+  auto user = _users[userId];
 
   delete user.cursor;
   _dock->takeItem(_dock->row(user.item));
   delete user.item;
 
-  _users.erase(clientId);
+  _users.erase(userId);
 }
 
-void TextEdit::remoteMoveQuery(int fileId, int clientId, SymbolId symbolId, int cursorPosition) {
-  debug("User: " + QString::number(clientId) + " moved cursor");
+void TextEdit::remoteMoveQuery(int fileId, int userId, SymbolId symbolId, int cursorPosition) {
+  debug("User: " + QString::number(userId) + " moved cursor");
 
   //TODO check nella mappa per vedere che ci sia
-  auto user = _users[clientId];
-  user.cursor->updateCursorPosition(getCursorPosition(symbolId, cursorPosition));
+  auto cursor = _users[userId].cursor;
+  cursor->updateCursorPosition(getCursorPosition(symbolId, cursorPosition));
+  cursor->show();
 }
 
 std::pair<SymbolId, int> TextEdit::saveCursorPosition(const QTextCursor &cursor) {
@@ -470,7 +767,7 @@ std::pair<SymbolId, int> TextEdit::saveCursorPosition(const QTextCursor &cursor)
     id = {-1,-1}; //TODO magari si può fare meglio
   }
   else {
-    id = _file.symbolAt(position-1).getSymbolId();
+    id = _file.symbolAt(position-1).getSymbolId(); //TODO potenziale EXCEPTION
   }
 
   return {id, position};

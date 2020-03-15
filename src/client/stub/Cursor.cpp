@@ -7,50 +7,58 @@
 #include "utils.h"
 #include <QString>
 
-Cursor::Cursor(QTextEdit *parent, QColor color) : QLabel(parent), textEdit_(parent), _color(color) {
+Cursor::Cursor(QTextEdit *parent, QColor color) : QLabel(parent), _textEdit(parent), _color(color), _isVisible(false), _isActive(false) {
   //TODO rivedere questi parametri
-  //_color.setAlpha(128);
+  _color.setAlpha(192);
   setFixedWidth(2);
 
   setStyleSheet("background-color : " + _color.name(QColor::HexArgb) + ";");
 
-  cursor_ = new QTextCursor(parent->document());
+  _cursor = new QTextCursor(parent->document());
+  updateCursorPosition(0);
+  setVisible(false);
 
-  timer_ = new QTimer(this);
-  QObject::connect(timer_, &QTimer::timeout, this, &Cursor::changeVisibility);
-  timer_->start(500);
+  _timer = new QTimer(this);
+  QObject::connect(_timer, &QTimer::timeout, this, &Cursor::changeVisibility);
+}
+
+void Cursor::show() {
+  if(!_isActive) {
+    changeVisibility();
+    _timer->start(500);
+    _isActive = true;
+  }
 }
 
 void Cursor::updateCursorPosition(int position) {
-  cursor_->setPosition(position);
+  _cursor->setPosition(position);
   updateCursorView();
 }
 
 void Cursor::updateCursorView() {
-  auto rect = textEdit_->cursorRect(*cursor_);
-
+  auto rect = _textEdit->cursorRect(*_cursor);
   move(rect.x(), rect.y());
   setFixedHeight(rect.height());
 }
 
 void Cursor::changeVisibility() {
-  isVisible_ ? setVisible(false) : setVisible(true);
-  isVisible_ = !isVisible_;
+  _isVisible ? setVisible(false) : setVisible(true);
+  _isVisible = !_isVisible;
 }
 
 void Cursor::insert(const Symbol &sym, int position) {
-  cursor_->setPosition(position);
+  _cursor->setPosition(position);
 
-  cursor_->setCharFormat(sym.getFormat());
-  cursor_->insertText(sym.getChar());
+  _cursor->setCharFormat(sym.getFormat());
+  _cursor->insertText(sym.getChar());
 
   updateCursorView();
 }
 
 void Cursor::remove(int position) {
-  cursor_->setPosition(position);
+  _cursor->setPosition(position);
 
-  cursor_->deleteChar();
+  _cursor->deleteChar();
 
   updateCursorView();
 }
