@@ -149,11 +149,12 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
   }
 
   File& f = _openFiles[fileId];
-  _clients[clientId].fileId = fileId;
-  _clients[clientId].fileIsOpen = true;
-  _clients[clientId].fileIdUser = fileIdUser ? *fileIdUser : fileId;
+  auto& tmp = _clients[clientId];
+  tmp.fileId = fileId;
+  tmp.fileIsOpen = true;
+  tmp.fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
-  f.addUser(_clients[clientId].session->getUserId(), _clients[clientId].username);
+  f.addUser(tmp.session->getUserId(), tmp.username);
 
   return f;
 }
