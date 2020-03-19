@@ -36,7 +36,7 @@ public:
 
   /* gestione file */
   // richiesta di un file da parte di un client
-  File getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser);
+  File getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser, bool first_access=false);
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
   void addSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
   void deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
@@ -44,7 +44,7 @@ public:
   void updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
 
   // chiusura fiel da parte del client -> rimozione da fileClients, NON dalla FifoMap
-  void closeFile(quint64 clientId, int fileId);
+  void closeFile(quint64 clientId, int fileId, bool deleted=false);
 
   void sendToAll(quint64 clientId, int fileId, QByteArray data);
 

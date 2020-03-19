@@ -256,7 +256,7 @@ void File::removeUser(int userId) {
 }
 
 void File::setOnline(int userId, bool val) {
-  if(_users.count(userId) != 0) {
+  if(_users.count(userId) == 0) {
     throw FileUserException{"User is not in map"};
   }
 
@@ -264,7 +264,7 @@ void File::setOnline(int userId, bool val) {
 }
 
 bool File::isOnline(int userId) {
-  if(_users.count(userId) != 0) {
+  if(_users.count(userId) == 0) {
     throw FileUserException{"User is not in map"};
   }
 
