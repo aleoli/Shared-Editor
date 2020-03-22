@@ -178,7 +178,7 @@ void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& 
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not open the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
@@ -197,7 +197,7 @@ void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArra
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not open the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
@@ -216,7 +216,7 @@ void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArra
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not open the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
@@ -235,7 +235,7 @@ void MessageManager::closeFile(quint64 clientId, int fileId, bool deleted) {
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not open the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //rimuovo da fileClients
