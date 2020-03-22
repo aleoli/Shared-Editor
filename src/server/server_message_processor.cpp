@@ -545,22 +545,6 @@ void ServerMessageProcessor::deleteFile() {
 
   this->_manager->closeFile(this->_clientId, fileId, true);
 
-  if(!file.is_link()) {
-    auto clients = this->_manager->getClientsInFile(fileId);
-    for(auto &cl: clients) {
-      if(cl == this->_clientId) {
-        continue;
-      }
-      auto userId = this->_manager->getUserId(cl);
-
-      QJsonObject data;
-      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-
-      auto msg = Message{Message::Type::FILE, (int) Message::FileAction::FILE_DELETED, Message::Status::QUERY, data};
-      this->_manager->send_data(cl, msg.toQByteArray());
-    }
-  }
-
   file.remove(ServerMessageProcessor::delete_lambda);
 
   QJsonObject data;
