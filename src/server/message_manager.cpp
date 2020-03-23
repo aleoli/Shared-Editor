@@ -130,7 +130,7 @@ void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
   }
 }
 
-File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser) {
+File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser, bool first_access) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -154,7 +154,11 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
   tmp.fileIsOpen = true;
   tmp.fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
-  f.addUser(tmp.session->getUserId(), tmp.username);
+  if(first_access) {
+    f.addUser(tmp.session->getUserId(), tmp.username);
+  } else {
+    f.setOnline(tmp.session->getUserId(), true);
+  }
 
   return f;
 }
@@ -174,7 +178,7 @@ void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& 
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
@@ -193,7 +197,7 @@ void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArra
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
@@ -212,7 +216,7 @@ void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArra
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //sempre il check per vedere se il file è caricato in memoria
@@ -225,13 +229,13 @@ void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArra
   }
 }
 
-void MessageManager::closeFile(quint64 clientId, int fileId) {
+void MessageManager::closeFile(quint64 clientId, int fileId, bool deleted) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client has not opened the file"};
+    throw ClientFileException{"Client did not open the file"};
   }
 
   //rimuovo da fileClients
@@ -240,9 +244,14 @@ void MessageManager::closeFile(quint64 clientId, int fileId) {
   if(list.empty()) _fileClients.erase(fileId);
 
   //rimuovo da _clients
-  _clients[clientId].fileIsOpen = false;
+  auto& tmp = _clients[clientId];
+  tmp.fileIsOpen = false;
 
-  _openFiles[fileId].removeUser(_clients[clientId].session->getUserId());
+  if(deleted) {
+    _openFiles[fileId].removeUser(tmp.session->getUserId());
+  } else {
+    _openFiles[fileId].setOnline(tmp.session->getUserId(), false);
+  }
 }
 
 bool MessageManager::clientIsLogged(quint64 clientId) {

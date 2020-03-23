@@ -439,7 +439,7 @@ void ServerMessageProcessor::newFile() {
   QJsonObject data;
   data["fileId"] = file.getId();
 
-	this->_manager->getFile(this->_clientId, file.getId(), std::nullopt);
+	this->_manager->getFile(this->_clientId, file.getId(), std::nullopt, true);
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
   this->_has_resp = true;
@@ -541,6 +541,9 @@ void ServerMessageProcessor::deleteFile() {
   auto session = Session::get(token);
 
   auto file = FSElement_db::get(session, _m.getInt("fileId"));
+  auto fileId = file.getPhysicalId();
+
+  this->_manager->closeFile(this->_clientId, fileId, true);
 
   file.remove(ServerMessageProcessor::delete_lambda);
 
@@ -584,7 +587,7 @@ void ServerMessageProcessor::activateLink() {
 
     QJsonObject data;
     data["element"] = file.getFSElement().toJsonObject();
-    data["file"] = this->_manager->getFile(this->_clientId, fileId, file.getId()).toJsonObject();
+    data["file"] = this->_manager->getFile(this->_clientId, fileId, file.getId(), true).toJsonObject();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
     this->_has_resp = true;
