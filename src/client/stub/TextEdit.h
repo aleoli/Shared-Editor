@@ -25,6 +25,7 @@ class TextEdit : public QMainWindow {
       QString username;
       Cursor *cursor;
       QColor color;
+      bool isOnline;
     } remoteUser;
 
     typedef struct {

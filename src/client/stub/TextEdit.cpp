@@ -77,15 +77,20 @@ void TextEdit::setConnectedUsers() {
   for(auto &user : _file.getUsers()) {
     if (user.second.userId == _user.userId) continue;
 
+    debug("User ID: " + QString::number(user.second.userId));
+    debug("isOnline: " + QString::number(user.second.online));
+
     remoteUser rUser;
     rUser.userId = user.second.userId;
     rUser.username = user.second.username;
     rUser.color = _gen.getColor();
     rUser.cursor = new Cursor(_textEdit, rUser.color);
+    rUser.isOnline = user.second.online;
 
     rUser.item = new QListWidgetItem(rUser.username, _dock);
     rUser.item->setFlags(Qt::NoItemFlags);
     rUser.item->setForeground(rUser.color);
+    rUser.item->setHidden(!rUser.isOnline);
 
     //TODO check nella mappa per vedere che non ci sia già
     _users[user.second.userId] = rUser;
@@ -722,32 +727,45 @@ void TextEdit::updateCursors() {
 void TextEdit::userConnectedQuery(int fileId, int userId, QString username) {
   info("New remote user: " + username + " " + QString::number(userId));
 
-  remoteUser user;
-  user.userId = userId;
-  user.username = username;
-  user.color = _gen.getColor();
-  user.cursor = new Cursor(_textEdit, user.color);
-  user.cursor->show();
+  if(_users.count(userId) == 0) {
+    debug("This user just activated the link for this file");
+    remoteUser user;
+    user.userId = userId;
+    user.username = username;
+    user.color = _gen.getColor();
+    user.isOnline = true;
+    user.cursor = new Cursor(_textEdit, user.color);
+    user.cursor->show();
 
-  user.item = new QListWidgetItem(username, _dock);
-  user.item->setFlags(Qt::NoItemFlags);
-  user.item->setForeground(user.color);
+    user.item = new QListWidgetItem(username, _dock);
+    user.item->setFlags(Qt::NoItemFlags);
+    user.item->setForeground(user.color);
+    user.item->setHidden(false);
 
-  //TODO check nella mappa per vedere che non ci sia già
-  _users[userId] = user;
+    _users[userId] = user;
+  }
+  else {
+    debug("User already known, just setting his name visible");
+    auto user = _users[userId];
+
+    user.isOnline = true;
+    user.item->setHidden(false);
+  }
 }
 
 void TextEdit::userDisconnectedQuery(int fileId, int userId) {
   info("User " + QString::number(userId) + " disconnected");
 
-  //TODO check nella mappa per vedere che ci sia
+  if(_users.count(userId) == 0) {
+    error("User not present in the list of users!!");
+    return;
+  }
+
   auto user = _users[userId];
 
-  delete user.cursor;
-  _dock->takeItem(_dock->row(user.item));
-  delete user.item;
-
-  _users.erase(userId);
+  user.isOnline = false;
+  user.item->setHidden(true);
+  //TODO reset cursor to first position
 }
 
 void TextEdit::remoteMoveQuery(int fileId, int userId, SymbolId symbolId, int cursorPosition) {
