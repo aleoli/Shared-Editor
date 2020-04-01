@@ -186,10 +186,10 @@ void TextEdit::addRemoteUser(int userId, const QString &username, bool isOnline)
   user.cursor = new Cursor(_textEdit, user.color);
 
   if(isOnline) {
-    user.item = new QListWidgetItem(username, _dockOnline);
+    user.item = new QListWidgetItem(username, _listOnline);
   }
   else {
-    user.item = new QListWidgetItem(username, _dockOffline);
+    user.item = new QListWidgetItem(username, _listOffline);
 
   }
 
@@ -204,8 +204,8 @@ void TextEdit::setRemoteUserOnline(int userId) {
   auto &user = _users[userId];
 
   user.isOnline = true;
-  _dockOffline->takeItem(_dockOffline->row(user.item));
-  _dockOnline->addItem(user.item);
+  _listOffline->takeItem(_listOffline->row(user.item));
+  _listOnline->addItem(user.item);
 }
 
 void TextEdit::remoteUserConnected(int userId, const QString &username) {
@@ -229,8 +229,8 @@ void TextEdit::remoteUserDisconnected(int userId) {
   auto &user = _users[userId];
 
   user.isOnline = false;
-  _dockOnline->takeItem(_dockOnline->row(user.item));
-  _dockOffline->addItem(user.item);
+  _listOnline->takeItem(_listOnline->row(user.item));
+  _listOffline->addItem(user.item);
   //TODO reset cursor to first position
 }
 
@@ -256,30 +256,31 @@ void TextEdit::setUser(int userId, QString username) {
   _user.charId = 0;
 
   if(_user.item != nullptr) {
-    _dockOnline->takeItem(_dockOnline->row(_user.item));
+    _listOnline->takeItem(_listOnline->row(_user.item));
     delete _user.item;
   }
 
   _user.item = new QListWidgetItem(username + " (Tu)");
   _user.item->setFlags(Qt::NoItemFlags);
   _user.item->setForeground(QColor("black"));
-  _dockOnline->insertItem(0, _user.item);
+  _listOnline->insertItem(0, _user.item);
 }
 
 void TextEdit::initDock() {
-  auto *dockWidget = new QDockWidget(tr("Utenti online:"), this);
-  dockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
-  addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+  _dockOnline = new QDockWidget(tr("Utenti online:"), this);
+  _dockOnline->setAllowedAreas(Qt::RightDockWidgetArea);
+  addDockWidget(Qt::RightDockWidgetArea, _dockOnline);
 
-  auto *dockWidget2 = new QDockWidget(tr("Utenti offline:"), this);
-  dockWidget2->setAllowedAreas(Qt::RightDockWidgetArea);
-  addDockWidget(Qt::RightDockWidgetArea, dockWidget2);
+  _dockOffline = new QDockWidget(tr("Utenti offline:"), this);
+  _dockOffline->setAllowedAreas(Qt::RightDockWidgetArea);
+  addDockWidget(Qt::RightDockWidgetArea, _dockOffline);
 
-  _dockOnline = new QListWidget(dockWidget);
-  dockWidget->setWidget(_dockOnline);
+  _listOnline = new QListWidget(_dockOnline);
+  _dockOnline->setWidget(_listOnline);
 
-  _dockOffline = new QListWidget(dockWidget2);
-  dockWidget2->setWidget(_dockOffline);
+  _listOffline = new QListWidget(_dockOffline);
+  _dockOffline->setWidget(_listOffline);
+  _dockOffline->setVisible(false);
 }
 
 void TextEdit::setupFileActions() {
@@ -471,11 +472,13 @@ void TextEdit::textHighlight() {
 void TextEdit::disableTextHighlight() {
   debug("Disable text highlight");
   refresh();
+  _dockOffline->setVisible(false);
 }
 
 void TextEdit::enableTextHighlight() {
   debug("Enable text highlight");
   refresh(false, true);
+  _dockOffline->setVisible(true);
 }
 
 void TextEdit::textColor() {
@@ -753,10 +756,10 @@ void TextEdit::reset() {
   _users.clear();
 
   //clear dock widgets
-  auto me = _dockOnline->takeItem(0);
-  _dockOnline->clear();
-  _dockOffline->clear();
-  _dockOnline->addItem(me);
+  auto me = _listOnline->takeItem(0);
+  _listOnline->clear();
+  _listOffline->clear();
+  _listOnline->addItem(me);
 
   // reset value
   _blockSignals = false;

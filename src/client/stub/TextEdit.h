@@ -126,7 +126,8 @@ private:
   QFontComboBox *_comboFont;
   QComboBox *_comboSize;
 
-  QListWidget *_dockOnline, *_dockOffline;
+  QListWidget *_listOnline, *_listOffline;
+  QDockWidget *_dockOnline, *_dockOffline;
 
   File _file;
   std::optional<QString> _shareLink;
