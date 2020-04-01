@@ -99,6 +99,7 @@ QJsonArray File::usersToJsonArray() const {
 
     value["userId"] = el.second.userId;
     value["username"] = el.second.username;
+    value["online"] = el.second.online;
 
     array.append(value);
   }
@@ -128,10 +129,11 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayTousers(const QJsonArray 
     auto obj = el.toObject();
     auto userIdValue = obj["userId"];
     auto usernameValue = obj["username"];
+    auto isOnlineValue = obj["online"];
 
     if(userIdValue.isUndefined() || usernameValue.isUndefined()) {
-        throw FileFromJsonException{"The QJsonObject has some fields missing"};
-      }
+      throw FileFromJsonException{"The QJsonObject has some fields missing"};
+    }
 
     auto userId = userIdValue.toInt(-1);
 
@@ -143,7 +145,7 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayTousers(const QJsonArray 
       throw FileFromJsonException{"One or more fields in users array are not valid"};
     }
 
-    File::UserInfo info { userId, usernameValue.toString() };
+    File::UserInfo info { userId, usernameValue.toString(), isOnlineValue.toBool(false) };
 
     users[userId] = info;
   }
