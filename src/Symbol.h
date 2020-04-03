@@ -64,8 +64,8 @@ public:
 
   void update(const Symbol &s);
 
-  static bool compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2);
-  bool hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt) const;
+  static bool compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground = false);
+  bool hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground = false) const;
 
   void setFormat(QTextCharFormat fmt);
   QTextCharFormat getFormat() const;

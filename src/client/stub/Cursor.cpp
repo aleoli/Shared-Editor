@@ -46,10 +46,16 @@ void Cursor::changeVisibility() {
   _isVisible = !_isVisible;
 }
 
-void Cursor::insert(const Symbol &sym, int position) {
+void Cursor::insert(const Symbol &sym, int position, std::optional<QBrush> backgroundColor) {
   _cursor->setPosition(position);
 
-  _cursor->setCharFormat(sym.getFormat());
+  auto fmt = sym.getFormat();
+
+  if(backgroundColor) {
+    fmt.setBackground(*backgroundColor);
+  }
+
+  _cursor->setCharFormat(fmt);
   _cursor->insertText(sym.getChar());
 
   updateCursorView();

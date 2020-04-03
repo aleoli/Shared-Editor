@@ -34,12 +34,14 @@ const QString rsrcPath = ":/images/win";
 #endif
 
 TextEdit::TextEdit(QWidget *parent)
-        : QMainWindow(parent), _blockSignals(false), _cursorPosition(0), _shareLink(std::nullopt)
+        : QMainWindow(parent), _blockSignals(false), _cursorPosition(0), _shareLink(std::nullopt), _highlightOn(false)
 {
   // QTextEdit sarà il nostro widget principale, contiene un box in cui inserire testo.
   // Inoltre avremo un menu, in cui ci saranno tutte le varie opzioni, e una toolbar che ne avrà un set
   _textEdit = new QTextEditImpl(this);
   setCentralWidget(_textEdit);
+
+  _defColor = _textEdit->currentCharFormat().background();
 
   // inizializzo tutte le varie azioni. Un'azione può essere "Nuovo File", "Copia", "Incolla", "Grassetto", ...
   // per ogni azione va associato uno slot (funzione che esegue qualcosa quando si vuole eseguire l'azione
@@ -100,7 +102,7 @@ void TextEdit::actionRefresh() {
   refresh();
 }
 
-void TextEdit::refresh(bool changeFile, bool highlight) {
+void TextEdit::refresh(bool changeFile) {
   _blockSignals = true;
 
   //salvo pos del cursore mio
@@ -117,13 +119,15 @@ void TextEdit::refresh(bool changeFile, bool highlight) {
   for(auto &sym : _file.getSymbols()) {
     auto format = sym.getFormat();
 
-    if(highlight) {
+    if(_highlightOn) {
       auto userId = sym.getSymbolId().getUserId();
       auto optcolor = getRemoteUserColor(userId);
       if(optcolor) {
         auto &color = *optcolor;
-        color.setAlpha(128);
         format.setBackground(color);
+      }
+      else if(userId == _user.userId) { // should always be true if the previous condition is not satisfied
+        format.setBackground(_defColor);
       }
     }
 
@@ -244,7 +248,10 @@ std::optional<QColor> TextEdit::getRemoteUserColor(int userId) {
     return std::nullopt;
   }
 
-  return std::optional<QColor>(_users[userId].color);
+  auto color = _users[userId].color;
+  color.setAlpha(128);
+
+  return std::optional<QColor>(color);
 }
 
 void TextEdit::setUser(int userId, QString username) {
@@ -400,8 +407,8 @@ void TextEdit::setupTextActions() {
 
 
   // BACKGROUND COLOR
-  const QIcon backgroundColorIcon(":/buttons/fill.png");
-  _actionTextBackgroundColor = menu->addAction(backgroundColorIcon, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
+  pix.fill(QColor::fromRgb(255,255,255));
+  _actionTextBackgroundColor = menu->addAction(pix, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
   tb->addAction(_actionTextBackgroundColor);
 
 
@@ -467,17 +474,21 @@ void TextEdit::textHighlight() {
     enableTextHighlight();
   else
     disableTextHighlight();
+
+  updateActions(); //to trigger background color button to change TODO change only that button
 }
 
 void TextEdit::disableTextHighlight() {
   debug("Disable text highlight");
+  _highlightOn = false;
   refresh();
   _dockOffline->setVisible(false);
 }
 
 void TextEdit::enableTextHighlight() {
   debug("Enable text highlight");
-  refresh(false, true);
+  _highlightOn = true;
+  refresh(false);
   _dockOffline->setVisible(true);
 }
 
@@ -498,6 +509,11 @@ void TextEdit::textColor() {
 
 void TextEdit::textBackgroundColor() {
   if(_blockSignals) return;
+
+  if(_highlightOn) {
+    ErrorDialog::showDialog(this, "Disable highlighting first");
+    return;
+  }
 
   debug("Cambiato colore sfondo");
   QTextCursor cursor = _textEdit->textCursor();
@@ -617,7 +633,7 @@ void TextEdit::handleUpdate(int pos, int nchars) {
 
     auto &sym = _file.symbolAt(pos + i);
 
-    if(!sym.hasSameAttributes(chr, fmt)) {
+    if(!sym.hasSameAttributes(chr, fmt, _highlightOn)) {
       sym.setFormat(fmt);
       sym.setChar(chr);
       real = true;
@@ -627,6 +643,23 @@ void TextEdit::handleUpdate(int pos, int nchars) {
   }
 
   if(real) {
+    if (_highlightOn) {
+      _blockSignals = true;
+      //repeat the process, to set transparent background
+      cursor.setPosition(pos);
+      for(int i=0; i<nchars; i++) {
+        cursor.movePosition(QTextCursor::NextCharacter);
+
+        auto chr = _textEdit->document()->characterAt(pos + i);
+        auto fmt = cursor.charFormat();
+
+        cursor.deletePreviousChar();
+        fmt.setBackground(_defColor);
+        cursor.insertText(chr, fmt);
+      }
+      _blockSignals = false;
+    }
+
     emit localUpdateQuery(_fileId, symUpdated);
   }
   else {
@@ -670,6 +703,18 @@ void TextEdit::handleInsert(int pos, int added) {
       cursor.deletePreviousChar(); //TODO check. delete null characters
     }
     else {
+      // mettendo qua il check dell'highlight cambio anche il simbolo interno nel File
+      // così sono sicuro che il background è trasparente (es ho inserito a destra di un carattere inserito
+      // da un altro, il background sarà di quel colore erroneamente)
+      if(_highlightOn) {
+        // set transparent background
+        _blockSignals = true;
+        cursor.deletePreviousChar();
+        fmt.setBackground(_defColor);
+        cursor.insertText(chr, fmt);
+        _blockSignals = false;
+      }
+
       Symbol s{{_user.userId, _user.charId++}, chr, fmt};
       //debug(QString::fromStdString(s.to_string()));
 
@@ -726,6 +771,18 @@ void TextEdit::updateActions() {
   pix.fill(fmt.foreground().color());
   _actionTextColor->setIcon(pix);
 
+  // TODO: FIX THIS!!
+  // temp: dato che normalmente il backgroundColor ritornato da sto metodo è nero (a meno che non lo si cambia)
+  // non posso mostrare quel colore nel pulsante, quindi mostro bianco (temporaneamente!!!)
+  auto backgroundColor = fmt.background().color();
+  if(backgroundColor == QColor::fromRgb(0,0,0) || backgroundColor == QColor::fromRgb(0,0,0,0)) {
+    pix.fill(QColor::fromRgb(255,255,255));
+  }
+  else {
+    pix.fill(backgroundColor);
+  }
+  _actionTextBackgroundColor->setIcon(pix);
+
   _comboFont->setCurrentText(fmt.font().family());
   _comboSize->setCurrentIndex(QFontDatabase::standardSizes().indexOf(fmt.font().pointSize()));
 
@@ -777,6 +834,7 @@ void TextEdit::reset() {
 void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols) {
   _blockSignals = true;
   int pos;
+  auto backgroundColor = _highlightOn ? getRemoteUserColor(userId) : std::nullopt;
 
   //TODO non deve succedere, ma se il userId non esiste crasha tutto.. idem delete e update
   debug("userid: " + QString::number(userId));
@@ -787,7 +845,7 @@ void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> sym
 
   for(auto &sym : symbols) {
     pos = _file.remoteInsert(sym);
-    cursor->insert(sym, pos);
+    cursor->insert(sym, pos, backgroundColor);
   }
 
   cursor->show();
@@ -816,6 +874,7 @@ void TextEdit::remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> sym
   _blockSignals = true;
   int pos;
   auto cursor = _users.at(userId).cursor;
+  auto backgroundColor = _highlightOn ? getRemoteUserColor(userId) : std::nullopt;
 
   debug("Update remoto di " + QString::number(symbols.size())
         + " caratteri dell'user " + QString::number(userId));
@@ -824,7 +883,7 @@ void TextEdit::remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> sym
     pos = _file.remoteUpdate(sym);
     if(pos != -1) {
       cursor->remove(pos);
-      cursor->insert(sym, pos);
+      cursor->insert(sym, pos, backgroundColor);
     }
   }
 

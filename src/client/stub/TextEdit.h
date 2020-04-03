@@ -95,7 +95,7 @@ private:
 
   void initDock();
   void actionRefresh();
-  void refresh(bool changeFile = false, bool highlight = false);
+  void refresh(bool changeFile = false);
   void clear();
   void reset();
   void share();
@@ -142,4 +142,6 @@ private:
   bool _blockSignals;
   int _cursorPosition;
   ColorGenerator _gen;
+  bool _highlightOn;
+  QBrush _defColor;
 };
