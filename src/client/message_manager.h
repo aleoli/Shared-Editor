@@ -81,7 +81,7 @@ public slots:
   void newDirQuery(QString token, QString name, std::optional<int> parentId = std::nullopt);
   void editDirQuery(QString token, int dirId, std::optional<QString> name, std::optional<int> parentId);
   void deleteDirQuery(QString token, int dirId);
-  void getDirQuery(QString token, int dirId);
+  void getDirQuery(QString token, std::optional<int> dirId = std::nullopt);
   void moveFileQuery(QString token, int fileId, int dirId);
 
 private:
