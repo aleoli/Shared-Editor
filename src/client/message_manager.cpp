@@ -266,12 +266,13 @@ void MessageManager::deleteDirQuery(QString token, int dirId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::getDirQuery(QString token, int dirId) {
+void MessageManager::getDirQuery(QString token, std::optional<int> dirId) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::GET_DIR),
     Message::Status::QUERY};
 
     m.setValue("token", token);
-    m.setValue("dirId", dirId);
+    if(dirId)
+      m.setValue("dirId", *dirId);
 
     emit send_data(m.toQByteArray());
 }
