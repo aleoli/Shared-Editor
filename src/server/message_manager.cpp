@@ -102,7 +102,7 @@ void MessageManager::clientDisconnected(quint64 clientId) {
       if(cl == clientId) {
         continue;
       }
-      auto userId = this->getUserId(cl);
+      auto userId = this->getUserId(clientId);
 
       QJsonObject _data;
       _data["fileId"] = data.fileIdUser;

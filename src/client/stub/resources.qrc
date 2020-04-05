@@ -9,6 +9,7 @@
     <file alias="refresh.png">imgs/refresh.png</file>
     <file alias="share.png">imgs/share.png</file>
     <file alias="fill.png">imgs/fill.png</file>
+    <file alias="colors.png">imgs/colors.png</file>
 </qresource>
 
 <qresource prefix="/other">

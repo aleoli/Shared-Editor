@@ -25,6 +25,7 @@ class TextEdit : public QMainWindow {
       QString username;
       Cursor *cursor;
       QColor color;
+      bool isOnline;
     } remoteUser;
 
     typedef struct {
@@ -70,6 +71,7 @@ private slots:
   void textBold();
   void textItalic();
   void textUnderline();
+  void textHighlight();
   void textColor();
   void textBackgroundColor();
   void textFamily(const QString &f);
@@ -92,10 +94,23 @@ private:
   void handleInsert(int pos, int added);
 
   void initDock();
+  void actionRefresh();
   void refresh(bool changeFile = false);
   void clear();
   void reset();
   void share();
+
+  // remote users functions
+  void addRemoteUser(int userId, const QString &username, bool isOnline = true);
+  void setRemoteUserOnline(int userId);
+  void remoteUserConnected(int userId, const QString &username);
+  void remoteUserDisconnected(int userId);
+  std::optional<QColor> getRemoteUserColor(int userId);
+  void hideOfflineUsers();
+  void showOfflineUsers();
+
+  void disableTextHighlight();
+  void enableTextHighlight();
 
   std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
   int getCursorPosition(SymbolId id, int position);
@@ -105,12 +120,14 @@ private:
   QAction *_actionTextBold;
   QAction *_actionTextItalic;
   QAction *_actionTextUnderline;
+  QAction *_actionTextHighlight;
   QAction *_actionTextColor;
   QAction *_actionTextBackgroundColor;
   QFontComboBox *_comboFont;
   QComboBox *_comboSize;
 
-  QListWidget *_dock;
+  QListWidget *_listOnline, *_listOffline;
+  QDockWidget *_dockOnline, *_dockOffline;
 
   File _file;
   std::optional<QString> _shareLink;
@@ -125,4 +142,6 @@ private:
   bool _blockSignals;
   int _cursorPosition;
   ColorGenerator _gen;
+  bool _highlightOn;
+  QBrush _defColor;
 };

@@ -9,6 +9,9 @@
 #include <QTextCursor>
 #include <QTextEdit>
 #include <QColor>
+#include <QBrush>
+
+#include <optional>
 
 #include "Symbol.h"
 
@@ -18,7 +21,7 @@ class Cursor : public QLabel {
 public:
   Cursor(QTextEdit *parent, QColor color);
   void updateCursorPosition(int position);
-  void insert(const Symbol &sym, int position);
+  void insert(const Symbol &sym, int position, std::optional<QBrush> backgroundColor = std::nullopt);
   void remove(int position);
   void show();
 

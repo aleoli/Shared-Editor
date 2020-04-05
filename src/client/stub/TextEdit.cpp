@@ -34,12 +34,14 @@ const QString rsrcPath = ":/images/win";
 #endif
 
 TextEdit::TextEdit(QWidget *parent)
-        : QMainWindow(parent), _blockSignals(false), _cursorPosition(0), _shareLink(std::nullopt)
+        : QMainWindow(parent), _blockSignals(false), _cursorPosition(0), _shareLink(std::nullopt), _highlightOn(false)
 {
   // QTextEdit sarà il nostro widget principale, contiene un box in cui inserire testo.
   // Inoltre avremo un menu, in cui ci saranno tutte le varie opzioni, e una toolbar che ne avrà un set
   _textEdit = new QTextEditImpl(this);
   setCentralWidget(_textEdit);
+
+  _defColor = _textEdit->currentCharFormat().background();
 
   // inizializzo tutte le varie azioni. Un'azione può essere "Nuovo File", "Copia", "Incolla", "Grassetto", ...
   // per ogni azione va associato uno slot (funzione che esegue qualcosa quando si vuole eseguire l'azione
@@ -77,18 +79,10 @@ void TextEdit::setConnectedUsers() {
   for(auto &user : _file.getUsers()) {
     if (user.second.userId == _user.userId) continue;
 
-    remoteUser rUser;
-    rUser.userId = user.second.userId;
-    rUser.username = user.second.username;
-    rUser.color = _gen.getColor();
-    rUser.cursor = new Cursor(_textEdit, rUser.color);
+    debug("User ID: " + QString::number(user.second.userId));
+    debug("isOnline: " + QString::number(user.second.online));
 
-    rUser.item = new QListWidgetItem(rUser.username, _dock);
-    rUser.item->setFlags(Qt::NoItemFlags);
-    rUser.item->setForeground(rUser.color);
-
-    //TODO check nella mappa per vedere che non ci sia già
-    _users[user.second.userId] = rUser;
+    addRemoteUser(user.second.userId, user.second.username, user.second.online);
   }
 }
 
@@ -102,6 +96,10 @@ void TextEdit::setFileId(int id) {
 
 int TextEdit::getFileId() const {
   return _fileId;
+}
+
+void TextEdit::actionRefresh() {
+  refresh();
 }
 
 void TextEdit::refresh(bool changeFile) {
@@ -119,7 +117,21 @@ void TextEdit::refresh(bool changeFile) {
   //refresh
   QTextCursor cursor{_textEdit->document()};
   for(auto &sym : _file.getSymbols()) {
-    cursor.setCharFormat(sym.getFormat());
+    auto format = sym.getFormat();
+
+    if(_highlightOn) {
+      auto userId = sym.getSymbolId().getUserId();
+      auto optcolor = getRemoteUserColor(userId);
+      if(optcolor) {
+        auto &color = *optcolor;
+        format.setBackground(color);
+      }
+      else if(userId == _user.userId) { // should always be true if the previous condition is not satisfied
+        format.setBackground(_defColor);
+      }
+    }
+
+    cursor.setCharFormat(format);
     cursor.insertText(sym.getChar());
   }
 
@@ -169,6 +181,79 @@ void TextEdit::clear() {
   _blockSignals = false;
 }
 
+void TextEdit::addRemoteUser(int userId, const QString &username, bool isOnline) {
+  remoteUser user;
+  user.userId = userId;
+  user.username = username;
+  user.color = _gen.getColor();
+  user.isOnline = isOnline;
+  user.cursor = new Cursor(_textEdit, user.color);
+
+  if(isOnline) {
+    user.item = new QListWidgetItem(username, _listOnline);
+  }
+  else {
+    user.item = new QListWidgetItem(username, _listOffline);
+
+  }
+
+  user.item->setFlags(Qt::NoItemFlags);
+  user.item->setForeground(user.color);
+
+  // userId should not be present in map, as it is checked by the caller of this function
+  _users[userId] = user;
+}
+
+void TextEdit::setRemoteUserOnline(int userId) {
+  auto &user = _users[userId];
+
+  user.isOnline = true;
+  _listOffline->takeItem(_listOffline->row(user.item));
+  _listOnline->addItem(user.item);
+}
+
+void TextEdit::remoteUserConnected(int userId, const QString &username) {
+  if(_users.count(userId) == 0) {
+    debug("This user just activated the link for this file");
+    addRemoteUser(userId, username);
+    _users[userId].cursor->show();
+  }
+  else {
+    debug("User already known, just setting his name visible");
+    setRemoteUserOnline(userId);
+  }
+}
+
+void TextEdit::remoteUserDisconnected(int userId) {
+  if(_users.count(userId) == 0) {
+    error("User " + QString::number(userId) + " not present in the list of users!!");
+    return;
+  }
+
+  auto &user = _users[userId];
+
+  user.isOnline = false;
+  _listOnline->takeItem(_listOnline->row(user.item));
+  _listOffline->addItem(user.item);
+  //TODO reset cursor to first position
+}
+
+std::optional<QColor> TextEdit::getRemoteUserColor(int userId) {
+  if(_user.userId == userId) {
+    return std::nullopt;
+  }
+
+  if(_users.count(userId) == 0) {
+    error("User " + QString::number(userId) + " not present in the list of users!!");
+    return std::nullopt;
+  }
+
+  auto color = _users[userId].color;
+  color.setAlpha(64);
+
+  return std::optional<QColor>(color);
+}
+
 void TextEdit::setUser(int userId, QString username) {
   debug("User initialized with userId: " + QString::number(userId));
 
@@ -178,23 +263,31 @@ void TextEdit::setUser(int userId, QString username) {
   _user.charId = 0;
 
   if(_user.item != nullptr) {
-    _dock->takeItem(_dock->row(_user.item));
+    _listOnline->takeItem(_listOnline->row(_user.item));
     delete _user.item;
   }
 
   _user.item = new QListWidgetItem(username + " (Tu)");
   _user.item->setFlags(Qt::NoItemFlags);
   _user.item->setForeground(QColor("black"));
-  _dock->insertItem(0, _user.item);
+  _listOnline->insertItem(0, _user.item);
 }
 
 void TextEdit::initDock() {
-  auto *dockWidget = new QDockWidget(tr("Utenti connessi:"), this);
-  dockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
-  addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+  _dockOnline = new QDockWidget(tr("Utenti online:"), this);
+  _dockOnline->setAllowedAreas(Qt::RightDockWidgetArea);
+  addDockWidget(Qt::RightDockWidgetArea, _dockOnline);
 
-  _dock = new QListWidget(this);
-  dockWidget->setWidget(_dock);
+  _dockOffline = new QDockWidget(tr("Utenti offline:"), this);
+  _dockOffline->setAllowedAreas(Qt::RightDockWidgetArea);
+  addDockWidget(Qt::RightDockWidgetArea, _dockOffline);
+
+  _listOnline = new QListWidget(_dockOnline);
+  _dockOnline->setWidget(_listOnline);
+
+  _listOffline = new QListWidget(_dockOffline);
+  _dockOffline->setWidget(_listOffline);
+  _dockOffline->setVisible(false);
 }
 
 void TextEdit::setupFileActions() {
@@ -215,7 +308,7 @@ void TextEdit::setupFileActions() {
   tb->addAction(info);
 
   const QIcon refreshIcon(":/buttons/refresh.png");
-  QAction *refresh = menu->addAction(refreshIcon,  tr("&Refresh document"), this, &TextEdit::refresh);
+  QAction *refresh = menu->addAction(refreshIcon,  tr("&Refresh document"), this, &TextEdit::actionRefresh);
   tb->addAction(refresh);
 
   const QIcon shareIcon(":/buttons/share.png");
@@ -296,6 +389,13 @@ void TextEdit::setupTextActions() {
   _actionTextUnderline->setCheckable(true);
 
 
+  // AZIONE EVIDENZIA TESTO UTENTI
+  const QIcon highlightIcon(":/buttons/colors.png");
+  _actionTextHighlight = menu->addAction(highlightIcon,  tr("&Highlight text"), this, &TextEdit::textHighlight);
+  tb->addAction(_actionTextHighlight);
+  _actionTextHighlight->setCheckable(true);
+
+
   menu->addSeparator();
 
 
@@ -307,8 +407,8 @@ void TextEdit::setupTextActions() {
 
 
   // BACKGROUND COLOR
-  const QIcon backgroundColorIcon(":/buttons/fill.png");
-  _actionTextBackgroundColor = menu->addAction(backgroundColorIcon, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
+  pix.fill(QColor::fromRgb(255,255,255));
+  _actionTextBackgroundColor = menu->addAction(pix, tr("&BackgroundColor..."), this, &TextEdit::textBackgroundColor);
   tb->addAction(_actionTextBackgroundColor);
 
 
@@ -369,6 +469,29 @@ void TextEdit::textUnderline() {
   _textEdit->mergeCurrentCharFormat(fmt);
 }
 
+void TextEdit::textHighlight() {
+  if (_actionTextHighlight->isChecked())
+    enableTextHighlight();
+  else
+    disableTextHighlight();
+
+  updateActions(); //to trigger background color button to change TODO change only that button
+}
+
+void TextEdit::disableTextHighlight() {
+  debug("Disable text highlight");
+  _highlightOn = false;
+  refresh();
+  _dockOffline->setVisible(false);
+}
+
+void TextEdit::enableTextHighlight() {
+  debug("Enable text highlight");
+  _highlightOn = true;
+  refresh(false);
+  _dockOffline->setVisible(true);
+}
+
 void TextEdit::textColor() {
   if(_blockSignals) return;
 
@@ -386,6 +509,11 @@ void TextEdit::textColor() {
 
 void TextEdit::textBackgroundColor() {
   if(_blockSignals) return;
+
+  if(_highlightOn) {
+    ErrorDialog::showDialog(this, "Disable highlighting first");
+    return;
+  }
 
   debug("Cambiato colore sfondo");
   QTextCursor cursor = _textEdit->textCursor();
@@ -505,7 +633,7 @@ void TextEdit::handleUpdate(int pos, int nchars) {
 
     auto &sym = _file.symbolAt(pos + i);
 
-    if(!sym.hasSameAttributes(chr, fmt)) {
+    if(!sym.hasSameAttributes(chr, fmt, _highlightOn)) {
       sym.setFormat(fmt);
       sym.setChar(chr);
       real = true;
@@ -515,6 +643,23 @@ void TextEdit::handleUpdate(int pos, int nchars) {
   }
 
   if(real) {
+    if (_highlightOn) {
+      _blockSignals = true;
+      //repeat the process, to set transparent background
+      cursor.setPosition(pos);
+      for(int i=0; i<nchars; i++) {
+        cursor.movePosition(QTextCursor::NextCharacter);
+
+        auto chr = _textEdit->document()->characterAt(pos + i);
+        auto fmt = cursor.charFormat();
+
+        cursor.deletePreviousChar();
+        fmt.setBackground(_defColor);
+        cursor.insertText(chr, fmt);
+      }
+      _blockSignals = false;
+    }
+
     emit localUpdateQuery(_fileId, symUpdated);
   }
   else {
@@ -558,6 +703,18 @@ void TextEdit::handleInsert(int pos, int added) {
       cursor.deletePreviousChar(); //TODO check. delete null characters
     }
     else {
+      // mettendo qua il check dell'highlight cambio anche il simbolo interno nel File
+      // così sono sicuro che il background è trasparente (es ho inserito a destra di un carattere inserito
+      // da un altro, il background sarà di quel colore erroneamente)
+      if(_highlightOn) {
+        // set transparent background
+        _blockSignals = true;
+        cursor.deletePreviousChar();
+        fmt.setBackground(_defColor);
+        cursor.insertText(chr, fmt);
+        _blockSignals = false;
+      }
+
       Symbol s{{_user.userId, _user.charId++}, chr, fmt};
       //debug(QString::fromStdString(s.to_string()));
 
@@ -570,10 +727,10 @@ void TextEdit::handleInsert(int pos, int added) {
 }
 
 void TextEdit::cursorChanged() {
-  debug("cursorChanged triggered");
-  auto cursor = _textEdit->textCursor();
-
+  //debug("cursorChanged triggered");
   if(_blockSignals) return;
+
+  auto cursor = _textEdit->textCursor();
 
   if(cursor.hasSelection()) return; //non mando nulla se sto selezionando
 
@@ -599,7 +756,7 @@ void TextEdit::cursorChanged() {
 }
 
 void TextEdit::formatChanged() {
-  debug("Format changed");
+  //debug("Format changed");
 }
 
 void TextEdit::updateActions() {
@@ -613,6 +770,18 @@ void TextEdit::updateActions() {
   QPixmap pix(16, 16);
   pix.fill(fmt.foreground().color());
   _actionTextColor->setIcon(pix);
+
+  // TODO: FIX THIS!!
+  // temp: dato che normalmente il backgroundColor ritornato da sto metodo è nero (a meno che non lo si cambia)
+  // non posso mostrare quel colore nel pulsante, quindi mostro bianco (temporaneamente!!!)
+  auto backgroundColor = fmt.background().color();
+  if(backgroundColor == QColor::fromRgb(0,0,0) || backgroundColor == QColor::fromRgb(0,0,0,0)) {
+    pix.fill(QColor::fromRgb(255,255,255));
+  }
+  else {
+    pix.fill(backgroundColor);
+  }
+  _actionTextBackgroundColor->setIcon(pix);
 
   _comboFont->setCurrentText(fmt.font().family());
   _comboSize->setCurrentIndex(QFontDatabase::standardSizes().indexOf(fmt.font().pointSize()));
@@ -639,15 +808,22 @@ void TextEdit::reset() {
   //elimino users
   for(auto &user : _users) {
     delete user.second.cursor;
-    _dock->takeItem(_dock->row(user.second.item));
-    delete user.second.item;
+
   }
   _users.clear();
+
+  //clear dock widgets
+  auto me = _listOnline->takeItem(0);
+  _listOnline->clear();
+  _listOffline->clear();
+  _listOnline->addItem(me);
 
   // reset value
   _blockSignals = false;
   _cursorPosition = 0;
   _gen.reset();
+
+  //TODO reset actions (pulsanti non checked etc)
 }
 
 // SLOT messaggi ricevuti da remoto
@@ -658,6 +834,7 @@ void TextEdit::reset() {
 void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols) {
   _blockSignals = true;
   int pos;
+  auto backgroundColor = _highlightOn ? getRemoteUserColor(userId) : std::nullopt;
 
   //TODO non deve succedere, ma se il userId non esiste crasha tutto.. idem delete e update
   debug("userid: " + QString::number(userId));
@@ -668,7 +845,7 @@ void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> sym
 
   for(auto &sym : symbols) {
     pos = _file.remoteInsert(sym);
-    cursor->insert(sym, pos);
+    cursor->insert(sym, pos, backgroundColor);
   }
 
   cursor->show();
@@ -697,6 +874,7 @@ void TextEdit::remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> sym
   _blockSignals = true;
   int pos;
   auto cursor = _users.at(userId).cursor;
+  auto backgroundColor = _highlightOn ? getRemoteUserColor(userId) : std::nullopt;
 
   debug("Update remoto di " + QString::number(symbols.size())
         + " caratteri dell'user " + QString::number(userId));
@@ -705,7 +883,7 @@ void TextEdit::remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> sym
     pos = _file.remoteUpdate(sym);
     if(pos != -1) {
       cursor->remove(pos);
-      cursor->insert(sym, pos);
+      cursor->insert(sym, pos, backgroundColor);
     }
   }
 
@@ -722,38 +900,24 @@ void TextEdit::updateCursors() {
 void TextEdit::userConnectedQuery(int fileId, int userId, QString username) {
   info("New remote user: " + username + " " + QString::number(userId));
 
-  remoteUser user;
-  user.userId = userId;
-  user.username = username;
-  user.color = _gen.getColor();
-  user.cursor = new Cursor(_textEdit, user.color);
-  user.cursor->show();
-
-  user.item = new QListWidgetItem(username, _dock);
-  user.item->setFlags(Qt::NoItemFlags);
-  user.item->setForeground(user.color);
-
-  //TODO check nella mappa per vedere che non ci sia già
-  _users[userId] = user;
+  remoteUserConnected(userId, username);
 }
 
 void TextEdit::userDisconnectedQuery(int fileId, int userId) {
   info("User " + QString::number(userId) + " disconnected");
 
-  //TODO check nella mappa per vedere che ci sia
-  auto user = _users[userId];
-
-  delete user.cursor;
-  _dock->takeItem(_dock->row(user.item));
-  delete user.item;
-
-  _users.erase(userId);
+  remoteUserDisconnected(userId);
 }
 
 void TextEdit::remoteMoveQuery(int fileId, int userId, SymbolId symbolId, int cursorPosition) {
   debug("User: " + QString::number(userId) + " moved cursor");
 
   //TODO check nella mappa per vedere che ci sia
+  if(_users.count(userId) == 0) {
+    error("User " + QString::number(userId) + " not present in the list of users!!");
+    return;
+  }
+
   auto cursor = _users[userId].cursor;
   cursor->updateCursorPosition(getCursorPosition(symbolId, cursorPosition));
   cursor->show();

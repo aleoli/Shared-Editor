@@ -40,16 +40,15 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
   return !operator==(lhs, rhs);
 }
 
-bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2) {
+bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground) {
   return fmt1.font() == fmt2.font() &&
   fmt1.foreground() == fmt2.foreground() &&
-  fmt1.background() == fmt2.background();
+  ignoreBackground ? true : fmt1.background() == fmt2.background();
 }
 
-bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt) const {
-  return _char == chr && compareFormats(_fmt, fmt);
+bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground) const {
+  return _char == chr && compareFormats(_fmt, fmt, ignoreBackground);
 }
-
 
 void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
   auto idValue = json["id"];
