@@ -249,7 +249,7 @@ std::optional<QColor> TextEdit::getRemoteUserColor(int userId) {
   }
 
   auto color = _users[userId].color;
-  color.setAlpha(128);
+  color.setAlpha(64);
 
   return std::optional<QColor>(color);
 }
