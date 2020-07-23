@@ -1,0 +1,25 @@
+<RCC>
+  <qresource prefix="res">
+    <file>checkbox_checked.png</file>
+    <file>dropdown_arrow.png</file>
+    <file>account.png</file>
+    <file>forward.png</file>
+    <file>up.png</file>
+    <file>account_large_hover.png</file>
+    <file>account_large.png</file>
+    <file>checkbox.png</file>
+    <file>back.png</file>
+    <file>delete.png</file>
+    <file>file.png</file>
+    <file>folder.png</file>
+    <file>home.png</file>
+    <file>logout.png</file>
+    <file>move.png</file>
+    <file>newFile.png</file>
+    <file>newFolder.png</file>
+    <file>options.png</file>
+    <file>rename.png</file>
+    <file>search.png</file>
+    <file>share.png</file>
+  </qresource>
+</RCC>
