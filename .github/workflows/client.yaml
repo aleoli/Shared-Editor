@@ -1,0 +1,76 @@
+name: Client
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup-docker
+        uses: docker-practice/actions-setup-docker@0.0.1
+      - name: Set the commit to build
+        run: |
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+             echo "::set-env name=commit_ref::${{ github.event.pull_request.head.sha }}"
+          else
+             echo "::set-env name=commit_ref::${{ github.sha }}"
+          fi
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          ref: "${{ env.commit_ref }}"
+      - name: Build client image
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: sharededitor/client
+          username: ${{ secrets.DOCKER_USERNAME }}
+          dockerfile: docker/Dockerfile_client
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: "latest,${{ env.commit_ref }}"
+        if: github.ref == 'refs/heads/master'
+      - name: Build client image (CI)
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: sharededitor/client
+          username: ${{ secrets.DOCKER_USERNAME }}
+          dockerfile: docker/Dockerfile_client
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: "${{ env.commit_ref }}"
+        if: github.ref != 'refs/heads/master'
+  build-stub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup-docker
+        uses: docker-practice/actions-setup-docker@0.0.1
+      - name: Set the commit to build
+        run: |
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+             echo "::set-env name=commit_ref::${{ github.event.pull_request.head.sha }}"
+          else
+             echo "::set-env name=commit_ref::${{ github.sha }}"
+          fi
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          ref: "${{ env.commit_ref }}"
+      - name: Build stubClient image
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: sharededitor/stub-client
+          username: ${{ secrets.DOCKER_USERNAME }}
+          dockerfile: docker/Dockerfile_stubClient
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: "latest,${{ env.commit_ref }}"
+        if: github.ref == 'refs/heads/master'
+      - name: Build client image (CI)
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: sharededitor/stub-client
+          username: ${{ secrets.DOCKER_USERNAME }}
+          dockerfile: docker/Dockerfile_stubClient
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: "${{ env.commit_ref }}"
+        if: github.ref != 'refs/heads/master'

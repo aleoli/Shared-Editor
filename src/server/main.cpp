@@ -1,17 +1,19 @@
 #include <QCoreApplication>
+#include <csignal>
 
 #include "sys.h"
 #include "client_manager.h"
 #include "message_manager.h"
 
-#include "exceptions.h"
-
-using namespace se_exceptions;
+void signalHandler(int signum);
 
 int main(int argc, char *argv[]) {
   QCoreApplication app(argc, argv);
   SysConf conf = initiate_system(app);
   info("System successfully started");
+
+  std::signal(SIGINT, signalHandler);
+  std::signal(SIGTERM, signalHandler);
 
   auto cm = ClientManager::get(conf.port);
   auto mm = MessageManager::get();
@@ -21,5 +23,10 @@ int main(int argc, char *argv[]) {
   QObject::connect(mm.get(), SIGNAL(send_data(quint64, QByteArray)), cm.get(), SLOT(sendData(quint64, QByteArray)));
   QObject::connect(mm.get(), SIGNAL(connection_error(quint64)), cm.get(), SIGNAL(force_close(quint64)));
 
-  return app.exec();
+  return QCoreApplication::exec();
+}
+
+void signalHandler(int signum) {
+  info("Bye bye");
+  QCoreApplication::exit(0);
 }
