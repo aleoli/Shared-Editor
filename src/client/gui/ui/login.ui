@@ -813,7 +813,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
   <tabstop>btn_RegisterForm</tabstop>
  </tabstops>
  <resources>
-  <include location="../resources/res.qrc"/>
+  <include location="resources/res.qrc"/>
  </resources>
  <connections/>
 </ui>

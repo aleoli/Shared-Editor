@@ -130,7 +130,7 @@ selection-background-color: #f76163;</string>
               <string notr="true">margin-left: 20px;</string>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;New Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
@@ -157,6 +157,38 @@ selection-background-color: #f76163;</string>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="styleSheet">
+                <string notr="true">QLabel{;
+	background: rgba(0,0,0,0);
+	margin-left: 0px;
+	margin-bottom: 0px;
+}</string>
+               </property>
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Actual Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_newPassword">
+               <property name="styleSheet">
+                <string notr="true">background: white;
+border:1px solid white;
+border-radius: 9px;
+padding: 1 8px;
+margin: 0 20 20 0px;
+color: #94938f;
+font: &quot;Segoe UI Emoji&quot;;
+selection-background-color: #f76163;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <property name="sizeConstraint">
               <enum>QLayout::SetDefaultConstraint</enum>
@@ -167,7 +199,7 @@ selection-background-color: #f76163;</string>
              <item>
               <widget class="QLabel" name="label_6">
                <property name="styleSheet">
-                <string notr="true">margin-left: 0px;</string>
+                <string notr="true">margin-left: 20px;</string>
                </property>
                <property name="text">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -181,7 +213,7 @@ selection-background-color: #f76163;</string>
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
-margin: 0 0 20 0px;
+margin: 0 0 20 20px;
 color: #94938f;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
