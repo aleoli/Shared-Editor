@@ -1,5 +1,15 @@
 <RCC>
   <qresource prefix="res">
+    <file>profile-pics/default.png</file>
+    <file>profile-pics/happyman1.png</file>
+    <file>profile-pics/parrot.png</file>
+    <file>profile-pics/soldier.png</file>
+    <file>profile-pics/spaceship1.png</file>
+    <file>profile-pics/spaceship2.png</file>
+    <file>profile-pics/spaceship3.png</file>
+    <file>profile-pics/spaceship4.png</file>
+    <file>profile-pics/star.png</file>
+    <file>profile-pics/sunset.png</file>
     <file>checkbox_checked.png</file>
     <file>dropdown_arrow.png</file>
     <file>account.png</file>

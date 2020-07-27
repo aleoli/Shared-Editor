@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DocsBrowser</class>
+ <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1366</width>
-    <height>768</height>
+    <height>771</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,44 @@
    <enum>QTabWidget::Rounded</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">/*VERTICAL*/
+QScrollBar:vertical {
+    background-color: #242a38 ;width: 27px; margin-left: 3px;
+	}
+
+QScrollBar::handle:vertical {background-color:#4e596f; min-height: 100px;
+border-color:#4e596f ;border-width: 10px;border-style: solid;
+	border-radius: 12px;}
+
+QScrollBar::sub-line:vertical {border: 2px solid #242a38;background-color: #242a38;
+    height: 25px;subcontrol-position: top;subcontrol-origin: margin;}
+
+QScrollBar::add-line:vertical {border: 2px solid #242a38;background-color: #242a38;
+    height: 25px;subcontrol-position: bottom;subcontrol-origin: margin;}
+
+/*HORIZONTAL*/
+QScrollBar:horizontal {
+	background-color: #242a38;
+	height: 27px;
+	margin-top:3px;
+}
+
+QScrollBar::handle:horizontal {
+	min-width: 50px;
+	background-color:#4e596f;
+	border-color: #4e596f ;border-width: 10px;border-style: solid;
+	border-radius: 12px
+}
+
+/*QScrollBar::add-line:horizontal {
+	border: 2px solid #242a38;background-color: #242a38;
+    height: 25px;
+	subcontrol-position: left;
+	subcontrol-origin: margin;
+}*/
+</string>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
      <widget class="QPushButton" name="btn_home">
@@ -72,7 +110,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources/res.qrc">
+       <iconset resource="resources/res.qrc">
         <normaloff>:/res/home.png</normaloff>:/res/home.png</iconset>
       </property>
       <property name="iconSize">
@@ -126,7 +164,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources/res.qrc">
+       <iconset resource="resources/res.qrc">
         <normaloff>:/res/forward.png</normaloff>:/res/forward.png</iconset>
       </property>
       <property name="iconSize">
@@ -137,23 +175,28 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="btn_new_file">
+    <item row="1" column="10">
+     <widget class="QPushButton" name="btn_Logout">
+      <property name="minimumSize">
+       <size>
+        <width>38</width>
+        <height>38</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
-        <width>74</width>
-        <height>37</height>
+        <width>38</width>
+        <height>38</height>
        </size>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton {
-background: #f65964;
-border: 1px solid #f65964;
-border-radius: 2px;
+background: #4e596f;
+border: 1px solid #242a38;
+border-radius: 19px;
 /*margin-left: 50px;
 margin-right: 50px;*/
-padding-top: 5px;
-padding-bottom: 5px;
+padding-top: 12px;
 }
 
 QPushButton:hover {
@@ -162,30 +205,31 @@ cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
 radius: 0.7, stop: 0 #000, stop: 1 #f65964
 );*/
 background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+              fx:0.5, fy:0.5, stop:1 #4e596f, stop:0 white);
 }
 
 QPushButton:pressed {
 border-style: inset;
+
 /*background: qradialgradient(
 cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
 radius: 0.7, stop: 0 #f65964, stop: 1 #000
 );*/
 background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+              fx:0.5, fy:0.5, stop:0 #4e596f, stop:1 #242a38);
 }</string>
       </property>
       <property name="text">
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources/res.qrc">
-        <normaloff>:/res/newFile.png</normaloff>:/res/newFile.png</iconset>
+       <iconset resource="resources/res.qrc">
+        <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>25</width>
-        <height>31</height>
+        <width>24</width>
+        <height>26</height>
        </size>
       </property>
      </widget>
@@ -213,66 +257,6 @@ selection-background-color: #f76163;</string>
       </property>
       <property name="placeholderText">
        <string>SEARCH DOCUMENT...</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="QPushButton" name="btn_back">
-      <property name="maximumSize">
-       <size>
-        <width>74</width>
-        <height>37</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-background: #f65964;
-border: 1px solid #f65964;
-border-radius: 2px;
-/*margin-left: 50px;
-margin-right: 50px;*/
-padding-top: 5px;
-padding-right: 5px;
-padding-bottom: 5px;
-}
-
-QPushButton:hover {
-/*background: qradialgradient(
-cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-radius: 0.7, stop: 0 #000, stop: 1 #f65964
-);*/
-background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-}
-
-QPushButton:pressed {
-border-style: inset;
-/*background: qradialgradient(
-cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-radius: 0.7, stop: 0 #f65964, stop: 1 #000
-);*/
-background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
-}</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/res.qrc">
-        <normaloff>:/res/back.png</normaloff>:/res/back.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>26</width>
-        <height>29</height>
-       </size>
-      </property>
-      <property name="shortcut">
-       <string>Alt+Left</string>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -347,19 +331,13 @@ QComboBox QAbstractItemView{
       </item>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QPushButton" name="btn_new_folder">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
+    <item row="1" column="3">
+     <widget class="QPushButton" name="btn_back">
       <property name="maximumSize">
        <size>
         <width>74</width>
         <height>37</height>
        </size>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton {
@@ -369,6 +347,7 @@ border-radius: 2px;
 /*margin-left: 50px;
 margin-right: 50px;*/
 padding-top: 5px;
+padding-right: 5px;
 padding-bottom: 5px;
 }
 
@@ -395,23 +374,17 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources/res.qrc">
-        <normaloff>:/res/newFolder.png</normaloff>:/res/newFolder.png</iconset>
+       <iconset resource="resources/res.qrc">
+        <normaloff>:/res/back.png</normaloff>:/res/back.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>36</width>
-        <height>25</height>
+        <width>26</width>
+        <height>29</height>
        </size>
       </property>
       <property name="shortcut">
-       <string>Ctrl+Shift+N</string>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
-      </property>
-      <property name="default">
-       <bool>false</bool>
+       <string>Alt+Left</string>
       </property>
       <property name="flat">
        <bool>false</bool>
@@ -460,71 +433,13 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources/res.qrc">
+       <iconset resource="resources/res.qrc">
         <normaloff>:/res/up.png</normaloff>:/res/up.png</iconset>
       </property>
       <property name="iconSize">
        <size>
         <width>26</width>
         <height>29</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="10">
-     <widget class="QPushButton" name="btn_Logout">
-      <property name="minimumSize">
-       <size>
-        <width>38</width>
-        <height>38</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>38</width>
-        <height>38</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-background: #4e596f;
-border: 1px solid #242a38;
-border-radius: 19px;
-/*margin-left: 50px;
-margin-right: 50px;*/
-padding-top: 12px;
-}
-
-QPushButton:hover {
-/*background: qradialgradient(
-cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-radius: 0.7, stop: 0 #000, stop: 1 #f65964
-);*/
-background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #4e596f, stop:1 white);
-}
-
-QPushButton:pressed {
-border-style: inset;
-/*background: qradialgradient(
-cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-radius: 0.7, stop: 0 #f65964, stop: 1 #000
-);*/
-background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #4e596f, stop:1 #242a38);
-}</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources/res.qrc">
-        <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>26</height>
        </size>
       </property>
      </widget>
@@ -583,7 +498,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../resources/res.qrc">
+       <iconset resource="resources/res.qrc">
         <normaloff>:/res/search.png</normaloff>:/res/search.png</iconset>
       </property>
       <property name="iconSize">
@@ -597,10 +512,166 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
       </property>
      </widget>
     </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="btn_new_folder">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>74</width>
+        <height>37</height>
+       </size>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+background: #f65964;
+border: 1px solid #f65964;
+border-radius: 2px;
+/*margin-left: 50px;
+margin-right: 50px;*/
+padding-top: 5px;
+padding-bottom: 5px;
+}
+
+QPushButton:hover {
+/*background: qradialgradient(
+cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+radius: 0.7, stop: 0 #000, stop: 1 #f65964
+);*/
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+}
+
+QPushButton:pressed {
+border-style: inset;
+/*background: qradialgradient(
+cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
+radius: 0.7, stop: 0 #f65964, stop: 1 #000
+);*/
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="resources/res.qrc">
+        <normaloff>:/res/newFolder.png</normaloff>:/res/newFolder.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>36</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="shortcut">
+       <string>Ctrl+Shift+N</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+      <property name="default">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="btn_new_file">
+      <property name="maximumSize">
+       <size>
+        <width>74</width>
+        <height>37</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+background: #f65964;
+border: 1px solid #f65964;
+border-radius: 2px;
+/*margin-left: 50px;
+margin-right: 50px;*/
+padding-top: 5px;
+padding-bottom: 5px;
+}
+
+QPushButton:hover {
+/*background: qradialgradient(
+cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+radius: 0.7, stop: 0 #000, stop: 1 #f65964
+);*/
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+}
+
+QPushButton:pressed {
+border-style: inset;
+/*background: qradialgradient(
+cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
+radius: 0.7, stop: 0 #f65964, stop: 1 #000
+);*/
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="resources/res.qrc">
+        <normaloff>:/res/newFile.png</normaloff>:/res/newFile.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>31</height>
+       </size>
+      </property>
+     </widget>
+    </item>
     <item row="2" column="0" colspan="11">
      <widget class="QScrollArea" name="scrollArea">
       <property name="styleSheet">
-       <string notr="true">margin-top: 20px;</string>
+       <string notr="true">QScrollArea{
+	background: #242a38;
+}
+
+/*==============================================================*/
+/*margin-top: 20px;
+QScrollBar:vertical {
+	background: #242a38;
+	border: 3px solid #242a38;
+	width: 30px;}
+    QScrollBar::handle:vertical {
+	background: #4e596f;
+	border: 5px solid #4e596f;
+	border-radius: 10px;
+	}
+    QScrollBar::add-line:vertical {border: 3px solid #242a38;background-color: #242a38;
+    height: 2px;subcontrol-position: bottom;subcontrol-origin: margin;}
+    QScrollBar::sub-line:vertical {border: 3px solid #242a38;background-color: #242a38;
+    height: 2px;subcontrol-position: top;subcontrol-origin: margin;}
+
+QScrollBar:horizontal {
+	background: #242a38;
+	border: 3px solid #242a38;
+	width: 30px;}
+    QScrollBar::handle:horizontal {
+	background: #4e596f;
+	border: 5px solid #4e596f;
+	border-radius: 10px;
+	}
+    QScrollBar::add-line:horizontal {border: 3px solid #242a38;background-color: #242a38;
+    height: 2px;subcontrol-position: bottom;subcontrol-origin: margin;}
+    QScrollBar::sub-line:horizontal {border: 3px solid #242a38;background-color: #242a38;
+    height: 2px;subcontrol-position: top;subcontrol-origin: margin;}*/</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -633,111 +704,34 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
         <string notr="true">    QWidget {
 		background: white;
     }
+
+
+/*QScrollBar:vertical {
+	margin: 20px 0px 20px 0px;
+	border-color: green;
+	border-width: 1px;
+	border-style: dotted;
+    background-color: red;
+	width: 50px;
+	margin: 21px 0 21px 0;}
+
+QScrollBar::handle:vertical {background-color:blue ;min-height: 25px;}
+    
+QScrollBar::add-line:vertical {
+	border: 2px solid green;
+	background-color: yellow;
+    height: 25px;
+	subcontrol-position: bottom;
+	subcontrol-origin: margin;
+}
+    
+QScrollBar::sub-line:vertical {
+	border: 2px solid black;background-color: #32CC99;
+    height: 25px;
+	subcontrol-position: top;subcontrol-origin: margin;
+}*/
 </string>
        </property>
-       <widget class="QScrollBar" name="horizontalScrollBar">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>620</y>
-          <width>1301</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QScrollBar:horizontal {
-	background: #242a38;
-	border: 3px solid #242a38;
-	width: 30px;}
-    QScrollBar::handle:horizontal {
-	background: #4e596f;
-	border: 5px solid #4e596f;
-	border-radius: 10px;
-	}
-    QScrollBar::add-line:horizontal {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: bottom;subcontrol-origin: margin;}
-    QScrollBar::sub-line:horizontal {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: top;subcontrol-origin: margin;}</string>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-       <widget class="QScrollBar" name="verticalScrollBar">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>1300</x>
-          <y>0</y>
-          <width>31</width>
-          <height>631</height>
-         </rect>
-        </property>
-        <property name="baseSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <weight>50</weight>
-          <bold>false</bold>
-          <strikeout>false</strikeout>
-          <kerning>true</kerning>
-         </font>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QScrollBar:vertical {
-	background: #242a38;
-	border: 3px solid #242a38;
-	width: 30px;}
-    QScrollBar::handle:vertical {
-	background: #4e596f;
-	border: 5px solid #4e596f;
-	border-radius: 10px;
-	}
-    QScrollBar::add-line:vertical {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: bottom;subcontrol-origin: margin;}
-    QScrollBar::sub-line:vertical {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: top;subcontrol-origin: margin;}</string>
-        </property>
-        <property name="sliderPosition">
-         <number>0</number>
-        </property>
-        <property name="tracking">
-         <bool>true</bool>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="invertedAppearance">
-         <bool>false</bool>
-        </property>
-        <property name="invertedControls">
-         <bool>true</bool>
-        </property>
-       </widget>
       </widget>
      </widget>
     </item>
@@ -837,7 +831,7 @@ QMenu::separator {
   </widget>
   <action name="actionQuit">
    <property name="icon">
-    <iconset resource="../resources/res.qrc">
+    <iconset resource="resources/res.qrc">
      <normaloff>:/res/delete.png</normaloff>:/res/delete.png</iconset>
    </property>
    <property name="text">
@@ -846,7 +840,7 @@ QMenu::separator {
   </action>
   <action name="actionLogout">
    <property name="icon">
-    <iconset resource="../resources/res.qrc">
+    <iconset resource="resources/res.qrc">
      <normaloff>:/res/logout.png</normaloff>:/res/logout.png</iconset>
    </property>
    <property name="text">
@@ -878,7 +872,7 @@ QMenu::separator {
   <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources>
-  <include location="../resources/res.qrc"/>
+  <include location="resources/res.qrc"/>
  </resources>
  <connections/>
 </ui>
