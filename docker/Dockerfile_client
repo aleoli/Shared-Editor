@@ -1,0 +1,28 @@
+FROM debian:buster as builder
+
+RUN apt-get update && \
+  apt-get install -y build-essential cmake qt5-default \
+    libc6 libstdc++6 && \
+  rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY . .
+
+RUN ./scripts/build_client.sh
+
+
+
+FROM debian:buster
+RUN apt-get update && \
+  apt-get install -y qt5-default \
+    libc6 libstdc++6 && \
+  rm -rf /var/lib/apt/lists/*
+
+RUN useradd -ms /bin/bash user
+
+WORKDIR /app
+COPY --from=builder /app/bin/client /app/bin/client
+
+USER user
+
+ENTRYPOINT ["/app/bin/client"]

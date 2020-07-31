@@ -1,67 +1,32 @@
-#define TEST_USER 0
-#define TEST_SOCKET 1
-#define TEST_MESSAGE 1
-#define TEST_FS 1
-
 #include <QCoreApplication>
+#include <csignal>
 
-#include <iostream>
-
-#include "persistence_global.h"
 #include "sys.h"
-#include "utils.h"
-
-#if TEST_USER
-#include "test_user.h"
-#endif
-
-#if TEST_SOCKET or TEST_MESSAGE
-#include <QTcpServer>
-#include <QTcpSocket>
 #include "client_manager.h"
-#endif
-
-#if TEST_MESSAGE
 #include "message_manager.h"
-#include <memory>
-#include <QThread>
-#endif
 
-#if TEST_FS
-#include "test_fs.h"
-#endif
-
-#include "exceptions.h"
-
-using namespace se_exceptions;
+void signalHandler(int signum);
 
 int main(int argc, char *argv[]) {
   QCoreApplication app(argc, argv);
   SysConf conf = initiate_system(app);
   info("System successfully started");
 
-#if TEST_USER
-  test_user();
-#endif
+  std::signal(SIGINT, signalHandler);
+  std::signal(SIGTERM, signalHandler);
 
-#if TEST_SOCKET or TEST_MESSAGE
   auto cm = ClientManager::get(conf.port);
-#endif
-
-#if TEST_MESSAGE
   auto mm = MessageManager::get();
-  QThread mm_thread{};
-  mm->moveToThread(&mm_thread);
+
   QObject::connect(cm.get(), SIGNAL(dataReceived(quint64, QByteArray)), mm.get(), SLOT(process_data(quint64, QByteArray)));
   QObject::connect(cm.get(), SIGNAL(closeClient(quint64)), mm.get(), SLOT(clientDisconnected(quint64)));
   QObject::connect(mm.get(), SIGNAL(send_data(quint64, QByteArray)), cm.get(), SLOT(sendData(quint64, QByteArray)));
   QObject::connect(mm.get(), SIGNAL(connection_error(quint64)), cm.get(), SIGNAL(force_close(quint64)));
-  mm_thread.start();
-#endif
 
-#if TEST_FS
-  test_fs();
-#endif
+  return QCoreApplication::exec();
+}
 
-  return app.exec();
+void signalHandler(int signum) {
+  info("Bye bye");
+  QCoreApplication::exit(0);
 }

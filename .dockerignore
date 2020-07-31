@@ -1,0 +1,10 @@
+bin/
+build/
+cmake-build-debug/
+python-demo/
+windows/
+esempi/
+prove/
+
+src/server/build/
+src/client/build
