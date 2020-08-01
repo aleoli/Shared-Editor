@@ -1,7 +1,7 @@
 # Shared-Editor
 
-![Server](https://github.com/aleoli/Shared-Editor/workflows/.github/workflows/server.yaml/badge.svg)
-![Client](https://github.com/aleoli/Shared-Editor/workflows/.github/workflows/client.yaml/badge.svg)
+![Server](https://github.com/aleoli/Shared-Editor/workflows/Server/badge.svg)
+![Client](https://github.com/aleoli/Shared-Editor/workflows/Client/badge.svg)
 
 ### Link alla documentazione
 
