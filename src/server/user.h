@@ -12,36 +12,36 @@ using persistence::Persistent;
 class User: public Persistent {
 public:
   User(const User &u);
-  User(User &&u);
+  User(User &&u) noexcept;
   explicit User();
-  explicit User(QSqlRecord r);
+  explicit User(const QSqlRecord& r);
 
-  virtual ~User();
+  ~User() override;
 
-  virtual User& operator=(const User& u);
+  User& operator=(const User& u);
 
   static User registra(QString username, QString password);
-  static Session login(QString username, QString password);
+  static Session login(const QString& username, const QString& password);
 
-  virtual void save();
-  virtual void save_record(QSqlRecord &r);
-  virtual void remove();
+  void save() override;
+  void save_record(QSqlRecord &r) override;
+  void remove() override;
 
   const static QString table_name;
 
-  QString getUsername() const;
+  [[nodiscard]] QString getUsername() const;
 
-  bool setPassword(QString old_passwork, QString password);
+  bool setPassword(const QString& old_passwork, const QString& password);
   void setUsername(QString username);
-  void setIcon(QString icon);
+  void setIcon(const QString& icon);
 
-	static bool check_pass(QString pass);
+  static bool check_pass(const QString& pass);
 
 private:
   User(QString username, QString password);
 
-  static QString encrypt(QString str);
-  static bool check_pass(QString pass, QString db_pass);
+  static QString encrypt(const QString& str);
+  static bool check_pass(const QString& pass, const QString& db_pass);
 
   QString _username;
   QString _password;

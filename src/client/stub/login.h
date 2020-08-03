@@ -18,7 +18,7 @@ class Login : public QDialog
 
 public:
   explicit Login(QWidget *parent = nullptr);
-  ~Login();
+  ~Login() override;
 
   void unblock();
   void clear();
@@ -40,7 +40,7 @@ private:
 
   QLineEdit *_psw, *_username;
   QPushButton *_btnLogin, *_btnNew;
-  QLabel *_loading;
+  QLabel *_loading{};
   std::shared_ptr<QMovie> _movie;
   Ui::Login *ui;
 };

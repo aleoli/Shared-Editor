@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QJsonDocument>
+#include <utility>
 
 #include "utils.h"
 #include "File.h"
@@ -21,7 +22,7 @@ FSElement_db::FSElement_db(): Persistent() {
   this->_char_id = 0;
   this->_creator = Lazy<User>{-1};
   this->_original = Lazy<FSElement_db>{-1};
-	this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+QString::number(this->id)};
+  this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+QString::number(this->id)};
 }
 
 FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
@@ -38,7 +39,7 @@ FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
 	this->_shared_links = e._shared_links;
 }
 
-FSElement_db::FSElement_db(FSElement_db &&e): Persistent(e) {
+FSElement_db::FSElement_db(FSElement_db &&e) noexcept: Persistent(std::move(e)) {
   this->_path = e._path;
   this->_name = e._name;
   this->_type = e._type;
@@ -49,10 +50,10 @@ FSElement_db::FSElement_db(FSElement_db &&e): Persistent(e) {
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
-	this->_shared_links = e._shared_links;
+  this->_shared_links = e._shared_links;
 }
 
-FSElement_db::FSElement_db(QSqlRecord r): Persistent(r) {
+FSElement_db::FSElement_db(const QSqlRecord& r): Persistent(r) {
   this->_path = r.value("path").toString();
   this->_name = r.value("name").toString();
   this->_type = static_cast<FSElement::Type>(r.value("type").toInt());
@@ -63,11 +64,10 @@ FSElement_db::FSElement_db(QSqlRecord r): Persistent(r) {
   this->_children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+r.value("id").toString()};
   this->_original = Lazy<FSElement_db>{r.value("linked_from").toInt()};
   this->_links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+r.value("id").toString()};
-	this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+r.value("id").toString()};
+  this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+r.value("id").toString()};
 }
 
-FSElement_db::~FSElement_db() {
-}
+FSElement_db::~FSElement_db() = default;
 
 FSElement_db& FSElement_db::operator=(const FSElement_db& e) {
   if(this == &e) {
@@ -83,7 +83,7 @@ FSElement_db& FSElement_db::operator=(const FSElement_db& e) {
   this->_children = e._children;
   this->_original = e._original;
   this->_links = e._links;
-	this->_shared_links = e._shared_links;
+  this->_shared_links = e._shared_links;
   Persistent::operator=(e);
   return *this;
 }
@@ -107,7 +107,7 @@ void FSElement_db::remove() {
 	this->remove([](int e_id, int owner_id) -> void {});
 }
 
-void FSElement_db::remove(std::function<void(int, int)> notify_fn) {
+void FSElement_db::remove(const std::function<void(int, int)>& notify_fn) {
 	if(this->_type == FSElement::Type::DIRECTORY) {
 		if(this->_parent_id <= 0) {
 			// root dir
@@ -144,7 +144,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
   } else {
     fs_e._path = "";
   }
-  fs_e._name = name;
+  fs_e._name = std::move(name);
   fs_e._type = is_file ? FSElement::Type::FILE : FSElement::Type::DIRECTORY;
   fs_e._parent_id = parent_id;
   fs_e._owner_id = user_id;
@@ -280,7 +280,7 @@ FSElement_db FSElement_db::mkdir(const Session &s, QString name) {
     error("Trying to modify not your directory");
     throw se_exceptions::IllegalAccessException{"Trying to modify not your directory"};
   }
-  auto child = FSElement_db::create(s.getUserId(), this->id, name, false);
+  auto child = FSElement_db::create(s.getUserId(), this->id, std::move(name), false);
   this->_children.addValue(new FSElement_db{child});
   return child;
 }
@@ -294,7 +294,7 @@ FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
     error("Trying to modify not your directory");
     throw se_exceptions::IllegalAccessException{"Trying to modify not your directory"};
   }
-  auto child = FSElement_db::create(s.getUserId(), this->id, name, true);
+  auto child = FSElement_db::create(s.getUserId(), this->id, std::move(name), true);
   this->_children.addValue(new FSElement_db{child});
   return child;
 }
@@ -340,7 +340,7 @@ void FSElement_db::rename(const Session &s, QString name) {
     warn("Trying to rename not your element");
     throw se_exceptions::IllegalAccessException{"Trying to rename not your element"};
   }
-	this->_name = name;
+	this->_name = std::move(name);
 	this->save();
 }
 
@@ -369,7 +369,7 @@ FSElement_db FSElement_db::link(const Session &s, const QString &token) {
 }
 
 void FSElement_db::clearCache() {
-	this->_creator.clear();
+  this->_creator.clear();
   this->_original.clear();
   this->_links.clear();
   this->_children.clear();
@@ -410,12 +410,9 @@ int FSElement_db::getIdForUser(const Session &s, int file_id, int user_id) {
 }
 
 bool FSElement_db::availableForUser(int user_id) {
-  for(auto &l: this->_links.getValues()) {
-    if(l->_owner_id == user_id) {
-      return true;
-    }
-  }
-  return false;
+  return std::any_of(this->_links.getValues().begin(), this->_links.getValues().end(), [user_id](auto l) {
+    return l->_owner_id == user_id;
+  });
 }
 
 std::vector<FSElement_db*> FSElement_db::getChildren() {
@@ -426,7 +423,7 @@ bool FSElement_db::is_link() const {
   return this->_owner_id != this->_creator.getId();
 }
 
-User FSElement_db::getCreator() {
+[[maybe_unused]] User FSElement_db::getCreator() {
 	return this->_creator.getValue();
 }
 

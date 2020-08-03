@@ -1,4 +1,6 @@
 #include "errordialog.h"
+
+#include <utility>
 #include "ui_errordialog.h"
 
 ErrorDialog::ErrorDialog(QWidget *parent) :
@@ -14,11 +16,11 @@ ErrorDialog::~ErrorDialog()
 }
 
 void ErrorDialog::setErrorMsg(QString msg) {
-  emit setText(msg);
+  emit setText(std::move(msg));
 }
 
 void ErrorDialog::showDialog(QWidget *parent, QString msg) {
   ErrorDialog dia(parent);
-  dia.setErrorMsg(msg);
+  dia.setErrorMsg(std::move(msg));
   dia.exec();
 }

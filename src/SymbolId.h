@@ -15,14 +15,14 @@ public:
 
   static SymbolId fromJsonObject(const QJsonObject &json);
   static SymbolId fromJsonObject(QJsonObject &&json);
-  QJsonObject toJsonObject() const;
+  [[nodiscard]] QJsonObject toJsonObject() const;
 
-  int getUserId() const;
-  int getCharId() const;
-  std::string to_string() const;
+  [[nodiscard]] int getUserId() const;
+  [[nodiscard]] int getCharId() const;
+  [[nodiscard]] std::string to_string() const;
 
 private:
   void checkAndAssign(const QJsonObject &json);
 
-  int _userId, _charId;
+  int _userId{}, _charId{};
 };

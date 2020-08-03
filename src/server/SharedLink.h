@@ -16,17 +16,17 @@ class FSElement_db;   // fix circular include
 class SharedLink: public Persistent {
 public:
   SharedLink(const SharedLink &);
-  SharedLink(SharedLink &&);
+  SharedLink(SharedLink &&) noexcept;
   explicit SharedLink();
-  explicit SharedLink(QSqlRecord);
+  explicit SharedLink(const QSqlRecord&);
 
-  virtual ~SharedLink();
+  ~SharedLink() override;
 
-  virtual SharedLink& operator=(const SharedLink &);
+  SharedLink& operator=(const SharedLink &);
 
-  virtual void save();
-  virtual void save_record(QSqlRecord &);
-  virtual void remove();
+  void save() override;
+  void save_record(QSqlRecord &) override;
+  void remove() override;
 
   static const QString table_name;
 
@@ -34,7 +34,7 @@ public:
   static SharedLink get(const QString &token);
 
   FSElement_db element();
-  QString getToken() const;
+  [[nodiscard]] QString getToken() const;
 
 private:
   QString _token;

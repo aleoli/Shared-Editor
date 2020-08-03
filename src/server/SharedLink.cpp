@@ -15,18 +15,17 @@ SharedLink::SharedLink(const SharedLink &e): Persistent(e) {
   this->_fs_element = e._fs_element;
 }
 
-SharedLink::SharedLink(SharedLink &&e): Persistent(e) {
+SharedLink::SharedLink(SharedLink &&e) noexcept: Persistent(std::move(e)) {
   this->_token = e._token;
   this->_fs_element = e._fs_element;
 }
 
-SharedLink::SharedLink(QSqlRecord r): Persistent(r) {
+SharedLink::SharedLink(const QSqlRecord& r): Persistent(r) {
   this->_token = r.value("token").toString();
   this->_fs_element = Lazy<FSElement_db>{r.value("element_id").toInt()};
 }
 
-SharedLink::~SharedLink() {
-}
+SharedLink::~SharedLink() = default;
 
 SharedLink& SharedLink::operator=(const SharedLink& e) {
   if(this == &e) {

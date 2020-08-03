@@ -12,27 +12,27 @@ using persistence::Lazy;
 class Session: public Persistent {
 public:
   Session(const Session &s);
-  Session(Session &&s);
+  Session(Session &&s) noexcept;
   explicit Session();
-  explicit Session(QSqlRecord r);
+  explicit Session(const QSqlRecord& r);
 
-  virtual ~Session();
+  ~Session() override;
 
-  virtual Session& operator=(const Session &s);
+  Session& operator=(const Session &s);
 
   static Session start(int user_id);
   static Session get(const QString& token);
   void close();
 
-  virtual void save();
-  virtual void save_record(QSqlRecord &r);
-  virtual void remove();
+  void save() override;
+  void save_record(QSqlRecord &r) override;
+  void remove() override;
 
   const static QString table_name;
 
-  int getUserId() const;
+  [[nodiscard]] int getUserId() const;
   User getUser();
-  QString getToken() const;
+  [[nodiscard]] QString getToken() const;
 
 private:
   static QString new_token();

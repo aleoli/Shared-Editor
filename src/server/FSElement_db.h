@@ -22,25 +22,25 @@ class SharedLink;   // fix circular include
 class FSElement_db: public Persistent {
 public:
   FSElement_db(const FSElement_db &);
-  FSElement_db(FSElement_db &&);
+  FSElement_db(FSElement_db &&) noexcept;
   explicit FSElement_db();
-  explicit FSElement_db(QSqlRecord);
+  explicit FSElement_db(const QSqlRecord&);
 
-  virtual ~FSElement_db();
+  ~FSElement_db() override;
 
-  virtual FSElement_db& operator=(const FSElement_db &);
+  FSElement_db& operator=(const FSElement_db &);
 
-  virtual void save();
-  virtual void save_record(QSqlRecord &);
-	virtual void remove();
-  virtual void remove(std::function<void(int e_id, int owner_id)> notify_fn);
+  void save() override;
+  void save_record(QSqlRecord &) override;
+  void remove() override;
+  virtual void remove(const std::function<void(int e_id, int owner_id)>& notify_fn);
 
   static const QString table_name;
 
-  QString getName() const;
+  [[nodiscard]] QString getName() const;
   int getPhysicalId();
   static int getIdForUser(const Session &s, int file_id, int user_id);
-  int getCharId() const;
+  [[nodiscard]] int getCharId() const;
 
   void addCharId(int v);
 
@@ -53,19 +53,19 @@ public:
   std::vector<FSElement_db*> ls(const Session &s);
   static FSElement_db link(const Session &s, const QString &token);
   SharedLink share(const Session &s);
-	void mv(const Session &s, FSElement_db &fs_e);
-	void mv(const Session &s, int new_dir_id);
-	void rename(const Session &s, QString name);
+  void mv(const Session &s, FSElement_db &fs_e);
+  void mv(const Session &s, int new_dir_id);
+  void rename(const Session &s, QString name);
 
-	User getCreator();
+  User getCreator();
 
-  FSElement getFSElement() const;
-  File load() const;
+  [[nodiscard]] FSElement getFSElement() const;
+  [[nodiscard]] File load() const;
   void store(const File &f);
 
-  bool is_link() const;
+  [[nodiscard]] bool is_link() const;
 
-	void clearCache();
+  void clearCache();
 
 private:
   static FSElement_db create(int user_id, int parent_id, QString name, bool is_file = false);
@@ -74,10 +74,9 @@ private:
 
   bool availableForUser(int user_id);
 
-  FSElement load_dir() const;
   void del_file();
 
-  QString getPath() const;
+  [[nodiscard]] QString getPath() const;
   bool path_on_disk_available();
 
   QString _path;

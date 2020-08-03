@@ -7,7 +7,7 @@
 template <typename T>
 class Queue {
 public:
-    Queue() {}
+    Queue() = default;
 
     unsigned int size() {
         std::lock_guard<std::mutex> guard(_m);

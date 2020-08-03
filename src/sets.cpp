@@ -7,17 +7,16 @@ std::shared_ptr<Sets> Sets::instance = nullptr;
 Sets::Sets(Sets::LogLevel log_level): _log_level(log_level) {
 }
 
-Sets::~Sets() {
-}
+Sets::~Sets() = default;
 
-std::shared_ptr<Sets> Sets::get(QString log_level) {
+std::shared_ptr<Sets> Sets::get(const QString& log_level) {
   if(instance == nullptr) {
     instance.reset(new Sets{Sets::getLogLevel(log_level)});
   }
   return instance;
 }
 
-Sets::LogLevel Sets::getLogLevel(QString log_level) {
+Sets::LogLevel Sets::getLogLevel(const QString& log_level) {
   if(log_level == "none") {
     return Sets::LogLevel::NONE;
   } else if(log_level == "error") {

@@ -16,17 +16,17 @@ public:
   Sets() = delete;
   Sets& operator=(Sets&&) = delete;
 
-  static std::shared_ptr<Sets> get(QString log_level = "none");
+  static std::shared_ptr<Sets> get(const QString& log_level = "none");
 
   ~Sets();
 
-  const Sets::LogLevel& getLogLevel() const;
+  [[nodiscard]] const Sets::LogLevel& getLogLevel() const;
 
 private:
   static std::shared_ptr<Sets> instance;
   explicit Sets(LogLevel log_level);
 
-  static LogLevel getLogLevel(QString log_level);
+  static LogLevel getLogLevel(const QString& log_level);
 
   LogLevel _log_level;
 };

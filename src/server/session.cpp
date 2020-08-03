@@ -17,19 +17,19 @@ Session::Session(const Session &s): Persistent(s) {
   this->_user = s._user;
 }
 
-Session::Session(Session &&s): Persistent(s) {
+Session::Session(Session &&s) noexcept: Persistent(std::move(s)) {
   this->_token = s._token;
   this->_active = s._active;
   this->_user = s._user;
 }
 
-Session::Session(QSqlRecord r): Persistent(r) {
+Session::Session(const QSqlRecord& r): Persistent(r) {
   this->_token = r.value("token").toString();
   this->_active = r.value("active").toInt() == 1;
   this->_user = Lazy<User>{r.value("user_id").toInt()};
 }
 
-Session::~Session() {}
+Session::~Session() = default;
 
 Session& Session::operator=(const Session& s) {
   if(this == &s) {
@@ -69,10 +69,10 @@ Session Session::start(int user_id) {
       s._active = true;
       s.save();     // lancia un'eccezione se non ci riesce
       return s;
-    } catch(SQLException e) {
+    } catch(SQLException& e) {
       retry--;
       if(retry == 0) {
-        throw e;
+        throw;
       }
       continue;
     }

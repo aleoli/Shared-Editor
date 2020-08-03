@@ -11,11 +11,12 @@ using namespace se_exceptions;
 #include <algorithm>
 #include <QChar>
 #include <QJsonDocument>
+#include <utility>
 
-File::File() {}
+File::File() = default;
 
 File::File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> symbols)
-  : _users(users), _symbols(symbols) {}
+  : _users(std::move(users)), _symbols(std::move(symbols)) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -40,7 +41,7 @@ void File::checkAndAssign(const QJsonObject &json) {
   auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
 
-  _users = jsonArrayTousers(users);
+  _users = jsonArrayToUsers(users);
   _symbols = utils::jsonArrayToVector<Symbol>(symbols);
 }
 
@@ -118,7 +119,7 @@ std::string File::usersToString() const {
   return ss.str();
 }
 
-std::unordered_map<int, File::UserInfo> File::jsonArrayTousers(const QJsonArray &array) {
+std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray &array) {
   std::unordered_map<int, File::UserInfo> users;
 
   for(auto&& el : array) {
@@ -246,7 +247,7 @@ void File::addUser(int userId, QString username) {
     throw FileUserException{"User already exists"};
   }
 
-  _users[userId] = { userId, username, true };
+  _users[userId] = { userId, std::move(username), true };
 }
 
 void File::removeUser(int userId) {
@@ -288,12 +289,12 @@ void File::localInsert(Symbol &sym, int pos) {
   std::vector<Symbol::Identifier> v1, v2;
 
   if(previous != -1) {
-      auto sym = _symbols.at(previous);
-      v1 = sym.getPos();
+      auto sym2 = _symbols.at(previous);
+      v1 = sym2.getPos();
   }
   if(next != -1) {
-      auto sym = _symbols.at(next);
-      v2 = sym.getPos();
+      auto sym2 = _symbols.at(next);
+      v2 = sym2.getPos();
   }
 
   std::vector<Symbol::Identifier> position;
@@ -410,7 +411,7 @@ int File::remoteUpdate(const Symbol &sym) {
 
     return pos.first;
   }
-  catch(FileSymbolsException e) {
+  catch(FileSymbolsException& e) {
     //il simbolo non esiste più
     return -1;
   }

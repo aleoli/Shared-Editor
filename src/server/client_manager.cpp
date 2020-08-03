@@ -3,6 +3,7 @@
 #include "client.h"
 
 #include <iostream>
+#include <utility>
 
 std::shared_ptr<ClientManager> ClientManager::instance = nullptr;
 
@@ -30,17 +31,17 @@ std::shared_ptr<ClientManager> ClientManager::get(int port) {
 void ClientManager::newConnection() {
   while(this->_s.hasPendingConnections()) {
     auto cl = new Client{this->_s.nextPendingConnection(), this->_next_client_id};
-		QThread *t = new QThread(cl);
-		cl->moveToThread(t);
-		connect(cl, SIGNAL(dataReady(quint64, QByteArray)), this, SIGNAL(dataReceived(quint64, QByteArray)));
+    auto *t = new QThread(cl);
+    cl->moveToThread(t);
+    connect(cl, SIGNAL(dataReady(quint64, QByteArray)), this, SIGNAL(dataReceived(quint64, QByteArray)));
     connect(cl, SIGNAL(disconnected(quint64)), SLOT(disconnected(quint64)));
-		connect(this, SIGNAL(closeClient(quint64)), cl, SLOT(disconnect(quint64)));
+    connect(this, SIGNAL(closeClient(quint64)), cl, SLOT(disconnect(quint64)));
     connect(cl, SIGNAL(disconnected(quint64)), this, SIGNAL(closeClient(quint64)));
     connect(this, SIGNAL(force_close(quint64)), cl, SLOT(disconnect(quint64)));
     connect(this, SIGNAL(send_data(quint64, QByteArray)), cl, SLOT(send(quint64, QByteArray)));
     this->_clients[this->_next_client_id] = cl;
-		this->_threads[this->_next_client_id++] = t;
-		t->start();
+    this->_threads[this->_next_client_id++] = t;
+    t->start();
   }
 }
 
@@ -59,10 +60,10 @@ void ClientManager::onCloseClient(quint64 id) {
 }
 
 void ClientManager::sendData(quint64 client_id, QByteArray data) {
-  emit this->send_data(client_id, data);
+  emit this->send_data(client_id, std::move(data));
 }
 
-void ClientManager::sendData(std::list<quint64> client_list, QByteArray data) {
+void ClientManager::sendData(const std::list<quint64>& client_list, const QByteArray& data) {
   for(auto& client_id: client_list) {
     emit this->send_data(client_id, data);
   }

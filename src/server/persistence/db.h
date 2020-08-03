@@ -35,7 +35,7 @@ public:
         return DB::instance;
     }
 
-    static void create_db_if_not_exists(QString path = "") {
+    static void create_db_if_not_exists(const QString& path = "") {
       QSqlQuery query;
       QStringList strs;
       if(path != "") {
@@ -84,7 +84,7 @@ public:
         }
     }
 
-    template<typename T> static std::vector<T> get(QString filter) {
+    template<typename T> static std::vector<T> get(const QString& filter) {
         std::vector<T> v;
         QSqlTableModel model;
         model.setTable(T::table_name);

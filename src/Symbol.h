@@ -21,26 +21,26 @@ public:
 
     static Identifier fromJsonObject(const QJsonObject &json);
     static Identifier fromJsonObject(QJsonObject &&json);
-    QJsonObject toJsonObject() const;
+    [[nodiscard]] QJsonObject toJsonObject() const;
 
     friend bool operator==(const Identifier& lhs, const Identifier& rhs);
     friend bool operator<(const Identifier& lhs, const Identifier& rhs);
 
-    int getDigit() const;
-    int getUserId() const;
-    std::string to_string() const;
+    [[nodiscard]] int getDigit() const;
+    [[nodiscard]] int getUserId() const;
+    [[nodiscard]] std::string to_string() const;
 
   private:
     void checkAndAssign(const QJsonObject &json);
 
-    int _digit, _userId;
+    int _digit{}, _userId{};
   };
 
   Symbol();
   Symbol(SymbolId id, QChar chr);
   Symbol(SymbolId id, QChar chr, QTextCharFormat fmt);
-  Symbol(const QJsonObject &json, bool readPos = true);
-  Symbol(QJsonObject &&json, bool readPos = true);
+  explicit Symbol(const QJsonObject &json, bool readPos = true);
+  explicit Symbol(QJsonObject &&json, bool readPos = true);
 
   friend bool operator<(const Symbol& lhs, const Symbol& rhs);
   friend bool operator==(const Symbol& lhs, const Symbol& rhs);
@@ -48,47 +48,47 @@ public:
 
   static Symbol fromJsonObject(const QJsonObject &json, bool readPos = true);
   static Symbol fromJsonObject(QJsonObject &&json, bool readPos = true);
-  QJsonObject toJsonObject(bool writePos = true) const;
+  [[nodiscard]] QJsonObject toJsonObject(bool writePos = true) const;
 
   static QJsonObject serializeFormat(const QTextCharFormat &fmt);
   static QTextCharFormat deserializeFormat(const QJsonObject &json);
 
   void setSymbolId(SymbolId id);
-  SymbolId getSymbolId() const;
+  [[nodiscard]] SymbolId getSymbolId() const;
   void setChar(QChar chr);
-  QChar getChar() const;
+  [[nodiscard]] QChar getChar() const;
   void setPos(std::vector<Identifier> pos);
-  std::vector<Identifier> getPos() const;
-  std::string to_string() const;
-  std::string getFontInfo() const;
+  [[nodiscard]] std::vector<Identifier> getPos() const;
+  [[nodiscard]] std::string to_string() const;
+  [[nodiscard]] std::string getFontInfo() const;
 
   void update(const Symbol &s);
 
   static bool compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground = false);
-  bool hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground = false) const;
+  [[nodiscard]] bool hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground = false) const;
 
   void setFormat(QTextCharFormat fmt);
-  QTextCharFormat getFormat() const;
-  void setFont(QFont font);
-  QFont getFont() const;
+  [[nodiscard]] QTextCharFormat getFormat() const;
+  void setFont(const QFont& font);
+  [[nodiscard]] QFont getFont() const;
   void setBold(bool enable);
-  bool isBold() const;
+  [[nodiscard]] bool isBold() const;
   void setSize(int size);
-  int getSize() const;
+  [[nodiscard]] int getSize() const;
   void setUnderline(bool enable);
-  bool isUnderline() const;
+  [[nodiscard]] bool isUnderline() const;
   void setItalic(bool enable);
-  bool isItalic() const;
+  [[nodiscard]] bool isItalic() const;
   void setFamily(const QString &family);
-  QString getFamily() const;
+  [[nodiscard]] QString getFamily() const;
   void setColor(const QColor &color);
-  QColor getColor() const;
+  [[nodiscard]] QColor getColor() const;
   void setBackgroundColor(const QColor &color);
-  QColor getBackgroundColor() const;
+  [[nodiscard]] QColor getBackgroundColor() const;
 
 private:
   void checkAndAssign(const QJsonObject &json, bool readPos = true);
-  std::string posToString() const; //TODO vedi se rimuovere
+  [[nodiscard]] std::string posToString() const; //TODO vedi se rimuovere
 
   static QBrush jsonArrayToBrush(const QJsonArray &array);
   static QJsonArray brushToJsonArray(const QBrush &b);

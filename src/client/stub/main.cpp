@@ -7,7 +7,7 @@
 #include "guiwrapper.h"
 #include "declarations.h"
 
-void signalHandler(int signum);
+void signalHandler(int);
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   return QApplication::exec();
 }
 
-void signalHandler(int signum) {
+void signalHandler(int) {
   info("Bye bye");
   QApplication::exit(0);
 }

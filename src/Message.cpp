@@ -6,6 +6,7 @@
 #include <QJsonDocument>
 #include <sstream>
 #include <QStringList>
+#include <utility>
 
 using namespace se_exceptions;
 
@@ -16,7 +17,7 @@ Message::Message(Message::Type type, int action, Message::Status status)
   : _type(type), _action(action), _status(status) {}
 
 Message::Message(Message::Type type, int action, Message::Status status, QJsonObject data)
-  : _type(type), _action(action), _status(status), _data(data) {}
+  : _type(type), _action(action), _status(status), _data(std::move(data)) {}
 
 Message::Message(const QJsonObject &json) {
   checkAndAssign(json);

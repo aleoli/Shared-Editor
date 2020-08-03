@@ -24,11 +24,11 @@ public:
 
   static std::shared_ptr<MessageManager> get();
 
-  ~MessageManager();
+  ~MessageManager() override;
 
   /* gestione utenti */
   //quando il processor processa un msg di login, va aggiunto a _clients
-  void addClient(quint64 clientId, std::shared_ptr<Session> session, QString username);
+  void addClient(quint64 clientId, const std::shared_ptr<Session>& session, QString username);
   QString getUsername(quint64 clientId);
   std::optional<quint64> getClient(int userId);             // il client in cui è connesso l'utente
   std::list<quint64> getClientsInFile(int fileId);      // tutti i client che stanno lavorando su un file
@@ -54,7 +54,7 @@ signals:
   void connection_error(quint64 client_id);
 
 public slots:
-  void process_data(quint64 client_id, QByteArray data);
+  void process_data(quint64 client_id, const QByteArray& data);
   void clientDisconnected(quint64 clientId);
 
 private:
