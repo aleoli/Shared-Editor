@@ -229,13 +229,11 @@ std::string File::to_string() const {
 }
 
 std::string File::text() const {
-  std::stringstream ss;
-
-  for(auto &sym : _symbols) {
-    ss << sym.getChar().toLatin1();
-  }
-
-  return ss.str();
+  std::string res;
+  std::transform(_symbols.begin(), _symbols.end(), std::back_inserter(res), [](const auto &s) {
+    return s.getChar().toLatin1();
+  });
+  return res;
 }
 
 void File::clear() {
@@ -289,11 +287,11 @@ void File::localInsert(Symbol &sym, int pos) {
   std::vector<Symbol::Identifier> v1, v2;
 
   if(previous != -1) {
-      auto sym2 = _symbols.at(previous);
+      auto sym2 = _symbols[previous];
       v1 = sym2.getPos();
   }
   if(next != -1) {
-      auto sym2 = _symbols.at(next);
+      auto sym2 = _symbols[next];
       v2 = sym2.getPos();
   }
 
@@ -311,10 +309,10 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> v1,
 
   Symbol::Identifier pos1, pos2;
 
-  if(!v1.empty()) pos1 = v1.at(0);
+  if(!v1.empty()) pos1 = v1[0];
   else pos1 = {0, userId};
 
-  if(!v2.empty()) pos2 = v2.at(0);
+  if(!v2.empty()) pos2 = v2[0];
   else pos2 = {static_cast<int>(pow(2, level) * 32), userId};
 
   int digit1 = pos1.getDigit();

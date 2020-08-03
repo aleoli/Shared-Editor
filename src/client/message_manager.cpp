@@ -23,7 +23,9 @@ std::shared_ptr<MessageManager> MessageManager::get() {
 }
 
 void MessageManager::process_data(QByteArray data) {
+#if VERBOSE
   std::cout << "DATA: " << data.data() << std::endl;
+#endif
   try {
     auto msg = Message::fromQByteArray(data);
     auto mp = ClientMessageProcessor{msg};
@@ -33,7 +35,9 @@ void MessageManager::process_data(QByteArray data) {
 
     Message res = mp.getResponse();
     auto array = res.toQByteArray();
+#if VERBOSE
     std::cout << "OUT: " << array.data() << std::endl;
+#endif
     emit this->send_data(array);
 
   } catch(se_exceptions::SE_Exception ex) {

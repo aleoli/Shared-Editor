@@ -23,6 +23,21 @@ Symbol::Symbol(QJsonObject &&json, bool readPos) {
   checkAndAssign(json, readPos);
 }
 
+Symbol::Symbol(const Symbol& s) = default;
+Symbol::Symbol(Symbol&& s) noexcept: _id(s._id), _char(s._char), _pos(std::move(s._pos)), _fmt(std::move(s._fmt)) {}
+
+Symbol &Symbol::operator=(const Symbol &s) = default;
+Symbol &Symbol::operator=(Symbol &&s) noexcept {
+  if(this == &s) {
+    return *this;
+  }
+  this->_id = s._id;
+  this->_char = s._char;
+  this->_pos = std::move(s._pos);
+  this->_fmt = std::move(s._fmt);
+  return *this;
+}
+
 bool operator<(const Symbol& lhs, const Symbol& rhs) {
   if(lhs._pos == rhs._pos) {
     return lhs._id < rhs._id;

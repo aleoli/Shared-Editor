@@ -35,7 +35,9 @@ void MessageManager::process_data(quint64 client_id, const QByteArray& data) {
     Message res = mp.getResponse();
     auto array = res.toQByteArray();
 
+#if VERBOSE
     std::cout << "OUT: " << array.data() << std::endl;
+#endif
     if(mp.shouldSendToAll()) {
       this->sendToAll(client_id, _clients[client_id].fileId, array);
     } else {
@@ -154,9 +156,10 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
   tmp.fileIsOpen = true;
   tmp.fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
-  if(first_access) {
+  try {
     f.addUser(tmp.session->getUserId(), tmp.username);
-  } else {
+  } catch(FileUserException&) {
+    // this user already exists in map
     f.setOnline(tmp.session->getUserId(), true);
   }
 

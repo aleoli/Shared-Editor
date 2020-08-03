@@ -9,6 +9,11 @@ public:
   SymbolId(int userId, int charId);
   explicit SymbolId(const QJsonObject &json);
   explicit SymbolId(QJsonObject &&json);
+  SymbolId(const SymbolId&) = default;
+  SymbolId(SymbolId&&) = default;
+
+  SymbolId& operator=(const SymbolId&) = default;
+  SymbolId& operator=(SymbolId&&) = default;
 
   friend bool operator<(const SymbolId& lhs, const SymbolId& rhs);
   friend bool operator==(const SymbolId& lhs, const SymbolId& rhs);

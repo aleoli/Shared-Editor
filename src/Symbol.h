@@ -18,6 +18,11 @@ public:
     Identifier(int digit, int userId);
     explicit Identifier(const QJsonObject &json);
     explicit Identifier(QJsonObject &&json);
+    Identifier(const Identifier&) = default;
+    Identifier(Identifier &&) = default;
+
+    Identifier& operator=(const Identifier& identifier) = default;
+    Identifier& operator=(Identifier&& identifier) noexcept = default;
 
     static Identifier fromJsonObject(const QJsonObject &json);
     static Identifier fromJsonObject(QJsonObject &&json);
@@ -41,6 +46,11 @@ public:
   Symbol(SymbolId id, QChar chr, QTextCharFormat fmt);
   explicit Symbol(const QJsonObject &json, bool readPos = true);
   explicit Symbol(QJsonObject &&json, bool readPos = true);
+  Symbol(const Symbol& s);
+  Symbol(Symbol&& s) noexcept;
+
+  Symbol& operator=(const Symbol& s);
+  Symbol& operator=(Symbol&& s) noexcept;
 
   friend bool operator<(const Symbol& lhs, const Symbol& rhs);
   friend bool operator==(const Symbol& lhs, const Symbol& rhs);
