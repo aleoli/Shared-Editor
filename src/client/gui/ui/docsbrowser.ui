@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
+ <class>DocsBrowser</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
@@ -716,7 +716,7 @@ QScrollBar:horizontal {
 	margin: 21px 0 21px 0;}
 
 QScrollBar::handle:vertical {background-color:blue ;min-height: 25px;}
-    
+
 QScrollBar::add-line:vertical {
 	border: 2px solid green;
 	background-color: yellow;
@@ -724,7 +724,7 @@ QScrollBar::add-line:vertical {
 	subcontrol-position: bottom;
 	subcontrol-origin: margin;
 }
-    
+
 QScrollBar::sub-line:vertical {
 	border: 2px solid black;background-color: #32CC99;
     height: 25px;
