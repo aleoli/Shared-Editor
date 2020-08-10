@@ -1,0 +1,18 @@
+FROM sharededitor/base as builder
+
+RUN apt-get update && \
+  apt-get install -y build-essential cmake && \
+  rm -rf /var/lib/apt/lists/*
+
+COPY . .
+RUN ./scripts/build_client.sh
+
+
+
+FROM sharededitor/base
+
+RUN useradd -ms /bin/bash user
+COPY --from=builder /app/bin/client /app/bin/client
+USER user
+
+ENTRYPOINT ["/app/bin/client"]

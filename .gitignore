@@ -35,3 +35,6 @@
 build/
 bin/
 src/server/.db
+
+.idea/
+cmake-build-debug/
