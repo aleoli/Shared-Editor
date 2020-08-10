@@ -200,4 +200,9 @@ namespace se_exceptions {
   public:
       ShareException(QString str): FileSystemException(str) {}
   };
+
+  class GuiException : public SE_Exception {
+  public:
+      GuiException(QString str): SE_Exception(str) {}
+  };
 }
