@@ -45,6 +45,7 @@ void GuiManager::initThreads(const SysConf &conf) {
 void GuiManager::run() {
   //TODO
   //Test
+  std::cout << "running" << std::endl;
   auto widget = new Login();
   widget->show();
 }
