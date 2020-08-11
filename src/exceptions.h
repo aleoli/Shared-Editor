@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QString>
+
 namespace se_exceptions {
   // parent class
   class SE_Exception: public std::exception {
@@ -204,5 +206,10 @@ namespace se_exceptions {
   class GuiException : public SE_Exception {
   public:
       GuiException(QString str): SE_Exception(str) {}
+  };
+
+  class UserException : public SE_Exception {
+  public:
+      UserException(QString str): SE_Exception(str) {}
   };
 }

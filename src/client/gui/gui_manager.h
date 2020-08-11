@@ -7,7 +7,10 @@
 #include <optional>
 #include <QCloseEvent>
 
+#include "../message_manager.h"
+#include "../server.h"
 #include "../sys.h"
+#include "user.h"
 
 class MyStackedWidget: public QStackedWidget
 {
@@ -41,6 +44,11 @@ public:
 signals:
   void quit();
 
+private slots:
+  // connessione del server
+  void connected();
+  void connectionLost();
+
 private:
   static std::shared_ptr<GuiManager> instance;
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
@@ -48,5 +56,10 @@ private:
   void initThreads(const SysConf &conf);
 
   MyStackedWidget *_stackedWidget;
+  std::shared_ptr<MessageManager> _manager;
+  std::shared_ptr<Server> _server;
+  QThread *_serverThread, *_managerThread;
+
+  std::shared_ptr<User> _user;
 };
 #endif // GUIMANAGER_H

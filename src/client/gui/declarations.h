@@ -16,7 +16,6 @@ Q_DECLARE_METATYPE(FSElement)
 Q_DECLARE_METATYPE(std::optional<QString>)
 Q_DECLARE_METATYPE(std::optional<int>)
 
-
 void registerClasses() {
   qRegisterMetaType<std::vector<Symbol> >();
   qRegisterMetaType<std::vector<SymbolId> >();
