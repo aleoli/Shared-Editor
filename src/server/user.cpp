@@ -1,6 +1,7 @@
 #include "user.h"
 
 #include <QCryptographicHash>
+#include <utility>
 
 #include "utils.h"
 #include "session.h"
@@ -21,21 +22,21 @@ User::User(const User& u): Persistent(u) {
   this->_password = u._password;
 }
 
-User::User(QString username, QString password): Persistent(), _username(username) {
-  this->_password = User::encrypt(password);
+User::User(QString username, QString password): Persistent(), _username(std::move(username)) {
+  this->_password = User::encrypt(std::move(password));
 }
 
-User::User(User&& u): Persistent(u) {
+User::User(User&& u) noexcept: Persistent(std::move(u)) {
   this->_username = u._username;
   this->_password = u._password;
 }
 
-User::User(QSqlRecord r): Persistent(r) {
+User::User(const QSqlRecord& r): Persistent(r) {
   this->_username = r.value("username").toString();
   this->_password = r.value("password").toString();
 }
 
-User::~User() {}
+User::~User() = default;
 
 User& User::operator=(const User &u) {
   if(this == &u) {
@@ -61,19 +62,19 @@ void User::remove() {
 }
 
 User User::registra(QString username, QString password) {
-  User u{username, password};
+  User u{std::move(username), std::move(password)};
   u.save();   // lancia un'eccezione se non ci riesce
   FSElement_db::mkroot(u.id);
   return u;
 }
 
-QString User::encrypt(QString str) {
+QString User::encrypt(const QString& str) {
   QString rnd = rndString(RND_LENGTH);
   QString encr = QString(QCryptographicHash::hash((str+rnd).toUtf8(), QCryptographicHash::Md5).toHex());
   return encr+rnd;
 }
 
-Session User::login(QString username, QString password) {
+Session User::login(const QString& username, const QString& password) {
   QSqlQuery query("SELECT id, password FROM "+User::table_name+" WHERE username=?");
   query.addBindValue(username);
   if(query.exec()) {
@@ -90,7 +91,7 @@ Session User::login(QString username, QString password) {
   }
 }
 
-bool User::check_pass(QString pass, QString db_pass) {
+bool User::check_pass(const QString& pass, const QString& db_pass) {
   int p = db_pass.length() - RND_LENGTH;
   QString rnd = db_pass.right(RND_LENGTH);
   QString str = db_pass.left(p);
@@ -102,7 +103,7 @@ QString User::getUsername() const {
   return this->_username;
 }
 
-bool User::setPassword(QString old_password, QString password) {
+bool User::setPassword(const QString& old_password, const QString& password) {
   QSqlQuery query("SELECT password FROM "+User::table_name+" WHERE id=?");
   query.addBindValue(this->id);
   if(query.exec()) {
@@ -122,15 +123,15 @@ bool User::setPassword(QString old_password, QString password) {
 }
 
 void User::setUsername(QString username) {
-  this->_username = username;
+  this->_username = std::move(username);
 }
 
-void User::setIcon(QString icon) {
+void User::setIcon(const QString& icon) {
   // TODO: set icon
   warn("TODO: set icon");
 }
 
-bool User::check_pass(QString pass) {
+bool User::check_pass(const QString& pass) {
 	// TODO: controlla che la pass rispetti le specifiche
 	return true;
 }

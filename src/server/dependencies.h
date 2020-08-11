@@ -1,5 +1,7 @@
 #pragma once
 
+#define VERBOSE false
+
 class Session;
 class User;
 

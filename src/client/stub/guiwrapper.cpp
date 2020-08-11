@@ -1,6 +1,7 @@
 #include "guiwrapper.h"
 
 #include <QThread>
+#include <utility>
 
 #include "errordialog.h"
 #include "exceptions.h"
@@ -178,7 +179,7 @@ void GuiWrapper::checkWaiting(bool shouldBe) {
   _waiting = !_waiting;
 }
 
-void GuiWrapper::loginQuery(QString username, QString psw) {
+void GuiWrapper::loginQuery(const QString& username, const QString& psw) {
   checkWaiting(false);
   _lastMessageSent = USERLOGIN;
 
@@ -192,7 +193,7 @@ void GuiWrapper::loginQuery(QString username, QString psw) {
   emit sendLoginQuery(username, psw);
 }
 
-void GuiWrapper::newUserQuery(QString username, QString psw, QString pswRepeat) {
+void GuiWrapper::newUserQuery(const QString& username, const QString& psw, QString pswRepeat) {
   checkWaiting(false);
   _lastMessageSent = USERNEW;
 
@@ -203,7 +204,7 @@ void GuiWrapper::newUserQuery(QString username, QString psw, QString pswRepeat) 
   _account.userId = -1;
   _account.token = std::nullopt;
 
-  emit sendNewUserQuery(username, psw, pswRepeat);
+  emit sendNewUserQuery(username, psw, std::move(pswRepeat));
 }
 
 void GuiWrapper::getFileQuery(int id) {
@@ -226,7 +227,7 @@ void GuiWrapper::activateLinkQuery(QString link) {
 
   info("Invio activate link query");
 
-  emit sendActivateLinkQuery(*_account.token, link);
+  emit sendActivateLinkQuery(*_account.token, std::move(link));
 }
 
 void GuiWrapper::newFileQuery() {
@@ -255,21 +256,21 @@ void GuiWrapper::localInsertQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local insert query");
   checkToken();
 
-  emit sendLocalInsertQuery(*_account.token, fileId, symbols);
+  emit sendLocalInsertQuery(*_account.token, fileId, std::move(symbols));
 }
 
 void GuiWrapper::localDeleteQuery(int fileId, std::vector<SymbolId> ids) {
   //debug("Invio local delete query");
   checkToken();
 
-  emit sendLocalDeleteQuery(*_account.token, fileId, ids);
+  emit sendLocalDeleteQuery(*_account.token, fileId, std::move(ids));
 }
 
 void GuiWrapper::localUpdateQuery(int fileId, std::vector<Symbol> symbols) {
   //debug("Invio local update query");
   checkToken();
 
-  emit sendLocalUpdateQuery(*_account.token, fileId, symbols);
+  emit sendLocalUpdateQuery(*_account.token, fileId, std::move(symbols));
 }
 
 void GuiWrapper::localMoveQuery(int fileId, SymbolId symbolId, int cursorPosition) {
@@ -288,7 +289,7 @@ void GuiWrapper::getLinkQuery(int fileId) {
 
 // SLOT MM
 
-void GuiWrapper::errorResponseReceived(QString reason) {
+void GuiWrapper::errorResponseReceived(const QString& reason) {
   checkWaiting(true);
 
   info("Ricevuta risposta di errore");
@@ -324,7 +325,7 @@ void GuiWrapper::errorResponseReceived(QString reason) {
   }
 }
 
-void GuiWrapper::loginResponseReceived(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon) {
+void GuiWrapper::loginResponseReceived(QString token, int userId, const std::optional<QString>& nickname, const std::optional<QString>& icon) {
   checkWaiting(true);
   if(_lastMessageSent != USERLOGIN) {
       debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
@@ -393,7 +394,7 @@ void GuiWrapper::newFileResponseReceived(int id) {
   _textEdit->show();
 }
 
-void GuiWrapper::getFileResponseReceived(File file, int charId) {
+void GuiWrapper::getFileResponseReceived(const File& file, int charId) {
   checkWaiting(true);
   if(_lastMessageSent != FILEGET) {
       debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(FILEGET));
@@ -418,26 +419,26 @@ void GuiWrapper::getFileResponseReceived(File file, int charId) {
 void GuiWrapper::remoteInsertQueryReceived(int fileId, int userId, std::vector<Symbol> symbols) {
   //debug("Ricevuto remote insert query");
 
-  emit remoteInsertQuery(fileId, userId, symbols);
+  emit remoteInsertQuery(fileId, userId, std::move(symbols));
 }
 
 void GuiWrapper::remoteDeleteQueryReceived(int fileId, int userId, std::vector<SymbolId> ids) {
   //debug("Ricevuto remote delete query");
 
-  emit remoteDeleteQuery(fileId, userId, ids);
+  emit remoteDeleteQuery(fileId, userId, std::move(ids));
 }
 
 void GuiWrapper::remoteUpdateQueryReceived(int fileId, int userId, std::vector<Symbol> symbols) {
   //debug("Ricevuto remote update query");
 
-  emit remoteUpdateQuery(fileId, userId, symbols);
+  emit remoteUpdateQuery(fileId, userId, std::move(symbols));
 }
 
 void GuiWrapper::userConnectedQueryReceived(int fileId, int userId, QString username) {
   info("Ricevuto user connected query");
   debug("User id: " + QString::number(userId));
 
-  emit userConnectedQuery(fileId, userId, username);
+  emit userConnectedQuery(fileId, userId, std::move(username));
 }
 
 void GuiWrapper::userDisconnectedQueryReceived(int fileId, int userId) {
@@ -454,7 +455,7 @@ void GuiWrapper::remoteMoveQueryReceived(int fileId, int userId, SymbolId symbol
   emit remoteMoveQuery(fileId, userId, symbolId, cursorPosition);
 }
 
-void GuiWrapper::getLinkResponseReceived(QString link) {
+void GuiWrapper::getLinkResponseReceived(const QString& link) {
   debug("Ricevuto share link");
   debug("Link: " + link);
 
@@ -466,7 +467,7 @@ void GuiWrapper::getLinkResponseReceived(QString link) {
   _textEdit->showShareLink();
 }
 
-void GuiWrapper::activateLinkResponseReceived(FSElement element, File file) {
+void GuiWrapper::activateLinkResponseReceived(const FSElement& element, const File& file) {
   checkWaiting(true);
   if(_lastMessageSent != FILELINK) {
       debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(FILELINK));
@@ -486,7 +487,7 @@ void GuiWrapper::activateLinkResponseReceived(FSElement element, File file) {
   _textEdit->setConnectedUsers(); //fix: i cursori si visualizzano correttamente solo DOPO che il texteditor è visibile
 }
 
-void GuiWrapper::checkToken() {
+void GuiWrapper::checkToken() const {
   if(!_account.token) {
     throw SE_Exception("token non inizializzato!");
   }

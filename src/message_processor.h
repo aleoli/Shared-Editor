@@ -4,10 +4,10 @@
 
 class MessageProcessor {
 public:
-  MessageProcessor(const Message &m);
+  explicit MessageProcessor(const Message &m);
 
-  bool hasResponse() const;
-  Message getResponse() const;
+  [[nodiscard]] bool hasResponse() const;
+  [[nodiscard]] Message getResponse() const;
 
 protected:
   virtual void process_message();

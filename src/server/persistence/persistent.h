@@ -18,17 +18,17 @@ public:
         this->id = e.id;
     }
 
-    Persistent(Persistent &&e) {
+    Persistent(Persistent &&e) noexcept {
         this->id = e.id;
     }
 
-    Persistent(QSqlRecord r) {
+    explicit Persistent(const QSqlRecord& r) {
         this->id = r.value("id").toInt();
     }
 
-    virtual ~Persistent() {}
+    virtual ~Persistent() = default;
 
-    virtual Persistent& operator=(const Persistent& e) {
+    Persistent& operator=(const Persistent& e) {
         if(this == &e) {
             return *this;
         }
@@ -42,7 +42,7 @@ public:
 
     const static QString table_name;
 
-    int getId() const {
+    [[nodiscard]] int getId() const {
         return this->id;
     }
 

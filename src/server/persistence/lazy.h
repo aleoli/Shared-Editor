@@ -10,7 +10,7 @@ using persistence::DB;
 template <typename T>
 class persistence::Lazy {
 public:
-    Lazy(int id=0): id(id), value(nullptr), has_value(false) {}
+    explicit Lazy(int id=0): id(id), value(nullptr), has_value(false) {}
 
     Lazy(const Lazy& e) {
         if(this != &e) {
@@ -28,7 +28,7 @@ public:
         }
     }
 
-    Lazy(Lazy && e) {
+    Lazy(Lazy && e) noexcept {
       if(this != &e) {
         if(this->value) {
           delete this->value;
@@ -63,7 +63,7 @@ public:
         return *this;
     }
 
-    Lazy& operator =(Lazy && e) {
+    Lazy& operator =(Lazy && e) noexcept {
       if(this != &e) {
         if(this->value) {
           delete this->value;
@@ -89,7 +89,7 @@ public:
         return this->operator->();
     }
 
-    int getId() const {
+    [[nodiscard]] int getId() const {
         return this->id;
     }
 
@@ -102,9 +102,9 @@ public:
 		}
 
 private:
-    int id;
+    int id{};
     T* value;
-    bool has_value;
+    bool has_value{};
 };
 
 #endif // LAZY_H

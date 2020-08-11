@@ -8,10 +8,10 @@ class Client: public QObject {
   Q_OBJECT
 public:
   Client(const Client &c) = delete;
-  Client(Client &&c);
+  Client(Client &&c) noexcept;
   explicit Client(QTcpSocket *s, quint64 id);
 
-  ~Client();
+  ~Client() override;
 
   Client& operator=(const Client &c) = delete;
 
@@ -20,8 +20,8 @@ signals:
   void disconnected(quint64 id);
 
 public slots:
-  void send(quint64 client_id, QByteArray msg);
-	void disconnect(quint64 id);
+  void send(quint64 client_id, const QByteArray& msg);
+  void disconnect(quint64 id);
 
 private slots:
   void read();

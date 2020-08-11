@@ -9,14 +9,14 @@ class ServerMessageProcessor: public MessageProcessor {
 public:
   ServerMessageProcessor(const Message &m, quint64 clientId);
 
-  bool shouldSendToAll() const;
+  [[nodiscard]] bool shouldSendToAll() const;
 
 protected:
-  virtual void process_error();
-  virtual void process_user();
-  virtual void process_file_edit();
-  virtual void process_file();
-  virtual void process_filesystem();
+  void process_error() override;
+  void process_user() override;
+  void process_file_edit() override;
+  void process_file() override;
+  void process_filesystem() override;
 
 private:
   bool _to_all = false;
@@ -25,9 +25,9 @@ private:
 
   static void delete_lambda(int link_id, int owner_id);
 
-  void disconnect(QString why);
+  static void disconnect(QString why);
 
-  void sendErrorMsg(QString reason);
+  void sendErrorMsg(const QString& reason);
 
   // handlers
 

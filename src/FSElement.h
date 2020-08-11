@@ -17,24 +17,24 @@ public:
 
   static FSElement fromJsonObject(const QJsonObject &json);
   static FSElement fromJsonObject(QJsonObject &&json);
-  QJsonObject toJsonObject() const;
+  [[nodiscard]] QJsonObject toJsonObject() const;
 
   friend bool operator==(const FSElement& lhs, const FSElement& rhs);
   friend bool operator!=(const FSElement& lhs, const FSElement& rhs);
 
-  int getId() const;
-  int getParentId() const;
+  [[nodiscard]] int getId() const;
+  [[nodiscard]] int getParentId() const;
   void setParentId(int parentId);
-  QString getName() const;
+  [[nodiscard]] QString getName() const;
   void setName(const QString &name);
-  Type getType() const;
-  std::string to_string() const;
+  [[nodiscard]] Type getType() const;
+  [[nodiscard]] std::string to_string() const;
 
 private:
   void checkAndAssign(const QJsonObject &json);
 
-  int _id;
-  int _parentId;
+  int _id{};
+  int _parentId{};
   QString _name;
   Type _type;
 };

@@ -22,7 +22,9 @@ void TextManager::addStr(QString str) {
     this->str.insert(0, str);
     emit this->str_loaded(str, 0);
     te->setRemoteInsert(false);
+#if VERBOSE
     std::cout << this->str.toStdString() << std::endl;
+#endif
 }
 
 void TextManager::addChr(QChar chr) {
@@ -31,7 +33,9 @@ void TextManager::addChr(QChar chr) {
         // invia un <br> al server
     }
     this->str.insert(pos-1, chr);
+#if VERBOSE
     std::cout << this->str.toStdString() << std::endl;
+#endif
 }
 
 QString TextManager::loadFromServer() {

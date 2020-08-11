@@ -12,7 +12,7 @@ Client::Client(QTcpSocket *s, quint64 id): QObject(nullptr) {
   connect(this->_socket, SIGNAL(disconnected()), SLOT(_disconnected()));
 }
 
-Client::Client(Client &&c) {
+Client::Client(Client &&c) noexcept {
   this->_id = c._id;
   if(this->_socket != nullptr) {
     QObject::disconnect(this->_socket, SIGNAL(readyRead()), this, SLOT(read()));
@@ -76,7 +76,7 @@ void Client::readData() {
   }
 }
 
-void Client::send(quint64 client_id, QByteArray msg) {
+void Client::send(quint64 client_id, const QByteArray& msg) {
   if(client_id == this->_id && this->_socket->state() == QAbstractSocket::ConnectedState) {
     QByteArray data;
     quint32 size = msg.size();

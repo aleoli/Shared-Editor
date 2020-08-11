@@ -13,7 +13,7 @@ class ErrorDialog : public QDialog
 
 public:
   explicit ErrorDialog(QWidget *parent = nullptr);
-  ~ErrorDialog();
+  ~ErrorDialog() override;
 
   void setErrorMsg(QString msg);
   static void showDialog(QWidget *parent, QString msg);

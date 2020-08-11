@@ -8,10 +8,10 @@
 
 QString rndString(int randomStringLength = 16);
 
-void error(QString str);
-void warn(QString str);
-void debug(QString str);
-void info(QString str);
+void error(const QString& str);
+void warn(const QString& str);
+void debug(const QString& str);
+void info(const QString& str);
 
 namespace utils {
   template<typename T>
