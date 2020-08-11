@@ -2,15 +2,16 @@
 
 #include <sstream>
 #include <QJsonValue>
+#include <utility>
 
 #include "exceptions.h"
 
 using namespace se_exceptions;
 
-FSElement::FSElement() : _id(-1), _parentId(-1) {}
+FSElement::FSElement() : _id(-1), _parentId(-1), _type(Type::FILE) {}
 
 FSElement::FSElement(int id, int parentId, QString name, Type type)
-  : _id(id), _parentId(parentId), _name(name), _type(type) {}
+  : _id(id), _parentId(parentId), _name(std::move(name)), _type(type) {}
 
 FSElement::FSElement(const QJsonObject &json) {
   checkAndAssign(json);

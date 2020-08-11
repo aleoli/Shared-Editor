@@ -16,7 +16,7 @@ class Landing : public QDialog
 
 public:
     explicit Landing(QWidget *parent = nullptr);
-    ~Landing();
+    ~Landing() override;
 
 private:
     Ui::Landing *ui;

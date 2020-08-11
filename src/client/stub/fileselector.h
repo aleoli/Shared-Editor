@@ -18,7 +18,7 @@ class FileSelector : public QDialog
 
 public:
   explicit FileSelector(QWidget *parent = nullptr);
-  ~FileSelector();
+  ~FileSelector() override;
 
   void unblock();
   void clear();
@@ -44,7 +44,7 @@ private:
   QPushButton *_btnOpen, *_btnNew, *_btnLink;
   Ui::FileSelector *ui;
 
-  QLabel *_loading;
+  QLabel *_loading{};
   std::shared_ptr<QMovie> _movie;
 };
 

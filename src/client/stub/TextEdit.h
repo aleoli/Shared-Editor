@@ -44,16 +44,16 @@ public:
   File& getFile();
   void setFileId(int id);
   int getFileId() const;
-  void setUser(int userId, QString username);
+  void setUser(int userId, const QString& username);
   void showShareLink();
   void setConnectedUsers();
 
 public slots:
   // messaggi dal server
-  void remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols);
-  void remoteDeleteQuery(int fileId, int userId, std::vector<SymbolId> ids);
-  void remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> symbols);
-  void userConnectedQuery(int fileId, int userId, QString username);
+  void remoteInsertQuery(int fileId, int userId, const std::vector<Symbol>& symbols);
+  void remoteDeleteQuery(int fileId, int userId, const std::vector<SymbolId>& ids);
+  void remoteUpdateQuery(int fileId, int userId, const std::vector<Symbol>& symbols);
+  void userConnectedQuery(int fileId, int userId, const QString& username);
   void userDisconnectedQuery(int fileId, int userId);
   void remoteMoveQuery(int fileId, int userId, SymbolId symbolId, int cursorPosition);
   void setShareLink(QString shareLink);
@@ -117,21 +117,21 @@ private:
 
   QTextEditImpl *_textEdit;
 
-  QAction *_actionTextBold;
-  QAction *_actionTextItalic;
-  QAction *_actionTextUnderline;
-  QAction *_actionTextHighlight;
-  QAction *_actionTextColor;
-  QAction *_actionTextBackgroundColor;
-  QFontComboBox *_comboFont;
-  QComboBox *_comboSize;
+  QAction *_actionTextBold{};
+  QAction *_actionTextItalic{};
+  QAction *_actionTextUnderline{};
+  QAction *_actionTextHighlight{};
+  QAction *_actionTextColor{};
+  QAction *_actionTextBackgroundColor{};
+  QFontComboBox *_comboFont{};
+  QComboBox *_comboSize{};
 
-  QListWidget *_listOnline, *_listOffline;
-  QDockWidget *_dockOnline, *_dockOffline;
+  QListWidget *_listOnline{}, *_listOffline{};
+  QDockWidget *_dockOnline{}, *_dockOffline{};
 
   File _file;
   std::optional<QString> _shareLink;
-  int _fileId;
+  int _fileId{};
   localUser _user; // TODO si può fare un check su questo attributo per vedere se ci sono errori
 
   //struttura dati per cursori etc

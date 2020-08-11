@@ -254,7 +254,7 @@ std::optional<QColor> TextEdit::getRemoteUserColor(int userId) {
   return std::optional<QColor>(color);
 }
 
-void TextEdit::setUser(int userId, QString username) {
+void TextEdit::setUser(int userId, const QString& username) {
   debug("User initialized with userId: " + QString::number(userId));
 
   _user.initialized = true;
@@ -452,7 +452,7 @@ void TextEdit::textItalic() {
 
   QTextCursor cursor = _textEdit->textCursor();
   auto fmt = cursor.charFormat();
-  fmt.setFontItalic(_actionTextItalic->isChecked() ? true : false);
+  fmt.setFontItalic(_actionTextItalic->isChecked());
 
   _textEdit->mergeCurrentCharFormat(fmt);
 }
@@ -464,7 +464,7 @@ void TextEdit::textUnderline() {
 
   QTextCursor cursor = _textEdit->textCursor();
   auto fmt = cursor.charFormat();
-  fmt.setFontUnderline(_actionTextUnderline->isChecked() ? true : false);
+  fmt.setFontUnderline(_actionTextUnderline->isChecked());
 
   _textEdit->mergeCurrentCharFormat(fmt);
 }
@@ -699,7 +699,7 @@ void TextEdit::handleInsert(int pos, int added) {
     auto chr = _textEdit->document()->characterAt(pos + i);
     auto fmt = cursor.charFormat();
 
-    if(chr == 0) {
+    if(chr == nullptr) {
       cursor.deletePreviousChar(); //TODO check. delete null characters
     }
     else {
@@ -750,7 +750,7 @@ void TextEdit::cursorChanged() {
     updateActions();
     _cursorPosition = pos.second;
   }
-  catch (FileSymbolsException e) {
+  catch (FileSymbolsException& e) {
     warn("cursorChanged ha lanciato una FileSymbolsException");
   }
 }
@@ -831,7 +831,7 @@ void TextEdit::reset() {
 // Serve soprattutto nel caso in cui l'app supporti più files aperti
 //INFO ipotizzo che i vettori non siano vuoti (check fatto nelle localXXX e lato server)
 
-void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> symbols) {
+void TextEdit::remoteInsertQuery(int fileId, int userId, const std::vector<Symbol>& symbols) {
   _blockSignals = true;
   int pos;
   auto backgroundColor = _highlightOn ? getRemoteUserColor(userId) : std::nullopt;
@@ -852,7 +852,7 @@ void TextEdit::remoteInsertQuery(int fileId, int userId, std::vector<Symbol> sym
   _blockSignals = false;
 }
 
-void TextEdit::remoteDeleteQuery(int fileId, int userId, std::vector<SymbolId> ids) {
+void TextEdit::remoteDeleteQuery(int fileId, int userId, const std::vector<SymbolId>& ids) {
   _blockSignals = true;
 
   int pos;
@@ -870,7 +870,7 @@ void TextEdit::remoteDeleteQuery(int fileId, int userId, std::vector<SymbolId> i
   _blockSignals = false;
 }
 
-void TextEdit::remoteUpdateQuery(int fileId, int userId, std::vector<Symbol> symbols) {
+void TextEdit::remoteUpdateQuery(int fileId, int userId, const std::vector<Symbol>& symbols) {
   _blockSignals = true;
   int pos;
   auto cursor = _users.at(userId).cursor;
@@ -897,7 +897,7 @@ void TextEdit::updateCursors() {
   }
 }
 
-void TextEdit::userConnectedQuery(int fileId, int userId, QString username) {
+void TextEdit::userConnectedQuery(int fileId, int userId, const QString& username) {
   info("New remote user: " + username + " " + QString::number(userId));
 
   remoteUserConnected(userId, username);
@@ -943,7 +943,7 @@ int TextEdit::getCursorPosition(SymbolId id, int position) {
   try {
     pos = _file.symbolById(id).first + 1;
   }
-  catch(FileSymbolsException e) {
+  catch(FileSymbolsException& e) {
     pos = position;
   }
 

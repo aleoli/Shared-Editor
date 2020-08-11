@@ -1,7 +1,6 @@
 #include "server_message_processor.h"
-
-#include <iostream>
 #include <QJsonDocument>
+#include <utility>
 
 #include "user.h"
 #include "session.h"
@@ -17,10 +16,10 @@ ServerMessageProcessor::ServerMessageProcessor(const Message &m, quint64 clientI
   _manager = MessageManager::get();
   try {
     this->process_message();
-  } catch(MessageDataException ex) {
+  } catch(MessageDataException &ex) {
     error(ex.what());
     this->sendErrorMsg(ex.what());
-  } catch(SE_Exception ex) {
+  } catch(SE_Exception &ex) {
     error(ex.what());
     this->sendErrorMsg(ex.what());
   } catch(...) {
@@ -228,12 +227,12 @@ void ServerMessageProcessor::process_filesystem() {
 }
 
 void ServerMessageProcessor::disconnect(QString why) {
-  error(why);
+  error(std::move(why));
   // TODO
   // emit _manager->connection_error();
 }
 
-void ServerMessageProcessor::sendErrorMsg(QString reason) {
+void ServerMessageProcessor::sendErrorMsg(const QString& reason) {
   QJsonObject data;
   data["reason"] = reason;
 
@@ -268,14 +267,14 @@ void ServerMessageProcessor::login() {
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::LOGIN, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(SQLNoElementSelectException) {
+  } catch(SQLNoElementSelectException&) {
     warn(ERROR_1);
     this->sendErrorMsg(ERROR_1);
-  } catch(ClientLoginException) {
+  } catch(ClientLoginException&) {
     s->close();
     warn(ERROR_2);
     this->sendErrorMsg(ERROR_2);
-  } catch(ClientMultipleLoginException) {
+  } catch(ClientMultipleLoginException&) {
     s->close();
     warn(ERROR_8);
     this->sendErrorMsg(ERROR_8);
@@ -293,7 +292,7 @@ void ServerMessageProcessor::logout() {
     this->_manager->clientDisconnected(this->_clientId);
 
     this->_has_resp = false;
-  } catch(SQLNoElementSelectException) {
+  } catch(SQLNoElementSelectException&) {
     warn(ERROR_NO_SESSION);
     this->sendErrorMsg(ERROR_NO_SESSION);
   }
@@ -331,7 +330,7 @@ void ServerMessageProcessor::newUser() {
 
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::NEW, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(SQLInsertException) {
+  } catch(SQLInsertException&) {
     error(ERROR_3);
     this->sendErrorMsg(ERROR_3);
   }
@@ -393,7 +392,7 @@ void ServerMessageProcessor::editUser() {
     QJsonObject data;
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::EDIT, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(SQLNoElementUpdateException) {
+  } catch(SQLNoElementUpdateException&) {
     error(ERROR_5);
     this->sendErrorMsg(ERROR_5);
   }
@@ -415,7 +414,7 @@ void ServerMessageProcessor::deleteUser() {
     QJsonObject data;
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::DELETE, Message::Status::RESPONSE, data};
     this->_has_resp = true;
-  } catch(SQLNoElementDeleteException) {
+  } catch(SQLNoElementDeleteException&) {
     error(ERROR_6);
     this->sendErrorMsg(ERROR_6);
   }
@@ -439,7 +438,7 @@ void ServerMessageProcessor::newFile() {
   QJsonObject data;
   data["fileId"] = file.getId();
 
-	this->_manager->getFile(this->_clientId, file.getId(), std::nullopt, true);
+  this->_manager->getFile(this->_clientId, file.getId(), std::nullopt, true);
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
   this->_has_resp = true;
@@ -470,15 +469,15 @@ void ServerMessageProcessor::getFile() {
       }
       auto userId = this->_manager->getUserId(cl);
 
-      QJsonObject data;
-      data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-      data["userId"] = session.getUserId();
-      data["username"] = this->_manager->getUsername(this->_clientId);
+      QJsonObject data2;
+      data2["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+      data2["userId"] = session.getUserId();
+      data2["username"] = this->_manager->getUsername(this->_clientId);
 
-      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
+      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data2};
       this->_manager->send_data(cl, msg.toQByteArray());
     }
-  } catch(IllegalAccessException) {
+  } catch(IllegalAccessException&) {
     warn(ACCESS_DENIED);
     this->sendErrorMsg(ACCESS_DENIED);
   }
@@ -599,18 +598,18 @@ void ServerMessageProcessor::activateLink() {
       }
       auto userId = this->_manager->getUserId(cl);
 
-      QJsonObject data;
-      data["fileId"] = FSElement_db::getIdForUser(session, file.getId(), userId);
-      data["userId"] = session.getUserId();
-      data["username"] = this->_manager->getUsername(this->_clientId);
+      QJsonObject data2;
+      data2["fileId"] = FSElement_db::getIdForUser(session, file.getId(), userId);
+      data2["userId"] = session.getUserId();
+      data2["username"] = this->_manager->getUsername(this->_clientId);
 
-      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data};
+      auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::USER_CONNECTED, Message::Status::QUERY, data2};
       this->_manager->send_data(cl, msg.toQByteArray());
     }
-  } catch(ShareException) {
+  } catch(ShareException&) {
     warn(ERROR_7);
     this->sendErrorMsg(ERROR_7);
-  } catch(DoubleLinkException) {
+  } catch(DoubleLinkException&) {
     warn(ERROR_9);
     this->sendErrorMsg(ERROR_9);
   }

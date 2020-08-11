@@ -66,7 +66,7 @@ private:
 
   QJsonArray usersToJsonArray() const;
   std::string usersToString() const; //TODO vedi se rimuovere
-  static std::unordered_map<int, File::UserInfo> jsonArrayTousers(const QJsonArray &array);
+  static std::unordered_map<int, File::UserInfo> jsonArrayToUsers(const QJsonArray &array);
 
   std::string symbolsToString() const; //TODO vedi se rimuovere
 

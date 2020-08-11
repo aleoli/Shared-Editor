@@ -1,18 +1,19 @@
 #include "Symbol.h"
 
 #include <sstream>
+#include <utility>
 
 #include "exceptions.h"
 #include "utils.h"
 
 using namespace se_exceptions;
 
-Symbol::Symbol() {}
+Symbol::Symbol() = default;
 
 Symbol::Symbol(SymbolId id, QChar chr) : _id(id), _char(chr) {}
 
 Symbol::Symbol(SymbolId id, QChar chr, QTextCharFormat fmt)
-  : _id(id), _char(chr), _fmt(fmt) {}
+  : _id(id), _char(chr), _fmt(std::move(fmt)) {}
 
 Symbol::Symbol(const QJsonObject &json, bool readPos) {
   checkAndAssign(json, readPos);
@@ -20,6 +21,21 @@ Symbol::Symbol(const QJsonObject &json, bool readPos) {
 
 Symbol::Symbol(QJsonObject &&json, bool readPos) {
   checkAndAssign(json, readPos);
+}
+
+Symbol::Symbol(const Symbol& s) = default;
+Symbol::Symbol(Symbol&& s) noexcept: _id(s._id), _char(s._char), _pos(std::move(s._pos)), _fmt(std::move(s._fmt)) {}
+
+Symbol &Symbol::operator=(const Symbol &s) = default;
+Symbol &Symbol::operator=(Symbol &&s) noexcept {
+  if(this == &s) {
+    return *this;
+  }
+  this->_id = s._id;
+  this->_char = s._char;
+  this->_pos = std::move(s._pos);
+  this->_fmt = std::move(s._fmt);
+  return *this;
 }
 
 bool operator<(const Symbol& lhs, const Symbol& rhs) {
@@ -42,8 +58,8 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
 
 bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground) {
   return fmt1.font() == fmt2.font() &&
-  fmt1.foreground() == fmt2.foreground() &&
-  ignoreBackground ? true : fmt1.background() == fmt2.background();
+         fmt1.foreground() == fmt2.foreground() &&
+         ignoreBackground || fmt1.background() == fmt2.background();
 }
 
 bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground) const {
@@ -233,7 +249,7 @@ QChar Symbol::getChar() const{
 }
 
 void Symbol::setPos(std::vector<Symbol::Identifier> pos) {
-  _pos = pos;
+  _pos = std::move(pos);
 }
 
 std::vector<Symbol::Identifier> Symbol::getPos() const{
@@ -257,14 +273,14 @@ void Symbol::update(const Symbol &s) {
 }
 
 void Symbol::setFormat(QTextCharFormat fmt) {
-  _fmt = fmt;
+  _fmt = std::move(fmt);
 }
 
 QTextCharFormat Symbol::getFormat() const {
   return _fmt;
 }
 
-void Symbol::setFont(QFont font) {
+void Symbol::setFont(const QFont& font) {
   _fmt.setFont(font);
 }
 

@@ -3,6 +3,7 @@
 
 #include "persistence.h"
 
+#include <utility>
 #include <vector>
 
 #include "db.h"
@@ -16,8 +17,8 @@ template<typename T>
 class persistence::LazyList {
 public:
     LazyList(): has_values(false) {}
-    LazyList(std::vector<int> ids): has_values(false), has_query(false), ids(ids) {}
-    LazyList(QString table_name, QString filter): has_values(false), has_query(true), table_name(table_name), filter(filter) {}
+    explicit LazyList(std::vector<int> ids): has_values(false), has_query(false), ids(std::move(ids)) {}
+    LazyList(QString table_name, QString filter): has_values(false), has_query(true), table_name(std::move(table_name)), filter(std::move(filter)) {}
 
     LazyList(const LazyList &e) {
         if(this != &e) {
@@ -38,7 +39,7 @@ public:
         }
     }
 
-    LazyList(LazyList &&e) {
+    LazyList(LazyList &&e) noexcept {
         if(this != &e) {
             for(int i=0; i<this->values.size(); i++) {
                 delete this->values[i];
@@ -87,7 +88,7 @@ public:
         return *this;
     }
 
-    LazyList& operator =(LazyList &&e) {
+    LazyList& operator =(LazyList &&e) noexcept {
         if(this != &e) {
             for(int i=0; i<this->values.size(); i++) {
                 delete this->values[i];
@@ -179,8 +180,8 @@ private:
 
     std::vector<int> ids;
     std::vector<T*> values;
-    bool has_values;
-    bool has_query;
+    bool has_values{};
+    bool has_query{};
     QString table_name;
     QString filter;
 };

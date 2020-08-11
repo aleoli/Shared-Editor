@@ -5,7 +5,7 @@
 #include "client_manager.h"
 #include "message_manager.h"
 
-void signalHandler(int signum);
+void signalHandler(int);
 
 int main(int argc, char *argv[]) {
   QCoreApplication app(argc, argv);
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   return QCoreApplication::exec();
 }
 
-void signalHandler(int signum) {
+void signalHandler(int) {
   info("Bye bye");
   QCoreApplication::exit(0);
 }

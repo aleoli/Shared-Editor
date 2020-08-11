@@ -6,8 +6,9 @@
 #include <QTimer>
 #include "utils.h"
 #include <QString>
+#include <utility>
 
-Cursor::Cursor(QTextEdit *parent, QColor color) : QLabel(parent), _textEdit(parent), _color(color), _isVisible(false), _isActive(false) {
+Cursor::Cursor(QTextEdit *parent, QColor color) : QLabel(parent), _textEdit(parent), _color(std::move(color)), _isVisible(false), _isActive(false) {
   //TODO rivedere questi parametri
   _color.setAlpha(192);
   setFixedWidth(2);

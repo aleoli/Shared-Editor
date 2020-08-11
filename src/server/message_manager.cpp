@@ -8,14 +8,14 @@
 using namespace se_exceptions;
 
 #include <iostream>
+#include <utility>
 
 std::shared_ptr<MessageManager> MessageManager::instance = nullptr;
 
 MessageManager::MessageManager(QObject *parent): QObject(parent) {
 }
 
-MessageManager::~MessageManager() {
-}
+MessageManager::~MessageManager() = default;
 
 std::shared_ptr<MessageManager> MessageManager::get() {
   if(instance == nullptr) {
@@ -24,7 +24,7 @@ std::shared_ptr<MessageManager> MessageManager::get() {
   return instance;
 }
 
-void MessageManager::process_data(quint64 client_id, QByteArray data) {
+void MessageManager::process_data(quint64 client_id, const QByteArray& data) {
   try {
     auto msg = Message::fromQByteArray(data);
     auto mp = ServerMessageProcessor{msg, client_id};
@@ -35,21 +35,23 @@ void MessageManager::process_data(quint64 client_id, QByteArray data) {
     Message res = mp.getResponse();
     auto array = res.toQByteArray();
 
+#if VERBOSE
     std::cout << "OUT: " << array.data() << std::endl;
+#endif
     if(mp.shouldSendToAll()) {
       this->sendToAll(client_id, _clients[client_id].fileId, array);
     } else {
       emit this->send_data(client_id, array);
     }
 
-  } catch(se_exceptions::SE_Exception ex) {
+  } catch(se_exceptions::SE_Exception &ex) {
     std::cerr << ex.what() << std::endl;
     emit this->connection_error(client_id);
     clientDisconnected(client_id);
   }
 }
 
-void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> session, QString username) {
+void MessageManager::addClient(quint64 clientId, const std::shared_ptr<Session>& session, QString username) {
   if(clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is already logged in"};
   }
@@ -63,7 +65,7 @@ void MessageManager::addClient(quint64 clientId, std::shared_ptr<Session> sessio
   data.clientId = clientId;
   data.session = session;
   data.fileIsOpen = false;
-  data.username = username;
+  data.username = std::move(username);
 
   _clients[clientId] = data;
 }
@@ -126,7 +128,7 @@ void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
   list.remove(clientId);
 
   if(!list.empty()) {
-    emit this->send_data(list, data);
+    emit this->send_data(list, std::move(data));
   }
 }
 
@@ -154,9 +156,10 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
   tmp.fileIsOpen = true;
   tmp.fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
-  if(first_access) {
+  try {
     f.addUser(tmp.session->getUserId(), tmp.username);
-  } else {
+  } catch(FileUserException&) {
+    // this user already exists in map
     f.setOnline(tmp.session->getUserId(), true);
   }
 

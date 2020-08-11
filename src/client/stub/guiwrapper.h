@@ -26,8 +26,8 @@ class GuiWrapper : public QWidget
     } account;
 
 public:
-  GuiWrapper(const SysConf &conf, QWidget *parent = 0);
-  ~GuiWrapper();
+  explicit GuiWrapper(const SysConf &conf, QWidget *parent = nullptr);
+  ~GuiWrapper() override;
   void run();
 
 signals:
@@ -56,8 +56,8 @@ signals:
 
 public slots:
   // slot di azioni compiute dall'user (connessioni con gli elementi grafici)
-  void loginQuery(QString username, QString psw);
-  void newUserQuery(QString username, QString psw, QString pswRepeat);
+  void loginQuery(const QString& username, const QString& psw);
+  void newUserQuery(const QString& username, const QString& psw, QString pswRepeat);
 
   void newFileQuery();
   void getFileQuery(int id);
@@ -71,19 +71,19 @@ public slots:
   void getLinkQuery(int fileId);
 
   // slot di ricezione messaggi dal mm
-  void errorResponseReceived(QString reason);
-  void loginResponseReceived(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon);
+  void errorResponseReceived(const QString& reason);
+  void loginResponseReceived(QString token, int userId, const std::optional<QString>& nickname, const std::optional<QString>& icon);
   void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
-  void getFileResponseReceived(File file, int charId);
+  void getFileResponseReceived(const File& file, int charId);
   void remoteInsertQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);
   void remoteDeleteQueryReceived(int fileId, int userId, std::vector<SymbolId> ids);
   void remoteUpdateQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);
   void userConnectedQueryReceived(int fileId, int userId, QString username);
   void userDisconnectedQueryReceived(int fileId, int userId);
   void remoteMoveQueryReceived(int fileId, int userId, SymbolId symbolId, int cursorPosition);
-  void getLinkResponseReceived(QString link);
-  void activateLinkResponseReceived(FSElement element, File file);
+  void getLinkResponseReceived(const QString& link);
+  void activateLinkResponseReceived(const FSElement& element, const File& file);
 
 private slots:
   // connessione del server
@@ -99,7 +99,7 @@ private:
   void testEditor();
   void testCRDT();
   void initThreads(const SysConf &conf);
-  void checkToken();
+  void checkToken() const;
 
   //ENUM per tenere traccia di quale finestra è aperta al momento (serve per sapere dove stampare i msg di errore)
   //si può anche usare per rinforzare i controlli sui msg ricevuti
@@ -117,7 +117,7 @@ private:
   // ulteriore check per garantire sicurezza / stabilità all'applicazione
   // (i msg tipo localinsert e altri non devono essere contati, solo quelli che prevedono risposta)
   //INFO considerare se inserirlo anche nel client definitivo
-  int _lastMessageSent;
+  int _lastMessageSent{};
 
   //booleano per vedere se sono in attesa di una risposta a un messaggio. Usato per rinforzare i check sui msg inviati
   //se è impostato a true e voglio mandare un messaggio -> errore grave!
@@ -140,7 +140,7 @@ private:
   //altri threads
   std::shared_ptr<MessageManager> _manager;
   std::shared_ptr<Server> _server;
-  QThread *_serverThread, *_managerThread;
+  QThread *_serverThread{}, *_managerThread{};
 };
 
 #endif // MAINTHREAD_H
