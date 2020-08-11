@@ -4,14 +4,6 @@
 #include <QString>
 
 #include "exceptions.h"
-#include "utils.h"
-
-#include "login.h"
-#include "docsbrowser.h"
-#include "edit.h"
-#include "landing.h"
-#include "registration.h"
-#include "texteditor.h"
 
 using namespace se_exceptions;
 
@@ -23,13 +15,29 @@ GuiManager::GuiManager(const SysConf &conf, QObject *parent): QObject(parent) {
   _stackedWidget = new MyStackedWidget();
   _user = User::get();
 
-  //TODO crea finestre e mettile nello stacked
-  //TODO collega tutti i segnali
+  _widgetLanding = new Landing;
+  _widgetLogin = new Login;
+  _widgetDocsBrowser = new DocsBrowser;
+  _widgetEdit = new Edit;
+  _widgetRegistration = new Registration;
+  _widgetTextEditor = new TextEditor;
+
+  // lo stacked prende l'ownership di queste finestre
+  _stackedWidget->addWidget(_widgetLanding);
+  _stackedWidget->addWidget(_widgetLogin);
+  _stackedWidget->addWidget(_widgetDocsBrowser);
+  _stackedWidget->addWidget(_widgetEdit);
+  _stackedWidget->addWidget(_widgetRegistration);
+  _stackedWidget->addWidget(_widgetTextEditor);
+
+  _stackedWidget->setCurrentWidget(_widgetLanding);
+
+  connectWidgets();
+  initClientToServer();
+  initServerToClient();
 }
 
 GuiManager::~GuiManager() {
-  delete _stackedWidget;
-
   _serverThread->quit();
   _managerThread->quit();
 
@@ -67,10 +75,24 @@ void GuiManager::initThreads(const SysConf &conf) {
   QObject::connect(_manager.get(), SIGNAL(send_data(QByteArray)), _server.get(), SLOT(write(QByteArray)));
 }
 
+void GuiManager::connectWidgets() {
+  QObject::connect(_stackedWidget, SIGNAL(close()), this, SLOT(closeStacked()));
+  // TODO signal/slot tra il manager e i widget
+}
+
+void GuiManager::initClientToServer() {
+  //Comunicazioni Client -> Server
+  //TODO prendi da stub e completa
+}
+
+void GuiManager::initServerToClient() {
+  //Comunicazioni Server -> Client
+  //TODO prendi da stub e completa
+}
+
 void GuiManager::connected() {
   info("Connesso al server");
-
-  // close landing, show login
+  _stackedWidget->setCurrentWidget(_widgetLogin);
 }
 
 void GuiManager::connectionLost() {
@@ -86,6 +108,12 @@ void GuiManager::run() {
   info("GuiManager running");
   _serverThread->start();
   _managerThread->start();
+  _stackedWidget->show();
+}
 
-  //TODO show landing
+void GuiManager::closeStacked() {
+  debug("Pressed close button");
+
+  //TODO logica per vedere se veramente si deve chiudere l'app oppure no
+  emit quit();
 }

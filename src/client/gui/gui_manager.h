@@ -7,10 +7,17 @@
 #include <optional>
 #include <QCloseEvent>
 
-#include "../message_manager.h"
-#include "../server.h"
-#include "../sys.h"
+#include "message_manager.h"
+#include "server.h"
+#include "sys.h"
+#include "utils.h"
 #include "user.h"
+#include "login.h"
+#include "docsbrowser.h"
+#include "edit.h"
+#include "landing.h"
+#include "registration.h"
+#include "texteditor.h"
 
 class MyStackedWidget: public QStackedWidget
 {
@@ -18,12 +25,12 @@ class MyStackedWidget: public QStackedWidget
 
 public:
   void closeEvent(QCloseEvent *bar) {
-    emit wannaQuit();
+    emit close();
     bar->ignore();
   }
 
 signals:
-  void wannaQuit(); //TODO vedi se ti serve sto robo
+  void close();
 };
 
 class GuiManager: public QObject
@@ -44,6 +51,9 @@ public:
 signals:
   void quit();
 
+public slots:
+  void closeStacked();
+
 private slots:
   // connessione del server
   void connected();
@@ -54,12 +64,23 @@ private:
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
 
   void initThreads(const SysConf &conf);
+  void connectWidgets();
+  void initClientToServer();
+  void initServerToClient();
 
-  MyStackedWidget *_stackedWidget;
   std::shared_ptr<MessageManager> _manager;
   std::shared_ptr<Server> _server;
   QThread *_serverThread, *_managerThread;
 
   std::shared_ptr<User> _user;
+  MyStackedWidget *_stackedWidget;
+
+  //finestre
+  Landing *_widgetLanding;
+  Login *_widgetLogin;
+  DocsBrowser *_widgetDocsBrowser;
+  Edit *_widgetEdit;
+  Registration *_widgetRegistration;
+  TextEditor *_widgetTextEditor;
 };
 #endif // GUIMANAGER_H
