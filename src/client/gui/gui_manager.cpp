@@ -114,6 +114,6 @@ void GuiManager::run() {
 void GuiManager::closeStacked() {
   debug("Pressed close button");
 
-  //TODO logica per vedere se veramente si deve chiudere l'app oppure no
+  //TODO logica per vedere se veramente si deve chiudere l'app oppure no?
   emit quit();
 }
