@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Registration</class>
+ <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
@@ -59,7 +59,7 @@ margin-bottom: 5px;</string>
         </spacer>
        </item>
        <item alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pushButton_changeProfile">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -136,17 +136,17 @@ background-color: #242A38;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_User_pwd">
          <property name="topMargin">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="verticalLayout_User">
            <property name="rightMargin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="label_Username">
              <property name="styleSheet">
               <string notr="true">QLabel{
 	text-decoration: none;
@@ -161,14 +161,14 @@ background-color: #242A38;
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_newUsername">
+            <widget class="QLineEdit" name="lineEdit_Username">
              <property name="styleSheet">
               <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
 margin: 0 20 20 0px;
-color: #94938f;
+color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
              </property>
@@ -177,9 +177,9 @@ selection-background-color: #f76163;</string>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout">
+          <layout class="QVBoxLayout" name="verticalLayout_pwd">
            <item>
-            <widget class="QLabel" name="label_5">
+            <widget class="QLabel" name="label_pwd">
              <property name="styleSheet">
               <string notr="true">margin-left: 20px;</string>
              </property>
@@ -189,14 +189,14 @@ selection-background-color: #f76163;</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_actualPassword">
+            <widget class="QLineEdit" name="lineEdit_Password">
              <property name="styleSheet">
               <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
 margin: 0 0 20 20px;
-color: #94938f;
+color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
              </property>
@@ -207,11 +207,11 @@ selection-background-color: #f76163;</string>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_ConfirmPwd">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="horizontalLayout_ConfirmPwd_2">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
+            <layout class="QVBoxLayout" name="verticalLayout_ConfirmPwd">
              <property name="sizeConstraint">
               <enum>QLayout::SetDefaultConstraint</enum>
              </property>
@@ -219,7 +219,7 @@ selection-background-color: #f76163;</string>
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_ConfirmPwd">
                <property name="styleSheet">
                 <string notr="true">margin-left: 0px;</string>
                </property>
@@ -229,14 +229,14 @@ selection-background-color: #f76163;</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_repeatPassword">
+              <widget class="QLineEdit" name="lineEdit_ConfirmPwd">
                <property name="styleSheet">
                 <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
 margin: 0 0 20 0px;
-color: #94938f;
+color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
                </property>
@@ -249,7 +249,7 @@ selection-background-color: #f76163;</string>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout_Signup_Cancel">
          <item>
           <widget class="QCheckBox" name="checkBox_showPasswords">
            <property name="cursor">
@@ -287,7 +287,7 @@ QCheckBox::indicator:checked {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_3">
+          <widget class="QPushButton" name="pushButton_Signup">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -327,12 +327,12 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
 }</string>
            </property>
            <property name="text">
-            <string>SAVE ALL</string>
+            <string>SIGNUP</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="pushButton_Cancel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>

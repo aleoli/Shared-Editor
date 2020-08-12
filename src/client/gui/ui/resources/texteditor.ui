@@ -19,7 +19,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="1">
-     <widget class="QTextEdit" name="textEdit_main">
+     <widget class="QTextEdit" name="textEdit">
       <property name="styleSheet">
        <string notr="true">background-color: white;</string>
       </property>
@@ -74,8 +74,8 @@ QComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-    background: url(:/res/text-editor/dropdown-arrow.png);
-    height: 15px;
+    image: url(:/res/text-editor/dropdown-arrow.png);
+    height: 30px;
 }
 
 QComboBox::down-arrow:on { /* shift the arrow when popup is open */
@@ -99,6 +99,19 @@ QListView#comboListView::item:hover {
 }</string>
       </property>
      </widget>
+    </item>
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>
@@ -443,7 +456,7 @@ QMenu::separator {
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_ConnectedUsers">
+  <widget class="QDockWidget" name="dockWidget_2">
    <property name="palette">
     <palette>
      <active>
@@ -613,9 +626,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_ConnectedUsers"/>
+   <widget class="QWidget" name="dockWidgetContents_2"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_Comments">
+  <widget class="QDockWidget" name="dockWidget">
    <property name="palette">
     <palette>
      <active>
@@ -768,7 +781,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_Comments"/>
+   <widget class="QWidget" name="dockWidgetContents"/>
   </widget>
   <action name="actionOpen">
    <property name="text">

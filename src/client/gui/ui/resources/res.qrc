@@ -1,5 +1,22 @@
 <RCC>
   <qresource prefix="res">
+    <file>text-editor/align-center.png</file>
+    <file>text-editor/align-left.png</file>
+    <file>text-editor/align-right.png</file>
+    <file>text-editor/bold.png</file>
+    <file>text-editor/comment.png</file>
+    <file>text-editor/copy.png</file>
+    <file>text-editor/cut.png</file>
+    <file>text-editor/download.png</file>
+    <file>text-editor/dropdown-arrow.png</file>
+    <file>text-editor/italics.png</file>
+    <file>text-editor/justify.png</file>
+    <file>text-editor/paste.png</file>
+    <file>text-editor/print.png</file>
+    <file>text-editor/redo.png</file>
+    <file>text-editor/strike.png</file>
+    <file>text-editor/underline.png</file>
+    <file>text-editor/undo.png</file>
     <file>profile-pics/default.png</file>
     <file>profile-pics/happyman1.png</file>
     <file>profile-pics/parrot.png</file>
