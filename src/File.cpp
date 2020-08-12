@@ -11,9 +11,18 @@ using namespace se_exceptions;
 #include <algorithm>
 #include <QChar>
 #include <QJsonDocument>
+#include <QFile>
 #include <utility>
 
 File::File() = default;
+
+File::File(const File &file) {
+  this->_users = file._users;
+  this->_symbols = file._symbols;
+  this->dirty = file.dirty;
+}
+
+File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)), dirty(file.dirty) {}
 
 File::File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> symbols)
   : _users(std::move(users)), _symbols(std::move(symbols)) {}
@@ -24,6 +33,26 @@ File::File(const QJsonObject &json){
 
 File::File(QJsonObject &&json){
   checkAndAssign(json);
+}
+
+File& File::operator=(const File &file) {
+  if(this == &file) {
+    return *this;
+  }
+  this->_users = file._users;
+  this->_symbols = file._symbols;
+  this->dirty = file.dirty;
+  return *this;
+}
+
+File& File::operator=(File &&file) noexcept {
+  if(this == &file) {
+    return *this;
+  }
+  this->_users = std::move(file._users);
+  this->_symbols = std::move(file._symbols);
+  this->dirty = file.dirty;
+  return *this;
 }
 
 void File::checkAndAssign(const QJsonObject &json) {
@@ -41,6 +70,7 @@ void File::checkAndAssign(const QJsonObject &json) {
   auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
 
+  auto ul = std::unique_lock{this->_mutex};
   _users = jsonArrayToUsers(users);
   _symbols = utils::jsonArrayToVector<Symbol>(symbols);
 }
@@ -77,6 +107,7 @@ QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
   json["users"] = QJsonValue(usersToJsonArray());
+  auto sl = std::shared_lock{this->_mutex};
   json["symbols"] = QJsonValue(utils::vectorToJsonArray(_symbols));
 
   return json;
@@ -95,6 +126,7 @@ QByteArray File::toQByteArray() const {
 QJsonArray File::usersToJsonArray() const {
   QJsonArray array;
 
+  auto sl = std::shared_lock{this->_mutex};
   for(auto &el : _users) {
     QJsonObject value;
 
@@ -111,6 +143,7 @@ QJsonArray File::usersToJsonArray() const {
 std::string File::usersToString() const {
   std::stringstream ss;
 
+  auto sl = std::shared_lock{this->_mutex};
   for(auto &el : _users) {
     ss << "\tuserId: " << el.second.userId << std::endl;
     ss << "\t\tusername: " << el.second.username.toStdString() << std::endl;
@@ -157,6 +190,7 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray 
 std::string File::symbolsToString() const {
   std::stringstream ss;
 
+  auto sl = std::shared_lock{this->_mutex};
   for(auto it = _symbols.begin(); it != _symbols.end(); it++) {
     auto &el = *it;
 
@@ -170,14 +204,17 @@ std::string File::symbolsToString() const {
 }
 
 std::unordered_map<int, File::UserInfo> File::getUsers() const {
+  auto sl = std::shared_lock{this->_mutex};
   return _users;
 }
 
 std::vector<Symbol> File::getSymbols() const {
+  auto sl = std::shared_lock{this->_mutex};
   return _symbols;
 }
 
 Symbol& File::symbolAt(int pos) {
+  auto sl = std::shared_lock{this->_mutex};
   if(_symbols.size() <= pos) {
     throw FileSymbolsException{"Invalid position"};
   }
@@ -187,6 +224,7 @@ Symbol& File::symbolAt(int pos) {
 
 std::pair<int, Symbol&> File::symbolById(SymbolId id) {
   int pos = 0;
+  auto sl = std::shared_lock{this->_mutex};
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
         bool val = cmp.getSymbolId() == id;
         if(!val) pos++;
@@ -202,6 +240,7 @@ std::pair<int, Symbol&> File::symbolById(SymbolId id) {
 
 int File::getPosition(SymbolId id) {
   int pos = 0;
+  auto sl = std::shared_lock{this->_mutex};
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
         bool val = cmp.getSymbolId() == id;
         if(!val) pos++;
@@ -216,6 +255,7 @@ int File::getPosition(SymbolId id) {
 }
 
 int File::numSymbols() const {
+  auto sl = std::shared_lock{this->_mutex};
   return _symbols.size();
 }
 
@@ -230,6 +270,7 @@ std::string File::to_string() const {
 
 std::string File::text() const {
   std::string res;
+  auto sl = std::shared_lock{this->_mutex};
   std::transform(_symbols.begin(), _symbols.end(), std::back_inserter(res), [](const auto &s) {
     return s.getChar().toLatin1();
   });
@@ -237,34 +278,43 @@ std::string File::text() const {
 }
 
 void File::clear() {
+  auto ul = std::unique_lock{this->_mutex};
+  dirty = true;
   _symbols.clear();
 }
 
 void File::addUser(int userId, QString username) {
+  auto ul = std::unique_lock{this->_mutex};
   if(_users.count(userId) != 0) {
     throw FileUserException{"User already exists"};
   }
 
+  dirty = true;
   _users[userId] = { userId, std::move(username), true };
 }
 
 void File::removeUser(int userId) {
+  auto ul = std::unique_lock{this->_mutex};
   if(_users.count(userId) == 0) {
     throw FileUserException{"User does not exist"};
   }
 
+  dirty = true;
   _users.erase(userId);
 }
 
 void File::setOnline(int userId, bool val) {
+  auto ul = std::unique_lock{this->_mutex};
   if(_users.count(userId) == 0) {
     throw FileUserException{"User is not in map"};
   }
 
+  dirty = true;
   _users[userId].online = val;
 }
 
 bool File::isOnline(int userId) {
+  auto sl = std::shared_lock{this->_mutex};
   if(_users.count(userId) == 0) {
     throw FileUserException{"User is not in map"};
   }
@@ -273,6 +323,7 @@ bool File::isOnline(int userId) {
 }
 
 void File::localInsert(Symbol &sym, int pos) {
+  auto ul = std::unique_lock{this->_mutex};
   // (chi ha chiamato questo metodo poi si preoccuperà di mandare info al server)
   auto size = _symbols.size();
 
@@ -300,6 +351,7 @@ void File::localInsert(Symbol &sym, int pos) {
   findPosition(sym.getSymbolId().getUserId(), v1, v2, position);
 
   sym.setPos(position);
+  dirty = true;
   _symbols.emplace(_symbols.begin() + pos, sym);
 }
 
@@ -363,6 +415,7 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> v1,
 }
 
 int File::remoteInsert(const Symbol &sym) {
+  auto ul = std::unique_lock{this->_mutex};
   int pos = 0;
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [sym, &pos](const Symbol &cmp) {
         bool val = sym < cmp;
@@ -370,20 +423,24 @@ int File::remoteInsert(const Symbol &sym) {
         return val;
     });
 
+  dirty = true;
   _symbols.emplace(result, sym);
 
   return pos;
 }
 
 void File::localDelete(int pos) {
+  auto ul = std::unique_lock{this->_mutex};
   if(pos < 0 || _symbols.size() <= pos) {
     throw FileSymbolsException{"Invalid delete position"};
   }
 
+  dirty = true;
   _symbols.erase(_symbols.begin()+pos);
 }
 
 int File::remoteDelete(SymbolId id) {
+  auto ul = std::unique_lock{this->_mutex};
   int pos = 0;
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
         bool val = id == cmp.getSymbolId();
@@ -396,6 +453,7 @@ int File::remoteDelete(SymbolId id) {
     return -1;
   }
 
+  dirty = true;
   _symbols.erase(result);
   return pos;
 }
@@ -415,7 +473,25 @@ int File::remoteUpdate(const Symbol &sym) {
   }
 }
 
+void File::store(const QString &path) {
+  auto sl = std::shared_lock{this->_mutex};
+  if(!this->dirty) {
+    return;
+  }
+
+  QFile file(path);
+  if(!file.open(QIODevice::WriteOnly)) {
+    error("cannot open file "+path);
+    throw se_exceptions::NoFileOnDiskException{"cannot open file "+path};
+  }
+  file.write(this->toQByteArray());
+  file.close();
+  this->dirty = false;
+}
+
 bool operator==(const File& lhs, const File& rhs) {
+  auto sl = std::shared_lock{lhs._mutex};
+  auto sl2 = std::shared_lock{rhs._mutex};
   return lhs._users == rhs._users && lhs._symbols == rhs._symbols;
 }
 

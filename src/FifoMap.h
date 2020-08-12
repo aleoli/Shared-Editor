@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <queue>
+#include <shared_mutex>
 
 template <typename T, typename U>
 class FifoMap {
@@ -53,8 +54,13 @@ public:
   auto end() { return _map.end(); }
   auto cend() { return _map.cend(); }
 
+  std::shared_mutex& getMutex() {
+    return this->_mutex;
+  }
+
 private:
   unsigned int _size;
   std::unordered_map<T, U> _map;
   std::queue<T> _queue;
+  std::shared_mutex _mutex;
 };

@@ -41,6 +41,7 @@ public:
   int getPhysicalId();
   static int getIdForUser(const Session &s, int file_id, int user_id);
   [[nodiscard]] int getCharId() const;
+  [[nodiscard]] QString getPath() const;
 
   void addCharId(int v);
 
@@ -76,7 +77,6 @@ private:
 
   void del_file();
 
-  [[nodiscard]] QString getPath() const;
   bool path_on_disk_available();
 
   QString _path;
