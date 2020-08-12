@@ -1,5 +1,4 @@
-#ifndef LANDING_H
-#define LANDING_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -23,5 +22,3 @@ signals:
 private:
     Ui::Landing *ui;
 };
-
-#endif

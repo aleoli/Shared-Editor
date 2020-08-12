@@ -1,5 +1,4 @@
-#ifndef LOGIN_H
-#define LOGIN_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -23,5 +22,3 @@ signals:
 private:
     Ui::Login *ui;
 };
-
-#endif // LOGIN_H

@@ -1,5 +1,4 @@
-#ifndef REGISTRATION_H
-#define REGISTRATION_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -23,5 +22,3 @@ signals:
 private:
     Ui::Registration *ui;
 };
-
-#endif

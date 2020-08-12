@@ -1,5 +1,4 @@
-#ifndef DOCSBROWSER_H
-#define DOCSBROWSER_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -23,5 +22,3 @@ signals:
 private:
     Ui::DocsBrowser *ui;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef GUIMANAGER_H
-#define GUIMANAGER_H
+#pragma once
 
 #include <QStackedWidget>
 #include <QObject>
@@ -83,4 +82,3 @@ private:
   Registration *_widgetRegistration;
   TextEditor *_widgetTextEditor;
 };
-#endif // GUIMANAGER_H

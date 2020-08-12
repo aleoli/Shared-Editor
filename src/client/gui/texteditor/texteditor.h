@@ -1,5 +1,4 @@
-#ifndef TEXTEDITOR_H
-#define TEXTEDITOR_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -23,5 +22,3 @@ signals:
 private:
     Ui::TextEditor *ui;
 };
-
-#endif

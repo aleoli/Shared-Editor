@@ -1,5 +1,4 @@
-#ifndef EDIT_H
-#define EDIT_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -23,5 +22,3 @@ signals:
 private:
     Ui::Edit *ui;
 };
-
-#endif
