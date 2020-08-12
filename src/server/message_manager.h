@@ -53,6 +53,8 @@ signals:
   void send_data(std::list<quint64> client_list, QByteArray data);
   void connection_error(quint64 client_id);
 
+  void quit();
+
 public slots:
   void process_data(quint64 client_id, const QByteArray& data);
   void clientDisconnected(quint64 clientId);
@@ -79,5 +81,5 @@ private:
 
   std::unordered_map<quint64, Data> _clients;                // mappa client_id -> Data
   std::unordered_map<int, std::list<quint64>> _fileClients;    // mappa file_id -> lista di client_id che lo stanno usando
-  FifoMap<int, File> _openFiles{MAX_OPEN_FILES};   //un unico posto in cui sono presenti i file, con l'aggiunta di qualche handler per gestirli
+  FifoMap<int, std::pair<QString, File>> _openFiles{MAX_OPEN_FILES};   //un unico posto in cui sono presenti i file, con l'aggiunta di qualche handler per gestirli
 };

@@ -28,5 +28,7 @@ int main(int argc, char *argv[]) {
 
 void signalHandler(int) {
   info("Bye bye");
+  auto mm = MessageManager::get();
+  emit mm->quit();
   QCoreApplication::exit(0);
 }

@@ -4,15 +4,21 @@
 #include "Message.h"
 #include "server_message_processor.h"
 #include "FSElement_db.h"
+#include "disk_manager.h"
 
 using namespace se_exceptions;
 
 #include <iostream>
 #include <utility>
+#include <shared_mutex>
 
 std::shared_ptr<MessageManager> MessageManager::instance = nullptr;
 
 MessageManager::MessageManager(QObject *parent): QObject(parent) {
+  // start disk manager
+  auto dm = DiskManager::get();
+  dm->setFileMap(&this->_openFiles);
+  QObject::connect(this, &MessageManager::quit, dm.get(), &DiskManager::quit);
 }
 
 MessageManager::~MessageManager() = default;
@@ -150,12 +156,13 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
     _fileClients[fileId].push_back(clientId);
   }
 
-  File& f = _openFiles[fileId];
   auto& tmp = _clients[clientId];
   tmp.fileId = fileId;
   tmp.fileIsOpen = true;
   tmp.fileIdUser = fileIdUser ? *fileIdUser : fileId;
 
+  auto sl = std::shared_lock(_openFiles.getMutex());
+  File& f = _openFiles[fileId].second;
   try {
     f.addUser(tmp.session->getUserId(), tmp.username);
   } catch(FileUserException&) {
@@ -163,16 +170,18 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
     f.setOnline(tmp.session->getUserId(), true);
   }
 
+  // TODO: it is calling copy constructor on file!!
   return f;
 }
 
 void MessageManager::loadFile(int clientId, int fileId) {
+  auto ul = std::unique_lock(_openFiles.getMutex());
   if(_openFiles.count(fileId) != 0) return;
 
   auto f_db = FSElement_db::get(*_clients[clientId].session, fileId);
 
   File f = f_db.load();
-  _openFiles[fileId] = f;
+  _openFiles.insert(fileId, std::pair<QString, File>{f_db.getPath(), std::move(f)});
 }
 
 void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& syms) {
@@ -188,7 +197,8 @@ void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& 
   // (potrebbe essere stato rimosso)
   loadFile(clientId, fileId);
 
-  File& f = _openFiles[fileId];
+  auto sl = std::shared_lock(_openFiles.getMutex());
+  File& f = _openFiles[fileId].second;
   for(const auto& sym: syms) {
     f.remoteInsert(Symbol::fromJsonObject(sym.toObject()));
   }
@@ -207,7 +217,8 @@ void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArra
   // (potrebbe essere stato rimosso)
   loadFile(clientId, fileId);
 
-  File& f = _openFiles[fileId];
+  auto sl = std::shared_lock(_openFiles.getMutex());
+  File& f = _openFiles[fileId].second;
   for(const auto& sym: syms) {
     f.remoteDelete(SymbolId::fromJsonObject(sym.toObject()));
   }
@@ -226,7 +237,8 @@ void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArra
   // (potrebbe essere stato rimosso)
   loadFile(clientId, fileId);
 
-  File& f = _openFiles[fileId];
+  auto sl = std::shared_lock(_openFiles.getMutex());
+  File& f = _openFiles[fileId].second;
   for(const auto& sym: syms) {
     f.remoteUpdate(Symbol::fromJsonObject(sym.toObject()));
   }
@@ -250,10 +262,11 @@ void MessageManager::closeFile(quint64 clientId, int fileId, bool deleted) {
   auto& tmp = _clients[clientId];
   tmp.fileIsOpen = false;
 
+  auto sl = std::shared_lock(_openFiles.getMutex());
   if(deleted) {
-    _openFiles[fileId].removeUser(tmp.session->getUserId());
+    _openFiles[fileId].second.removeUser(tmp.session->getUserId());
   } else {
-    _openFiles[fileId].setOnline(tmp.session->getUserId(), false);
+    _openFiles[fileId].second.setOnline(tmp.session->getUserId(), false);
   }
 }
 

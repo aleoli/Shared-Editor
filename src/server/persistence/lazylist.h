@@ -1,5 +1,4 @@
-#ifndef LAZYLIST_H
-#define LAZYLIST_H
+#pragma once
 
 #include "persistence.h"
 
@@ -185,5 +184,3 @@ private:
     QString table_name;
     QString filter;
 };
-
-#endif // LAZYLIST_H

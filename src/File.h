@@ -9,6 +9,7 @@
 #include <QString>
 #include <unordered_map>
 #include "utils.h"
+#include <shared_mutex>
 
 class File {
 public:
@@ -19,9 +20,14 @@ public:
   } UserInfo;
 
   File();
+  File(const File &file);
+  File(File &&file) noexcept;
   File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> _symbols);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
+
+  File& operator=(const File& file);
+  File& operator=(File&& file) noexcept;
 
   static File fromJsonObject(const QJsonObject &json);
   static File fromJsonObject(QJsonObject &&json);
@@ -50,6 +56,8 @@ public:
   void setOnline(int userId, bool val);
   bool isOnline(int userId);
 
+  void store(const QString &path);
+
   //CRDT
   void localInsert(Symbol &sym, int pos);
   int remoteInsert(const Symbol &sym); // returns the position in which i inserted
@@ -72,4 +80,7 @@ private:
 
   std::unordered_map<int, UserInfo> _users;
   std::vector<Symbol> _symbols;
+
+  bool dirty = false;
+  mutable std::shared_mutex _mutex;
 };

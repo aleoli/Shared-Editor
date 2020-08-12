@@ -1,5 +1,4 @@
-#ifndef PERSISTENT_H
-#define PERSISTENT_H
+#pragma once
 
 #include "persistence.h"
 
@@ -103,5 +102,3 @@ protected:
 
     int id;
 };
-
-#endif // PERSISTENT_H

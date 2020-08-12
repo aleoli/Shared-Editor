@@ -1,5 +1,4 @@
-#ifndef LAZY_H
-#define LAZY_H
+#pragma once
 
 #include "persistence.h"
 
@@ -106,5 +105,3 @@ private:
     T* value;
     bool has_value{};
 };
-
-#endif // LAZY_H
