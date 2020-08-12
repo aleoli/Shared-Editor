@@ -1,5 +1,4 @@
-#ifndef DB_H
-#define DB_H
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -128,5 +127,3 @@ private:
       "CREATE TABLE IF NOT EXISTS shared_link (id INTEGER PRIMARY KEY AUTOINCREMENT, token VARCHAR(128) UNIQUE, element_id INT, FOREIGN KEY(element_id) REFERENCES fs_element(id))"
     };
 };
-
-#endif // DB_H

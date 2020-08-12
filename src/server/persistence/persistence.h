@@ -1,5 +1,4 @@
-#ifndef PERSISTENCE_H
-#define PERSISTENCE_H
+#pragma once
 
 namespace persistence {
 
@@ -9,5 +8,3 @@ template <typename T> class LazyList;
 class Persistent;
 
 }
-
-#endif // PERSISTENCE_H
