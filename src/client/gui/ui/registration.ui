@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Registration</class>
- <widget class="QMainWindow" name="MainWindow">
+ <widget class="QMainWindow" name="Registration">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -59,7 +59,7 @@ margin-bottom: 5px;</string>
         </spacer>
        </item>
        <item alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="pushButton_changeProfile">
+        <widget class="QPushButton" name="btn_changeProfile">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -136,17 +136,17 @@ background-color: #242A38;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_User_pwd">
+        <layout class="QHBoxLayout" name="uname_pwd">
          <property name="topMargin">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_User">
+          <layout class="QVBoxLayout" name="uname">
            <property name="rightMargin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label_Username">
+            <widget class="QLabel" name="label_uname">
              <property name="styleSheet">
               <string notr="true">QLabel{
 	text-decoration: none;
@@ -161,7 +161,7 @@ background-color: #242A38;
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_Username">
+            <widget class="QLineEdit" name="ledit_uname">
              <property name="styleSheet">
               <string notr="true">background: white;
 border:1px solid white;
@@ -177,7 +177,7 @@ selection-background-color: #f76163;</string>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_pwd">
+          <layout class="QVBoxLayout" name="pwd">
            <item>
             <widget class="QLabel" name="label_pwd">
              <property name="styleSheet">
@@ -189,7 +189,7 @@ selection-background-color: #f76163;</string>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_Password">
+            <widget class="QLineEdit" name="ledit_pwd">
              <property name="styleSheet">
               <string notr="true">background: white;
 border:1px solid white;
@@ -207,31 +207,27 @@ selection-background-color: #f76163;</string>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_ConfirmPwd">
+        <layout class="QVBoxLayout" name="cnfrmPwd">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_ConfirmPwd_2">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_ConfirmPwd">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetDefaultConstraint</enum>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_ConfirmPwd">
-               <property name="styleSheet">
-                <string notr="true">margin-left: 0px;</string>
-               </property>
-               <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEdit_ConfirmPwd">
-               <property name="styleSheet">
-                <string notr="true">background: white;
+          <widget class="QLabel" name="label_cnfrmPwd">
+           <property name="styleSheet">
+            <string notr="true">margin-left: 0px;</string>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_cnfrmPwd">
+           <property name="styleSheet">
+            <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
@@ -239,19 +235,15 @@ margin: 0 0 20 0px;
 color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_Signup_Cancel">
+        <layout class="QVBoxLayout" name="buttons">
          <item>
-          <widget class="QCheckBox" name="checkBox_showPasswords">
+          <widget class="QCheckBox" name="checkBox_showPwds">
            <property name="cursor">
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
@@ -287,7 +279,7 @@ QCheckBox::indicator:checked {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_Signup">
+          <widget class="QPushButton" name="btn_signup">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -332,7 +324,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_Cancel">
+          <widget class="QPushButton" name="btn_cancel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>

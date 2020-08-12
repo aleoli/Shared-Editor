@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DocsBrowser</class>
+ <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
@@ -191,37 +191,7 @@ QComboBox QAbstractItemView{
       <property name="styleSheet">
        <string notr="true">QScrollArea{
 	background: #242a38;
-}
-
-/*==============================================================*/
-/*margin-top: 20px;
-QScrollBar:vertical {
-	background: #242a38;
-	border: 3px solid #242a38;
-	width: 30px;}
-    QScrollBar::handle:vertical {
-	background: #4e596f;
-	border: 5px solid #4e596f;
-	border-radius: 10px;
-	}
-    QScrollBar::add-line:vertical {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: bottom;subcontrol-origin: margin;}
-    QScrollBar::sub-line:vertical {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: top;subcontrol-origin: margin;}
-
-QScrollBar:horizontal {
-	background: #242a38;
-	border: 3px solid #242a38;
-	width: 30px;}
-    QScrollBar::handle:horizontal {
-	background: #4e596f;
-	border: 5px solid #4e596f;
-	border-radius: 10px;
-	}
-    QScrollBar::add-line:horizontal {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: bottom;subcontrol-origin: margin;}
-    QScrollBar::sub-line:horizontal {border: 3px solid #242a38;background-color: #242a38;
-    height: 2px;subcontrol-position: top;subcontrol-origin: margin;}*/</string>
+}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
@@ -254,32 +224,6 @@ QScrollBar:horizontal {
         <string notr="true">    QWidget {
 		background: white;
     }
-
-
-/*QScrollBar:vertical {
-	margin: 20px 0px 20px 0px;
-	border-color: green;
-	border-width: 1px;
-	border-style: dotted;
-    background-color: red;
-	width: 50px;
-	margin: 21px 0 21px 0;}
-
-QScrollBar::handle:vertical {background-color:blue ;min-height: 25px;}
-
-QScrollBar::add-line:vertical {
-	border: 2px solid green;
-	background-color: yellow;
-    height: 25px;
-	subcontrol-position: bottom;
-	subcontrol-origin: margin;
-}
-
-QScrollBar::sub-line:vertical {
-	border: 2px solid black;background-color: #32CC99;
-    height: 25px;
-	subcontrol-position: top;subcontrol-origin: margin;
-}*/
 </string>
        </property>
       </widget>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>TextEditor</class>
- <widget class="QMainWindow" name="MainWindow">
+ <widget class="QMainWindow" name="TextEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -66,7 +66,7 @@ QComboBox:on { /* shift the text when the popup opens */
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: center right;
-    width: 15px;
+    width: 15px; 
     right:3px;
     border-top-right-radius: 3px; /* same radius as the QComboBox */
     border-bottom-right-radius: 3px;
@@ -443,7 +443,7 @@ QMenu::separator {
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_ConnectedUsers">
+  <widget class="QDockWidget" name="dock_connectedUsers">
    <property name="palette">
     <palette>
      <active>
@@ -577,8 +577,8 @@ QMenu::separator {
     titlebar-normal-icon: url(undock.png);*/
 }
 
-QDockWidget::title {
-    text-align: center;
+QDockWidget::title { 
+    text-align: center; 
 	color: white;
     background: #F65964;
 	/*padding-left: 5px;*/
@@ -613,9 +613,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_ConnectedUsers"/>
+   <widget class="QWidget" name="contents_connectedUsers"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_Comments">
+  <widget class="QDockWidget" name="dock_comments">
    <property name="palette">
     <palette>
      <active>
@@ -726,8 +726,8 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     titlebar-normal-icon: url(undock.png);*/
 }
 
-QDockWidget::title {
-    text-align: center;
+QDockWidget::title { 
+    text-align: center; 
 	color: white;
     background: #F65964;
 	/*padding-left: 5px;*/
@@ -768,7 +768,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_Comments"/>
+   <widget class="QWidget" name="contents_comments"/>
   </widget>
   <action name="actionOpen">
    <property name="text">

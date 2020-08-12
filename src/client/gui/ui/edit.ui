@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Edit</class>
- <widget class="QMainWindow" name="MainWindow">
+ <widget class="QMainWindow" name="Edit">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -59,7 +59,7 @@ margin-bottom: 5px;</string>
         </spacer>
        </item>
        <item alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="pushButton_changeProfile">
+        <widget class="QPushButton" name="btn_changeProfile">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -209,27 +209,25 @@ selection-background-color: #f76163;</string>
        <item>
         <layout class="QHBoxLayout" name="pwd_CnfrmPwd">
          <item>
-          <layout class="QHBoxLayout" name="pwd_CnfrmPwd2">
+          <layout class="QVBoxLayout" name="pwd">
            <item>
-            <layout class="QVBoxLayout" name="pwd">
-             <item>
-              <widget class="QLabel" name="label_pwd">
-               <property name="styleSheet">
-                <string notr="true">QLabel{;
+            <widget class="QLabel" name="label_pwd">
+             <property name="styleSheet">
+              <string notr="true">QLabel{;
 	background: rgba(0,0,0,0);
 	margin-left: 0px;
 	margin-bottom: 0px;
 }</string>
-               </property>
-               <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Actual Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEdit_pwd">
-               <property name="styleSheet">
-                <string notr="true">background: white;
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Actual Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEdit_pwd">
+             <property name="styleSheet">
+              <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
@@ -237,33 +235,33 @@ margin: 0 20 20 0px;
 color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="cnfrmPwd">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_cnfrmPwd">
+             <property name="styleSheet">
+              <string notr="true">margin-left: 20px;</string>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="cnfrmPwd">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetDefaultConstraint</enum>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_cnfrmPwd">
-               <property name="styleSheet">
-                <string notr="true">margin-left: 20px;</string>
-               </property>
-               <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEdit_cnfrmPwd">
-               <property name="styleSheet">
-                <string notr="true">background: white;
+            <widget class="QLineEdit" name="lineEdit_cnfrmPwd">
+             <property name="styleSheet">
+              <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
@@ -271,10 +269,8 @@ margin: 0 0 20 20px;
 color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
