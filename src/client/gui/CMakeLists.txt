@@ -7,6 +7,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(..)
 include_directories(../..)
+include_directories(docsbrowser)
+include_directories(edit)
+include_directories(landing)
+include_directories(login)
+include_directories(registration)
+include_directories(texteditor)
 
 file(GLOB src_files
     "*.h"
@@ -15,8 +21,20 @@ file(GLOB src_files
     "../*.cpp"
     "../../*.h"
     "../../*.cpp"
-    "*.ui"
-    "*.qrc"
+    "ui/*.ui"
+    "ui/resources/*.qrc"
+    "docsbrowser/*.h"
+    "docsbrowser/*.cpp"
+    "edit/*.h"
+    "edit/*.cpp"
+    "landing/*.h"
+    "landing/*.cpp"
+    "login/*.h"
+    "login/*.cpp"
+    "registration/*.h"
+    "registration/*.cpp"
+    "texteditor/*.h"
+    "texteditor/*.cpp"
 )
 
 add_executable(client ${src_files})

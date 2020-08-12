@@ -1,0 +1,982 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TextEditor</class>
+ <widget class="QMainWindow" name="TextEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TextEditor</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #4E596F;</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="1">
+     <widget class="QTextEdit" name="textEdit_main">
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QFontComboBox" name="fontComboBox">
+      <property name="styleSheet">
+       <string notr="true">QComboBox {
+    border: 1px solid blue;
+    border-radius: 3px;
+    padding: 1px 18px 1px 3px;
+    min-width: 6em;
+    color: black;
+    background-color: white;
+    margin: 0 0 0 0;
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                  stop: 0 rgb(51, 51, 51), stop: 0.4 rgb(39, 39, 39),
+                                  stop: 0.5 rgb(32,32,32), stop: 1.0 rgb(38,38,38));
+}
+
+QComboBox::drop-down:editable {
+}
+
+QComboBox:!editable:on {
+}
+
+QComboBox::drop-down:editable:on {
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+    background-color: rgb(80, 80, 80);
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 15px; 
+    right:3px;
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+    background:none;
+}
+
+QComboBox::down-arrow {
+    background: url(:/res/text-editor/dropdown-arrow.png);
+    height: 15px;
+}
+
+QComboBox::down-arrow:on { /* shift the arrow when popup is open */
+    top: 1px;
+    left: 1px;
+}
+
+QListView#comboListView {
+    background: rgb(80, 80, 80);
+    color: rgb(220, 220, 220);
+    min-height: 90px;
+    margin: 0 0 0 0;
+}
+
+QListView#comboListView::item {
+    background-color: rgb(80, 80, 80);
+}
+
+QListView#comboListView::item:hover {
+    background-color: rgb(95, 95, 95);
+}</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar {
+    background-color: #242A38;
+    spacing: 3px; /* spacing between menu bar items */
+	font: 12pt white &quot;Segoe UI Emoji&quot;;
+	color: #fff;
+	padding: 5 0 0 10px;
+}
+
+QMenuBar::item {
+    padding: 1px 4px;
+    background: transparent;
+    border-radius: 2px;
+}
+
+QMenuBar::item:selected { /* when selected using mouse or keyboard */
+    background: #4e596f;
+}
+
+QMenuBar::item:pressed {
+    background: white;
+	color: #242a38;
+}</string>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="styleSheet">
+     <string notr="true">QMenu { /* sets background of the menu */
+    background-color: #242A38;
+	border: 1px solid #4e596f;
+	border-radius: 1px;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+	padding: 2px 25px 2px 20px;
+	border: 1px solid transparent;
+	background-color: transparent;
+	font: 10pt white &quot;Segoe UI Black&quot;;
+	color: #fff;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+	color: #fff;
+    background: transparent;
+}
+
+QMenu::separator {
+    height: 2px;
+    background: transparent;
+    margin-left: 10px;
+    margin-right: 5px;
+	color: #fff;
+}</string>
+    </property>
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionNew"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport"/>
+    <addaction name="actionCreate_Copy"/>
+    <addaction name="actionDownload"/>
+    <addaction name="actionRename"/>
+    <addaction name="actionAdd_to_my_files"/>
+    <addaction name="actionDelete"/>
+    <addaction name="actionDetails"/>
+    <addaction name="actionPrint"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="styleSheet">
+     <string notr="true">QMenu { /* sets background of the menu */
+    background-color: #242A38;
+	border: 1px solid #4e596f;
+	border-radius: 1px;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+	padding: 2px 25px 2px 20px;
+	border: 1px solid transparent;
+	background-color: transparent;
+	font: 10pt white &quot;Segoe UI Black&quot;;
+	color: #fff;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+	color: #fff;
+    background: transparent;
+}
+
+QMenu::separator {
+    height: 2px;
+    background: transparent;
+    margin-left: 10px;
+    margin-right: 5px;
+	color: #fff;
+}</string>
+    </property>
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionFind"/>
+    <addaction name="actionDelete_selected"/>
+    <addaction name="actionSelect_all"/>
+    <addaction name="actionHighlight"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="styleSheet">
+     <string notr="true">QMenu { /* sets background of the menu */
+    background-color: #242A38;
+	border: 1px solid #4e596f;
+	border-radius: 1px;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+	padding: 2px 25px 2px 20px;
+	border: 1px solid transparent;
+	background-color: transparent;
+	font: 10pt white &quot;Segoe UI Black&quot;;
+	color: #fff;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+	color: #fff;
+    background: transparent;
+}
+
+QMenu::separator {
+    height: 2px;
+    background: transparent;
+    margin-left: 10px;
+    margin-right: 5px;
+	color: #fff;
+}</string>
+    </property>
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionConnected_users"/>
+    <addaction name="actionComments"/>
+   </widget>
+   <widget class="QMenu" name="menuInsert">
+    <property name="styleSheet">
+     <string notr="true">QMenu { /* sets background of the menu */
+    background-color: #242A38;
+	border: 1px solid #4e596f;
+	border-radius: 1px;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+	padding: 2px 25px 2px 20px;
+	border: 1px solid transparent;
+	background-color: transparent;
+	font: 10pt white &quot;Segoe UI Black&quot;;
+	color: #fff;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+	color: #fff;
+    background: transparent;
+}
+
+QMenu::separator {
+    height: 2px;
+    background: transparent;
+    margin-left: 10px;
+    margin-right: 5px;
+	color: #fff;
+}</string>
+    </property>
+    <property name="title">
+     <string>Insert</string>
+    </property>
+    <addaction name="actionSeparator"/>
+    <addaction name="actionComment"/>
+   </widget>
+   <widget class="QMenu" name="menuFormat">
+    <property name="styleSheet">
+     <string notr="true">QMenu { /* sets background of the menu */
+    background-color: #242A38;
+	border: 1px solid #4e596f;
+	border-radius: 1px;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+	padding: 2px 25px 2px 20px;
+	border: 1px solid transparent;
+	background-color: transparent;
+	font: 10pt white &quot;Segoe UI Black&quot;;
+	color: #fff;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+	color: #fff;
+    background: transparent;
+}
+
+QMenu::separator {
+    height: 2px;
+    background: transparent;
+    margin-left: 10px;
+    margin-right: 5px;
+	color: #fff;
+}</string>
+    </property>
+    <property name="title">
+     <string>Format</string>
+    </property>
+    <widget class="QMenu" name="menuAlign">
+     <property name="styleSheet">
+      <string notr="true">QMenu { /* sets background of the menu */
+    background-color: #242A38;
+	border: 1px solid #4e596f;
+	border-radius: 1px;
+}
+
+QMenu::item {
+    /* sets background of menu item. set this to something non-transparent
+        if you want menu color and menu item color to be different */
+	padding: 2px 25px 2px 20px;
+	border: 1px solid transparent;
+	background-color: transparent;
+	font: 10pt white &quot;Segoe UI Black&quot;;
+	color: #fff;
+}
+
+QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+	color: #fff;
+    background: transparent;
+}
+
+QMenu::separator {
+    height: 2px;
+    background: transparent;
+    margin-left: 10px;
+    margin-right: 5px;
+	color: #fff;
+}</string>
+     </property>
+     <property name="title">
+      <string>Align</string>
+     </property>
+     <addaction name="actionAlign_left"/>
+     <addaction name="actionAlign_right"/>
+     <addaction name="actionAlign_center"/>
+     <addaction name="actionJustify"/>
+    </widget>
+    <addaction name="actionBold"/>
+    <addaction name="actionItalics"/>
+    <addaction name="actionUnderline"/>
+    <addaction name="actionStrike"/>
+    <addaction name="menuAlign"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuInsert"/>
+   <addaction name="menuFormat"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="styleSheet">
+    <string notr="true">background-color: #242A38;</string>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QDockWidget" name="dock_connectedUsers">
+   <property name="palette">
+    <palette>
+     <active>
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Button">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </active>
+     <inactive>
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>255</red>
+         <green>255</green>
+         <blue>255</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Button">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </inactive>
+     <disabled>
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>120</red>
+         <green>120</green>
+         <blue>120</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Button">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </disabled>
+    </palette>
+   </property>
+   <property name="font">
+    <font>
+     <family>Segoe UI Emoji</family>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QDockWidget{
+	border: 5px solid red;
+    /*titlebar-close-icon: url(close.png);
+    titlebar-normal-icon: url(undock.png);*/
+}
+
+QDockWidget::title { 
+    text-align: center; 
+	color: white;
+    background: #F65964;
+	/*padding-left: 5px;*/
+}
+
+QDockWidget::close-button, QDockWidget::float-button {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 0px;
+/*	icon-size: 14px; /* maximum icon size */*/
+}
+
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background: white;
+}
+
+QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
+    padding: 1px -1px -1px 1px;
+}
+
+/*QDockWidget::close-button {
+    subcontrol-position: top left;
+    subcontrol-origin: margin;
+    position: absolute;
+    top: 0px; left: 0px; bottom: 0px;
+    width: 14px;
+}*/</string>
+   </property>
+   <property name="windowTitle">
+    <string>Connected users</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="contents_connectedUsers"/>
+  </widget>
+  <widget class="QDockWidget" name="dock_comments">
+   <property name="palette">
+    <palette>
+     <active>
+      <colorrole role="Button">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </active>
+     <inactive>
+      <colorrole role="Button">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </inactive>
+     <disabled>
+      <colorrole role="Button">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>78</red>
+         <green>89</green>
+         <blue>111</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </disabled>
+    </palette>
+   </property>
+   <property name="font">
+    <font>
+     <family>Segoe UI Emoji</family>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <stylestrategy>PreferDefault</stylestrategy>
+    </font>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QDockWidget{
+	border: 5px solid red;
+    /*titlebar-close-icon: url(close.png);
+    titlebar-normal-icon: url(undock.png);*/
+}
+
+QDockWidget::title { 
+    text-align: center; 
+	color: white;
+    background: #F65964;
+	/*padding-left: 5px;*/
+}
+
+QDockWidget::close-button, QDockWidget::float-button {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 0px;
+/*	icon-size: 14px; /* maximum icon size */*/
+}
+
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background: white;
+}
+
+QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
+    padding: 1px -1px -1px 1px;
+}
+
+/*QDockWidget::close-button {
+    subcontrol-position: top left;
+    subcontrol-origin: margin;
+    position: absolute;
+    top: 0px; left: 0px; bottom: 0px;
+    width: 14px;
+}*/</string>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Comments</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="contents_comments"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import</string>
+   </property>
+  </action>
+  <action name="actionCreate_Copy">
+   <property name="text">
+    <string>Create Copy</string>
+   </property>
+  </action>
+  <action name="actionDownload">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/download.png</normaloff>:/res/text-editor/download.png</iconset>
+   </property>
+   <property name="text">
+    <string>Download</string>
+   </property>
+  </action>
+  <action name="actionRename">
+   <property name="text">
+    <string>Rename</string>
+   </property>
+  </action>
+  <action name="actionAdd_to_my_files">
+   <property name="text">
+    <string>Add to my files</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
+  <action name="actionDetails">
+   <property name="text">
+    <string>File info</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="text">
+    <string>Print</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/undo.png</normaloff>:/res/text-editor/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/redo.png</normaloff>:/res/text-editor/redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/cut.png</normaloff>:/res/text-editor/cut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cut</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/copy.png</normaloff>:/res/text-editor/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/paste.png</normaloff>:/res/text-editor/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="text">
+    <string>Find</string>
+   </property>
+  </action>
+  <action name="actionDelete_selected">
+   <property name="text">
+    <string>Delete selected</string>
+   </property>
+  </action>
+  <action name="actionSelect_all">
+   <property name="text">
+    <string>Select all</string>
+   </property>
+  </action>
+  <action name="actionHighlight">
+   <property name="text">
+    <string>Highlight</string>
+   </property>
+  </action>
+  <action name="actionConnected_users">
+   <property name="text">
+    <string>Connected users</string>
+   </property>
+  </action>
+  <action name="actionComments">
+   <property name="text">
+    <string>Comments</string>
+   </property>
+  </action>
+  <action name="actionSeparator">
+   <property name="text">
+    <string>Line separator</string>
+   </property>
+  </action>
+  <action name="actionComment">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/comment.png</normaloff>:/res/text-editor/comment.png</iconset>
+   </property>
+   <property name="text">
+    <string>Comment</string>
+   </property>
+  </action>
+  <action name="actionBold">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/bold.png</normaloff>:/res/text-editor/bold.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bold</string>
+   </property>
+  </action>
+  <action name="actionItalics">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/italics.png</normaloff>:/res/text-editor/italics.png</iconset>
+   </property>
+   <property name="text">
+    <string>Italics</string>
+   </property>
+  </action>
+  <action name="actionUnderline">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/underline.png</normaloff>:/res/text-editor/underline.png</iconset>
+   </property>
+   <property name="text">
+    <string>Underline</string>
+   </property>
+  </action>
+  <action name="actionStrike">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/strike.png</normaloff>:/res/text-editor/strike.png</iconset>
+   </property>
+   <property name="text">
+    <string>Strikethrough</string>
+   </property>
+  </action>
+  <action name="actionAlign_left">
+   <property name="text">
+    <string>Align left</string>
+   </property>
+  </action>
+  <action name="actionAlign_right">
+   <property name="text">
+    <string>Align right</string>
+   </property>
+  </action>
+  <action name="actionAlign_center">
+   <property name="text">
+    <string>Align center</string>
+   </property>
+  </action>
+  <action name="actionJustify">
+   <property name="text">
+    <string>Justify</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

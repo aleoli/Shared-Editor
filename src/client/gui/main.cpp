@@ -1,9 +1,12 @@
 #include <iostream>
 #include <csignal>
 #include <QApplication>
+#include <optional>
 
 #include "sys.h"
 #include "utils.h"
+#include "declarations.h"
+#include "gui_manager.h"
 
 void signalHandler(int signum);
 
@@ -15,10 +18,11 @@ int main(int argc, char **argv) {
   std::signal(SIGINT, signalHandler);
   std::signal(SIGTERM, signalHandler);
 
-  //vero main
-  //TODO vedere lo stub per come bisogna agire:
-  // per collegare gli opportuni signal/slot serve una classe "Wrapper" che inglobi
-  //tutte le componenti principali, sia grafiche che non
+  registerClasses();
+
+  auto w = GuiManager::get(std::optional<SysConf>(conf));
+  QObject::connect(w.get(), SIGNAL(quit()), &app, SLOT(quit()), Qt::QueuedConnection);
+  w->run();
 
   return QApplication::exec();
 }
