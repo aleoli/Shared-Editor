@@ -30,19 +30,17 @@
     <item row="1" column="0">
      <widget class="QFrame" name="frame">
       <property name="styleSheet">
-       <string notr="true">background : #4e596f;
-border-color: #4e596f;
-border-width: 1px;
+       <string notr="true">border-width: 1px;
 padding-top: 0px;
 margin-left: 40px;
 margin-right: 40px;
 margin-bottom: 5px;</string>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Plain</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item alignment="Qt::AlignHCenter">
