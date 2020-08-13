@@ -10,36 +10,11 @@
 #include <QJsonValue>
 #include <QTextCharFormat>
 
+#include "Identifier.h"
+
 class Symbol {
 public:
-  class Identifier {
-  public:
-    Identifier();
-    Identifier(int digit, int userId);
-    explicit Identifier(const QJsonObject &json);
-    explicit Identifier(QJsonObject &&json);
-    Identifier(const Identifier&) = default;
-    Identifier(Identifier &&) = default;
-
-    Identifier& operator=(const Identifier& identifier) = default;
-    Identifier& operator=(Identifier&& identifier) noexcept = default;
-
-    static Identifier fromJsonObject(const QJsonObject &json);
-    static Identifier fromJsonObject(QJsonObject &&json);
-    [[nodiscard]] QJsonObject toJsonObject() const;
-
-    friend bool operator==(const Identifier& lhs, const Identifier& rhs);
-    friend bool operator<(const Identifier& lhs, const Identifier& rhs);
-
-    [[nodiscard]] int getDigit() const;
-    [[nodiscard]] int getUserId() const;
-    [[nodiscard]] std::string to_string() const;
-
-  private:
-    void checkAndAssign(const QJsonObject &json);
-
-    int _digit{}, _userId{};
-  };
+  typedef IdentifierBase Identifier;
 
   Symbol();
   Symbol(SymbolId id, QChar chr);

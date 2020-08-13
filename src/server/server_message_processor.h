@@ -16,6 +16,7 @@ protected:
   void process_user() override;
   void process_file_edit() override;
   void process_file() override;
+  void process_comment() override;
   void process_filesystem() override;
 
 private:
@@ -49,6 +50,10 @@ private:
   void localDelete();
   void localUpdate();
   void localMove();
+
+  void newComment();
+  void updateComment();
+  void deleteComment();
 
   void newDir();
   void editDir();

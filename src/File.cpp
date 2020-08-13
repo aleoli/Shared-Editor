@@ -19,13 +19,14 @@ File::File() = default;
 File::File(const File &file) {
   this->_users = file._users;
   this->_symbols = file._symbols;
+  this->_comments = file._comments;
   this->dirty = file.dirty;
 }
 
-File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)), dirty(file.dirty) {}
+File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)), _comments(std::move(file._comments)), dirty(file.dirty) {}
 
-File::File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> symbols)
-  : _users(std::move(users)), _symbols(std::move(symbols)) {}
+File::File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> symbols, std::map<CommentIdentifier, Comment> comments)
+  : _users(std::move(users)), _symbols(std::move(symbols)), _comments(std::move(comments)) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -41,6 +42,7 @@ File& File::operator=(const File &file) {
   }
   this->_users = file._users;
   this->_symbols = file._symbols;
+  this->_comments = file._comments;
   this->dirty = file.dirty;
   return *this;
 }
@@ -51,6 +53,7 @@ File& File::operator=(File &&file) noexcept {
   }
   this->_users = std::move(file._users);
   this->_symbols = std::move(file._symbols);
+  this->_comments = std::move(file._comments);
   this->dirty = file.dirty;
   return *this;
 }
@@ -58,21 +61,24 @@ File& File::operator=(File &&file) noexcept {
 void File::checkAndAssign(const QJsonObject &json) {
   auto usersValue = json["users"];
   auto symbolsValue = json["symbols"];
+  auto commentsValue = json["comments"];
 
-  if(usersValue.isUndefined() || symbolsValue.isUndefined()) {
+  if(usersValue.isUndefined() || symbolsValue.isUndefined() || commentsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!usersValue.isArray() || !symbolsValue.isArray()) {
+  if(!usersValue.isArray() || !symbolsValue.isArray() || !commentsValue.isArray()) {
     throw FileFromJsonException{"One or more fields are not valid"};
   }
 
   auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
+  auto comments = symbolsValue.toArray();
 
   auto ul = std::unique_lock{this->_mutex};
   _users = jsonArrayToUsers(users);
   _symbols = utils::jsonArrayToVector<Symbol>(symbols);
+  _comments = jsonArrayToComments(comments);
 }
 
 File File::fromJsonObject(const QJsonObject &json) {
@@ -107,6 +113,7 @@ QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
   json["users"] = QJsonValue(usersToJsonArray());
+  json["comments"] = QJsonValue(commentsToJsonArray());
   auto sl = std::shared_lock{this->_mutex};
   json["symbols"] = QJsonValue(utils::vectorToJsonArray(_symbols));
 
@@ -201,6 +208,89 @@ std::string File::symbolsToString() const {
   }
 
   return ss.str();
+}
+
+File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
+  auto commentIdentifier = obj["commentIdentifier"];
+  if(commentIdentifier.isUndefined() || !commentIdentifier.isObject()) {
+    throw FileFromJsonException{"commentIdentifier is not an object"};
+  }
+  auto commentIdentifierObj = commentIdentifier.toObject();
+  auto userIdV = commentIdentifierObj["userId"];
+  auto commentIdV = commentIdentifierObj["commentId"];
+  auto textV = obj["text"];
+  auto creationDateV = obj["creationDate"];
+
+  if(userIdV.isUndefined() || commentIdV.isUndefined() || textV.isUndefined() || creationDateV.isUndefined()) {
+    throw FileFromJsonException{"The QJsonObject has some fields missing"};
+  }
+
+  auto userId = userIdV.toInt(-1);
+  auto commentId = commentIdV.toInt(-1);
+  if(userId == -1 || commentId == -1) {
+    throw FileFromJsonException{"One or more fields in users array are not valid"};
+  }
+
+  if(!textV.isString() || !creationDateV.isString()) {
+    throw FileFromJsonException{"One or more fields in users array are not valid"};
+  }
+
+  auto text = textV.toString();
+  auto creationDateString = creationDateV.toString();
+  auto creationDate = QDate::fromString(creationDateString);
+
+  if(!creationDate.isValid()) {
+    debug("creation date is not valid");
+    throw FileFromJsonException{"One or more fields in users array are not valid"};
+  }
+
+  Comment comment;
+  comment.identifier = CommentIdentifier{commentId, userId};
+  comment.text = text;
+  comment.creationDate = creationDate;
+
+  return comment;
+}
+
+QJsonObject File::commentToJsonObject(const Comment &comment) {
+  QJsonObject value;
+  QJsonObject commentIdentifier;
+
+  commentIdentifier["userId"] = comment.identifier.getUserId();
+  commentIdentifier["commentId"] = comment.identifier.getDigit();
+  value["commentIdentifier"] = commentIdentifier;
+  value["text"] = comment.text;
+  value["creationDate"] = comment.creationDate.toString();
+
+  return value;
+}
+
+QJsonArray File::commentsToJsonArray() const {
+  QJsonArray array;
+
+  auto sl = std::shared_lock{this->_mutex};
+  std::transform(_comments.begin(), _comments.end(), std::back_inserter(array), [](const auto &comment) {
+    return File::commentToJsonObject(comment.second);
+  });
+
+  return array;
+}
+
+std::map<File::CommentIdentifier, File::Comment> File::jsonArrayToComments(const QJsonArray &array) {
+  std::map<File::CommentIdentifier, File::Comment> comments;
+
+  for(const auto& el: array) {
+    if(!el.isObject()) {
+      throw FileFromJsonException{"One or more fields in comments array are not valid"};
+    }
+
+    auto obj = el.toObject();
+    auto comment = File::commentFromJsonObject(obj);
+
+    comments[comment.identifier] = comment;
+  }
+
+  return comments;
 }
 
 std::unordered_map<int, File::UserInfo> File::getUsers() const {
@@ -473,6 +563,33 @@ int File::remoteUpdate(const Symbol &sym) {
   }
 }
 
+void File::remoteAddComment(const Comment &comment) {
+  auto ul = std::unique_lock{this->_mutex};
+  _comments[comment.identifier] = comment;
+  dirty = true;
+}
+
+void File::remoteUpdateComment(const Comment &comment) {
+  auto ul = std::unique_lock{this->_mutex};
+  if(_comments.find(comment.identifier) == _comments.end()) {
+    // it does not exists
+    throw CommentException{"comment not found"};
+  }
+  _comments[comment.identifier] = comment;
+  dirty = true;
+}
+
+void File::remoteDeleteComment(const Comment &comment) {
+  auto ul = std::unique_lock{this->_mutex};
+  auto it = _comments.find(comment.identifier);
+  if(it == _comments.end()) {
+    // it does not exists
+    return;
+  }
+  _comments.erase(it);
+  dirty = true;
+}
+
 void File::store(const QString &path) {
   auto sl = std::shared_lock{this->_mutex};
   if(!this->dirty) {
@@ -492,11 +609,15 @@ void File::store(const QString &path) {
 bool operator==(const File& lhs, const File& rhs) {
   auto sl = std::shared_lock{lhs._mutex};
   auto sl2 = std::shared_lock{rhs._mutex};
-  return lhs._users == rhs._users && lhs._symbols == rhs._symbols;
+  return lhs._users == rhs._users && lhs._symbols == rhs._symbols && lhs._comments == rhs._comments;
 }
 
 bool operator!=(const File& lhs, const File& rhs) {
   return !operator==(lhs, rhs);
+}
+
+bool operator==(const File::Comment & lhs, const File::Comment & rhs) {
+  return lhs.identifier == rhs.identifier && lhs.text == rhs.text && lhs.creationDate == rhs.creationDate;
 }
 
 bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs) {

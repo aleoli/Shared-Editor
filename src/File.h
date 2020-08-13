@@ -10,19 +10,28 @@
 #include <unordered_map>
 #include "utils.h"
 #include <shared_mutex>
+#include <QDate>
 
 class File {
 public:
+  typedef IdentifierBase CommentIdentifier;
+
   typedef struct {
     int userId;
     QString username;
     bool online;
   } UserInfo;
 
+  typedef struct Comment {
+    CommentIdentifier identifier;
+    QString text;
+    QDate creationDate;
+  } Comment;
+
   File();
   File(const File &file);
   File(File &&file) noexcept;
-  File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> _symbols);
+  File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> _symbols, std::map<CommentIdentifier, Comment> comments);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -36,8 +45,12 @@ public:
   QJsonObject toJsonObject() const;
   QByteArray toQByteArray() const;
 
+  static Comment commentFromJsonObject(const QJsonObject &obj);
+  static QJsonObject commentToJsonObject(const Comment &comment);
+
   friend bool operator==(const File& lhs, const File& rhs);
   friend bool operator!=(const File& lhs, const File& rhs);
+  friend bool operator==(const File::Comment& lhs, const File::Comment& rhs);
   friend bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs);
 
   std::unordered_map<int, File::UserInfo> getUsers() const;
@@ -57,6 +70,11 @@ public:
   bool isOnline(int userId);
 
   void store(const QString &path);
+
+  // comments
+  void remoteAddComment(const Comment& comment);
+  void remoteUpdateComment(const Comment& comment);
+  void remoteDeleteComment(const Comment& comment);
 
   //CRDT
   void localInsert(Symbol &sym, int pos);
@@ -78,8 +96,12 @@ private:
 
   std::string symbolsToString() const; //TODO vedi se rimuovere
 
+  QJsonArray commentsToJsonArray() const;
+  static std::map<CommentIdentifier, Comment> jsonArrayToComments(const QJsonArray &array);
+
   std::unordered_map<int, UserInfo> _users;
   std::vector<Symbol> _symbols;
+  std::map<CommentIdentifier, Comment> _comments;
 
   bool dirty = false;
   mutable std::shared_mutex _mutex;

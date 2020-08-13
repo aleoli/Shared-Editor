@@ -18,6 +18,9 @@ void MessageProcessor::process_message() {
     case Message::Type::FILE_EDIT:
       process_file_edit();
       break;
+    case Message::Type::COMMENT:
+      process_comment();
+      break;
     case Message::Type::FILESYSTEM:
       process_filesystem();
       break;

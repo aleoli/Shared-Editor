@@ -5,17 +5,18 @@
 
 class ClientMessageProcessor: public MessageProcessor {
 public:
-  ClientMessageProcessor(const Message &m);
+  explicit ClientMessageProcessor(const Message &m);
 
 protected:
-  virtual void process_error();
-  virtual void process_user();
-  virtual void process_file_edit();
-  virtual void process_file();
-  virtual void process_filesystem();
+  void process_error() override;
+  void process_user() override;
+  void process_file_edit() override;
+  void process_file() override;
+  void process_comment() override;
+  void process_filesystem() override;
 
 private:
-  void disconnect(QString why);
+  void disconnect(const QString& why);
 
   //handlers  
   void login();

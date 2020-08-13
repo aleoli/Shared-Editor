@@ -41,9 +41,11 @@ public:
   int getPhysicalId();
   static int getIdForUser(const Session &s, int file_id, int user_id);
   [[nodiscard]] int getCharId() const;
+  [[nodiscard]] int getCommentId() const;
   [[nodiscard]] QString getPath() const;
 
   void addCharId(int v);
+  void incCommentId();
 
   static FSElement_db get(const Session &s, int id);
   static FSElement_db mkroot(int user_id);
@@ -77,7 +79,7 @@ private:
 
   void del_file();
 
-  bool path_on_disk_available();
+  [[nodiscard]] bool path_on_disk_available() const;
 
   QString _path;
   QString _name;
@@ -85,10 +87,11 @@ private:
   int _parent_id;
   int _owner_id;
   int _char_id;
+  int _comment_id;
 
-	Lazy<User> _creator;
+  Lazy<User> _creator;
   Lazy<FSElement_db> _original;
   LazyList<FSElement_db> _links;
   LazyList<FSElement_db> _children;
-	LazyList<SharedLink> _shared_links;
+  LazyList<SharedLink> _shared_links;
 };

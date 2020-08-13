@@ -244,6 +244,60 @@ void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArra
   }
 }
 
+void MessageManager::addComment(quint64 clientId, int fileId, const QJsonObject &comment) {
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client did not open the file"};
+  }
+
+  //sempre il check per vedere se il file è caricato in memoria
+  // (potrebbe essere stato rimosso)
+  loadFile(clientId, fileId);
+
+  auto sl = std::shared_lock(_openFiles.getMutex());
+  File& f = _openFiles[fileId].second;
+  f.remoteAddComment(File::commentFromJsonObject(comment));
+}
+
+void MessageManager::updateComment(quint64 clientId, int fileId, const QJsonObject &comment) {
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client did not open the file"};
+  }
+
+  //sempre il check per vedere se il file è caricato in memoria
+  // (potrebbe essere stato rimosso)
+  loadFile(clientId, fileId);
+
+  auto sl = std::shared_lock(_openFiles.getMutex());
+  File& f = _openFiles[fileId].second;
+  f.remoteUpdateComment(File::commentFromJsonObject(comment));
+}
+
+void MessageManager::deleteComment(quint64 clientId, int fileId, const QJsonObject &comment) {
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+
+  if(!clientHasFileOpen(clientId, fileId)) {
+    throw ClientFileException{"Client did not open the file"};
+  }
+
+  //sempre il check per vedere se il file è caricato in memoria
+  // (potrebbe essere stato rimosso)
+  loadFile(clientId, fileId);
+
+  auto sl = std::shared_lock(_openFiles.getMutex());
+  File& f = _openFiles[fileId].second;
+  f.remoteDeleteComment(File::commentFromJsonObject(comment));
+}
+
 void MessageManager::closeFile(quint64 clientId, int fileId, bool deleted) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};

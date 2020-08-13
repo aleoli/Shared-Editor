@@ -13,6 +13,7 @@ public:
       USER,
       FILE,
       FILE_EDIT,
+      COMMENT,
       FILESYSTEM
   };
 
@@ -46,6 +47,15 @@ public:
       USER_DISCONNECTED,
       LOCAL_MOVE,
       REMOTE_MOVE
+  };
+
+  enum class CommentAction {
+      COMMENT_LOCAL_INSERT,
+      COMMENT_LOCAL_UPDATE,
+      COMMENT_LOCAL_DELETE,
+      COMMENT_REMOTE_INSERT,
+      COMMENT_REMOTE_UPDATE,
+      COMMENT_REMOTE_DELETE,
   };
 
   enum class FileSystemAction {
