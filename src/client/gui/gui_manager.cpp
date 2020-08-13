@@ -78,6 +78,14 @@ void GuiManager::initThreads(const SysConf &conf) {
 void GuiManager::connectWidgets() {
   QObject::connect(_stackedWidget, SIGNAL(close()), this, SLOT(closeStacked()));
   // TODO signal/slot tra il manager e i widget
+
+  // alerts
+  QObject::connect(_widgetLanding, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
+  QObject::connect(_widgetLogin, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
+  QObject::connect(_widgetDocsBrowser, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
+  QObject::connect(_widgetEdit, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
+  QObject::connect(_widgetRegistration, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
+  QObject::connect(_widgetTextEditor, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
 }
 
 void GuiManager::initClientToServer() {
@@ -116,4 +124,9 @@ void GuiManager::closeStacked() {
 
   //TODO logica per vedere se veramente si deve chiudere l'app oppure no?
   emit quit();
+}
+
+void GuiManager::alert(Alert type, QString what) {
+  //TODO show alert dialog or something
+  debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + what);
 }
