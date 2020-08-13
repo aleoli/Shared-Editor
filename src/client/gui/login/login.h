@@ -29,7 +29,7 @@ private:
   void _login(bool checked);
   void _signup(bool checked);
 
-  bool _checkLoginFields(const QString &username, const QString &password);
+  bool _checkFields(const QString &username, const QString &password);
 
   Ui::Login *ui;
   QLineEdit *_widgetUsername, *_widgetPassword;
