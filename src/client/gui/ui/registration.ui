@@ -30,7 +30,10 @@
     <item row="1" column="0">
      <widget class="QFrame" name="frame">
       <property name="styleSheet">
-       <string notr="true">padding-top: 0px;
+       <string notr="true">background : #4e596f;
+border-color: #4e596f;
+border-width: 1px;
+padding-top: 0px;
 margin-left: 40px;
 margin-right: 40px;
 margin-bottom: 5px;</string>
@@ -182,6 +185,9 @@ color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
            </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
           </widget>
          </item>
         </layout>
@@ -219,6 +225,9 @@ margin: 0 0 20 0px;
 color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
            </property>
           </widget>
          </item>
