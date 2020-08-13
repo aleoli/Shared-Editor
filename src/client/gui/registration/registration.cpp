@@ -60,6 +60,9 @@ void Registration::_cancel(bool checked) {
 }
 
 bool Registration::_checkFields(const QString &username, const QString &password, const QString &pswRepeat) {
-  //TODO
+  //TODO migliora logica
+  if(username.size() == 0 || password.size() == 0 || password != pswRepeat) {
+    return false;
+  }
   return true;
 }

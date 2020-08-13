@@ -60,14 +60,25 @@ private slots:
   void connected();
   void connectionLost();
 
+  // show widgets
+  void showRegistration();
+  void showDocsBrowser();
+  void showLogin();
+  void showEdit();
+  void showTextEditor();
+
+  // messages from server
+  void serverErrorResponse(QString reason);
+  void serverLoginResponse(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon);
+  void serverNewUserResponse(QString token, int userId);
+
 private:
   static std::shared_ptr<GuiManager> instance;
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
 
   void initThreads(const SysConf &conf);
   void connectWidgets();
-  void initClientToServer();
-  void initServerToClient();
+  void connectServerToClient();
 
   std::shared_ptr<MessageManager> _manager;
   std::shared_ptr<Server> _server;

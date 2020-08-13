@@ -3,6 +3,7 @@
 #include <QThread>
 #include <QString>
 
+#include <optional>
 #include "exceptions.h"
 
 using namespace se_exceptions;
@@ -33,8 +34,7 @@ GuiManager::GuiManager(const SysConf &conf, QObject *parent): QObject(parent) {
   _stackedWidget->setCurrentWidget(_widgetLanding);
 
   connectWidgets();
-  initClientToServer();
-  initServerToClient();
+  connectServerToClient();
 }
 
 GuiManager::~GuiManager() {
@@ -77,7 +77,6 @@ void GuiManager::initThreads(const SysConf &conf) {
 
 void GuiManager::connectWidgets() {
   QObject::connect(_stackedWidget, SIGNAL(close()), this, SLOT(closeStacked()));
-  // TODO signal/slot tra il manager e i widget
 
   // alerts
   QObject::connect(_widgetLanding, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
@@ -86,21 +85,35 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetEdit, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
   QObject::connect(_widgetRegistration, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
   QObject::connect(_widgetTextEditor, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
+
+  //Login
+  QObject::connect(_widgetLogin, &Login::login, _manager.get(), &MessageManager::loginQuery);
+  QObject::connect(_widgetLogin, &Login::signup, this, &GuiManager::showRegistration);
+
+  //Registration
+  QObject::connect(_widgetRegistration, &Registration::signup, _manager.get(), &MessageManager::newUserQuery);
+  QObject::connect(_widgetRegistration, &Registration::cancel, this, &GuiManager::showLogin);
+
+  // Edit
+  //TODO
+
+  //DocsBrowser
+  //TODO
+
+  //TextEditor
+  //TODO
 }
 
-void GuiManager::initClientToServer() {
-  //Comunicazioni Client -> Server
-  //TODO prendi da stub e completa
-}
-
-void GuiManager::initServerToClient() {
+void GuiManager::connectServerToClient() {
   //Comunicazioni Server -> Client
-  //TODO prendi da stub e completa
+  QObject::connect(_manager.get(), &MessageManager::errorResponse, this, &GuiManager::serverErrorResponse);
+  QObject::connect(_manager.get(), &MessageManager::loginResponse, this, &GuiManager::serverLoginResponse);
+  QObject::connect(_manager.get(), &MessageManager::newUserResponse, this, &GuiManager::serverNewUserResponse);
 }
 
 void GuiManager::connected() {
   info("Connesso al server");
-  _stackedWidget->setCurrentWidget(_widgetLogin);
+  showLogin();
 }
 
 void GuiManager::connectionLost() {
@@ -129,4 +142,45 @@ void GuiManager::closeStacked() {
 void GuiManager::alert(Alert type, QString what) {
   //TODO show alert dialog or something
   debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + what);
+}
+
+//TODO servono dei check per queste funzioni di show?
+void GuiManager::showRegistration() {
+  _stackedWidget->setCurrentWidget(_widgetRegistration);
+}
+
+void GuiManager::showDocsBrowser() {
+  _stackedWidget->setCurrentWidget(_widgetDocsBrowser);
+}
+
+void GuiManager::showLogin() {
+  _stackedWidget->setCurrentWidget(_widgetLogin);
+}
+
+void GuiManager::showEdit() {
+  _stackedWidget->setCurrentWidget(_widgetEdit);
+}
+
+void GuiManager::showTextEditor() {
+  _stackedWidget->setCurrentWidget(_widgetTextEditor);
+}
+
+/* ### messages from server ### */
+
+void GuiManager::serverErrorResponse(QString reason) {
+  //TODO basta cosi?
+  alert(Alert::ERROR, reason);
+}
+
+void GuiManager::serverLoginResponse(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon) {
+  debug("GuiManager::serverLoginResponse");
+  _user->loginSuccessful(token, userId, icon);
+  showDocsBrowser();
+}
+
+void GuiManager::serverNewUserResponse(QString token, int userId) {
+  debug("GuiManager::serverNewUserResponse");
+  //TODO
+  _user->loginSuccessful(token, userId, std::nullopt); //TODO icona nella registrazione
+  showDocsBrowser();
 }

@@ -23,3 +23,18 @@ std::shared_ptr<User> User::get() {
 bool User::isLogged() {
   return _logged;
 }
+
+void User::setUsername(const QString &username) {
+  _username = username;
+}
+
+void User::loginSuccessful(const QString &token, int userId, const std::optional<QString> &icon) {
+  _token = token;
+  _userId = userId;
+  _icon = icon;
+  _logged = true;
+}
+
+void User::logout() {
+  _logged = false;
+}
