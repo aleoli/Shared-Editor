@@ -74,3 +74,26 @@ void info(const QString& str) {
 #endif
   }
 }
+
+bool check_pass(const QString& pass) {
+  // NOTE: the password has to have at least an Uppercase char, a Lowercase char, a number, and length are to be equal or more than 6
+  if(pass.length() < 6) {
+    return false;
+  }
+  bool upper = false, lower = false, number = false;
+  for(const auto& ch: pass) {
+    if(ch.isUpper()) {
+      upper = true;
+    }
+    if(ch.isLower()) {
+      lower = true;
+    }
+    if(ch.isNumber()) {
+      number = true;
+    }
+    if(upper && lower && number) {
+      return true;
+    }
+  }
+  return false;
+}

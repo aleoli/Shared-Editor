@@ -5,6 +5,7 @@
 #include "user.h"
 #include "session.h"
 #include "FSElement_db.h"
+#include "utils.h"
 
 #include "exceptions.h"
 #include "errors.h"
@@ -226,8 +227,8 @@ void ServerMessageProcessor::process_filesystem() {
   }
 }
 
-void ServerMessageProcessor::disconnect(QString why) {
-  error(std::move(why));
+void ServerMessageProcessor::disconnect(const QString& why) {
+  error(why);
   // TODO
   // emit _manager->connection_error();
 }
@@ -260,6 +261,10 @@ void ServerMessageProcessor::login() {
     QJsonObject data;
     data["token"] = s->getToken();
     data["userId"] = s->getUser().getId();
+    auto icon = s->getUser().getIcon();
+    if(icon != "") {
+      data["icon"] = icon;
+    }
 
     // TODO: set other fields
 
@@ -305,19 +310,27 @@ void ServerMessageProcessor::newUser() {
     auto username = _m.getString("username");
     auto password = _m.getString("password");
     auto pswRepeat = _m.getString("pswRepeat");
+    auto iconOpt = _m.getStringOpt("icon");
     if(password != pswRepeat) {
       debug(PASSWORD_NOT_MATCH);
       this->sendErrorMsg(PASSWORD_NOT_MATCH);
       return;
     }
 
-    if(!User::check_pass(password)) {
+    if(!check_pass(password)) {
       debug(PASSWORD_REQUIREMENTS);
       this->sendErrorMsg(PASSWORD_REQUIREMENTS);
       return;
     }
 
-    auto u = User::registra(username, password);
+    try {
+      auto u = User::registra(username, password, iconOpt);
+    } catch(UserException& ex) {
+      debug(ex.what());
+      this->sendErrorMsg(ex.what());
+      return;
+    }
+
     auto s = std::make_shared<Session>(User::login(username, password));
 
     QJsonObject data;
@@ -355,7 +368,7 @@ void ServerMessageProcessor::editUser() {
         this->sendErrorMsg(PASSWORD_NOT_MATCH);
         return;
       }
-      if(!User::check_pass(*password)) {
+      if(!check_pass(*password)) {
         debug(PASSWORD_REQUIREMENTS);
         this->sendErrorMsg(PASSWORD_REQUIREMENTS);
         return;
@@ -382,7 +395,13 @@ void ServerMessageProcessor::editUser() {
 
     auto icon = _m.getStringOpt("icon");
     if(icon) {
-      user.setIcon(*icon);
+      try {
+        user.setIcon(*icon);
+      } catch(UserException& ex) {
+        debug(ex.what());
+        this->sendErrorMsg(ex.what());
+        return;
+      }
     } else {
       debug("No icon change required");
     }

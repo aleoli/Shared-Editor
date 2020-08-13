@@ -13,6 +13,8 @@ void warn(const QString& str);
 void debug(const QString& str);
 void info(const QString& str);
 
+bool check_pass(const QString& pass);
+
 namespace utils {
   template<typename T>
   std::vector<T> jsonArrayToVector(const QJsonArray &json) {

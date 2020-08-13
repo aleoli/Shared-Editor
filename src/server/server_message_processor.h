@@ -25,7 +25,7 @@ private:
 
   static void delete_lambda(int link_id, int owner_id);
 
-  static void disconnect(QString why);
+  static void disconnect(const QString& why);
 
   void sendErrorMsg(const QString& reason);
 
