@@ -26,7 +26,7 @@ Login::~Login()
 }
 
 void Login::_showPassword(int state) {
-  debug("Login::showPassword");
+  debug("Login::_showPassword");
 
   if(state) {
     _widgetPassword->setEchoMode(QLineEdit::Normal);
@@ -40,9 +40,9 @@ void Login::_login(bool checked) {
   auto username = _widgetUsername->text();
   auto pwd = _widgetPassword->text();
 
-  debug("Login: " + username + " " + pwd);
+  debug("Login::_login " + username + " " + pwd);
 
-  if(_checkLoginFields(username, pwd)) {
+  if(_checkFields(username, pwd)) {
     emit login(username, pwd);
   }
   else {
@@ -51,11 +51,11 @@ void Login::_login(bool checked) {
 }
 
 void Login::_signup(bool checked) {
-  debug("Login::signup");
+  debug("Login::_signup");
   emit signup();
 }
 
-bool Login::_checkLoginFields(const QString &username, const QString &password) {
+bool Login::_checkFields(const QString &username, const QString &password) {
   //TODO
   return true;
 }
