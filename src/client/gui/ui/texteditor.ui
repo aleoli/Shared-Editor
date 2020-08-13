@@ -17,86 +17,11 @@
    <string notr="true">background-color: #4E596F;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <widget class="QTextEdit" name="textEdit_main">
       <property name="styleSheet">
        <string notr="true">background-color: white;</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QFontComboBox" name="fontComboBox">
-      <property name="styleSheet">
-       <string notr="true">QComboBox {
-    border: 1px solid blue;
-    border-radius: 3px;
-    padding: 1px 18px 1px 3px;
-    min-width: 6em;
-    color: black;
-    background-color: white;
-    margin: 0 0 0 0;
-}
-
-QComboBox:editable {
-    background: white;
-}
-
-QComboBox:!editable {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                  stop: 0 rgb(51, 51, 51), stop: 0.4 rgb(39, 39, 39),
-                                  stop: 0.5 rgb(32,32,32), stop: 1.0 rgb(38,38,38));
-}
-
-QComboBox::drop-down:editable {
-}
-
-QComboBox:!editable:on {
-}
-
-QComboBox::drop-down:editable:on {
-}
-
-QComboBox:on { /* shift the text when the popup opens */
-    padding-top: 3px;
-    padding-left: 4px;
-    background-color: rgb(80, 80, 80);
-}
-
-QComboBox::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: center right;
-    width: 15px; 
-    right:3px;
-    border-top-right-radius: 3px; /* same radius as the QComboBox */
-    border-bottom-right-radius: 3px;
-    background:none;
-}
-
-QComboBox::down-arrow {
-    background: url(:/res/text-editor/dropdown-arrow.png);
-    height: 15px;
-}
-
-QComboBox::down-arrow:on { /* shift the arrow when popup is open */
-    top: 1px;
-    left: 1px;
-}
-
-QListView#comboListView {
-    background: rgb(80, 80, 80);
-    color: rgb(220, 220, 220);
-    min-height: 90px;
-    margin: 0 0 0 0;
-}
-
-QListView#comboListView::item {
-    background-color: rgb(80, 80, 80);
-}
-
-QListView#comboListView::item:hover {
-    background-color: rgb(95, 95, 95);
-}</string>
       </property>
      </widget>
     </item>
@@ -432,18 +357,13 @@ QMenu::separator {
     <string notr="true">background-color: #242A38;</string>
    </property>
   </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <widget class="QDockWidget" name="dock_connectedUsers">
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>44</height>
+    </size>
+   </property>
    <property name="palette">
     <palette>
      <active>
@@ -607,6 +527,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     width: 14px;
 }*/</string>
    </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable</set>
+   </property>
    <property name="windowTitle">
     <string>Connected users</string>
    </property>
@@ -616,6 +539,12 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <widget class="QWidget" name="contents_connectedUsers"/>
   </widget>
   <widget class="QDockWidget" name="dock_comments">
+   <property name="minimumSize">
+    <size>
+     <width>110</width>
+     <height>44</height>
+    </size>
+   </property>
    <property name="palette">
     <palette>
      <active>
@@ -760,7 +689,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <bool>false</bool>
    </property>
    <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
+    <set>QDockWidget::DockWidgetClosable</set>
    </property>
    <property name="windowTitle">
     <string>Comments</string>
@@ -769,6 +698,103 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="contents_comments"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QFontComboBox" name="fontComboBox">
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    border: 1px solid blue;
+    border-radius: 3px;
+    padding: 1px 18px 1px 3px;
+    min-width: 6em;
+    color: black;
+    background-color: white;
+    margin: 0 0 0 0;
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                  stop: 0 rgb(51, 51, 51), stop: 0.4 rgb(39, 39, 39),
+                                  stop: 0.5 rgb(32,32,32), stop: 1.0 rgb(38,38,38));
+}
+
+QComboBox::drop-down:editable {
+}
+
+QComboBox:!editable:on {
+}
+
+QComboBox::drop-down:editable:on {
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+    background-color: rgb(80, 80, 80);
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 15px; 
+    right:3px;
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+    background:none;
+}
+
+QComboBox::down-arrow {
+    background: url(:/res/text-editor/dropdown-arrow.png);
+    height: 15px;
+}
+
+QComboBox::down-arrow:on { /* shift the arrow when popup is open */
+    top: 1px;
+    left: 1px;
+}
+
+QListView#comboListView {
+    background: rgb(80, 80, 80);
+    color: rgb(220, 220, 220);
+    min-height: 90px;
+    margin: 0 0 0 0;
+}
+
+QListView#comboListView::item {
+    background-color: rgb(80, 80, 80);
+}
+
+QListView#comboListView::item:hover {
+    background-color: rgb(95, 95, 95);
+}</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionOpen">
    <property name="text">

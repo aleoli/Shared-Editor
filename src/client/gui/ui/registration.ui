@@ -42,22 +42,6 @@ margin-bottom: 5px;</string>
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item alignment="Qt::AlignHCenter">
         <widget class="QPushButton" name="btn_changeProfile">
          <property name="enabled">
@@ -136,73 +120,69 @@ background-color: #242A38;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="uname_pwd">
-         <property name="topMargin">
+        <layout class="QVBoxLayout" name="uname">
+         <property name="rightMargin">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" name="uname">
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_uname">
-             <property name="styleSheet">
-              <string notr="true">QLabel{
+          <widget class="QLabel" name="label_uname">
+           <property name="styleSheet">
+            <string notr="true">QLabel{
 	text-decoration: none;
-	background: rgba(0,0,0,0);
 	margin-left: 0px;
 	margin-bottom: 0px;
 }</string>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="ledit_uname">
-             <property name="styleSheet">
-              <string notr="true">background: white;
-border:1px solid white;
-border-radius: 9px;
-padding: 1 8px;
-margin: 0 20 20 0px;
-color: #242A38;
-font: &quot;Segoe UI Emoji&quot;;
-selection-background-color: #f76163;</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="pwd">
-           <item>
-            <widget class="QLabel" name="label_pwd">
-             <property name="styleSheet">
-              <string notr="true">margin-left: 20px;</string>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="ledit_pwd">
-             <property name="styleSheet">
-              <string notr="true">background: white;
+          <widget class="QLineEdit" name="ledit_uname">
+           <property name="styleSheet">
+            <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
-margin: 0 0 20 20px;
+margin: 0 0 20 0px;
 color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="pwd">
+         <item>
+          <widget class="QLabel" name="label_pwd">
+           <property name="styleSheet">
+            <string notr="true">QLabel{
+	text-decoration: none;
+	margin-left: 0px;
+	margin-bottom: 0px;
+}</string>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ledit_pwd">
+           <property name="styleSheet">
+            <string notr="true">background: white;
+border:1px solid white;
+border-radius: 9px;
+padding: 1 8px;
+margin: 0 0 20 0px;
+color: #242A38;
+font: &quot;Segoe UI Emoji&quot;;
+selection-background-color: #f76163;</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -217,7 +197,11 @@ selection-background-color: #f76163;</string>
          <item>
           <widget class="QLabel" name="label_cnfrmPwd">
            <property name="styleSheet">
-            <string notr="true">margin-left: 0px;</string>
+            <string notr="true">QLabel{
+	text-decoration: none;
+	margin-left: 0px;
+	margin-bottom: 0px;
+}</string>
            </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -241,17 +225,15 @@ selection-background-color: #f76163;</string>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="buttons">
-         <item>
-          <widget class="QCheckBox" name="checkBox_showPwds">
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show/hide all the passwords&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QCheckBox {
+        <widget class="QCheckBox" name="checkBox_showPwds">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show/hide all the passwords&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QCheckBox {
     spacing: 5px;
 	font-size: 11pt;
 	color:white;
@@ -272,12 +254,14 @@ QCheckBox::indicator:checked {
     image: url(:/res/checkbox_checked.png);
 }
 </string>
-           </property>
-           <property name="text">
-            <string>show passwords</string>
-           </property>
-          </widget>
-         </item>
+         </property>
+         <property name="text">
+          <string>show passwords</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="buttons">
          <item>
           <widget class="QPushButton" name="btn_signup">
            <property name="sizePolicy">
@@ -295,7 +279,6 @@ QCheckBox::indicator:checked {
            <property name="styleSheet">
             <string notr="true">QPushButton {
 	background: #f76163;
-    /*border-style: outset;*/
     border-width: 1px;
     border-radius: 13px;
     border-color: #f76163;
@@ -305,7 +288,8 @@ QCheckBox::indicator:checked {
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-top: 15px;
-	margin-bottom: 0px;
+	margin-bottom: 10px;
+	min-height: 20px;
 }
 
 QPushButton:hover {
@@ -340,7 +324,6 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
            <property name="styleSheet">
             <string notr="true">QPushButton {
     background: #242A38;
-    /*border-style: outset;*/
     border-width: 1px;
     border-radius: 13px;
     border-color: #242A38;
@@ -350,6 +333,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-top: 0px;
+	min-height: 20px;
 }
 
 QPushButton:hover {

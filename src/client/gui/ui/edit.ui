@@ -177,19 +177,23 @@ selection-background-color: #f76163;</string>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="newPwd">
+          <layout class="QVBoxLayout" name="pwd">
            <item>
-            <widget class="QLabel" name="label_newPwd">
+            <widget class="QLabel" name="label_pwd">
              <property name="styleSheet">
-              <string notr="true">margin-left: 20px;</string>
+              <string notr="true">QLabel{;
+	background: rgba(0,0,0,0);
+	margin-left: 20px;
+	margin-bottom: 0px;
+}</string>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;New Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Actual Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_newPwd">
+            <widget class="QLineEdit" name="lineEdit_pwd">
              <property name="styleSheet">
               <string notr="true">background: white;
 border:1px solid white;
@@ -209,9 +213,9 @@ selection-background-color: #f76163;</string>
        <item>
         <layout class="QHBoxLayout" name="pwd_CnfrmPwd">
          <item>
-          <layout class="QVBoxLayout" name="pwd">
+          <layout class="QVBoxLayout" name="newPwd">
            <item>
-            <widget class="QLabel" name="label_pwd">
+            <widget class="QLabel" name="label_newPwd">
              <property name="styleSheet">
               <string notr="true">QLabel{;
 	background: rgba(0,0,0,0);
@@ -220,12 +224,12 @@ selection-background-color: #f76163;</string>
 }</string>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Actual Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;New Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_pwd">
+            <widget class="QLineEdit" name="lineEdit_newPwd">
              <property name="styleSheet">
               <string notr="true">background: white;
 border:1px solid white;
@@ -251,7 +255,11 @@ selection-background-color: #f76163;</string>
            <item>
             <widget class="QLabel" name="label_cnfrmPwd">
              <property name="styleSheet">
-              <string notr="true">margin-left: 20px;</string>
+              <string notr="true">QLabel{;
+	background: rgba(0,0,0,0);
+	margin-left: 20px;
+	margin-bottom: 0px;
+}</string>
              </property>
              <property name="text">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
