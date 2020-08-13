@@ -2,6 +2,7 @@
 #include "../ui/ui_login.h"
 
 #include "utils.h"
+#include "user.h"
 
 Login::Login(QWidget *parent) :
     QMainWindow(parent),
@@ -43,6 +44,7 @@ void Login::_login(bool checked) {
   debug("Login::_login " + username + " " + pwd);
 
   if(_checkFields(username, pwd)) {
+    User::get()->setUsername(username);
     emit login(username, pwd);
   }
   else {
@@ -56,6 +58,10 @@ void Login::_signup(bool checked) {
 }
 
 bool Login::_checkFields(const QString &username, const QString &password) {
-  //TODO
+  //TODO migliora logica
+  if(username.size() == 0 || password.size() == 0) {
+    return false;
+  }
+
   return true;
 }
