@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+#include "alert_messages.h"
+
 namespace Ui {
 class DocsBrowser;
 }
@@ -14,10 +16,10 @@ public:
     explicit DocsBrowser(QWidget *parent = nullptr);
     ~DocsBrowser();
 
-
 private slots:
 
 signals:
+  void alert(Alert type, QString what);
 
 private:
     Ui::DocsBrowser *ui;

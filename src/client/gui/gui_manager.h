@@ -17,6 +17,7 @@
 #include "landing.h"
 #include "registration.h"
 #include "texteditor.h"
+#include "alert_messages.h"
 
 class MyStackedWidget: public QStackedWidget
 {
@@ -52,6 +53,7 @@ signals:
 
 public slots:
   void closeStacked();
+  void alert(Alert type, QString what);
 
 private slots:
   // connessione del server

@@ -5,6 +5,7 @@ include(../../../cmake/qt_libraries.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(.)
 include_directories(..)
 include_directories(../..)
 include_directories(docsbrowser)
