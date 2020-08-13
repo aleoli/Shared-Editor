@@ -304,18 +304,18 @@ void ServerMessageProcessor::newUser() {
   try {
     auto username = _m.getString("username");
     auto password = _m.getString("password");
-		auto pswRepeat = _m.getString("pswRepeat");
-		if(password != pswRepeat) {
-			debug(PASSWORD_NOT_MATCH);
+    auto pswRepeat = _m.getString("pswRepeat");
+    if(password != pswRepeat) {
+      debug(PASSWORD_NOT_MATCH);
       this->sendErrorMsg(PASSWORD_NOT_MATCH);
       return;
-		}
+    }
 
-		if(!User::check_pass(password)) {
+    if(!User::check_pass(password)) {
       debug(PASSWORD_REQUIREMENTS);
       this->sendErrorMsg(PASSWORD_REQUIREMENTS);
       return;
-		}
+    }
 
     auto u = User::registra(username, password);
     auto s = std::make_shared<Session>(User::login(username, password));

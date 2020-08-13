@@ -1,6 +1,6 @@
 #pragma once
 
-#define PASSWORD_REQUIREMENTS "Password has to contain ..."
+#define PASSWORD_REQUIREMENTS "Password has to contain at least an Uppercase char, a Lowercase char, a number, and length are to be equal or more than 6"
 #define PASSWORD_NOT_MATCH "Password and PswRepeat does not match"
 #define ACCESS_DENIED "Access Denied"
 
