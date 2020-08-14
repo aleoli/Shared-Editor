@@ -164,7 +164,12 @@ selection-background-color: #f76163;</string>
                 <string/>
                </property>
                <property name="styleSheet">
-                <string notr="true">QCheckBox {
+                <string notr="true">QCheckBox:focus {
+   border: none;
+   outline: none;
+}
+
+QCheckBox {
     spacing: 5px;
 	font-size: 11pt;
 	color:white;
@@ -681,7 +686,12 @@ QCheckBox::indicator:checked {
               <string/>
              </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
+              <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
 	background: #f76163;
     border-width: 1px;
     border-radius: 13px;
@@ -728,7 +738,12 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               <string/>
              </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
+              <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
     background: #242A38;
     border-width: 1px;
     border-radius: 13px;
