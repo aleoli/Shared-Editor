@@ -57,7 +57,7 @@ margin-bottom: 5px;</string>
          <property name="maximumSize">
           <size>
            <width>140</width>
-           <height>65</height>
+           <height>67</height>
           </size>
          </property>
          <property name="sizeIncrement">
@@ -84,22 +84,27 @@ margin-bottom: 5px;</string>
          <property name="styleSheet">
           <string notr="true">QPushButton{
 background-color: #f76163;
-border: 2px solid white;
+border: 1px solid #f76163;
 border-radius: 30px;
 }
 
 QPushButton:hover{
-background-color: #4e596f;
+padding: -1px 1px 1px -1px;
 }
 
 QPushButton:pressed{
-background-color: #242A38;
+padding: 1px -1px -1px 1px;
 }
 
 QToolTip{
 	background: none;
 	margin-left: 0px;
 	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
 }</string>
          </property>
          <property name="text">
@@ -266,6 +271,11 @@ QCheckBox::indicator:unchecked {
 QCheckBox::indicator:checked {
     image: url(:/res/checkbox_checked.png);
 }
+
+QCheckBox:focus {
+   border: none;
+   outline: none;
+}
 </string>
          </property>
          <property name="text">
@@ -313,6 +323,11 @@ background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
 QPushButton:pressed {
 background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #f65964, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
 }</string>
            </property>
            <property name="text">
@@ -358,6 +373,11 @@ QPushButton:pressed {
 border-style: inset;
 background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #242A38, stop:1 #000);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
 }</string>
            </property>
            <property name="text">
