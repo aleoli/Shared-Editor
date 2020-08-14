@@ -3,6 +3,11 @@
 #include <QMainWindow>
 
 #include "alert_messages.h"
+#include "user.h"
+
+#include <QPushButton>
+
+#include <memory>
 
 namespace Ui {
 class DocsBrowser;
@@ -16,11 +21,22 @@ public:
     explicit DocsBrowser(QWidget *parent = nullptr);
     ~DocsBrowser();
 
-private slots:
+    void clear();
+
+public slots:
+    void setIcon();
 
 signals:
   void alert(Alert type, QString what);
+  void logout(QString token);
+
+private slots:
+  void _logout(bool checked);
 
 private:
     Ui::DocsBrowser *ui;
+
+    QPushButton *_widgetLogout;
+
+    std::shared_ptr<User> _user;
 };

@@ -16,6 +16,8 @@ public:
     explicit TextEditor(QWidget *parent = nullptr);
     ~TextEditor();
 
+    void clear();
+
 private slots:
 
 signals:

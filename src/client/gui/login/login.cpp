@@ -26,6 +26,12 @@ Login::~Login()
     delete ui;
 }
 
+void Login::clear() {
+  _widgetUsername->clear();
+  _widgetPassword->clear();
+  _widgetShowPassword->setCheckState(Qt::Unchecked);
+}
+
 void Login::_showPassword(int state) {
   debug("Login::_showPassword");
 

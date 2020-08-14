@@ -12,3 +12,7 @@ Edit::~Edit()
 {
     delete ui;
 }
+
+void Edit::clear() {
+  // TODO Cose da fare quando la finestra è portata in primo piano (es. svuotare i campi)
+}

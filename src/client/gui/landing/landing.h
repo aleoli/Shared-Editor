@@ -16,6 +16,8 @@ public:
     explicit Landing(QWidget *parent = nullptr);
     ~Landing();
 
+    void clear();
+
 private slots:
 
 signals:

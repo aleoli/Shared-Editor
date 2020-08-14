@@ -23,6 +23,8 @@ public:
     explicit Registration(QWidget *parent = nullptr);
     ~Registration();
 
+    void clear();
+
 private slots:
 
 signals:
@@ -35,6 +37,7 @@ private slots:
   void _signup(bool checked);
   void _cancel(bool checked);
   void _setIcon(bool checked);
+  void _setDefaultIcon();
 
 private:
   bool _checkFields(const QString &username, const QString &password, const QString &pswRepeat);

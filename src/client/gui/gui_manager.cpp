@@ -86,19 +86,23 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetRegistration, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
   QObject::connect(_widgetTextEditor, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
 
+  // user/file updates
+  QObject::connect(_user.get(), &User::iconChanged, _widgetDocsBrowser, &DocsBrowser::setIcon);
+  //TODO others e.g. icon in texteditor
+
   //Login
   QObject::connect(_widgetLogin, &Login::login, _manager.get(), &MessageManager::loginQuery);
-  QObject::connect(_widgetLogin, &Login::signup, this, &GuiManager::showRegistration);
+  QObject::connect(_widgetLogin, &Login::signup, this, &GuiManager::loginSignup);
 
   //Registration
   QObject::connect(_widgetRegistration, &Registration::signup, _manager.get(), &MessageManager::newUserQuery);
-  QObject::connect(_widgetRegistration, &Registration::cancel, this, &GuiManager::showLogin);
+  QObject::connect(_widgetRegistration, &Registration::cancel, this, &GuiManager::registrationCancel);
 
   // Edit
   //TODO
 
   //DocsBrowser
-  //TODO
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::logout, this, &GuiManager::docsBrowserLogout);
 
   //TextEditor
   //TODO
@@ -144,25 +148,57 @@ void GuiManager::alert(Alert type, QString what) {
   debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + what);
 }
 
+/* ### show slots ### */
+
 //TODO servono dei check per queste funzioni di show?
-void GuiManager::showRegistration() {
+void GuiManager::showRegistration(bool clear) {
+  if(clear)
+    _widgetRegistration->clear();
+
   _stackedWidget->setCurrentWidget(_widgetRegistration);
 }
 
-void GuiManager::showDocsBrowser() {
+void GuiManager::showDocsBrowser(bool clear) {
+  if(clear)
+    _widgetDocsBrowser->clear();
+
   _stackedWidget->setCurrentWidget(_widgetDocsBrowser);
 }
 
-void GuiManager::showLogin() {
+void GuiManager::showLogin(bool clear) {
+  if(clear)
+    _widgetLogin->clear();
+
   _stackedWidget->setCurrentWidget(_widgetLogin);
 }
 
-void GuiManager::showEdit() {
+void GuiManager::showEdit(bool clear) {
+  if(clear)
+    _widgetEdit->clear();
+
   _stackedWidget->setCurrentWidget(_widgetEdit);
 }
 
-void GuiManager::showTextEditor() {
+void GuiManager::showTextEditor(bool clear) {
+  if(clear)
+    _widgetTextEditor->clear();
+
   _stackedWidget->setCurrentWidget(_widgetTextEditor);
+}
+
+/* ### other slots ### */
+void GuiManager::loginSignup() {
+  showRegistration(true);
+}
+
+void GuiManager::registrationCancel() {
+  showLogin(true);
+}
+
+void GuiManager::docsBrowserLogout() {
+  _manager.get()->logoutQuery(_user->getToken());
+  _user->logout();
+  showLogin(true);
 }
 
 /* ### messages from server ### */
@@ -175,12 +211,12 @@ void GuiManager::serverErrorResponse(QString reason) {
 void GuiManager::serverLoginResponse(QString token, int userId, std::optional<QString> icon) {
   debug("GuiManager::serverLoginResponse");
   _user->login(token, userId, icon);
-  showDocsBrowser();
+  showDocsBrowser(true);
 }
 
 void GuiManager::serverNewUserResponse(QString token, int userId) {
   debug("GuiManager::serverNewUserResponse");
   //TODO
   _user->login(token, userId, std::nullopt);
-  showDocsBrowser();
+  showDocsBrowser(true);
 }

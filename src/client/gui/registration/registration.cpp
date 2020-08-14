@@ -33,6 +33,14 @@ Registration::~Registration()
     delete ui;
 }
 
+void Registration::clear() {
+  _widgetUsername->clear();
+  _widgetPassword->clear();
+  _widgetPasswordRepeat->clear();
+  _widgetShowPasswords->setCheckState(Qt::Unchecked);
+  _setDefaultIcon();
+}
+
 void Registration::_showPasswords(int state) {
   debug("Registration::_showPasswords");
 
@@ -82,6 +90,17 @@ void Registration::_setIcon(bool checked) {
     catch(...) {
       emit alert(Alert::ERROR, LOAD_ICON_FAILED);
     }
+}
+
+void Registration::_setDefaultIcon() {
+  try {
+    auto icon = image_utils::loadRoundedImage(DEFAULT_ICON);
+    _widgetIcon->setIcon(icon);
+    _user->setIcon(icon);
+  }
+  catch(...) {
+    emit alert(Alert::ERROR, LOAD_ICON_FAILED);
+  }
 }
 
 bool Registration::_checkFields(const QString &username, const QString &password, const QString &pswRepeat) {
