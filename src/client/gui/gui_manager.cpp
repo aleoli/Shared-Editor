@@ -172,7 +172,7 @@ void GuiManager::serverErrorResponse(QString reason) {
   alert(Alert::ERROR, reason);
 }
 
-void GuiManager::serverLoginResponse(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon) {
+void GuiManager::serverLoginResponse(QString token, int userId, std::optional<QString> icon) {
   debug("GuiManager::serverLoginResponse");
   _user->loginSuccessful(token, userId, icon);
   showDocsBrowser();

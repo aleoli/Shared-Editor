@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QMovie>
 #include <memory>
+#include <optional>
 
 namespace Ui {
 class Login;
@@ -25,7 +26,7 @@ public:
 
 signals:
   void loginQuery(QString, QString);
-  void newUserQuery(QString, QString, QString);
+  void newUserQuery(QString, QString, QString, std::optional<QString>);
 
 public slots:
   void login();

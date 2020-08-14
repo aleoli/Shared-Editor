@@ -5,6 +5,8 @@
 #include <QCheckBox>
 #include <QPushButton>
 
+#include <optional>
+
 #include "alert_messages.h"
 
 namespace Ui {
@@ -22,7 +24,7 @@ public:
 private slots:
 
 signals:
-  void signup(QString username, QString password, QString pswRepeat);
+  void signup(QString username, QString password, QString pswRepeat, std::optional<QString> icon);
   void cancel();
   void alert(Alert type, QString what);
 

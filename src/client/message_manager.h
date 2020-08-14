@@ -27,12 +27,12 @@ signals:
   // messaggi Server -> Client. La GUI deve collegarci gli slot
   void errorResponse(const QString &reason);
 
-  void loginResponse(const QString &token, int userId, const std::optional<QString> &nickname, const std::optional<QString> &icon);
+  void loginResponse(const QString &token, int userId, const std::optional<QString> &icon);
   void newUserResponse(const QString &token, int userId);
   void editUserResponse();
   void deleteUserResponse();
   void newFileResponse(int fileId);
-  void getFileResponse(const File &file, int charId);
+  void getFileResponse(const File &file, int charId, int commentId);
   void editFileResponse();
   void deleteFileResponse();
   void fileDeletedQuery(int fileId);
@@ -64,8 +64,8 @@ public slots:
   // Messaggi Client -> Server. La GUI deve collegarci dei segnali
   void loginQuery(const QString &username, const QString &password);
   void logoutQuery(const QString &token);
-  void newUserQuery(const QString &username, const QString &password, const QString &pswRepeat);
-  void editUserQuery(const QString &token, const std::optional<QString> &nickname, const std::optional<QString> &oldPassword, const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon);
+  void newUserQuery(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon);
+  void editUserQuery(const QString &token, const std::optional<QString> &oldPassword, const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon);
   void deleteUserQuery(const QString &token);
   void getUserIconQuery(int userId);
 

@@ -70,7 +70,7 @@ void Login::newUser() {
 
   debug("Premuto btnNew. Username: " + username + " Password: " + psw);
 
-  emit newUserQuery(username, psw, psw);
+  emit newUserQuery(username, psw, psw, std::nullopt);
 }
 
 void Login::unblock() {

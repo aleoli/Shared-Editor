@@ -193,7 +193,7 @@ void GuiWrapper::loginQuery(const QString& username, const QString& psw) {
   emit sendLoginQuery(username, psw);
 }
 
-void GuiWrapper::newUserQuery(const QString& username, const QString& psw, QString pswRepeat) {
+void GuiWrapper::newUserQuery(const QString& username, const QString& psw, QString pswRepeat, const std::optional<QString>& icon) {
   checkWaiting(false);
   _lastMessageSent = USERNEW;
 
@@ -204,7 +204,7 @@ void GuiWrapper::newUserQuery(const QString& username, const QString& psw, QStri
   _account.userId = -1;
   _account.token = std::nullopt;
 
-  emit sendNewUserQuery(username, psw, std::move(pswRepeat));
+  emit sendNewUserQuery(username, psw, std::move(pswRepeat), icon);
 }
 
 void GuiWrapper::getFileQuery(int id) {
@@ -325,7 +325,7 @@ void GuiWrapper::errorResponseReceived(const QString& reason) {
   }
 }
 
-void GuiWrapper::loginResponseReceived(QString token, int userId, const std::optional<QString>& nickname, const std::optional<QString>& icon) {
+void GuiWrapper::loginResponseReceived(QString token, int userId, const std::optional<QString>& icon) {
   checkWaiting(true);
   if(_lastMessageSent != USERLOGIN) {
       debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(USERLOGIN));
@@ -394,7 +394,7 @@ void GuiWrapper::newFileResponseReceived(int id) {
   _textEdit->show();
 }
 
-void GuiWrapper::getFileResponseReceived(const File& file, int charId) {
+void GuiWrapper::getFileResponseReceived(const File& file, int charId, int commentId) {
   checkWaiting(true);
   if(_lastMessageSent != FILEGET) {
       debug("Last message: " + QString::number(_lastMessageSent) + " Response received: " + QString::number(FILEGET));
