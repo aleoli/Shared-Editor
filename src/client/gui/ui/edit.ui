@@ -112,6 +112,12 @@ background-color: #4e596f;
 
 QPushButton:pressed{
 background-color: #242A38;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
 }</string>
          </property>
          <property name="text">
@@ -119,7 +125,7 @@ background-color: #242A38;
          </property>
          <property name="icon">
           <iconset resource="resources/res.qrc">
-           <normaloff>:/res/profile-pics/spaceship3.png</normaloff>:/res/profile-pics/spaceship3.png</iconset>
+           <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -304,14 +310,14 @@ selection-background-color: #f76163;</string>
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show/hide all the passwords&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="styleSheet">
             <string notr="true">QCheckBox {
     spacing: 5px;
 	font-size: 11pt;
 	color:white;
-	margin-bottom: -3px;
+	margin-bottom: 0px;
 	margin-left: 0px;
 }
 
@@ -346,7 +352,7 @@ QCheckBox::indicator:checked {
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save all changes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="styleSheet">
             <string notr="true">QPushButton {
@@ -391,7 +397,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abort&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="styleSheet">
             <string notr="true">QPushButton {
