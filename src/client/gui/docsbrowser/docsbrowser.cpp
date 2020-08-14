@@ -20,10 +20,12 @@ DocsBrowser::~DocsBrowser()
 
 void DocsBrowser::clear() {
   // TODO Cose da fare quando la finestra è portata in primo piano (es. svuotare i campi)
+  setIcon();
 }
 
 void DocsBrowser::setIcon() {
   _widgetLogout->setIcon(_user->getIcon());
+  _widgetLogout->setIconSize(_widgetLogout->size());
 }
 
 void DocsBrowser::_logout(bool checked) {
