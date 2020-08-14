@@ -67,7 +67,7 @@ void MessageManager::logoutQuery(const QString &token) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::newUserQuery(const QString &username, const QString &password, const QString &pswRepeat) {
+void MessageManager::newUserQuery(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon) {
   Message m{Message::Type::USER, static_cast<int>(Message::UserAction::NEW),
     Message::Status::QUERY};
 
@@ -75,18 +75,18 @@ void MessageManager::newUserQuery(const QString &username, const QString &passwo
     m.setValue("password", password);
     m.setValue("pswRepeat", pswRepeat);
 
+    if(icon)
+      m.setValue("icon", *icon);
+
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::editUserQuery(const QString &token, const std::optional<QString> &nickname, const std::optional<QString> &oldPassword,
+void MessageManager::editUserQuery(const QString &token, const std::optional<QString> &oldPassword,
   const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon) {
     Message m{Message::Type::USER, static_cast<int>(Message::UserAction::EDIT),
       Message::Status::QUERY};
 
       m.setValue("token", token);
-
-      if(nickname)
-        m.setValue("nickname", *nickname);
 
       if(oldPassword && password && pswRepeat) {
         m.setValue("oldPassword", *oldPassword);

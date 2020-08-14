@@ -47,7 +47,7 @@ void Registration::_signup(bool checked) {
   debug("Registration::_signup " + username + " " + pwd + " " + pwdRepeat);
 
   if(_checkFields(username, pwd, pwdRepeat)) {
-    emit signup(username, pwd, pwdRepeat);
+    emit signup(username, pwd, pwdRepeat, std::nullopt); //TODO icon
   }
   else {
     emit alert(Alert::ERROR, INCORRECT_FIELDS);

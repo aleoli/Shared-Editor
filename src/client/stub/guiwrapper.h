@@ -33,7 +33,7 @@ public:
 signals:
   //segnali da emettere per mandare messaggi al server
   void sendLoginQuery(QString username, QString password);
-  void sendNewUserQuery(QString username, QString password, QString passwordRepeat);
+  void sendNewUserQuery(QString username, QString password, QString passwordRepeat, std::optional<QString> icon);
   void sendNewFileQuery(QString token, QString name, int dirId = 0);
   void sendGetFileQuery(QString token, int fileId);
   void sendCloseFileQuery(QString token, int fileId);
@@ -57,7 +57,7 @@ signals:
 public slots:
   // slot di azioni compiute dall'user (connessioni con gli elementi grafici)
   void loginQuery(const QString& username, const QString& psw);
-  void newUserQuery(const QString& username, const QString& psw, QString pswRepeat);
+  void newUserQuery(const QString& username, const QString& psw, QString pswRepeat, const std::optional<QString>& icon);
 
   void newFileQuery();
   void getFileQuery(int id);
@@ -72,10 +72,10 @@ public slots:
 
   // slot di ricezione messaggi dal mm
   void errorResponseReceived(const QString& reason);
-  void loginResponseReceived(QString token, int userId, const std::optional<QString>& nickname, const std::optional<QString>& icon);
+  void loginResponseReceived(QString token, int userId, const std::optional<QString>& icon);
   void newUserResponseReceived(QString token, int userId);
   void newFileResponseReceived(int fileId);
-  void getFileResponseReceived(const File& file, int charId);
+  void getFileResponseReceived(const File& file, int charId, int commentId);
   void remoteInsertQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);
   void remoteDeleteQueryReceived(int fileId, int userId, std::vector<SymbolId> ids);
   void remoteUpdateQueryReceived(int fileId, int userId, std::vector<Symbol> symbols);

@@ -274,11 +274,9 @@ void ClientMessageProcessor::login() {
   try {
     auto token = _m.getString("token");
     auto userId = _m.getInt("userId");
-
-    auto nickname = _m.getStringOpt("nickname");
     auto icon = _m.getStringOpt("icon");
 
-    emit _manager->loginResponse(token, userId, nickname, icon);
+    emit _manager->loginResponse(token, userId, icon);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
@@ -344,8 +342,9 @@ void ClientMessageProcessor::getFile() {
   try {
     auto file = _m.getObject("file");
     auto charId = _m.getInt("charId");
+    auto commentId = _m.getInt("commentId");
 
-    emit _manager->getFileResponse(File::fromJsonObject(file), charId);
+    emit _manager->getFileResponse(File::fromJsonObject(file), charId, commentId);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());

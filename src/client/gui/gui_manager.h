@@ -69,7 +69,7 @@ private slots:
 
   // messages from server
   void serverErrorResponse(QString reason);
-  void serverLoginResponse(QString token, int userId, std::optional<QString> nickname, std::optional<QString> icon);
+  void serverLoginResponse(QString token, int userId, std::optional<QString> icon);
   void serverNewUserResponse(QString token, int userId);
 
 private:

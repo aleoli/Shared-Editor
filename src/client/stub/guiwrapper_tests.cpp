@@ -7,7 +7,7 @@ void GuiWrapper::testWindows() {
   info("Tra 15 secondi arriva una loginResponseReceived");
   info("Tra 30 secondi arriva un newFileResponseReceived");
 
-  QTimer::singleShot(15000, this, [this]() {loginResponseReceived("questoeuntokenautentico", 33, std::nullopt, std::nullopt);});
+  QTimer::singleShot(15000, this, [this]() {loginResponseReceived("questoeuntokenautentico", 33, std::nullopt);});
   QTimer::singleShot(30000, this, [this]() {newFileResponseReceived(0);});
 }
 
