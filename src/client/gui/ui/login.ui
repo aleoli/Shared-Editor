@@ -161,7 +161,7 @@ selection-background-color: #f76163;</string>
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show/hide the password&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
                </property>
                <property name="styleSheet">
                 <string notr="true">QCheckBox {
@@ -169,7 +169,7 @@ selection-background-color: #f76163;</string>
 	font-size: 11pt;
 	color:white;
 	margin-left: 0px;
-	margin-bottom: -3px;
+	margin-bottom: 0px;
 }
 
 QCheckBox::indicator {
@@ -678,7 +678,7 @@ QCheckBox::indicator:checked {
               <enum>Qt::StrongFocus</enum>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sign in&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string/>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
@@ -725,7 +725,7 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;First time here?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string/>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
