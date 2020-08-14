@@ -2,13 +2,13 @@
 
 #include "exceptions.h"
 #include "utils.h"
+#include "image_utils.h"
 
 using namespace se_exceptions;
 
 std::shared_ptr<User> User::instance = nullptr;
 
-User::User() : _logged(false) {
-}
+User::User() : _logged(false), _icon(image_utils::loadImage(DEFAULT_ICON)){}
 
 User::~User() {
 }
@@ -28,13 +28,37 @@ void User::setUsername(const QString &username) {
   _username = username;
 }
 
-void User::loginSuccessful(const QString &token, int userId, const std::optional<QString> &icon) {
+void User::setIcon(const QIcon &icon) {
+  _icon = icon;
+}
+
+void User::login(const QString &token, int userId, const std::optional<QString> &icon) {
   _token = token;
   _userId = userId;
-  _icon = icon;
+
+  if(icon) {
+    _icon = image_utils::decodeImage(*icon);
+  }
+
   _logged = true;
 }
 
 void User::logout() {
   _logged = false;
+}
+
+QString User::getUsername() const {
+  return _username;
+}
+
+QIcon User::getIcon() const {
+  return _icon;
+}
+
+QString User::getToken() const {
+  return _token;
+}
+
+int User::getUserId() const {
+  return _userId;
 }

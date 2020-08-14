@@ -215,11 +215,16 @@ namespace se_exceptions {
   // Gui exceptions
   class GuiException : public SE_Exception {
   public:
-      GuiException(QString str): SE_Exception(str) {}
+      GuiException(QString str): SE_Exception(std::move(str)) {}
+  };
+
+  class ImageException : public GuiException {
+  public:
+      ImageException(QString str): GuiException(std::move(str)) {}
   };
 
   class UserException : public SE_Exception {
   public:
-      UserException(QString str): SE_Exception(str) {}
+      UserException(QString str): SE_Exception(std::move(str)) {}
   };
 }

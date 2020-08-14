@@ -174,13 +174,13 @@ void GuiManager::serverErrorResponse(QString reason) {
 
 void GuiManager::serverLoginResponse(QString token, int userId, std::optional<QString> icon) {
   debug("GuiManager::serverLoginResponse");
-  _user->loginSuccessful(token, userId, icon);
+  _user->login(token, userId, icon);
   showDocsBrowser();
 }
 
 void GuiManager::serverNewUserResponse(QString token, int userId) {
   debug("GuiManager::serverNewUserResponse");
   //TODO
-  _user->loginSuccessful(token, userId, std::nullopt); //TODO icona nella registrazione
+  _user->login(token, userId, std::nullopt);
   showDocsBrowser();
 }
