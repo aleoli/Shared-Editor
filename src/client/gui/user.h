@@ -3,8 +3,11 @@
 #include <memory>
 #include <QString>
 #include <QIcon>
+#include <QObject>
 
-class User {
+class User : public QObject {
+  Q_OBJECT
+
 public:
   User(const User&) = delete;
   User(User&&) = delete;
@@ -27,6 +30,12 @@ public:
 
   void login(const QString &token, int userId, const std::optional<QString> &icon);
   void logout();
+
+signals:
+  void iconChanged();
+  void loggedIn();
+  void loggedOut();
+  //TODO others
 
 private:
   static std::shared_ptr<User> instance;

@@ -60,12 +60,9 @@ private slots:
   void connected();
   void connectionLost();
 
-  // show widgets
-  void showRegistration();
-  void showDocsBrowser();
-  void showLogin();
-  void showEdit();
-  void showTextEditor();
+  void loginSignup();
+  void registrationCancel();
+  void docsBrowserLogout();
 
   // messages from server
   void serverErrorResponse(QString reason);
@@ -73,6 +70,13 @@ private slots:
   void serverNewUserResponse(QString token, int userId);
 
 private:
+  // show widgets
+  void showRegistration(bool clear = false);
+  void showDocsBrowser(bool clear = false);
+  void showLogin(bool clear = false);
+  void showEdit(bool clear = false);
+  void showTextEditor(bool clear = false);
+
   static std::shared_ptr<GuiManager> instance;
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
 

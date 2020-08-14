@@ -16,6 +16,8 @@ public:
     explicit Edit(QWidget *parent = nullptr);
     ~Edit();
 
+    void clear();
+
 private slots:
 
 signals:

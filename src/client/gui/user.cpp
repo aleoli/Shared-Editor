@@ -8,7 +8,7 @@ using namespace se_exceptions;
 
 std::shared_ptr<User> User::instance = nullptr;
 
-User::User() : _logged(false), _icon(image_utils::loadImage(DEFAULT_ICON)){}
+User::User() : _logged(false), _icon(image_utils::loadRoundedImage(DEFAULT_ICON)){}
 
 User::~User() {
 }
@@ -30,6 +30,7 @@ void User::setUsername(const QString &username) {
 
 void User::setIcon(const QIcon &icon) {
   _icon = icon;
+  emit iconChanged();
 }
 
 void User::login(const QString &token, int userId, const std::optional<QString> &icon) {
@@ -41,10 +42,12 @@ void User::login(const QString &token, int userId, const std::optional<QString> 
   }
 
   _logged = true;
+  emit loggedIn();
 }
 
 void User::logout() {
   _logged = false;
+  emit loggedOut();
 }
 
 QString User::getUsername() const {
@@ -56,9 +59,17 @@ QIcon User::getIcon() const {
 }
 
 QString User::getToken() const {
+  if(!_logged) {
+    throw UserException{"User not logged!"};
+  }
+
   return _token;
 }
 
 int User::getUserId() const {
+  if(!_logged) {
+    throw UserException{"User not logged!"};
+  }
+
   return _userId;
 }

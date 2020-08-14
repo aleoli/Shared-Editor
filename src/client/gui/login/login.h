@@ -19,16 +19,19 @@ public:
     explicit Login(QWidget *parent = nullptr);
     ~Login();
 
+    void clear();
+
 signals:
   void login(QString username, QString password);
   void signup();
   void alert(Alert type, QString what);
 
-private:
+private slots:
   void _showPassword(int state);
   void _login(bool checked);
   void _signup(bool checked);
 
+private:
   bool _checkFields(const QString &username, const QString &password);
 
   Ui::Login *ui;
