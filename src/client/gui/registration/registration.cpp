@@ -85,6 +85,7 @@ void Registration::_setIcon(bool checked) {
     try {
       auto icon = image_utils::loadRoundedImage(filename);
       _widgetIcon->setIcon(icon);
+      _widgetIcon->setIconSize(_widgetIcon->size());
       _user->setIcon(icon);
     }
     catch(...) {
