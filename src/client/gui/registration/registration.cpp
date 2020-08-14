@@ -2,10 +2,15 @@
 #include "../ui/ui_registration.h"
 
 #include "utils.h"
+#include "image_utils.h"
+
+#include <QFileDialog>
+
 
 Registration::Registration(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::Registration)
+    ui(new Ui::Registration),
+    _user(User::get())
 {
     ui->setupUi(this);
 
@@ -15,10 +20,12 @@ Registration::Registration(QWidget *parent) :
     _widgetShowPasswords = findChild<QCheckBox *>("checkBox_showPwds");
     _widgetSignup = findChild<QPushButton *>("btn_signup");
     _widgetCancel = findChild<QPushButton *>("btn_cancel");
+    _widgetIcon = findChild<QPushButton *>("btn_changeProfile");
 
     connect(_widgetShowPasswords, &QCheckBox::stateChanged, this, &Registration::_showPasswords);
     connect(_widgetSignup, &QPushButton::clicked, this, &Registration::_signup);
     connect(_widgetCancel, &QPushButton::clicked, this, &Registration::_cancel);
+    connect(_widgetIcon, &QPushButton::clicked, this, &Registration::_setIcon);
 }
 
 Registration::~Registration()
@@ -47,7 +54,8 @@ void Registration::_signup(bool checked) {
   debug("Registration::_signup " + username + " " + pwd + " " + pwdRepeat);
 
   if(_checkFields(username, pwd, pwdRepeat)) {
-    emit signup(username, pwd, pwdRepeat, std::nullopt); //TODO icon
+    _user->setUsername(username);
+    emit signup(username, pwd, pwdRepeat, image_utils::encodeImage(_user->getIcon()));
   }
   else {
     emit alert(Alert::ERROR, INCORRECT_FIELDS);
@@ -57,6 +65,23 @@ void Registration::_signup(bool checked) {
 void Registration::_cancel(bool checked) {
   debug("Registration::_cancel");
   emit cancel();
+}
+
+void Registration::_setIcon(bool checked) {
+  debug("Registration::_setIcon");
+
+  //TODO check sull'icona!
+  auto filename = QFileDialog::getOpenFileName(this,
+    tr("Open Image"), PROFILE_PICS_PATH, tr("Image Files (*.png *.jpg *.bmp)"));
+
+    try {
+      auto icon = image_utils::loadRoundedImage(filename);
+      _widgetIcon->setIcon(icon);
+      _user->setIcon(icon);
+    }
+    catch(...) {
+      emit alert(Alert::ERROR, LOAD_ICON_FAILED);
+    }
 }
 
 bool Registration::_checkFields(const QString &username, const QString &password, const QString &pswRepeat) {

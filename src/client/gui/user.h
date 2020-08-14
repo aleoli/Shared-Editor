@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <QString>
+#include <QIcon>
 
 class User {
 public:
@@ -16,7 +17,15 @@ public:
   bool isLogged();
 
   void setUsername(const QString &username);
-  void loginSuccessful(const QString &token, int userId, const std::optional<QString> &icon);
+  QString getUsername() const;
+
+  void setIcon(const QIcon &icon);
+  QIcon getIcon() const;
+
+  QString getToken() const;
+  int getUserId() const;
+
+  void login(const QString &token, int userId, const std::optional<QString> &icon);
   void logout();
 
 private:
@@ -24,9 +33,9 @@ private:
   User();
 
   bool _logged;
-  //TODO altri dati
   QString _username;
   QString _token;
   int _userId;
-  std::optional<QString> _icon;
+  QIcon _icon;
+  //TODO dati relativi al file: File, charId, commentId
 };

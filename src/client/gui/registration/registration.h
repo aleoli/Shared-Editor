@@ -6,8 +6,10 @@
 #include <QPushButton>
 
 #include <optional>
+#include <memory>
 
 #include "alert_messages.h"
+#include "user.h"
 
 namespace Ui {
 class Registration;
@@ -28,15 +30,19 @@ signals:
   void cancel();
   void alert(Alert type, QString what);
 
-private:
+private slots:
   void _showPasswords(int state);
   void _signup(bool checked);
   void _cancel(bool checked);
+  void _setIcon(bool checked);
 
+private:
   bool _checkFields(const QString &username, const QString &password, const QString &pswRepeat);
 
   Ui::Registration *ui;
   QLineEdit *_widgetUsername, *_widgetPassword, *_widgetPasswordRepeat;
   QCheckBox *_widgetShowPasswords;
-  QPushButton *_widgetSignup, *_widgetCancel;
+  QPushButton *_widgetSignup, *_widgetCancel, *_widgetIcon;
+
+  std::shared_ptr<User> _user;
 };
