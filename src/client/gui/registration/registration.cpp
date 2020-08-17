@@ -65,9 +65,6 @@ void Registration::_signup(bool checked) {
     _user->setUsername(username);
     emit signup(username, pwd, pwdRepeat, image_utils::encodeImage(_user->getIcon()));
   }
-  else {
-    emit alert(Alert::ERROR, INCORRECT_FIELDS);
-  }
 }
 
 void Registration::_cancel(bool checked) {
@@ -105,9 +102,20 @@ void Registration::_setDefaultIcon() {
 }
 
 bool Registration::_checkFields(const QString &username, const QString &password, const QString &pswRepeat) {
-  //TODO migliora logica
-  if(username.size() == 0 || password != pswRepeat || !check_pass(password)) {
+  if(username.isEmpty() || password.isEmpty() || pswRepeat.isEmpty()) {
+    emit alert(Alert::ERROR, INCORRECT_FIELDS);
     return false;
   }
+
+  if(!check_pass(password)) {
+    emit alert(Alert::ERROR, WRONG_PASSWORD);
+    return false;
+  }
+
+  if(password != pswRepeat) {
+    emit alert(Alert::ERROR, PSW_MISMATCH);
+    return false;
+  }
+
   return true;
 }

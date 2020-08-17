@@ -26,6 +26,7 @@ public:
   QString getUsername() const;
 
   void setIcon(const QIcon &icon);
+  void setDecodedIcon(const QString &icon);
   QIcon getIcon() const;
 
   QString getToken() const;

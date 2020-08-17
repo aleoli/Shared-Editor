@@ -39,7 +39,7 @@ QString image_utils::encodeImage(const QIcon &icon) {
   QByteArray ba;
   QBuffer buffer(&ba);
   buffer.open(QIODevice::WriteOnly);
-  icon.pixmap(300,300).toImage().save(&buffer); // TODO format?
+  icon.pixmap(300,300).toImage().save(&buffer, "PNG");
 
   return QString::fromUtf8(ba.toBase64());
 }

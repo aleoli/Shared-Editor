@@ -37,12 +37,18 @@ void User::setIcon(const QIcon &icon) {
   emit iconChanged();
 }
 
+void User::setDecodedIcon(const QString &icon) {
+  debug("Setting icon");
+  _icon = image_utils::decodeImage(icon);
+  emit iconChanged();
+}
+
 void User::login(const QString &token, int userId, const std::optional<QString> &icon) {
   _token = token;
   _userId = userId;
 
   if(icon) {
-    _icon = image_utils::decodeImage(*icon);
+    setDecodedIcon(*icon);
   }
 
   _logged = true;
