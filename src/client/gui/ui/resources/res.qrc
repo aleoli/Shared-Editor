@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="res">
+    <file>text-editor/comments.png</file>
+    <file>text-editor/connected.png</file>
+    <file>text-editor/share.png</file>
+    <file>text-editor/color.png</file>
+    <file>text-editor/mark.png</file>
     <file>text-editor/align-center.png</file>
     <file>text-editor/align-left.png</file>
     <file>text-editor/align-right.png</file>
