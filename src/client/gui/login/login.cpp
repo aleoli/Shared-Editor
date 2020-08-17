@@ -64,8 +64,13 @@ void Login::_signup(bool checked) {
 }
 
 bool Login::_checkFields(const QString &username, const QString &password) {
-  //TODO migliora logica
-  if(username.size() == 0 || password.size() == 0) {
+  if(username.isEmpty() || password.isEmpty()) {
+    emit alert(Alert::ERROR, INCORRECT_FIELDS);
+    return false;
+  }
+
+  if(!check_pass(password)) {
+    emit alert(Alert::ERROR, WRONG_PASSWORD);
     return false;
   }
 
