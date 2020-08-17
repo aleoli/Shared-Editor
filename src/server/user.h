@@ -20,7 +20,7 @@ public:
 
   User& operator=(const User& u);
 
-  static User registra(QString username, QString password);
+  static User registra(QString username, const QString& password, const std::optional<QString>& icon);
   static Session login(const QString& username, const QString& password);
 
   void save() override;
@@ -30,20 +30,21 @@ public:
   const static QString table_name;
 
   [[nodiscard]] QString getUsername() const;
+  [[nodiscard]] QString getIcon() const;
 
-  bool setPassword(const QString& old_passwork, const QString& password);
+  bool setPassword(const QString& old_password, const QString& password);
   void setUsername(QString username);
   void setIcon(const QString& icon);
 
-  static bool check_pass(const QString& pass);
-
 private:
-  User(QString username, QString password);
+  User(QString username, const QString& password);
 
   static QString encrypt(const QString& str);
   static bool check_pass(const QString& pass, const QString& db_pass);
+  static bool check_icon(const QString& icon);
 
   QString _username;
   QString _password;
+  QString _imagePath;
 
 };

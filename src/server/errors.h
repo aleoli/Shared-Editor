@@ -1,7 +1,8 @@
 #pragma once
 
-#define PASSWORD_REQUIREMENTS "Password has to contain ..."
+#define PASSWORD_REQUIREMENTS "Password has to contain at least an Uppercase char, a Lowercase char, a number, and length are to be equal or more than 6"
 #define PASSWORD_NOT_MATCH "Password and PswRepeat does not match"
+#define ICON_REQUIREMENTS "Icon size has to be less than 1MB"
 #define ACCESS_DENIED "Access Denied"
 
 #define GENERIC_ERROR "Generic Error"
