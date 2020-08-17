@@ -106,7 +106,7 @@ void Registration::_setDefaultIcon() {
 
 bool Registration::_checkFields(const QString &username, const QString &password, const QString &pswRepeat) {
   //TODO migliora logica
-  if(username.size() == 0 || password.size() == 0 || password != pswRepeat) {
+  if(username.size() == 0 || password != pswRepeat || !check_pass(password)) {
     return false;
   }
   return true;
