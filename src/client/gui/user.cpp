@@ -24,6 +24,10 @@ bool User::isLogged() {
   return _logged;
 }
 
+bool User::isFileOpen() {
+  return _fileOpen;
+}
+
 void User::setUsername(const QString &username) {
   _username = username;
 }
@@ -72,4 +76,28 @@ int User::getUserId() const {
   }
 
   return _userId;
+}
+
+void User::openFile(int fileId, const File &file, int charId, int commentId) {
+  _fileId = fileId;
+  _file = std::move(file);
+  _charId = charId;
+  _commentId = commentId;
+  _fileOpen = true;
+}
+
+void User::closeFile() {
+  _fileOpen = false;
+}
+
+int User::getFileId() const {
+  return _fileId;
+}
+
+int User::getCharId() {
+  return _charId++;
+}
+
+int User::getCommentId() {
+  return _commentId++;
 }

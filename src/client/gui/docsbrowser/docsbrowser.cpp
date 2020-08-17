@@ -1,6 +1,8 @@
 #include "docsbrowser.h"
 #include "../ui/ui_docsbrowser.h"
 
+#include "utils.h"
+
 DocsBrowser::DocsBrowser(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DocsBrowser),
@@ -8,9 +10,13 @@ DocsBrowser::DocsBrowser(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _widgetLogout = findChild<QPushButton *>("btn_logout");
+    _widgetAccount = findChild<QPushButton *>("btn_logout");
+    _widgetNewFile = findChild<QPushButton *>("btn_new_file");
+    _actionLogout= findChild<QAction *>("actionLogout");
 
-    connect(_widgetLogout, &QPushButton::clicked, this, &DocsBrowser::_logout);
+    connect(_widgetAccount, &QPushButton::clicked, this, &DocsBrowser::_account);
+    connect(_widgetNewFile, &QPushButton::clicked, this, &DocsBrowser::_newFile);
+    connect(_actionLogout, &QAction::triggered, this, &DocsBrowser::_logout);
 }
 
 DocsBrowser::~DocsBrowser()
@@ -24,8 +30,20 @@ void DocsBrowser::clear() {
 }
 
 void DocsBrowser::setIcon() {
-  _widgetLogout->setIcon(_user->getIcon());
-  _widgetLogout->setIconSize(_widgetLogout->size());
+  _widgetAccount->setIcon(_user->getIcon());
+  _widgetAccount->setIconSize(_widgetAccount->size());
+}
+
+void DocsBrowser::_account(bool checked) {
+  //TODO qua dovrebbe comparire un menu a tendina con le opzioni edit account e logout
+  emit editAccount();
+  //emit logout(_user->getToken());
+}
+
+void DocsBrowser::_newFile(bool checked) {
+  //TODO qua dovrebbe comparire un menù a tendina chiedendo il nome del file
+  //TODO inoltre bisogna ricavare l'id della cartella che lo conterrà
+  emit newFile(_user->getToken(), "originalFile");
 }
 
 void DocsBrowser::_logout(bool checked) {
