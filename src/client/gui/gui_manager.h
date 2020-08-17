@@ -62,6 +62,7 @@ private slots:
 
   void loginSignup();
   void registrationCancel();
+  void editCancel();
   void docsBrowserLogout();
   void docsBrowserEditAccount();
 
@@ -69,6 +70,7 @@ private slots:
   void serverErrorResponse(const QString &reason);
   void serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon);
   void serverNewUserResponse(const QString &token, int userId);
+  void serverEditUserResponse();
   void serverNewFileResponse(int fileId);
 
 private:

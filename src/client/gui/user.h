@@ -29,6 +29,11 @@ public:
   void setDecodedIcon(const QString &icon);
   QIcon getIcon() const;
 
+  void setTempIcon(const QIcon &icon);
+  void setTempIcon();
+  void tempToPermanentIcon();
+  QIcon getTempIcon() const;
+
   QString getToken() const;
   int getUserId() const;
 
@@ -55,7 +60,7 @@ private:
   QString _username;
   QString _token;
   int _userId;
-  QIcon _icon;
+  QIcon _icon, _tempIcon;
   //TODO dati relativi al file: File, charId, commentId
   bool _fileOpen;
   File _file;

@@ -63,7 +63,7 @@ void Registration::_signup(bool checked) {
 
   if(_checkFields(username, pwd, pwdRepeat)) {
     _user->setUsername(username);
-    emit signup(username, pwd, pwdRepeat, image_utils::encodeImage(_user->getIcon()));
+    emit signup(username, pwd, pwdRepeat, std::optional<QString>(std::move(image_utils::encodeImage(_user->getIcon()))));
   }
 }
 
@@ -75,7 +75,6 @@ void Registration::_cancel(bool checked) {
 void Registration::_setIcon(bool checked) {
   debug("Registration::_setIcon");
 
-  //TODO check sull'icona!
   auto filename = QFileDialog::getOpenFileName(this,
     tr("Open Image"), PROFILE_PICS_PATH, tr("Image Files (*.png *.jpg *.bmp)"));
 

@@ -38,9 +38,20 @@ void User::setIcon(const QIcon &icon) {
 }
 
 void User::setDecodedIcon(const QString &icon) {
-  debug("Setting icon");
   _icon = image_utils::decodeImage(icon);
   emit iconChanged();
+}
+
+void User::setTempIcon(const QIcon &icon) {
+  _tempIcon = icon;
+}
+
+void User::setTempIcon() {
+  _tempIcon = _icon;
+}
+
+void User::tempToPermanentIcon() {
+  setIcon(_tempIcon);
 }
 
 void User::login(const QString &token, int userId, const std::optional<QString> &icon) {
@@ -66,6 +77,10 @@ QString User::getUsername() const {
 
 QIcon User::getIcon() const {
   return _icon;
+}
+
+QIcon User::getTempIcon() const {
+  return _tempIcon;
 }
 
 QString User::getToken() const {
