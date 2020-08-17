@@ -87,7 +87,8 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetTextEditor, &TextEditor::alert, this, &GuiManager::alert);
 
   // user/file updates
-  QObject::connect(_user.get(), &User::iconChanged, _widgetDocsBrowser, &DocsBrowser::setIcon);
+  QObject::connect(_user.get(), &User::iconChanged, _widgetDocsBrowser, &DocsBrowser::setIcon);  QObject::connect(_user.get(), &User::iconChanged, _widgetEdit, &Edit::setIcon);
+
   //TODO others e.g. icon in texteditor
 
   //Login
@@ -99,7 +100,8 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetRegistration, &Registration::cancel, this, &GuiManager::registrationCancel);
 
   // Edit
-  //TODO
+  QObject::connect(_widgetEdit, &Edit::save, _manager.get(), &MessageManager::editUserQuery);
+  QObject::connect(_widgetEdit, &Edit::cancel, this, &GuiManager::editCancel);
 
   //DocsBrowser
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::logout, this, &GuiManager::docsBrowserLogout);
@@ -116,6 +118,7 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::errorResponse, this, &GuiManager::serverErrorResponse);
   QObject::connect(_manager.get(), &MessageManager::loginResponse, this, &GuiManager::serverLoginResponse);
   QObject::connect(_manager.get(), &MessageManager::newUserResponse, this, &GuiManager::serverNewUserResponse);
+  QObject::connect(_manager.get(), &MessageManager::editUserResponse, this, &GuiManager::serverEditUserResponse);
   QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
 }
 
@@ -199,6 +202,10 @@ void GuiManager::registrationCancel() {
   showLogin(true);
 }
 
+void GuiManager::editCancel() {
+  showDocsBrowser();
+}
+
 void GuiManager::docsBrowserLogout() {
   _manager.get()->logoutQuery(_user->getToken());
   _user->logout();
@@ -219,14 +226,21 @@ void GuiManager::serverErrorResponse(const QString &reason) {
 void GuiManager::serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon) {
   debug("GuiManager::serverLoginResponse");
   _user->login(token, userId, icon);
+  showEdit(true); // to fix small icon bug in Edit when launched first time
   showDocsBrowser(true);
 }
 
 void GuiManager::serverNewUserResponse(const QString &token, int userId) {
   debug("GuiManager::serverNewUserResponse");
-  //TODO
   _user->login(token, userId, std::nullopt);
+  showEdit(true); // to fix small icon bug in Edit when launched first time
   showDocsBrowser(true);
+}
+
+void GuiManager::serverEditUserResponse() {
+  debug("GuiManager::serverEditUserResponse");
+  _user->tempToPermanentIcon();
+  showDocsBrowser(); //TODO ?
 }
 
 void GuiManager::serverNewFileResponse(int fileId) {
