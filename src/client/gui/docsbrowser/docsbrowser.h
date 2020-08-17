@@ -28,10 +28,10 @@ public slots:
     void setIcon();
 
 signals:
-  void alert(Alert type, QString what);
-  void logout(QString token);
+  void alert(Alert type, const QString &what);
+  void logout(const QString &token);
   void editAccount();
-  void newFile(QString token, QString name, std::optional<int> dirId = std::nullopt);
+  void newFile(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
 
 private slots:
   void _account(bool checked);

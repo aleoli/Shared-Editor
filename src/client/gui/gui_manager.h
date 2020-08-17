@@ -53,7 +53,7 @@ signals:
 
 public slots:
   void closeStacked();
-  void alert(Alert type, QString what);
+  void alert(Alert type, const QString &what);
 
 private slots:
   // connessione del server
@@ -66,9 +66,9 @@ private slots:
   void docsBrowserEditAccount();
 
   // messages from server
-  void serverErrorResponse(QString reason);
-  void serverLoginResponse(QString token, int userId, std::optional<QString> icon);
-  void serverNewUserResponse(QString token, int userId);
+  void serverErrorResponse(const QString &reason);
+  void serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon);
+  void serverNewUserResponse(const QString &token, int userId);
   void serverNewFileResponse(int fileId);
 
 private:

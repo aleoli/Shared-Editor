@@ -22,9 +22,9 @@ public:
     void clear();
 
 signals:
-  void login(QString username, QString password);
+  void login(const QString &username, const QString &password);
   void signup();
-  void alert(Alert type, QString what);
+  void alert(Alert type, const QString &what);
 
 private slots:
   void _showPassword(int state);
