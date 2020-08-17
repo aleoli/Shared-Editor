@@ -63,11 +63,13 @@ private slots:
   void loginSignup();
   void registrationCancel();
   void docsBrowserLogout();
+  void docsBrowserEditAccount();
 
   // messages from server
   void serverErrorResponse(QString reason);
   void serverLoginResponse(QString token, int userId, std::optional<QString> icon);
   void serverNewUserResponse(QString token, int userId);
+  void serverNewFileResponse(int fileId);
 
 private:
   // show widgets

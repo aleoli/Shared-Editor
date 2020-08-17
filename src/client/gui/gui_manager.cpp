@@ -103,6 +103,9 @@ void GuiManager::connectWidgets() {
 
   //DocsBrowser
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::logout, this, &GuiManager::docsBrowserLogout);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::editAccount, this, &GuiManager::docsBrowserEditAccount);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::newFile, _manager.get(), &MessageManager::newFileQuery);
+
 
   //TextEditor
   //TODO
@@ -113,6 +116,7 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::errorResponse, this, &GuiManager::serverErrorResponse);
   QObject::connect(_manager.get(), &MessageManager::loginResponse, this, &GuiManager::serverLoginResponse);
   QObject::connect(_manager.get(), &MessageManager::newUserResponse, this, &GuiManager::serverNewUserResponse);
+  QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
 }
 
 void GuiManager::connected() {
@@ -201,6 +205,10 @@ void GuiManager::docsBrowserLogout() {
   showLogin(true);
 }
 
+void GuiManager::docsBrowserEditAccount() {
+  showEdit(true);
+}
+
 /* ### messages from server ### */
 
 void GuiManager::serverErrorResponse(QString reason) {
@@ -219,4 +227,10 @@ void GuiManager::serverNewUserResponse(QString token, int userId) {
   //TODO
   _user->login(token, userId, std::nullopt);
   showDocsBrowser(true);
+}
+
+void GuiManager::serverNewFileResponse(int fileId) {
+  debug("GuiManager::serverNewFileResponse");
+  _user->openFile(fileId);
+  showTextEditor(true);
 }
