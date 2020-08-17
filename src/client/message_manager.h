@@ -52,6 +52,10 @@ signals:
   void getDirResponse(std::vector<FSElement> elements);
   void moveFileResponse();
 
+  void commentRemoteInsertQuery(int fileId, int userId, File::Comment comment);
+  void commentRemoteUpdateQuery(int fileId, int userId, File::Comment comment);
+  void commentRemoteDeleteQuery(int fileId, int userId, File::Comment comment);
+
 public slots:
   void process_data(QByteArray data);
 
@@ -83,6 +87,10 @@ public slots:
   void deleteDirQuery(QString token, int dirId);
   void getDirQuery(QString token, std::optional<int> dirId = std::nullopt);
   void moveFileQuery(QString token, int fileId, int dirId);
+
+  void commentLocalInsertQuery(QString token, int fileId, File::Comment comment);
+  void commentLocalUpdateQuery(QString token, int fileId, File::Comment comment);
+  void commentLocalDeleteQuery(QString token, int fileId, File::Comment comment);
 
 private:
   static std::shared_ptr<MessageManager> instance;

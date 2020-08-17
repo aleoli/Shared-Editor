@@ -182,21 +182,21 @@ void ClientMessageProcessor::process_comment() {
       if(isResponse)
         disconnect("Ricevuto messaggio con status non valido");
       else
-        warn("TODO: newComment()");   // TODO
+        newComment();
       break;
 
     case Message::CommentAction::COMMENT_REMOTE_UPDATE:
       if(isResponse)
         disconnect("Ricevuto messaggio con status non valido");
       else
-        warn("TODO: updateComment()");    // TODO
+        updateComment();
       break;
 
     case Message::CommentAction::COMMENT_REMOTE_DELETE:
       if(isResponse)
         disconnect("Ricevuto messaggio con status non valido");
       else
-        warn("TODO: deleteComment()");    // TODO
+        deleteComment();
       break;
 
     default:
@@ -508,4 +508,49 @@ void ClientMessageProcessor::moveFile() {
   info("FILESYSTEM::MOVE_FILE response received");
 
   emit _manager->moveFileResponse();
+}
+
+void ClientMessageProcessor::newComment() {
+  info("COMMENT::REMOTE_INSERT query received");
+
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto userId = _m.getInt("userId");
+    auto comment = _m.getObject("comment");
+
+    emit _manager->commentRemoteInsertQuery(fileId, userId, File::commentFromJsonObject(comment));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
+}
+
+void ClientMessageProcessor::updateComment() {
+  info("COMMENT::REMOTE_UPDATE query received");
+
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto userId = _m.getInt("userId");
+    auto comment = _m.getObject("comment");
+
+    emit _manager->commentRemoteUpdateQuery(fileId, userId, File::commentFromJsonObject(comment));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
+}
+
+void ClientMessageProcessor::deleteComment() {
+  info("COMMENT::REMOTE_DELETE query received");
+
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto userId = _m.getInt("userId");
+    auto comment = _m.getObject("comment");
+
+    emit _manager->commentRemoteDeleteQuery(fileId, userId, File::commentFromJsonObject(comment));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
 }

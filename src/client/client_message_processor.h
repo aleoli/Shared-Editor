@@ -18,7 +18,7 @@ protected:
 private:
   void disconnect(const QString& why);
 
-  //handlers  
+  //handlers
   void login();
   void newUser();
   void editUser();
@@ -41,6 +41,9 @@ private:
   void deleteDir();
   void getDir();
   void moveFile();
+  void newComment();
+  void updateComment();
+  void deleteComment();
 
   std::shared_ptr<MessageManager> _manager;
 };

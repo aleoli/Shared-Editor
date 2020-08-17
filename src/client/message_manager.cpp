@@ -291,3 +291,36 @@ void MessageManager::moveFileQuery(QString token, int fileId, int dirId) {
 
     emit send_data(m.toQByteArray());
 }
+
+void MessageManager::commentLocalInsertQuery(QString token, int fileId, File::Comment comment) {
+  Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_INSERT),
+    Message::Status::QUERY};
+
+    m.setValue("token", token);
+    m.setValue("fileId", fileId);
+    m.setValue("comment", File::commentToJsonObject(comment));
+
+    emit send_data(m.toQByteArray());
+}
+
+void MessageManager::commentLocalUpdateQuery(QString token, int fileId, File::Comment comment) {
+  Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_UPDATE),
+    Message::Status::QUERY};
+
+    m.setValue("token", token);
+    m.setValue("fileId", fileId);
+    m.setValue("comment", File::commentToJsonObject(comment));
+
+    emit send_data(m.toQByteArray());
+}
+
+void MessageManager::commentLocalDeleteQuery(QString token, int fileId, File::Comment comment) {
+  Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_DELETE),
+    Message::Status::QUERY};
+
+    m.setValue("token", token);
+    m.setValue("fileId", fileId);
+    m.setValue("comment", File::commentToJsonObject(comment));
+
+    emit send_data(m.toQByteArray());
+}
