@@ -10,10 +10,12 @@
 #include <QPainter>
 #include <QIcon>
 #include <QPainterPath>
+#include <QFileInfo>
 
 #include <vector>
 
 #include "exceptions.h"
+#include "utils.h"
 
 using namespace se_exceptions;
 
@@ -55,10 +57,12 @@ std::vector<QIcon> image_utils::getAllProfilePics() {
 }
 
 QIcon image_utils::loadRoundedImage(const QString &filename) {
+  checkIcon(filename);
+
   const QPixmap orig = QPixmap(filename);
 
   if(orig.isNull()) {
-   throw ImageException{"Image not found!"};
+   throw ImageException{"Could not load image!"};
   }
 
   // getting size if the original picture is not square
@@ -79,4 +83,17 @@ QIcon image_utils::loadRoundedImage(const QString &filename) {
   painter.drawPixmap(x, y, orig.width(), orig.height(), orig);
 
   return QIcon(rounded);
+}
+
+void image_utils::checkIcon(const QString &filename) {
+  auto file = QFileInfo{filename};
+
+  if(!file.exists()) {
+    throw ImageException{"Image not found!"};
+
+  }
+
+  if(file.size() > MAX_SIZE) {
+    throw ImageException{"Image is too big!"};
+  }
 }
