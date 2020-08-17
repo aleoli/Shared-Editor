@@ -28,9 +28,9 @@ public:
 private slots:
 
 signals:
-  void signup(QString username, QString password, QString pswRepeat, std::optional<QString> icon);
+  void signup(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon);
   void cancel();
-  void alert(Alert type, QString what);
+  void alert(Alert type, const QString &what);
 
 private slots:
   void _showPasswords(int state);

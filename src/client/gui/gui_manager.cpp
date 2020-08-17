@@ -79,12 +79,12 @@ void GuiManager::connectWidgets() {
   QObject::connect(_stackedWidget, SIGNAL(close()), this, SLOT(closeStacked()));
 
   // alerts
-  QObject::connect(_widgetLanding, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
-  QObject::connect(_widgetLogin, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
-  QObject::connect(_widgetDocsBrowser, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
-  QObject::connect(_widgetEdit, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
-  QObject::connect(_widgetRegistration, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
-  QObject::connect(_widgetTextEditor, SIGNAL(alert(Alert, QString)), this, SLOT(alert(Alert, QString)));
+  QObject::connect(_widgetLanding, &Landing::alert, this, &GuiManager::alert);
+  QObject::connect(_widgetLogin, &Login::alert, this, &GuiManager::alert);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::alert, this, &GuiManager::alert);
+  QObject::connect(_widgetEdit, &Edit::alert, this, &GuiManager::alert);
+  QObject::connect(_widgetRegistration, &Registration::alert, this, &GuiManager::alert);
+  QObject::connect(_widgetTextEditor, &TextEditor::alert, this, &GuiManager::alert);
 
   // user/file updates
   QObject::connect(_user.get(), &User::iconChanged, _widgetDocsBrowser, &DocsBrowser::setIcon);
@@ -147,7 +147,7 @@ void GuiManager::closeStacked() {
   emit quit();
 }
 
-void GuiManager::alert(Alert type, QString what) {
+void GuiManager::alert(Alert type, const QString &what) {
   //TODO show alert dialog or something
   debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + what);
 }
@@ -211,18 +211,18 @@ void GuiManager::docsBrowserEditAccount() {
 
 /* ### messages from server ### */
 
-void GuiManager::serverErrorResponse(QString reason) {
+void GuiManager::serverErrorResponse(const QString &reason) {
   //TODO basta cosi?
   alert(Alert::ERROR, reason);
 }
 
-void GuiManager::serverLoginResponse(QString token, int userId, std::optional<QString> icon) {
+void GuiManager::serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon) {
   debug("GuiManager::serverLoginResponse");
   _user->login(token, userId, icon);
   showDocsBrowser(true);
 }
 
-void GuiManager::serverNewUserResponse(QString token, int userId) {
+void GuiManager::serverNewUserResponse(const QString &token, int userId) {
   debug("GuiManager::serverNewUserResponse");
   //TODO
   _user->login(token, userId, std::nullopt);

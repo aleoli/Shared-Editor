@@ -21,7 +21,7 @@ public:
 private slots:
 
 signals:
-  void alert(Alert type, QString what);
+  void alert(Alert type, const QString &what);
 
 private:
     Ui::TextEditor *ui;
