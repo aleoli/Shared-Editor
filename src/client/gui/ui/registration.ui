@@ -27,13 +27,18 @@
     <string notr="true">background : #4e596f;</string>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
+    <item row="0" column="0">
      <widget class="QFrame" name="frame">
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="styleSheet">
-       <string notr="true">border-width: 1px;
-padding-top: 0px;
-margin-left: 40px;
-margin-right: 40px;
+       <string notr="true">padding-top: 0px;
+margin-left: 0px;
+margin-right: 0px;
 margin-bottom: 5px;</string>
       </property>
       <property name="frameShape">
@@ -43,94 +48,6 @@ margin-bottom: 5px;</string>
        <enum>QFrame::Plain</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item alignment="Qt::AlignHCenter">
-        <widget class="QPushButton" name="btn_changeProfile">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>140</width>
-           <height>67</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="toolTip">
-          <string>edit profile icon</string>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QPushButton{
-background-color: #f76163;
-border: 1px solid #f76163;
-border-radius: 30px;
-}
-
-QPushButton:hover{
-padding: -1px 1px 1px -1px;
-}
-
-QPushButton:pressed{
-padding: 1px -1px -1px 1px;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
-QPushButton:focus {
-   border: none;
-   outline: none;
-}</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="resources/res.qrc">
-           <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>59</width>
-           <height>59</height>
-          </size>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-         <property name="default">
-          <bool>false</bool>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
        <item>
         <layout class="QVBoxLayout" name="uname">
          <property name="rightMargin">
@@ -283,24 +200,115 @@ QCheckBox:focus {
          </property>
         </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="buttons">
-         <item>
-          <widget class="QPushButton" name="btn_signup">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="toolTip">
-            <string/>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="btn_changeProfile">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>201</width>
+        <height>201</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="toolTip">
+       <string>edit profile icon</string>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton{
+background-color: #f76163;
+border: 1px solid #f76163;
+border-radius: 100px;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="resources/res.qrc">
+        <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>200</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+      <property name="default">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <layout class="QVBoxLayout" name="buttons">
+      <item>
+       <widget class="QPushButton" name="btn_signup">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
 	background: #f76163;
     border-width: 1px;
     border-radius: 13px;
@@ -329,28 +337,28 @@ QPushButton:focus {
    border: none;
    outline: none;
 }</string>
-           </property>
-           <property name="text">
-            <string>SIGNUP</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_cancel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="toolTip">
-            <string/>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
+        </property>
+        <property name="text">
+         <string>SIGNUP</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_cancel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
     background: #242A38;
     border-width: 1px;
     border-radius: 13px;
@@ -379,16 +387,13 @@ QPushButton:focus {
    border: none;
    outline: none;
 }</string>
-           </property>
-           <property name="text">
-            <string>CANCEL</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
+        </property>
+        <property name="text">
+         <string>CANCEL</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
