@@ -113,6 +113,8 @@ private slots:
 
 private:
   void showWindow(MainWindow *window, bool clear = false);
+  void freezeWindow();
+  void unfreezeWindow();
 
   static std::shared_ptr<GuiManager> instance;
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
