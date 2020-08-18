@@ -15,6 +15,7 @@ protected:
   virtual void process_user() = 0;
   virtual void process_file_edit() = 0;
   virtual void process_file() = 0;
+  virtual void process_comment() = 0;
   virtual void process_filesystem() = 0;
 
   const Message& _m;

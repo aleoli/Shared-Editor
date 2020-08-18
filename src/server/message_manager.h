@@ -43,6 +43,11 @@ public:
   // per la modifica di un simbolo
   void updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
 
+  /* gestione commenti */
+  void addComment(quint64 clientId, int fileId, const QJsonObject& comment);
+  void deleteComment(quint64 clientId, int fileId, const QJsonObject& comment);
+  void updateComment(quint64 clientId, int fileId, const QJsonObject& comment);
+
   // chiusura fiel da parte del client -> rimozione da fileClients, NON dalla FifoMap
   void closeFile(quint64 clientId, int fileId, bool deleted=false);
 

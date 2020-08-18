@@ -136,6 +136,12 @@ namespace se_exceptions {
       explicit FileNotFoundException(QString str): MessageManagerException(std::move(str)) {}
   };
 
+  // Comment exceptions
+  class CommentException : public SE_Exception {
+  public:
+      explicit CommentException(QString str): SE_Exception(std::move(str)) {}
+  };
+
   // MainThread exceptions
   class MainThreadException : public SE_Exception {
   public:
@@ -205,6 +211,8 @@ namespace se_exceptions {
       explicit ShareException(QString str): FileSystemException(std::move(str)) {}
   };
 
+
+  // Gui exceptions
   class GuiException : public SE_Exception {
   public:
       GuiException(QString str): SE_Exception(str) {}

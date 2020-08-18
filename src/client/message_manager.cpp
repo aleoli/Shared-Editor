@@ -22,7 +22,7 @@ std::shared_ptr<MessageManager> MessageManager::get() {
   return instance;
 }
 
-void MessageManager::process_data(QByteArray data) {
+void MessageManager::process_data(const QByteArray &data) {
 #if VERBOSE
   std::cout << "DATA: " << data.data() << std::endl;
 #endif
@@ -48,7 +48,7 @@ void MessageManager::process_data(QByteArray data) {
 
 // SLOT C->S
 
-void MessageManager::loginQuery(QString username, QString password) {
+void MessageManager::loginQuery(const QString &username, const QString &password) {
   Message m{Message::Type::USER, static_cast<int>(Message::UserAction::LOGIN),
     Message::Status::QUERY};
 
@@ -58,7 +58,7 @@ void MessageManager::loginQuery(QString username, QString password) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::logoutQuery(QString token) {
+void MessageManager::logoutQuery(const QString &token) {
   Message m{Message::Type::USER, static_cast<int>(Message::UserAction::LOGOUT),
     Message::Status::QUERY};
 
@@ -67,7 +67,7 @@ void MessageManager::logoutQuery(QString token) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::newUserQuery(QString username, QString password, QString pswRepeat) {
+void MessageManager::newUserQuery(const QString &username, const QString &password, const QString &pswRepeat) {
   Message m{Message::Type::USER, static_cast<int>(Message::UserAction::NEW),
     Message::Status::QUERY};
 
@@ -78,8 +78,8 @@ void MessageManager::newUserQuery(QString username, QString password, QString ps
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::editUserQuery(QString token, std::optional<QString> nickname, std::optional<QString> oldPassword,
-  std::optional<QString> password, std::optional<QString> pswRepeat, std::optional<QString> icon) {
+void MessageManager::editUserQuery(const QString &token, const std::optional<QString> &nickname, const std::optional<QString> &oldPassword,
+  const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon) {
     Message m{Message::Type::USER, static_cast<int>(Message::UserAction::EDIT),
       Message::Status::QUERY};
 
@@ -100,7 +100,7 @@ void MessageManager::editUserQuery(QString token, std::optional<QString> nicknam
       emit send_data(m.toQByteArray());
 }
 
-void MessageManager::deleteUserQuery(QString token) {
+void MessageManager::deleteUserQuery(const QString &token) {
   Message m{Message::Type::USER, static_cast<int>(Message::UserAction::DELETE),
     Message::Status::QUERY};
 
@@ -109,7 +109,7 @@ void MessageManager::deleteUserQuery(QString token) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::newFileQuery(QString token, QString name, std::optional<int> dirId) {
+void MessageManager::newFileQuery(const QString &token, const QString &name, const std::optional<int> &dirId) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::NEW),
     Message::Status::QUERY};
 
@@ -122,7 +122,7 @@ void MessageManager::newFileQuery(QString token, QString name, std::optional<int
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::getFileQuery(QString token, int fileId) {
+void MessageManager::getFileQuery(const QString &token, int fileId) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::GET),
     Message::Status::QUERY};
 
@@ -132,7 +132,7 @@ void MessageManager::getFileQuery(QString token, int fileId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::closeFileQuery(QString token, int fileId) {
+void MessageManager::closeFileQuery(const QString &token, int fileId) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::CLOSE),
     Message::Status::QUERY};
 
@@ -142,7 +142,7 @@ void MessageManager::closeFileQuery(QString token, int fileId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::editFileQuery(QString token, int fileId, std::optional<QString> name) {
+void MessageManager::editFileQuery(const QString &token, int fileId, const std::optional<QString> &name) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::EDIT),
     Message::Status::QUERY};
 
@@ -155,7 +155,7 @@ void MessageManager::editFileQuery(QString token, int fileId, std::optional<QStr
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::deleteFileQuery(QString token, int fileId) {
+void MessageManager::deleteFileQuery(const QString &token, int fileId) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::DELETE),
     Message::Status::QUERY};
 
@@ -165,7 +165,7 @@ void MessageManager::deleteFileQuery(QString token, int fileId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::getLinkQuery(QString token, int fileId) {
+void MessageManager::getLinkQuery(const QString &token, int fileId) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::GET_LINK),
     Message::Status::QUERY};
 
@@ -175,7 +175,7 @@ void MessageManager::getLinkQuery(QString token, int fileId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::activateLinkQuery(QString token, QString link) {
+void MessageManager::activateLinkQuery(const QString &token, const QString &link) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::ACTIVATE_LINK),
     Message::Status::QUERY};
 
@@ -185,7 +185,7 @@ void MessageManager::activateLinkQuery(QString token, QString link) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localInsertQuery(QString token, int fileId, std::vector<Symbol> symbols) {
+void MessageManager::localInsertQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_INSERT),
     Message::Status::QUERY};
 
@@ -196,7 +196,7 @@ void MessageManager::localInsertQuery(QString token, int fileId, std::vector<Sym
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localDeleteQuery(QString token, int fileId, std::vector<SymbolId> ids) {
+void MessageManager::localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_DELETE),
     Message::Status::QUERY};
 
@@ -207,7 +207,7 @@ void MessageManager::localDeleteQuery(QString token, int fileId, std::vector<Sym
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localUpdateQuery(QString token, int fileId, std::vector<Symbol> symbols) {
+void MessageManager::localUpdateQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_UPDATE),
     Message::Status::QUERY};
 
@@ -219,7 +219,7 @@ void MessageManager::localUpdateQuery(QString token, int fileId, std::vector<Sym
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localMoveQuery(QString token, int fileId, SymbolId symbolId, int cursorPosition) {
+void MessageManager::localMoveQuery(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_MOVE),
     Message::Status::QUERY};
 
@@ -231,7 +231,7 @@ void MessageManager::localMoveQuery(QString token, int fileId, SymbolId symbolId
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::newDirQuery(QString token, QString name, std::optional<int> parentId) {
+void MessageManager::newDirQuery(const QString &token, const QString &name, const std::optional<int> &parentId) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::NEW_DIR),
     Message::Status::QUERY};
 
@@ -244,7 +244,7 @@ void MessageManager::newDirQuery(QString token, QString name, std::optional<int>
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::editDirQuery(QString token, int dirId, std::optional<QString> name, std::optional<int> parentId = std::nullopt) {
+void MessageManager::editDirQuery(const QString &token, int dirId, const std::optional<QString> &name, const std::optional<int> &parentId = std::nullopt) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::EDIT_DIR),
     Message::Status::QUERY};
 
@@ -260,7 +260,7 @@ void MessageManager::editDirQuery(QString token, int dirId, std::optional<QStrin
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::deleteDirQuery(QString token, int dirId) {
+void MessageManager::deleteDirQuery(const QString &token, int dirId) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::DELETE_DIR),
     Message::Status::QUERY};
 
@@ -270,7 +270,7 @@ void MessageManager::deleteDirQuery(QString token, int dirId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::getDirQuery(QString token, std::optional<int> dirId) {
+void MessageManager::getDirQuery(const QString &token, const std::optional<int> &dirId) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::GET_DIR),
     Message::Status::QUERY};
 
@@ -281,13 +281,46 @@ void MessageManager::getDirQuery(QString token, std::optional<int> dirId) {
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::moveFileQuery(QString token, int fileId, int dirId) {
+void MessageManager::moveFileQuery(const QString &token, int fileId, int dirId) {
   Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::MOVE_FILE),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
     m.setValue("dirId", dirId);
+
+    emit send_data(m.toQByteArray());
+}
+
+void MessageManager::commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment) {
+  Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_INSERT),
+    Message::Status::QUERY};
+
+    m.setValue("token", token);
+    m.setValue("fileId", fileId);
+    m.setValue("comment", File::commentToJsonObject(comment));
+
+    emit send_data(m.toQByteArray());
+}
+
+void MessageManager::commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment) {
+  Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_UPDATE),
+    Message::Status::QUERY};
+
+    m.setValue("token", token);
+    m.setValue("fileId", fileId);
+    m.setValue("comment", File::commentToJsonObject(comment));
+
+    emit send_data(m.toQByteArray());
+}
+
+void MessageManager::commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment) {
+  Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_DELETE),
+    Message::Status::QUERY};
+
+    m.setValue("token", token);
+    m.setValue("fileId", fileId);
+    m.setValue("comment", File::commentToJsonObject(comment));
 
     emit send_data(m.toQByteArray());
 }

@@ -182,6 +182,37 @@ void ServerMessageProcessor::process_file_edit() {
   }
 }
 
+void ServerMessageProcessor::process_comment() {
+  auto action = static_cast<Message::CommentAction>(_m.getAction());
+  bool isResponse = _m.getStatus() == Message::Status::RESPONSE;
+
+  switch(action) {
+    case Message::CommentAction::COMMENT_LOCAL_INSERT:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        newComment();
+      break;
+
+    case Message::CommentAction::COMMENT_LOCAL_UPDATE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        updateComment();
+      break;
+
+    case Message::CommentAction::COMMENT_LOCAL_DELETE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        deleteComment();
+      break;
+
+    default:
+      disconnect("Ricevuto messaggio con azione non valida");
+  }
+}
+
 void ServerMessageProcessor::process_filesystem() {
   auto action = static_cast<Message::FileSystemAction>(_m.getAction());
   bool isResponse = _m.getStatus() == Message::Status::RESPONSE;
@@ -477,6 +508,7 @@ void ServerMessageProcessor::getFile() {
     QJsonObject data;
     data["file"] = file.toJsonObject();
     data["charId"] = file_db.getCharId();
+    data["commentId"] = file_db.getCommentId();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::GET, Message::Status::RESPONSE, data};
     this->_has_resp = true;
@@ -751,6 +783,105 @@ void ServerMessageProcessor::localMove() {
     data["cursorPosition"] = _m.getInt("cursorPosition");
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_MOVE, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
+}
+
+
+
+void ServerMessageProcessor::newComment() {
+  info("NewComment query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
+  auto fileId = file_db.getPhysicalId();
+
+  auto comment = _m.getObject("comment");
+  this->_manager->addComment(this->_clientId, fileId, comment);
+
+  file_db.incCommentId();
+
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
+
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["comment"] = comment;
+    data["userId"] = session.getUserId();
+
+    auto msg = Message{Message::Type::COMMENT, (int) Message::CommentAction::COMMENT_REMOTE_INSERT, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
+}
+
+void ServerMessageProcessor::updateComment() {
+  info("UpdateComment query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
+  auto fileId = file_db.getPhysicalId();
+
+  auto comment = _m.getObject("comment");
+  this->_manager->updateComment(this->_clientId, fileId, comment);
+
+  file_db.incCommentId();
+
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
+
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["comment"] = comment;
+    data["userId"] = session.getUserId();
+
+    auto msg = Message{Message::Type::COMMENT, (int) Message::CommentAction::COMMENT_REMOTE_UPDATE, Message::Status::QUERY, data};
+    this->_manager->send_data(cl, msg.toQByteArray());
+  }
+
+  this->_has_resp = false;
+}
+
+void ServerMessageProcessor::deleteComment() {
+  info("DeleteComment query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
+  auto fileId = file_db.getPhysicalId();
+
+  auto comment = _m.getObject("comment");
+  this->_manager->deleteComment(this->_clientId, fileId, comment);
+
+  auto clients = this->_manager->getClientsInFile(fileId);
+  for(auto &cl: clients) {
+    if(cl == this->_clientId) {
+      continue;
+    }
+    auto userId = this->_manager->getUserId(cl);
+
+    QJsonObject data;
+    data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
+    data["comment"] = comment;
+    data["userId"] = session.getUserId();
+
+    auto msg = Message{Message::Type::COMMENT, (int) Message::CommentAction::COMMENT_REMOTE_DELETE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());
   }
 

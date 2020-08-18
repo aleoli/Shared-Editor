@@ -19,7 +19,7 @@ void ClientMessageProcessor::process_error() {
 
     emit _manager->errorResponse(reason);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -173,6 +173,37 @@ void ClientMessageProcessor::process_file_edit() {
   }
 }
 
+void ClientMessageProcessor::process_comment() {
+  auto action = static_cast<Message::CommentAction>(_m.getAction());
+  bool isResponse = _m.getStatus() == Message::Status::RESPONSE;
+
+  switch(action) {
+    case Message::CommentAction::COMMENT_REMOTE_INSERT:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        newComment();
+      break;
+
+    case Message::CommentAction::COMMENT_REMOTE_UPDATE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        updateComment();
+      break;
+
+    case Message::CommentAction::COMMENT_REMOTE_DELETE:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        deleteComment();
+      break;
+
+    default:
+      disconnect("Ricevuto messaggio con azione non valida");
+  }
+}
+
 void ClientMessageProcessor::process_filesystem() {
   auto action = static_cast<Message::FileSystemAction>(_m.getAction());
   bool isResponse = _m.getStatus() == Message::Status::RESPONSE;
@@ -218,7 +249,7 @@ void ClientMessageProcessor::process_filesystem() {
   }
 }
 
-void ClientMessageProcessor::disconnect(QString why) {
+void ClientMessageProcessor::disconnect(const QString& why) {
   error(why);
   emit _manager->connection_error();
 }
@@ -235,7 +266,7 @@ void ClientMessageProcessor::login() {
 
     emit _manager->loginResponse(token, userId, nickname, icon);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -249,7 +280,7 @@ void ClientMessageProcessor::newUser() {
 
     emit _manager->newUserResponse(token, userId);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -274,7 +305,7 @@ void ClientMessageProcessor::newFile() {
 
     emit _manager->newFileResponse(fileId);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -288,7 +319,7 @@ void ClientMessageProcessor::getFile() {
 
     emit _manager->getFileResponse(File::fromJsonObject(file), charId);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -313,7 +344,7 @@ void ClientMessageProcessor::fileDeleted() {
 
     emit _manager->fileDeletedQuery(fileId);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -326,7 +357,7 @@ void ClientMessageProcessor::getLink() {
 
     emit _manager->getLinkResponse(link);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -340,7 +371,7 @@ void ClientMessageProcessor::activateLink() {
 
     emit _manager->activateLinkResponse(FSElement::fromJsonObject(element), File::fromJsonObject(file));
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -355,7 +386,7 @@ void ClientMessageProcessor::remoteInsert() {
 
     emit _manager->remoteInsertQuery(fileId, userId, utils::jsonArrayToVector<Symbol>(symbols));
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -370,7 +401,7 @@ void ClientMessageProcessor::remoteDelete() {
 
     emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToVector<SymbolId>(ids));
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -385,7 +416,7 @@ void ClientMessageProcessor::remoteUpdate() {
 
     emit _manager->remoteUpdateQuery(fileId, userId, utils::jsonArrayToVector<Symbol>(symbols));
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -400,7 +431,7 @@ void ClientMessageProcessor::userConnected() {
 
     emit _manager->userConnectedQuery(fileId, userId, username);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -414,7 +445,7 @@ void ClientMessageProcessor::userDisconnected() {
 
     emit _manager->userDisconnectedQuery(fileId, userId);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -430,7 +461,7 @@ void ClientMessageProcessor::remoteMove() {
 
     emit _manager->remoteMoveQuery(fileId, userId, SymbolId::fromJsonObject(symbolId), cursorPosition);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -443,7 +474,7 @@ void ClientMessageProcessor::newDir() {
 
     emit _manager->newDirResponse(dirId);
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -468,7 +499,7 @@ void ClientMessageProcessor::getDir() {
 
     emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements));
   }
-  catch(SE_Exception e) {
+  catch(SE_Exception& e) {
     disconnect(e.what());
   }
 }
@@ -477,4 +508,49 @@ void ClientMessageProcessor::moveFile() {
   info("FILESYSTEM::MOVE_FILE response received");
 
   emit _manager->moveFileResponse();
+}
+
+void ClientMessageProcessor::newComment() {
+  info("COMMENT::REMOTE_INSERT query received");
+
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto userId = _m.getInt("userId");
+    auto comment = _m.getObject("comment");
+
+    emit _manager->commentRemoteInsertQuery(fileId, userId, File::commentFromJsonObject(comment));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
+}
+
+void ClientMessageProcessor::updateComment() {
+  info("COMMENT::REMOTE_UPDATE query received");
+
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto userId = _m.getInt("userId");
+    auto comment = _m.getObject("comment");
+
+    emit _manager->commentRemoteUpdateQuery(fileId, userId, File::commentFromJsonObject(comment));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
+}
+
+void ClientMessageProcessor::deleteComment() {
+  info("COMMENT::REMOTE_DELETE query received");
+
+  try {
+    auto fileId = _m.getInt("fileId");
+    auto userId = _m.getInt("userId");
+    auto comment = _m.getObject("comment");
+
+    emit _manager->commentRemoteDeleteQuery(fileId, userId, File::commentFromJsonObject(comment));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
 }
