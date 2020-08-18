@@ -104,7 +104,6 @@ QMenu::separator {
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="separator"/>
     <addaction name="actionImport"/>
     <addaction name="actionCreate_Copy"/>
     <addaction name="actionDownload"/>
@@ -485,7 +484,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </attribute>
    <widget class="QWidget" name="contents_comments"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="options">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
@@ -495,7 +494,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="minimumSize">
     <size>
      <width>1000</width>
-     <height>44</height>
+     <height>50</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -528,7 +527,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <attribute name="dockWidgetArea">
     <number>4</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QWidget" name="options_contents">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item alignment="Qt::AlignLeft">
       <widget class="QPushButton" name="btn_undo">
@@ -2176,6 +2175,214 @@ QToolTip{
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>show comments</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: #242A38;
+    border-width: 0px;
+    border-radius: 5px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #4E596F;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>share</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: #242A38;
+    border-width: 0px;
+    border-radius: 5px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #4E596F;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>show connected users</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: #242A38;
+    border-width: 0px;
+    border-radius: 5px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #4E596F;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_logout">
+       <property name="minimumSize">
+        <size>
+         <width>38</width>
+         <height>38</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>38</width>
+         <height>38</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+background: #4e596f;
+border: 0px solid #242a38;
+border-radius: 19px;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed {
+padding: 1px -1px -1px 1px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>26</height>
+        </size>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
