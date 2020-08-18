@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>16777215</width>
-    <height>16777215</height>
+    <width>598</width>
+    <height>428</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,12 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
      <widget class="QFrame" name="loginForm">
+      <property name="maximumSize">
+       <size>
+        <width>700</width>
+        <height>400</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">background: rgba(255, 170, 0, 0);
 margin: 0 60 10 60px;</string>

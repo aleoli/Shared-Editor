@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>689</width>
-    <height>464</height>
+    <width>749</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -298,66 +298,25 @@ margin-bottom: 5px;</string>
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="uname_newPwd">
-         <property name="topMargin">
-          <number>0</number>
-         </property>
+        <layout class="QVBoxLayout" name="pwd">
          <item>
-          <layout class="QVBoxLayout" name="uname">
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_uname">
-             <property name="styleSheet">
-              <string notr="true">QLabel{
-	text-decoration: none;
-	background: rgba(0,0,0,0);
-	margin-left: 0px;
-	margin-bottom: 0px;
-}</string>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Username&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_uname">
-             <property name="styleSheet">
-              <string notr="true">background: white;
-border:1px solid white;
-border-radius: 9px;
-padding: 1 8px;
-margin: 0 20 20 0px;
-color: #242A38;
-font: &quot;Segoe UI Emoji&quot;;
-selection-background-color: #f76163;</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="pwd">
-           <item>
-            <widget class="QLabel" name="label_pwd">
-             <property name="styleSheet">
-              <string notr="true">QLabel{;
+          <widget class="QLabel" name="label_pwd">
+           <property name="styleSheet">
+            <string notr="true">QLabel{;
 	background: rgba(0,0,0,0);
 	margin-left: 20px;
 	margin-bottom: 0px;
 }</string>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Actual Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_pwd">
-             <property name="styleSheet">
-              <string notr="true">background: white;
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Actual Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_pwd">
+           <property name="styleSheet">
+            <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
@@ -365,82 +324,40 @@ margin: 0 0 20 20px;
 color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-             </property>
-             <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="pwd_CnfrmPwd">
+        <layout class="QVBoxLayout" name="cnfrmPwd">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
-          <layout class="QVBoxLayout" name="newPwd">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetDefaultConstraint</enum>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_newPwd">
-             <property name="styleSheet">
-              <string notr="true">QLabel{;
-	background: rgba(0,0,0,0);
-	margin-left: 0px;
-	margin-bottom: 0px;
-}</string>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;New  Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_newPwd">
-             <property name="styleSheet">
-              <string notr="true">background: white;
-border:1px solid white;
-border-radius: 9px;
-padding: 1 8px;
-margin: 0 20 20 0px;
-color: #242A38;
-font: &quot;Segoe UI Emoji&quot;;
-selection-background-color: #f76163;</string>
-             </property>
-             <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="cnfrmPwd">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetDefaultConstraint</enum>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_cnfrmPwd">
-             <property name="styleSheet">
-              <string notr="true">QLabel{;
+          <widget class="QLabel" name="label_cnfrmPwd">
+           <property name="styleSheet">
+            <string notr="true">QLabel{;
 	background: rgba(0,0,0,0);
 	margin-left: 20px;
 	margin-bottom: 0px;
 }</string>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_cnfrmPwd">
-             <property name="styleSheet">
-              <string notr="true">background: white;
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Confirm Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_cnfrmPwd">
+           <property name="styleSheet">
+            <string notr="true">background: white;
 border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
@@ -448,17 +365,53 @@ margin: 0 0 20 20px;
 color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-             </property>
-             <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
-       <item alignment="Qt::AlignLeft">
+       <item>
+        <layout class="QVBoxLayout" name="newPwd">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_newPwd">
+           <property name="styleSheet">
+            <string notr="true">QLabel{;
+	background: rgba(0,0,0,0);
+	margin-left: 20px;
+	margin-bottom: 0px;
+}</string>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;New  Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_newPwd">
+           <property name="styleSheet">
+            <string notr="true">background: white;
+border:1px solid white;
+border-radius: 9px;
+padding: 1 8px;
+margin: 0 0 20 20px;
+color: #242A38;
+font: &quot;Segoe UI Emoji&quot;;
+selection-background-color: #f76163;</string>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QCheckBox" name="checkBox_showPasswords">
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
@@ -476,8 +429,7 @@ QCheckBox {
     spacing: 5px;
 	font-size: 11pt;
 	color:white;
-	margin-bottom: 0px;
-	margin-left: 0px;
+	margin: 0 0 0 20px;
 }
 
 QCheckBox::indicator {
@@ -506,6 +458,12 @@ QCheckBox::indicator:checked {
      <layout class="QVBoxLayout" name="buttons_checkbox">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <property name="leftMargin">
+       <number>20</number>
+      </property>
+      <property name="rightMargin">
+       <number>20</number>
       </property>
       <item>
        <widget class="QPushButton" name="btn_save">
@@ -803,6 +761,44 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
         </property>
         <property name="text">
          <string>CANCEL</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+	background: #f76163;
+    border-width: 1px;
+    border-radius: 13px;
+    border-color: #f76163;
+    font: 12pt;
+    color: white;
+    padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 15px;
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+}
+
+QPushButton:pressed {
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+        </property>
+        <property name="text">
+         <string>DELETE ACCOUNT</string>
         </property>
        </widget>
       </item>
