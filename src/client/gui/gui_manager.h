@@ -58,6 +58,13 @@ signals:
   void getDirQuery(const QString &token, const std::optional<int> &dirId = std::nullopt);
   void moveFileQuery(const QString &token, int fileId, int dirId);
 
+  void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
+  void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
+  void commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment);
+
+  void serverGetDirResponse(const std::vector<FSElement> &elements);
+  void serverNewDirResponse(int id);
+
 public slots:
   void closeStacked();
   void alert(Alert type, const QString &what, const QString &title = "");

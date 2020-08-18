@@ -42,6 +42,6 @@ file(GLOB src_files
     "dialogs/*.cpp"
 )
 
-add_executable(client ${src_files})
+add_executable(client ${src_files} docsbrowser/docwidget.cpp docsbrowser/docwidget.h docsbrowser/docwidget_folder.cpp docsbrowser/docwidget_folder.h)
 
 target_link_libraries(client ${LIBRARIES} pthread)

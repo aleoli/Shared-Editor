@@ -112,6 +112,11 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::editAccount, this, &GuiManager::docsBrowserEditAccount);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::newFile, this, &GuiManager::docsBrowserNewFile);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::activateLink, this, &GuiManager::docsBrowserActivateLink);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::getDir, this, &GuiManager::getDirQuery);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::newDir, this, &GuiManager::newDirQuery);
+
+  QObject::connect(this, &GuiManager::serverGetDirResponse, _widgetDocsBrowser, &DocsBrowser::showDir);
+  QObject::connect(this, &GuiManager::serverNewDirResponse, _widgetDocsBrowser, &DocsBrowser::changeDir);
 
   //TextEditor
   QObject::connect(_widgetTextEditor, &TextEditor::share, this, &GuiManager::textEditorShare);
@@ -165,6 +170,8 @@ void GuiManager::connectServerToClient() {
 
   QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
   QObject::connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiManager::serverActivateLinkResponse);
+  QObject::connect(_manager.get(), &MessageManager::getDirResponse, this, &GuiManager::serverGetDirResponse);
+  QObject::connect(_manager.get(), &MessageManager::newDirResponse, this, &GuiManager::serverNewDirResponse);
   QObject::connect(_manager.get(), &MessageManager::deleteFileResponse, this, &GuiManager::serverDeleteFileResponse);
 
   QObject::connect(_manager.get(), &MessageManager::getLinkResponse, this, &GuiManager::serverGetLinkResponse);
