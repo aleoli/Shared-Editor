@@ -108,6 +108,7 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::logout, this, &GuiManager::docsBrowserLogout);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::editAccount, this, &GuiManager::docsBrowserEditAccount);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::newFile, this, &GuiManager::docsBrowserNewFile);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::activateLink, this, &GuiManager::docsBrowserActivateLink);
 
 
   //TextEditor
@@ -149,10 +150,13 @@ void GuiManager::connectClientToServer() {
 void GuiManager::connectServerToClient() {
   //Comunicazioni Server -> Client
   QObject::connect(_manager.get(), &MessageManager::errorResponse, this, &GuiManager::serverErrorResponse);
+
   QObject::connect(_manager.get(), &MessageManager::loginResponse, this, &GuiManager::serverLoginResponse);
   QObject::connect(_manager.get(), &MessageManager::newUserResponse, this, &GuiManager::serverNewUserResponse);
   QObject::connect(_manager.get(), &MessageManager::editUserResponse, this, &GuiManager::serverEditUserResponse);
+
   QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
+  QObject::connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiManager::serverActivateLinkResponse);
 }
 
 void GuiManager::connected() {
@@ -255,6 +259,11 @@ void GuiManager::docsBrowserNewFile(const QString &token, const QString &name, c
   emit newFileQuery(token, name, dirId);
 }
 
+void GuiManager::docsBrowserActivateLink(const QString &token, const QString &link) {
+  freezeWindow();
+  emit activateLinkQuery(token, link);
+}
+
 /* ### MESSAGES FROM SERVER ### */
 
 void GuiManager::serverErrorResponse(const QString &reason) {
@@ -288,6 +297,14 @@ void GuiManager::serverEditUserResponse() {
 void GuiManager::serverNewFileResponse(int fileId) {
   debug("GuiManager::serverNewFileResponse");
   _user->openFile(fileId);
+  unfreezeWindow();
+  showWindow(_widgetTextEditor, true);
+}
+
+void GuiManager::serverActivateLinkResponse(const FSElement &element, const File &file) {
+  debug("GuiManager::serverActivateLinkResponse");
+  //TODO questo FSElement va passato al docsbrowser che lo mette nella view
+  _user->openFile(element.getId(), file);
   unfreezeWindow();
   showWindow(_widgetTextEditor, true);
 }
