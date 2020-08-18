@@ -17,7 +17,7 @@ public:
 
 public slots:
     virtual void clear();
-    
+
 private:
     Ui::Landing *ui;
 };
