@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+
+<qresource prefix="/imgs">
+    <file alias="loading">loading.gif</file>
+</qresource>
+
+</RCC>

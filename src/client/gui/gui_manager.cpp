@@ -157,7 +157,6 @@ void GuiManager::connectServerToClient() {
 
 void GuiManager::connected() {
   info("Connesso al server");
-  //showLogin();
   showWindow(_widgetLogin, true);
 }
 
@@ -196,12 +195,20 @@ void GuiManager::showWindow(MainWindow *window, bool clear) {
   _stackedWidget->setCurrentWidget(window);
 }
 
+void GuiManager::freezeWindow() {
+  auto widget = static_cast<MainWindow *>(_stackedWidget->currentWidget());
+  widget->freeze();
+}
+
+void GuiManager::unfreezeWindow() {
+  auto widget = static_cast<MainWindow *>(_stackedWidget->currentWidget());
+  widget->unfreeze();
+}
+
 /* ### LOGIN ### */
 
 void GuiManager::loginLogin(const QString &username, const QString &password) {
-  auto widget = static_cast<MainWindow *>(_stackedWidget->currentWidget());
-  widget->freeze();
-
+  freezeWindow();
   emit loginQuery(username, password);
 }
 
@@ -216,14 +223,14 @@ void GuiManager::registrationCancel() {
 }
 
 void GuiManager::registrationSignup(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon) {
-  //TODO freeze
+  freezeWindow();
   emit newUserQuery(username, password, pswRepeat, icon);
 }
 
 /* ### EDIT ### */
 void GuiManager::editSave(const QString &token, const std::optional<QString> &oldPassword,
   const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon) {
-    //TODO freeze
+    freezeWindow();
     emit editUserQuery(token, oldPassword, password, pswRepeat, icon);
 }
 
@@ -244,19 +251,21 @@ void GuiManager::docsBrowserEditAccount() {
 }
 
 void GuiManager::docsBrowserNewFile(const QString &token, const QString &name, const std::optional<int> &dirId) {
+  freezeWindow();
   emit newFileQuery(token, name, dirId);
 }
 
-/* ### messages from server ### */
+/* ### MESSAGES FROM SERVER ### */
 
 void GuiManager::serverErrorResponse(const QString &reason) {
-  //TODO basta cosi?
+  unfreezeWindow();
   alert(Alert::ERROR, reason);
 }
 
 void GuiManager::serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon) {
   debug("GuiManager::serverLoginResponse");
   _user->login(token, userId, icon);
+  unfreezeWindow();
   showWindow(_widgetEdit, true); // to fix small icon bug in Edit when launched first time
   showWindow(_widgetDocsBrowser, true);
 }
@@ -264,6 +273,7 @@ void GuiManager::serverLoginResponse(const QString &token, int userId, const std
 void GuiManager::serverNewUserResponse(const QString &token, int userId) {
   debug("GuiManager::serverNewUserResponse");
   _user->login(token, userId, std::nullopt);
+  unfreezeWindow();
   showWindow(_widgetEdit, true); // to fix small icon bug in Edit when launched first time
   showWindow(_widgetDocsBrowser, true);
 }
@@ -271,11 +281,13 @@ void GuiManager::serverNewUserResponse(const QString &token, int userId) {
 void GuiManager::serverEditUserResponse() {
   debug("GuiManager::serverEditUserResponse");
   _user->tempToPermanentIcon();
+  unfreezeWindow();
   showWindow(_widgetDocsBrowser); //TODO ?
 }
 
 void GuiManager::serverNewFileResponse(int fileId) {
   debug("GuiManager::serverNewFileResponse");
   _user->openFile(fileId);
+  unfreezeWindow();
   showWindow(_widgetTextEditor, true);
 }

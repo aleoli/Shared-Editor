@@ -18,6 +18,7 @@ include_directories(texteditor)
 file(GLOB src_files
     "*.h"
     "*.cpp"
+    "res/*.qrc"
     "../*.h"
     "../*.cpp"
     "../../*.h"

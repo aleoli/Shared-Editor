@@ -3,6 +3,8 @@
 #include <QMainWindow>
 #include <QWidget>
 #include <QString>
+#include <QLabel>
+#include <QMovie>
 
 #include <memory>
 
@@ -25,4 +27,10 @@ signals:
 
 protected:
   std::shared_ptr<User> _user;
+
+private:
+  void initLoading();
+
+  QLabel *_loading{};
+  std::shared_ptr<QMovie> _movie;
 };
