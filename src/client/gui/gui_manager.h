@@ -74,12 +74,7 @@ private slots:
   void serverNewFileResponse(int fileId);
 
 private:
-  // show widgets
-  void showRegistration(bool clear = false);
-  void showDocsBrowser(bool clear = false);
-  void showLogin(bool clear = false);
-  void showEdit(bool clear = false);
-  void showTextEditor(bool clear = false);
+  void showWindow(MainWindow *window, bool clear = false);
 
   static std::shared_ptr<GuiManager> instance;
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
@@ -96,7 +91,7 @@ private:
   MyStackedWidget *_stackedWidget;
 
   //finestre
-  Landing *_widgetLanding;
+  MainWindow *_widgetLanding;
   Login *_widgetLogin;
   DocsBrowser *_widgetDocsBrowser;
   Edit *_widgetEdit;

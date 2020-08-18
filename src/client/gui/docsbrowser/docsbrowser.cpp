@@ -4,9 +4,8 @@
 #include "utils.h"
 
 DocsBrowser::DocsBrowser(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::DocsBrowser),
-    _user(User::get())
+    MainWindow(parent),
+    ui(new Ui::DocsBrowser)
 {
     ui->setupUi(this);
 

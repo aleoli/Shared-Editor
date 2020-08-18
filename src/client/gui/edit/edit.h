@@ -1,13 +1,12 @@
 #pragma once
 
-#include <QMainWindow>
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QPushButton>
 
 #include <optional>
-#include <memory>
 
+#include "main_window.h"
 #include "alert_messages.h"
 #include "user.h"
 
@@ -15,7 +14,7 @@ namespace Ui {
 class Edit;
 }
 
-class Edit : public QMainWindow
+class Edit : public MainWindow
 {
     Q_OBJECT
 
@@ -23,7 +22,8 @@ public:
     explicit Edit(QWidget *parent = nullptr);
     ~Edit();
 
-    void clear();
+public slots:
+    virtual void clear();
 
 public slots:
   void setIcon();
@@ -31,7 +31,6 @@ public slots:
 signals:
   void save(const QString &token, const std::optional<QString> &password, const std::optional<QString> &newPsw, const std::optional<QString> &newPswRepeat, const std::optional<QString> &icon);
   void cancel();
-  void alert(Alert type, const QString &what);
 
 private slots:
   void _showPasswords(int state);
@@ -48,6 +47,4 @@ private:
   QLineEdit *_widgetPassword, *_widgetNewPassword, *_widgetNewPasswordRepeat;
   QCheckBox *_widgetShowPasswords;
   QPushButton *_widgetSave, *_widgetCancel, *_widgetIcon;
-
-  std::shared_ptr<User> _user;
 };

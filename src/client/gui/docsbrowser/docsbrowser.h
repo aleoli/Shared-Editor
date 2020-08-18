@@ -1,20 +1,18 @@
 #pragma once
 
-#include <QMainWindow>
-
 #include "alert_messages.h"
 #include "user.h"
+#include "main_window.h"
 
 #include <QPushButton>
 
-#include <memory>
 #include <optional>
 
 namespace Ui {
 class DocsBrowser;
 }
 
-class DocsBrowser : public QMainWindow
+class DocsBrowser : public MainWindow
 {
     Q_OBJECT
 
@@ -22,13 +20,13 @@ public:
     explicit DocsBrowser(QWidget *parent = nullptr);
     ~DocsBrowser();
 
-    void clear();
+public slots:
+    virtual void clear();
 
 public slots:
     void setIcon();
 
 signals:
-  void alert(Alert type, const QString &what);
   void logout(const QString &token);
   void editAccount();
   void newFile(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
@@ -43,6 +41,4 @@ private:
 
     QPushButton *_widgetAccount, *_widgetNewFile;
     QAction *_actionLogout;
-
-    std::shared_ptr<User> _user;
 };

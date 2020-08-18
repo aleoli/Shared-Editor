@@ -6,11 +6,9 @@
 
 #include <QFileDialog>
 
-
 Registration::Registration(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::Registration),
-    _user(User::get())
+    MainWindow(parent),
+    ui(new Ui::Registration)
 {
     ui->setupUi(this);
 

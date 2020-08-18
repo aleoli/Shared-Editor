@@ -124,7 +124,8 @@ void GuiManager::connectServerToClient() {
 
 void GuiManager::connected() {
   info("Connesso al server");
-  showLogin();
+  //showLogin();
+  showWindow(_widgetLogin, true);
 }
 
 void GuiManager::connectionLost() {
@@ -155,65 +156,34 @@ void GuiManager::alert(Alert type, const QString &what) {
   debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + what);
 }
 
-/* ### show slots ### */
-
-//TODO servono dei check per queste funzioni di show?
-void GuiManager::showRegistration(bool clear) {
+void GuiManager::showWindow(MainWindow *window, bool clear) {
   if(clear)
-    _widgetRegistration->clear();
+    window->clear();
 
-  _stackedWidget->setCurrentWidget(_widgetRegistration);
-}
-
-void GuiManager::showDocsBrowser(bool clear) {
-  if(clear)
-    _widgetDocsBrowser->clear();
-
-  _stackedWidget->setCurrentWidget(_widgetDocsBrowser);
-}
-
-void GuiManager::showLogin(bool clear) {
-  if(clear)
-    _widgetLogin->clear();
-
-  _stackedWidget->setCurrentWidget(_widgetLogin);
-}
-
-void GuiManager::showEdit(bool clear) {
-  if(clear)
-    _widgetEdit->clear();
-
-  _stackedWidget->setCurrentWidget(_widgetEdit);
-}
-
-void GuiManager::showTextEditor(bool clear) {
-  if(clear)
-    _widgetTextEditor->clear();
-
-  _stackedWidget->setCurrentWidget(_widgetTextEditor);
+  _stackedWidget->setCurrentWidget(window);
 }
 
 /* ### other slots ### */
 void GuiManager::loginSignup() {
-  showRegistration(true);
+  showWindow(_widgetRegistration, true);
 }
 
 void GuiManager::registrationCancel() {
-  showLogin(true);
+  showWindow(_widgetLogin, true);
 }
 
 void GuiManager::editCancel() {
-  showDocsBrowser();
+  showWindow(_widgetDocsBrowser);
 }
 
 void GuiManager::docsBrowserLogout() {
   _manager.get()->logoutQuery(_user->getToken());
   _user->logout();
-  showLogin(true);
+  showWindow(_widgetLogin, true);
 }
 
 void GuiManager::docsBrowserEditAccount() {
-  showEdit(true);
+  showWindow(_widgetEdit, true);
 }
 
 /* ### messages from server ### */
@@ -226,25 +196,25 @@ void GuiManager::serverErrorResponse(const QString &reason) {
 void GuiManager::serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon) {
   debug("GuiManager::serverLoginResponse");
   _user->login(token, userId, icon);
-  showEdit(true); // to fix small icon bug in Edit when launched first time
-  showDocsBrowser(true);
+  showWindow(_widgetEdit, true); // to fix small icon bug in Edit when launched first time
+  showWindow(_widgetDocsBrowser, true);
 }
 
 void GuiManager::serverNewUserResponse(const QString &token, int userId) {
   debug("GuiManager::serverNewUserResponse");
   _user->login(token, userId, std::nullopt);
-  showEdit(true); // to fix small icon bug in Edit when launched first time
-  showDocsBrowser(true);
+  showWindow(_widgetEdit, true); // to fix small icon bug in Edit when launched first time
+  showWindow(_widgetDocsBrowser, true);
 }
 
 void GuiManager::serverEditUserResponse() {
   debug("GuiManager::serverEditUserResponse");
   _user->tempToPermanentIcon();
-  showDocsBrowser(); //TODO ?
+  showWindow(_widgetDocsBrowser); //TODO ?
 }
 
 void GuiManager::serverNewFileResponse(int fileId) {
   debug("GuiManager::serverNewFileResponse");
   _user->openFile(fileId);
-  showTextEditor(true);
+  showWindow(_widgetTextEditor, true);
 }
