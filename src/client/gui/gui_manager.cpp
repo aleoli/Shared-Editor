@@ -34,6 +34,7 @@ GuiManager::GuiManager(const SysConf &conf, QObject *parent): QObject(parent) {
   _stackedWidget->setCurrentWidget(_widgetLanding);
 
   connectWidgets();
+  connectClientToServer();
   connectServerToClient();
 }
 
@@ -92,25 +93,57 @@ void GuiManager::connectWidgets() {
   //TODO others e.g. icon in texteditor
 
   //Login
-  QObject::connect(_widgetLogin, &Login::login, _manager.get(), &MessageManager::loginQuery);
+  QObject::connect(_widgetLogin, &Login::login, this, &GuiManager::loginLogin);
   QObject::connect(_widgetLogin, &Login::signup, this, &GuiManager::loginSignup);
 
   //Registration
-  QObject::connect(_widgetRegistration, &Registration::signup, _manager.get(), &MessageManager::newUserQuery);
+  QObject::connect(_widgetRegistration, &Registration::signup, this, &GuiManager::registrationSignup);
   QObject::connect(_widgetRegistration, &Registration::cancel, this, &GuiManager::registrationCancel);
 
   // Edit
-  QObject::connect(_widgetEdit, &Edit::save, _manager.get(), &MessageManager::editUserQuery);
+  QObject::connect(_widgetEdit, &Edit::save, this, &GuiManager::editSave);
   QObject::connect(_widgetEdit, &Edit::cancel, this, &GuiManager::editCancel);
 
   //DocsBrowser
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::logout, this, &GuiManager::docsBrowserLogout);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::editAccount, this, &GuiManager::docsBrowserEditAccount);
-  QObject::connect(_widgetDocsBrowser, &DocsBrowser::newFile, _manager.get(), &MessageManager::newFileQuery);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::newFile, this, &GuiManager::docsBrowserNewFile);
 
 
   //TextEditor
   //TODO
+}
+
+void GuiManager::connectClientToServer() {
+  //Comunicazioni Client -> Server
+  QObject::connect(this, &GuiManager::loginQuery, _manager.get(), &MessageManager::loginQuery);
+  QObject::connect(this, &GuiManager::logoutQuery, _manager.get(), &MessageManager::logoutQuery);
+  QObject::connect(this, &GuiManager::newUserQuery, _manager.get(), &MessageManager::newUserQuery);
+  QObject::connect(this, &GuiManager::editUserQuery, _manager.get(), &MessageManager::editUserQuery);
+  QObject::connect(this, &GuiManager::deleteUserQuery, _manager.get(), &MessageManager::deleteUserQuery);
+
+  QObject::connect(this, &GuiManager::newFileQuery, _manager.get(), &MessageManager::newFileQuery);
+  QObject::connect(this, &GuiManager::getFileQuery, _manager.get(), &MessageManager::getFileQuery);
+  QObject::connect(this, &GuiManager::closeFileQuery, _manager.get(), &MessageManager::closeFileQuery);
+  QObject::connect(this, &GuiManager::editFileQuery, _manager.get(), &MessageManager::editFileQuery);
+  QObject::connect(this, &GuiManager::deleteFileQuery, _manager.get(), &MessageManager::deleteFileQuery);
+  QObject::connect(this, &GuiManager::getLinkQuery, _manager.get(), &MessageManager::getLinkQuery);
+  QObject::connect(this, &GuiManager::activateLinkQuery, _manager.get(), &MessageManager::activateLinkQuery);
+
+  QObject::connect(this, &GuiManager::localInsertQuery, _manager.get(), &MessageManager::localInsertQuery);
+  QObject::connect(this, &GuiManager::localDeleteQuery, _manager.get(), &MessageManager::localDeleteQuery);
+  QObject::connect(this, &GuiManager::localUpdateQuery, _manager.get(), &MessageManager::localUpdateQuery);
+  QObject::connect(this, &GuiManager::localMoveQuery, _manager.get(), &MessageManager::localMoveQuery);
+
+  QObject::connect(this, &GuiManager::newDirQuery, _manager.get(), &MessageManager::newDirQuery);
+  QObject::connect(this, &GuiManager::editDirQuery, _manager.get(), &MessageManager::editDirQuery);
+  QObject::connect(this, &GuiManager::deleteDirQuery, _manager.get(), &MessageManager::deleteDirQuery);
+  QObject::connect(this, &GuiManager::getDirQuery, _manager.get(), &MessageManager::getDirQuery);
+  QObject::connect(this, &GuiManager::moveFileQuery, _manager.get(), &MessageManager::moveFileQuery);
+
+  QObject::connect(this, &GuiManager::commentLocalInsertQuery, _manager.get(), &MessageManager::commentLocalInsertQuery);
+  QObject::connect(this, &GuiManager::commentLocalUpdateQuery, _manager.get(), &MessageManager::commentLocalUpdateQuery);
+  QObject::connect(this, &GuiManager::commentLocalDeleteQuery, _manager.get(), &MessageManager::commentLocalDeleteQuery);
 }
 
 void GuiManager::connectServerToClient() {
@@ -163,27 +196,55 @@ void GuiManager::showWindow(MainWindow *window, bool clear) {
   _stackedWidget->setCurrentWidget(window);
 }
 
-/* ### other slots ### */
+/* ### LOGIN ### */
+
+void GuiManager::loginLogin(const QString &username, const QString &password) {
+  auto widget = static_cast<MainWindow *>(_stackedWidget->currentWidget());
+  widget->freeze();
+
+  emit loginQuery(username, password);
+}
+
 void GuiManager::loginSignup() {
   showWindow(_widgetRegistration, true);
 }
 
+/* ### REGISTRATION ### */
+
 void GuiManager::registrationCancel() {
   showWindow(_widgetLogin, true);
+}
+
+void GuiManager::registrationSignup(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon) {
+  //TODO freeze
+  emit newUserQuery(username, password, pswRepeat, icon);
+}
+
+/* ### EDIT ### */
+void GuiManager::editSave(const QString &token, const std::optional<QString> &oldPassword,
+  const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon) {
+    //TODO freeze
+    emit editUserQuery(token, oldPassword, password, pswRepeat, icon);
 }
 
 void GuiManager::editCancel() {
   showWindow(_widgetDocsBrowser);
 }
 
-void GuiManager::docsBrowserLogout() {
-  _manager.get()->logoutQuery(_user->getToken());
+/* ### DOCSBROWSER ### */
+
+void GuiManager::docsBrowserLogout(const QString &token) {
+  emit logoutQuery(token);
   _user->logout();
   showWindow(_widgetLogin, true);
 }
 
 void GuiManager::docsBrowserEditAccount() {
   showWindow(_widgetEdit, true);
+}
+
+void GuiManager::docsBrowserNewFile(const QString &token, const QString &name, const std::optional<int> &dirId) {
+  emit newFileQuery(token, name, dirId);
 }
 
 /* ### messages from server ### */

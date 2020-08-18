@@ -51,6 +51,35 @@ public:
 signals:
   void quit();
 
+  void loginQuery(const QString &username, const QString &password);
+  void logoutQuery(const QString &token);
+  void newUserQuery(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon);
+  void editUserQuery(const QString &token, const std::optional<QString> &oldPassword, const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon);
+  void deleteUserQuery(const QString &token);
+
+  void newFileQuery(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
+  void getFileQuery(const QString &token, int fileId);
+  void closeFileQuery(const QString &token, int fileId);
+  void editFileQuery(const QString &token, int fileId, const std::optional<QString> &name);
+  void deleteFileQuery(const QString &token, int fileId);
+  void getLinkQuery(const QString &token, int fileId);
+  void activateLinkQuery(const QString &token, const QString &link);
+
+  void localInsertQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids);
+  void localUpdateQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localMoveQuery(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
+
+  void newDirQuery(const QString &token, const QString &name, const std::optional<int> &parentId = std::nullopt);
+  void editDirQuery(const QString &token, int dirId, const std::optional<QString> &name, const std::optional<int> &parentId);
+  void deleteDirQuery(const QString &token, int dirId);
+  void getDirQuery(const QString &token, const std::optional<int> &dirId = std::nullopt);
+  void moveFileQuery(const QString &token, int fileId, int dirId);
+
+  void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
+  void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
+  void commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment);
+
 public slots:
   void closeStacked();
   void alert(Alert type, const QString &what);
@@ -60,10 +89,19 @@ private slots:
   void connected();
   void connectionLost();
 
+  // messages from windows
+  void loginLogin(const QString &username, const QString &password);
   void loginSignup();
+
+  void registrationSignup(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon);
   void registrationCancel();
+
+  void editSave(const QString &token, const std::optional<QString> &oldPassword,
+    const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon);
   void editCancel();
-  void docsBrowserLogout();
+
+  void docsBrowserNewFile(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
+  void docsBrowserLogout(const QString &token);
   void docsBrowserEditAccount();
 
   // messages from server
@@ -81,6 +119,7 @@ private:
 
   void initThreads(const SysConf &conf);
   void connectWidgets();
+  void connectClientToServer();
   void connectServerToClient();
 
   std::shared_ptr<MessageManager> _manager;
