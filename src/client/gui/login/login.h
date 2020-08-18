@@ -1,17 +1,17 @@
 #pragma once
 
-#include <QMainWindow>
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QPushButton>
 
+#include "main_window.h"
 #include "alert_messages.h"
 
 namespace Ui {
 class Login;
 }
 
-class Login : public QMainWindow
+class Login : public MainWindow
 {
     Q_OBJECT
 
@@ -19,12 +19,12 @@ public:
     explicit Login(QWidget *parent = nullptr);
     ~Login();
 
-    void clear();
+public slots:
+    virtual void clear();
 
 signals:
   void login(const QString &username, const QString &password);
   void signup();
-  void alert(Alert type, const QString &what);
 
 private slots:
   void _showPassword(int state);

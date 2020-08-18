@@ -5,7 +5,7 @@
 #include "user.h"
 
 Login::Login(QWidget *parent) :
-    QMainWindow(parent),
+    MainWindow(parent),
     ui(new Ui::Login)
 {
     ui->setupUi(this);
@@ -50,7 +50,7 @@ void Login::_login(bool checked) {
   debug("Login::_login " + username + " " + pwd);
 
   if(_checkFields(username, pwd)) {
-    User::get()->setUsername(username);
+    _user->setUsername(username);
     emit login(username, pwd);
   }
   else {

@@ -7,9 +7,8 @@
 #include "image_utils.h"
 
 Edit::Edit(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::Edit),
-    _user(User::get())
+    MainWindow(parent),
+    ui(new Ui::Edit)
 {
     ui->setupUi(this);
 

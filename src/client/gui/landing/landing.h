@@ -1,14 +1,13 @@
 #pragma once
 
-#include <QMainWindow>
-
 #include "alert_messages.h"
+#include "main_window.h"
 
 namespace Ui {
 class Landing;
 }
 
-class Landing : public QMainWindow
+class Landing : public MainWindow
 {
     Q_OBJECT
 
@@ -16,13 +15,9 @@ public:
     explicit Landing(QWidget *parent = nullptr);
     ~Landing();
 
-    void clear();
-
-private slots:
-
-signals:
-  void alert(Alert type, const QString &what);
-
+public slots:
+    virtual void clear();
+    
 private:
     Ui::Landing *ui;
 };

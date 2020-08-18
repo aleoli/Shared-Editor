@@ -1,13 +1,12 @@
 #pragma once
 
-#include <QMainWindow>
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QPushButton>
 
 #include <optional>
-#include <memory>
 
+#include "main_window.h"
 #include "alert_messages.h"
 #include "user.h"
 
@@ -15,7 +14,7 @@ namespace Ui {
 class Registration;
 }
 
-class Registration : public QMainWindow
+class Registration : public MainWindow
 {
     Q_OBJECT
 
@@ -23,14 +22,12 @@ public:
     explicit Registration(QWidget *parent = nullptr);
     ~Registration();
 
-    void clear();
-
-private slots:
+public slots:
+    virtual void clear();
 
 signals:
   void signup(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon);
   void cancel();
-  void alert(Alert type, const QString &what);
 
 private slots:
   void _showPasswords(int state);
@@ -46,6 +43,4 @@ private:
   QLineEdit *_widgetUsername, *_widgetPassword, *_widgetPasswordRepeat;
   QCheckBox *_widgetShowPasswords;
   QPushButton *_widgetSignup, *_widgetCancel, *_widgetIcon;
-
-  std::shared_ptr<User> _user;
 };
