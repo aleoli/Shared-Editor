@@ -11,10 +11,15 @@ DocsBrowser::DocsBrowser(QWidget *parent) :
 
     _widgetAccount = findChild<QPushButton *>("btn_logout");
     _widgetNewFile = findChild<QPushButton *>("btn_new_file");
+    _widgetSearchButton = findChild<QPushButton *>("btn_search");
+    _widgetSearch = findChild<QLineEdit *>("ledit_search");
+
     _actionLogout= findChild<QAction *>("actionLogout");
 
     connect(_widgetAccount, &QPushButton::clicked, this, &DocsBrowser::_account);
     connect(_widgetNewFile, &QPushButton::clicked, this, &DocsBrowser::_newFile);
+    connect(_widgetSearchButton, &QPushButton::clicked, this, &DocsBrowser::_search);
+
     connect(_actionLogout, &QAction::triggered, this, &DocsBrowser::_logout);
 }
 
@@ -47,4 +52,10 @@ void DocsBrowser::_newFile(bool checked) {
 
 void DocsBrowser::_logout(bool checked) {
   emit logout(_user->getToken());
+}
+
+void DocsBrowser::_search(bool checked) {
+  //TODO qua metto la logica per attivare un link, per i miei test, ovviamente cambiala
+  auto username = _widgetSearch->text();
+  emit activateLink(_user->getToken(), username);
 }

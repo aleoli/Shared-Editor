@@ -5,6 +5,7 @@
 #include "main_window.h"
 
 #include <QPushButton>
+#include <QLineEdit>
 
 #include <optional>
 
@@ -30,15 +31,18 @@ signals:
   void logout(const QString &token);
   void editAccount();
   void newFile(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
+  void activateLink(const QString &token, const QString &link);
 
 private slots:
   void _account(bool checked);
   void _newFile(bool checked);
   void _logout(bool checked);
+  void _search(bool checked);
 
 private:
     Ui::DocsBrowser *ui;
 
-    QPushButton *_widgetAccount, *_widgetNewFile;
+    QPushButton *_widgetAccount, *_widgetNewFile, *_widgetSearchButton;
+    QLineEdit *_widgetSearch;
     QAction *_actionLogout;
 };

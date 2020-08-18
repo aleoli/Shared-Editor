@@ -18,6 +18,7 @@
 #include "registration.h"
 #include "texteditor.h"
 #include "alert_messages.h"
+#include "FSElement.h"
 
 class MyStackedWidget: public QStackedWidget
 {
@@ -103,13 +104,17 @@ private slots:
   void docsBrowserNewFile(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
   void docsBrowserLogout(const QString &token);
   void docsBrowserEditAccount();
+  void docsBrowserActivateLink(const QString &token, const QString &link);
 
   // messages from server
   void serverErrorResponse(const QString &reason);
+
   void serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon);
   void serverNewUserResponse(const QString &token, int userId);
   void serverEditUserResponse();
+
   void serverNewFileResponse(int fileId);
+  void serverActivateLinkResponse(const FSElement &element, const File &file);
 
 private:
   void showWindow(MainWindow *window, bool clear = false);
