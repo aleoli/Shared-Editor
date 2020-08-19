@@ -1,12 +1,11 @@
 #pragma once
 
-#include <QStackedWidget>
 #include <QObject>
 #include <memory>
 #include <optional>
-#include <QCloseEvent>
 
 #include "message_manager.h"
+#include "stacked_widget.h"
 #include "server.h"
 #include "sys.h"
 #include "utils.h"
@@ -14,25 +13,10 @@
 #include "login.h"
 #include "docsbrowser.h"
 #include "edit.h"
-#include "landing.h"
 #include "registration.h"
 #include "texteditor.h"
 #include "alert_messages.h"
 #include "FSElement.h"
-
-class MyStackedWidget: public QStackedWidget
-{
-  Q_OBJECT
-
-public:
-  void closeEvent(QCloseEvent *bar) {
-    emit close();
-    bar->ignore();
-  }
-
-signals:
-  void close();
-};
 
 class GuiManager: public QObject
 {
@@ -134,10 +118,9 @@ private:
   QThread *_serverThread, *_managerThread;
 
   std::shared_ptr<User> _user;
-  MyStackedWidget *_stackedWidget;
+  StackedWidget *_stackedWidget;
 
   //finestre
-  MainWindow *_widgetLanding;
   Login *_widgetLogin;
   DocsBrowser *_widgetDocsBrowser;
   Edit *_widgetEdit;

@@ -2,6 +2,9 @@
 
 #include <QThread>
 #include <QString>
+#include <QRect>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include <optional>
 #include "exceptions.h"
@@ -13,10 +16,9 @@ std::shared_ptr<GuiManager> GuiManager::instance = nullptr;
 GuiManager::GuiManager(const SysConf &conf, QObject *parent): QObject(parent) {
   initThreads(conf);
 
-  _stackedWidget = new MyStackedWidget();
+  _stackedWidget = new StackedWidget();
   _user = User::get();
 
-  _widgetLanding = new Landing;
   _widgetLogin = new Login;
   _widgetDocsBrowser = new DocsBrowser;
   _widgetEdit = new Edit;
@@ -24,14 +26,11 @@ GuiManager::GuiManager(const SysConf &conf, QObject *parent): QObject(parent) {
   _widgetTextEditor = new TextEditor;
 
   // lo stacked prende l'ownership di queste finestre
-  _stackedWidget->addWidget(_widgetLanding);
   _stackedWidget->addWidget(_widgetLogin);
   _stackedWidget->addWidget(_widgetDocsBrowser);
   _stackedWidget->addWidget(_widgetEdit);
   _stackedWidget->addWidget(_widgetRegistration);
   _stackedWidget->addWidget(_widgetTextEditor);
-
-  _stackedWidget->setCurrentWidget(_widgetLanding);
 
   connectWidgets();
   connectClientToServer();
@@ -77,10 +76,9 @@ void GuiManager::initThreads(const SysConf &conf) {
 }
 
 void GuiManager::connectWidgets() {
-  QObject::connect(_stackedWidget, SIGNAL(close()), this, SLOT(closeStacked()));
+  QObject::connect(_stackedWidget, SIGNAL(quit()), this, SLOT(closeStacked()));
 
   // alerts
-  QObject::connect(_widgetLanding, &Landing::alert, this, &GuiManager::alert);
   QObject::connect(_widgetLogin, &Login::alert, this, &GuiManager::alert);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::alert, this, &GuiManager::alert);
   QObject::connect(_widgetEdit, &Edit::alert, this, &GuiManager::alert);
@@ -161,7 +159,7 @@ void GuiManager::connectServerToClient() {
 
 void GuiManager::connected() {
   info("Connesso al server");
-  showWindow(_widgetLogin, true);
+  _stackedWidget->show();
 }
 
 void GuiManager::connectionLost() {
@@ -177,7 +175,6 @@ void GuiManager::run() {
   info("GuiManager running");
   _serverThread->start();
   _managerThread->start();
-  _stackedWidget->show();
 }
 
 void GuiManager::closeStacked() {

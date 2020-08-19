@@ -7,6 +7,11 @@ MainWindow::MainWindow(QWidget *parent) :
     initLoading();
 }
 
+void MainWindow::closeEvent(QCloseEvent *bar) {
+  emit exit();
+  bar->ignore();
+}
+
 void MainWindow::initLoading() {
   _movie = std::make_shared<QMovie>(":/imgs/loading");
 

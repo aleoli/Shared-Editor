@@ -5,6 +5,7 @@
 #include <QString>
 #include <QLabel>
 #include <QMovie>
+#include <QCloseEvent>
 
 #include <memory>
 
@@ -16,6 +17,7 @@ class MainWindow : public QMainWindow {
 
 public:
   explicit MainWindow(QWidget *parent = nullptr);
+  void closeEvent(QCloseEvent *bar) override;
 
 public slots:
   virtual void clear() = 0;
@@ -24,6 +26,7 @@ public slots:
 
 signals:
   void alert(Alert type, const QString &what);
+  void exit();
 
 protected:
   std::shared_ptr<User> _user;
