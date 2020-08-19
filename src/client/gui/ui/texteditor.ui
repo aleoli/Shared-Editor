@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
+    <width>1113</width>
     <height>600</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1028</width>
+     <width>1113</width>
      <height>50</height>
     </rect>
    </property>
@@ -351,141 +351,11 @@ QMenu::separator {
     <addaction name="actionStrike"/>
     <addaction name="menuAlign"/>
    </widget>
-   <widget class="QMenu" name="menuShare">
-    <property name="geometry">
-     <rect>
-      <x>433</x>
-      <y>131</y>
-      <width>135</width>
-      <height>50</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="font">
-     <font>
-      <underline>false</underline>
-     </font>
-    </property>
-    <property name="contextMenuPolicy">
-     <enum>Qt::NoContextMenu</enum>
-    </property>
-    <property name="acceptDrops">
-     <bool>false</bool>
-    </property>
-    <property name="toolTip">
-     <string>share document</string>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::RightToLeft</enum>
-    </property>
-    <property name="title">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources/res.qrc">
-      <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
-    </property>
-    <property name="separatorsCollapsible">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuConnected">
-    <property name="layoutDirection">
-     <enum>Qt::RightToLeft</enum>
-    </property>
-    <property name="tearOffEnabled">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources/res.qrc">
-      <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuAccount">
-    <property name="minimumSize">
-     <size>
-      <width>20</width>
-      <height>20</height>
-     </size>
-    </property>
-    <property name="sizeIncrement">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="baseSize">
-     <size>
-      <width>0</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="font">
-     <font>
-      <kerning>true</kerning>
-     </font>
-    </property>
-    <property name="contextMenuPolicy">
-     <enum>Qt::NoContextMenu</enum>
-    </property>
-    <property name="toolTip">
-     <string>logout or edit account</string>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::RightToLeft</enum>
-    </property>
-    <property name="tearOffEnabled">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources/res.qrc">
-      <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
-    </property>
-    <property name="toolTipsVisible">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuHome">
-    <property name="tearOffEnabled">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="resources/res.qrc">
-      <normaloff>:/res/text-editor/home1.png</normaloff>
-      <normalon>:/res/text-editor/home1_on.png</normalon>
-      <activeon>:/res/text-editor/home1_on.png</activeon>
-      <selectedon>:/res/text-editor/home1_on.png</selectedon>:/res/text-editor/home1.png</iconset>
-    </property>
-    <property name="separatorsCollapsible">
-     <bool>true</bool>
-    </property>
-    <property name="toolTipsVisible">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <addaction name="menuHome"/>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuInsert"/>
    <addaction name="menuFormat"/>
-   <addaction name="menuShare"/>
-   <addaction name="menuConnected"/>
-   <addaction name="menuAccount"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="styleSheet">
@@ -629,7 +499,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
    <property name="minimumSize">
     <size>
-     <width>1113</width>
+     <width>1225</width>
      <height>70</height>
     </size>
    </property>
@@ -667,457 +537,23 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <property name="styleSheet">
      <string notr="true"/>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="20" rowspan="3">
-      <widget class="QPushButton" name="btn_mark">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>highlight selection</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/mark.png</normaloff>:/res/text-editor/mark.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="39" rowspan="3">
-      <widget class="QPushButton" name="btn_logout">
-       <property name="minimumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>logout or edit account</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-background: #4e596f;
-border: 0px solid #242a38;
-border-radius: 19px;
-}
-
-QPushButton:hover{
-padding: -1px 1px 1px -1px;
-}
-
-QPushButton:pressed {
-padding: 1px -1px -1px 1px;
-}
-
-QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>26</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="34">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="28" rowspan="3">
-      <widget class="QPushButton" name="btn_justify">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>justify</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/justify.png</normaloff>:/res/text-editor/justify.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="36" rowspan="3">
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>show comments</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: #242A38;
-    border-width: 0px;
-    border-radius: 5px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #4E596F;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="38" rowspan="3">
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>show connected users</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: #242A38;
-    border-width: 0px;
-    border-radius: 5px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #4E596F;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="13" rowspan="5" colspan="2">
-      <widget class="QLabel" name="label_separatorCL">
-       <property name="maximumSize">
-        <size>
-         <width>20</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="palette">
-        <palette>
-         <active>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>36</red>
-             <green>42</green>
-             <blue>56</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Button">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Base">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Window">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </active>
-         <inactive>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>36</red>
-             <green>42</green>
-             <blue>56</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Button">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Base">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Window">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </inactive>
-         <disabled>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>120</red>
-             <green>120</green>
-             <blue>120</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Button">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Base">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Window">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </disabled>
-        </palette>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::VLine</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" rowspan="2">
-      <widget class="QLineEdit" name="lineEdit">
-       <property name="maximumSize">
-        <size>
-         <width>71</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLineEdit {
-    border: 2px solid #242A38;
-    border-radius: 15px;
-    padding: 0 8px;
-    background: #4E596F;
-    selection-background-color: #F65964;
-	color: white;
-}</string>
-       </property>
-       <property name="frame">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>Doc name</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="pushButton_4">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btn_home">
        <property name="minimumSize">
         <size>
          <width>0</width>
          <height>50</height>
         </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>40</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>back to DocsBrowser</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton:focus {
@@ -1172,7 +608,362 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="0" column="9" rowspan="5" colspan="2">
+     <item>
+      <widget class="QLineEdit" name="ledit_rename">
+       <property name="maximumSize">
+        <size>
+         <width>71</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLineEdit {
+    border: 2px solid #242A38;
+    border-radius: 15px;
+    padding: 0 8px;
+    background: #4E596F;
+    selection-background-color: #F65964;
+	color: white;
+}</string>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Doc name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_rename">
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>rename</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="resources/res.qrc">:/res/text-editor/rename1.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_undo">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>undo</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+    padding-right: 2px;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/undo.png</normaloff>:/res/text-editor/undo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+Z</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_redo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="sizeIncrement">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>redo</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+    padding-left: 2px;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/redo.png</normaloff>:/res/text-editor/redo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+Shift+Z</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_cut">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>cut</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/cut.png</normaloff>:/res/text-editor/cut.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_copy">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>copy</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/copy.png</normaloff>:/res/text-editor/copy.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_paste">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>paste</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/paste.png</normaloff>:/res/text-editor/paste.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_separatorL">
        <property name="maximumSize">
         <size>
@@ -1318,353 +1109,101 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="0" column="26" rowspan="3">
-      <widget class="QPushButton" name="btn_alignC">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>align center</string>
-       </property>
+     <item>
+      <widget class="QFontComboBox" name="fontComboBox">
        <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
+        <string notr="true">QFontComboBox {
+    border: 1px solid  #4e596f;
     border-radius: 3px;
-    border-color: #f76163;
+    padding: 1px 18px 1px 3px;
+    min-width: 6em;
+	max-width: 10em;
+    color: #242A38;
+	background: #f76163;
+    margin: 0 0 0 0;
 }
 
-QPushButton:hover {
-background: #242A38;
+QFontComboBox:editable {
+    background: white;
 }
 
-QPushButton:pressed {
-background: #f76163;
+QFontComboBox:!editable {
+	background: #4e596f;
+    /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                  stop: 0 rgb(51, 51, 51), stop: 0.4 rgb(39, 39, 39),
+                                  stop: 0.5 rgb(32,32,32), stop: 1.0 rgb(38,38,38));*/
 }
 
-QToolTip{
-	background: none;
-	margin-left: 0px;
+QFontComboBox::drop-down:editable {
+	background: #f76163;
 	margin-right: 0px;
+	padding-left: 10px;
+}
+
+QFontComboBox:!editable:on {
+	background: blue;
+	margin-right: 0px;
+	margin-left: 5px;
+}
+
+QFontComboBox::drop-down:editable:on {
+	background: #4e596f;
+	margin-right: 0px;
+	margin-left: 5px;
+}
+
+QFontComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+    background-color: #4e596f;
+}
+
+QFontComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 8px; 
+    right: 3px;
+	left: 1px;
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+    background:#4e596f;
+}
+
+QFontComboBox::down-arrow {    
+	background: url(:/res/text-editor/dropdown-arrow.png);
+    height: 15px;
+	width: 22px;
+	padding-right: 3px;
+}
+
+QComboBox::down-arrow:on { /* shift the arrow when popup is open */
+	top: 1px;
+    left: 1px;
+}
+
+QListView#comboListView {
+    background: #4e596f;
+    color: white;
+    min-height: 90px;
+    margin: 0 0 0 0;
+}
+
+QListView#comboListView::item {
+	background: #4e596f;
+}
+
+QListView#comboListView::item:hover {
+    background-color: #4e596f;
 }</string>
        </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/align-center.png</normaloff>:/res/text-editor/align-center.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
+       <property name="currentFont">
+        <font>
+         <family>Segoe UI Emoji</family>
+        </font>
        </property>
       </widget>
      </item>
-     <item row="0" column="18" rowspan="3">
-      <widget class="QPushButton" name="btn_underline">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>underline</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/underline.png</normaloff>:/res/text-editor/underline.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="32" rowspan="3">
-      <widget class="QPushButton" name="btn_download">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>download document</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/download.png</normaloff>:/res/text-editor/download.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="29" rowspan="5" colspan="2">
-      <widget class="QLabel" name="label_separatorR">
-       <property name="maximumSize">
-        <size>
-         <width>20</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="palette">
-        <palette>
-         <active>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>36</red>
-             <green>42</green>
-             <blue>56</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Button">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Base">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Window">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </active>
-         <inactive>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>36</red>
-             <green>42</green>
-             <blue>56</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Button">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Base">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Window">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </inactive>
-         <disabled>
-          <colorrole role="WindowText">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>120</red>
-             <green>120</green>
-             <blue>120</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Button">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Base">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-          <colorrole role="Window">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>78</red>
-             <green>89</green>
-             <blue>111</blue>
-            </color>
-           </brush>
-          </colorrole>
-         </disabled>
-        </palette>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::VLine</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="17" rowspan="3">
-      <widget class="QPushButton" name="btn_strike">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>strikethrough</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/strike.png</normaloff>:/res/text-editor/strike.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="12" rowspan="3">
+     <item>
       <widget class="QComboBox" name="comboBox">
        <property name="styleSheet">
         <string notr="true">QComboBox {
@@ -1804,413 +1343,7 @@ QListView#comboListView::item:hover {
        </item>
       </widget>
      </item>
-     <item row="3" column="22">
-      <widget class="QLabel" name="label_color_txt">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>5</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="37" rowspan="3">
-      <widget class="QPushButton" name="pushButton">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>share</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: #242A38;
-    border-width: 0px;
-    border-radius: 5px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #4E596F;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="15" rowspan="3">
-      <widget class="QPushButton" name="btn_bold">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>bold</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/bold.png</normaloff>:/res/text-editor/bold.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="8" rowspan="3">
-      <widget class="QPushButton" name="btn_paste">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>paste</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/paste.png</normaloff>:/res/text-editor/paste.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="16" rowspan="3">
-      <widget class="QPushButton" name="btn_italics">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>italics</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/italics.png</normaloff>:/res/text-editor/italics.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="6" rowspan="3">
-      <widget class="QPushButton" name="btn_cut">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>cut</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/cut.png</normaloff>:/res/text-editor/cut.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3" rowspan="3">
-      <widget class="QPushButton" name="btn_undo">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>undo</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-    padding-right: 2px;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/undo.png</normaloff>:/res/text-editor/undo.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Ctrl+Z</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-       <property name="default">
-        <bool>false</bool>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="33" rowspan="3">
-      <widget class="QPushButton" name="btn_print">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>print document</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/print.png</normaloff>:/res/text-editor/print.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="23" rowspan="5">
+     <item>
       <widget class="QLabel" name="label_separatorCR">
        <property name="maximumSize">
         <size>
@@ -2344,8 +1477,8 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="0" column="27" rowspan="3">
-      <widget class="QPushButton" name="btn_alignR">
+     <item>
+      <widget class="QPushButton" name="btn_bold">
        <property name="maximumSize">
         <size>
          <width>25</width>
@@ -2353,7 +1486,7 @@ QToolTip{
         </size>
        </property>
        <property name="toolTip">
-        <string>align right</string>
+        <string>bold</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton:focus {
@@ -2387,7 +1520,7 @@ QToolTip{
        </property>
        <property name="icon">
         <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/align-right.png</normaloff>:/res/text-editor/align-right.png</iconset>
+         <normaloff>:/res/text-editor/bold.png</normaloff>:/res/text-editor/bold.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -2397,8 +1530,8 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="0" column="31" rowspan="3">
-      <widget class="QPushButton" name="btn_comment">
+     <item>
+      <widget class="QPushButton" name="btn_italics">
        <property name="maximumSize">
         <size>
          <width>25</width>
@@ -2406,7 +1539,7 @@ QToolTip{
         </size>
        </property>
        <property name="toolTip">
-        <string>insert a comment</string>
+        <string>italics</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton:focus {
@@ -2440,7 +1573,7 @@ QToolTip{
        </property>
        <property name="icon">
         <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/comment.png</normaloff>:/res/text-editor/comment.png</iconset>
+         <normaloff>:/res/text-editor/italics.png</normaloff>:/res/text-editor/italics.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -2450,12 +1583,171 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="3" column="20">
+     <item>
+      <widget class="QPushButton" name="btn_strike">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>strikethrough</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/strike.png</normaloff>:/res/text-editor/strike.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_underline">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>underline</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/underline.png</normaloff>:/res/text-editor/underline.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_mark">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>highlight selection</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/mark.png</normaloff>:/res/text-editor/mark.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_color_mark">
        <property name="maximumSize">
         <size>
-         <width>30</width>
-         <height>5</height>
+         <width>5</width>
+         <height>20</height>
         </size>
        </property>
        <property name="frameShape">
@@ -2466,73 +1758,7 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="0" column="25" rowspan="3">
-      <widget class="QPushButton" name="btn_alignL">
-       <property name="maximumSize">
-        <size>
-         <width>25</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>align left</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #242A38;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/align-left.png</normaloff>:/res/text-editor/align-left.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="20">
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="22" rowspan="3">
+     <item>
       <widget class="QPushButton" name="btn_color">
        <property name="maximumSize">
         <size>
@@ -2585,8 +1811,164 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="0" column="7" rowspan="3">
-      <widget class="QPushButton" name="btn_copy">
+     <item>
+      <widget class="QLabel" name="label_color_txt">
+       <property name="maximumSize">
+        <size>
+         <width>5</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_separatorR">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>120</red>
+             <green>120</green>
+             <blue>120</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::VLine</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_alignL">
        <property name="maximumSize">
         <size>
          <width>25</width>
@@ -2594,7 +1976,7 @@ QToolTip{
         </size>
        </property>
        <property name="toolTip">
-        <string>copy</string>
+        <string>align left</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton:focus {
@@ -2628,7 +2010,7 @@ QToolTip{
        </property>
        <property name="icon">
         <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/copy.png</normaloff>:/res/text-editor/copy.png</iconset>
+         <normaloff>:/res/text-editor/align-left.png</normaloff>:/res/text-editor/align-left.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -2638,31 +2020,16 @@ QToolTip{
        </property>
       </widget>
      </item>
-     <item row="0" column="5" rowspan="3">
-      <widget class="QPushButton" name="btn_redo">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+     <item>
+      <widget class="QPushButton" name="btn_alignC">
        <property name="maximumSize">
         <size>
          <width>25</width>
          <height>25</height>
         </size>
        </property>
-       <property name="sizeIncrement">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
        <property name="toolTip">
-        <string>redo</string>
+        <string>align center</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton:focus {
@@ -2675,7 +2042,6 @@ QPushButton {
     border-width: 0px;
     border-radius: 3px;
     border-color: #f76163;
-    padding-left: 2px;
 }
 
 QPushButton:hover {
@@ -2697,7 +2063,7 @@ QToolTip{
        </property>
        <property name="icon">
         <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/redo.png</normaloff>:/res/text-editor/redo.png</iconset>
+         <normaloff>:/res/text-editor/align-center.png</normaloff>:/res/text-editor/align-center.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -2705,124 +2071,440 @@ QToolTip{
          <height>20</height>
         </size>
        </property>
-       <property name="shortcut">
-        <string>Ctrl+Shift+Z</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-       <property name="default">
-        <bool>false</bool>
-       </property>
       </widget>
      </item>
-     <item row="0" column="11" rowspan="3">
-      <widget class="QFontComboBox" name="fontComboBox">
+     <item>
+      <widget class="QPushButton" name="btn_alignR">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>align right</string>
+       </property>
        <property name="styleSheet">
-        <string notr="true">QFontComboBox {
-    border: 1px solid  #4e596f;
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
     border-radius: 3px;
-    padding: 1px 18px 1px 3px;
-    min-width: 6em;
-	max-width: 10em;
-    color: #242A38;
-	background: #f76163;
-    margin: 0 0 0 0;
+    border-color: #f76163;
 }
 
-QFontComboBox:editable {
-    background: white;
+QPushButton:hover {
+background: #242A38;
 }
 
-QFontComboBox:!editable {
-	background: #4e596f;
-    /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                  stop: 0 rgb(51, 51, 51), stop: 0.4 rgb(39, 39, 39),
-                                  stop: 0.5 rgb(32,32,32), stop: 1.0 rgb(38,38,38));*/
+QPushButton:pressed {
+background: #f76163;
 }
 
-QFontComboBox::drop-down:editable {
-	background: #f76163;
+QToolTip{
+	background: none;
+	margin-left: 0px;
 	margin-right: 0px;
-	padding-left: 10px;
-}
-
-QFontComboBox:!editable:on {
-	background: blue;
-	margin-right: 0px;
-	margin-left: 5px;
-}
-
-QFontComboBox::drop-down:editable:on {
-	background: #4e596f;
-	margin-right: 0px;
-	margin-left: 5px;
-}
-
-QFontComboBox:on { /* shift the text when the popup opens */
-    padding-top: 3px;
-    padding-left: 4px;
-    background-color: #4e596f;
-}
-
-QFontComboBox::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: center right;
-    width: 8px; 
-    right: 3px;
-	left: 1px;
-    border-top-right-radius: 3px; /* same radius as the QComboBox */
-    border-bottom-right-radius: 3px;
-    background:#4e596f;
-}
-
-QFontComboBox::down-arrow {    
-	background: url(:/res/text-editor/dropdown-arrow.png);
-    height: 15px;
-	width: 22px;
-	padding-right: 3px;
-}
-
-QComboBox::down-arrow:on { /* shift the arrow when popup is open */
-	top: 1px;
-    left: 1px;
-}
-
-QListView#comboListView {
-    background: #4e596f;
-    color: white;
-    min-height: 90px;
-    margin: 0 0 0 0;
-}
-
-QListView#comboListView::item {
-	background: #4e596f;
-}
-
-QListView#comboListView::item:hover {
-    background-color: #4e596f;
 }</string>
        </property>
-       <property name="currentFont">
-        <font>
-         <family>Segoe UI Emoji</family>
-        </font>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/align-right.png</normaloff>:/res/text-editor/align-right.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label">
+     <item>
+      <widget class="QPushButton" name="btn_justify">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>justify</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/justify.png</normaloff>:/res/text-editor/justify.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_separatorCL">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>120</red>
+             <green>120</green>
+             <blue>120</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::VLine</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_comment">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>insert a comment</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/comment.png</normaloff>:/res/text-editor/comment.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_download">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>download document</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/download.png</normaloff>:/res/text-editor/download.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_print">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>print document</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/print.png</normaloff>:/res/text-editor/print.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_comments">
        <property name="maximumSize">
         <size>
          <width>30</width>
-         <height>20</height>
+         <height>30</height>
         </size>
        </property>
        <property name="toolTip">
-        <string>rename</string>
+        <string>show comments</string>
        </property>
        <property name="styleSheet">
-        <string notr="true">QToolTip{
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: #242A38;
+    border-width: 0px;
+    border-radius: 5px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #4E596F;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
 	background: none;
 	margin-left: 0px;
 	margin-right: 0px;
@@ -2831,8 +2513,179 @@ QListView#comboListView::item:hover {
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap resource="resources/res.qrc">:/res/text-editor/rename1.png</pixmap>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_share">
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>share</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: #242A38;
+    border-width: 0px;
+    border-radius: 5px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #4E596F;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_connected">
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>show connected users</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: #242A38;
+    border-width: 0px;
+    border-radius: 5px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #4E596F;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>30</width>
+         <height>30</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_logout">
+       <property name="minimumSize">
+        <size>
+         <width>38</width>
+         <height>38</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>38</width>
+         <height>38</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>logout or edit account</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+background: #4e596f;
+border: 0px solid #242a38;
+border-radius: 19px;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed {
+padding: 1px -1px -1px 1px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>26</height>
+        </size>
        </property>
       </widget>
      </item>
