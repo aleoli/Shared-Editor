@@ -43,4 +43,6 @@ private:
   QLineEdit *_widgetUsername, *_widgetPassword, *_widgetPasswordRepeat;
   QCheckBox *_widgetShowPasswords;
   QPushButton *_widgetSignup, *_widgetCancel, *_widgetIcon;
+
+  bool _iconSet;
 };

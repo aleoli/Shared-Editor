@@ -101,6 +101,7 @@ void GuiManager::connectWidgets() {
   // Edit
   QObject::connect(_widgetEdit, &Edit::save, this, &GuiManager::editSave);
   QObject::connect(_widgetEdit, &Edit::cancel, this, &GuiManager::editCancel);
+  QObject::connect(_widgetEdit, &Edit::deleteAccount, this, &GuiManager::editDelete);
 
   //DocsBrowser
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::logout, this, &GuiManager::docsBrowserLogout);
@@ -152,6 +153,7 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::loginResponse, this, &GuiManager::serverLoginResponse);
   QObject::connect(_manager.get(), &MessageManager::newUserResponse, this, &GuiManager::serverNewUserResponse);
   QObject::connect(_manager.get(), &MessageManager::editUserResponse, this, &GuiManager::serverEditUserResponse);
+  QObject::connect(_manager.get(), &MessageManager::deleteUserResponse, this, &GuiManager::serverDeleteUserResponse);
 
   QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
   QObject::connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiManager::serverActivateLinkResponse);
@@ -239,6 +241,11 @@ void GuiManager::editCancel() {
   showWindow(_widgetDocsBrowser);
 }
 
+void GuiManager::editDelete(const QString &token) {
+  freezeWindow();
+  emit deleteUserQuery(token);
+}
+
 /* ### DOCSBROWSER ### */
 
 void GuiManager::docsBrowserLogout(const QString &token) {
@@ -289,6 +296,12 @@ void GuiManager::serverEditUserResponse() {
   _user->tempToPermanentIcon();
   unfreezeWindow();
   showWindow(_widgetDocsBrowser); //TODO ?
+}
+
+void GuiManager::serverDeleteUserResponse() {
+  debug("GuiManager::serverDeleteUserResponse");
+  unfreezeWindow();
+  showWindow(_widgetLogin, true);
 }
 
 void GuiManager::serverNewFileResponse(int fileId) {

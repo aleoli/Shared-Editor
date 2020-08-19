@@ -84,6 +84,7 @@ private slots:
   void editSave(const QString &token, const std::optional<QString> &oldPassword,
     const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon);
   void editCancel();
+  void editDelete(const QString &token);
 
   void docsBrowserNewFile(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
   void docsBrowserLogout(const QString &token);
@@ -96,6 +97,7 @@ private slots:
   void serverLoginResponse(const QString &token, int userId, const std::optional<QString> &icon);
   void serverNewUserResponse(const QString &token, int userId);
   void serverEditUserResponse();
+  void serverDeleteUserResponse();
 
   void serverNewFileResponse(int fileId);
   void serverActivateLinkResponse(const FSElement &element, const File &file);

@@ -1,14 +1,17 @@
 #include "registration.h"
 #include "../ui/ui_registration.h"
 
+#include <QFileDialog>
+
 #include "utils.h"
 #include "image_utils.h"
+#include "exceptions.h"
 
-#include <QFileDialog>
+using namespace se_exceptions;
 
 Registration::Registration(QWidget *parent) :
     MainWindow(parent),
-    ui(new Ui::Registration)
+    ui(new Ui::Registration), _iconSet(false)
 {
     ui->setupUi(this);
 
@@ -19,6 +22,11 @@ Registration::Registration(QWidget *parent) :
     _widgetSignup = findChild<QPushButton *>("btn_signup");
     _widgetCancel = findChild<QPushButton *>("btn_cancel");
     _widgetIcon = findChild<QPushButton *>("btn_changeProfile");
+
+    if(!_widgetUsername || !_widgetPassword || !_widgetPasswordRepeat ||
+        !_widgetShowPasswords || !_widgetSignup || !_widgetCancel || !_widgetIcon) {
+          throw GuiException{"One or more widgets in Registration are null"};
+    }
 
     connect(_widgetShowPasswords, &QCheckBox::stateChanged, this, &Registration::_showPasswords);
     connect(_widgetSignup, &QPushButton::clicked, this, &Registration::_signup);
@@ -37,6 +45,7 @@ void Registration::clear() {
   _widgetPasswordRepeat->clear();
   _widgetShowPasswords->setCheckState(Qt::Unchecked);
   _setDefaultIcon();
+  _iconSet = false;
 }
 
 void Registration::_showPasswords(int state) {
@@ -57,11 +66,16 @@ void Registration::_signup(bool checked) {
   auto pwd = _widgetPassword->text();
   auto pwdRepeat = _widgetPasswordRepeat->text();
 
-  debug("Registration::_signup " + username + " " + pwd + " " + pwdRepeat);
+  debug("Registration::_signup " + username + " " + pwd + " " + pwdRepeat + " " + QString::number(_iconSet));
 
   if(_checkFields(username, pwd, pwdRepeat)) {
     _user->setUsername(username);
-    emit signup(username, pwd, pwdRepeat, std::optional<QString>(std::move(image_utils::encodeImage(_user->getIcon()))));
+
+    std::optional<QString> icon = std::nullopt;
+    if(_iconSet)
+      icon = std::optional<QString>(std::move(image_utils::encodeImage(_user->getIcon())));
+
+    emit signup(username, pwd, pwdRepeat, icon);
   }
 }
 
@@ -81,6 +95,7 @@ void Registration::_setIcon(bool checked) {
       _widgetIcon->setIcon(icon);
       _widgetIcon->setIconSize(_widgetIcon->size());
       _user->setIcon(icon);
+      _iconSet = true;
     }
     catch(...) {
       emit alert(Alert::ERROR, LOAD_ICON_FAILED);

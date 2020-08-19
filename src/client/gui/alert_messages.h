@@ -13,3 +13,5 @@ enum class Alert {
 #define PSW_MISMATCH QString("Password and confirm password are different!")
 #define LOAD_ICON_FAILED QString("Icon load failed!")
 #define ICON_TOO_BIG QString("Icon too big!")
+#define SAME_PASSWORDS QString("Old password and new password are the same!")
+#define NO_CHANGES QString("No changes made!")
