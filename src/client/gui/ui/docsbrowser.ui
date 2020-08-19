@@ -26,12 +26,12 @@
    <property name="styleSheet">
     <string notr="true">/*VERTICAL*/
 QScrollBar:vertical {
-    background-color: #242a38 ;width: 27px; margin-left: 3px;
+    background-color: #242a38 ;width: 19px; margin-left: 3px;
 	}
 
 QScrollBar::handle:vertical {background-color:#4e596f; min-height: 100px;
-border-color:#4e596f ;border-width: 10px;border-style: solid;
-	border-radius: 12px;}
+border-color:#4e596f ;border-width: 3px;border-style: solid;
+	border-radius: 7px;}
 
 QScrollBar::sub-line:vertical {border: 2px solid #242a38;background-color: #242a38;
     height: 25px;subcontrol-position: top;subcontrol-origin: margin;}
@@ -42,15 +42,15 @@ QScrollBar::add-line:vertical {border: 2px solid #242a38;background-color: #242a
 /*HORIZONTAL*/
 QScrollBar:horizontal {
 	background-color: #242a38;
-	height: 27px;
+	height: 19px;
 	margin-top:3px;
 }
 
 QScrollBar::handle:horizontal {
 	min-width: 50px;
 	background-color:#4e596f;
-	border-color: #4e596f ;border-width: 10px;border-style: solid;
-	border-radius: 12px
+	border-color: #4e596f ;border-width: 3px;border-style: solid;
+	border-radius: 7px
 }
 
 /*QScrollBar::add-line:horizontal {
