@@ -20,6 +20,8 @@ int main(int argc, char **argv) {
 
   registerClasses();
 
+  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
   auto w = GuiManager::get(std::optional<SysConf>(conf));
   QObject::connect(w.get(), SIGNAL(quit()), &app, SLOT(quit()), Qt::QueuedConnection);
   w->run();
