@@ -15,7 +15,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{
-	border-image: url(:/res/file.png) 0 0 0 0 stretch stretch;
+	border-image: url(:/res/folder.png) 0 0 0 0 stretch stretch;
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
