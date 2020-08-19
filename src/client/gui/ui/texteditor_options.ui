@@ -1,26 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Options</class>
- <widget class="QMainWindow" name="Options">
+ <widget class="QWidget" name="Options">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>164</width>
-    <height>56</height>
+    <width>209</width>
+    <height>86</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>0</width>
-    <height>0</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>161555</width>
-    <height>161555</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Options</string>
@@ -28,24 +16,20 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <property name="styleSheet">
-    <string notr="true">background : transparent;</string>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QPushButton" name="btn_comments">
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>show comments</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:focus {
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QPushButton" name="btn_share">
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>share</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton:focus {
    border: none;
    outline: none;
 }
@@ -70,35 +54,35 @@ QToolTip{
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="resources/res.qrc">
-        <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>30</width>
-        <height>30</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btn_share">
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>share</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:focus {
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_comments">
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>show comments</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton:focus {
    border: none;
    outline: none;
 }
@@ -123,35 +107,35 @@ QToolTip{
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="resources/res.qrc">
-        <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>30</width>
-        <height>30</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btn_connected">
-      <property name="maximumSize">
-       <size>
-        <width>30</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>show connected users</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:focus {
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_connected">
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>show connected users</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton:focus {
    border: none;
    outline: none;
 }
@@ -176,41 +160,41 @@ QToolTip{
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="resources/res.qrc">
-        <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>30</width>
-        <height>30</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btn_logout">
-      <property name="minimumSize">
-       <size>
-        <width>38</width>
-        <height>38</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>38</width>
-        <height>38</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>logout or edit account</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>30</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_logout">
+     <property name="minimumSize">
+      <size>
+       <width>38</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>38</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>logout or edit account</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
 background: #4e596f;
 border: 0px solid #242a38;
 border-radius: 19px;
@@ -234,24 +218,23 @@ QToolTip{
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="resources/res.qrc">
-        <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>26</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>26</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources>
   <include location="resources/res.qrc"/>
