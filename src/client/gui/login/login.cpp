@@ -3,6 +3,9 @@
 
 #include "utils.h"
 #include "user.h"
+#include "exceptions.h"
+
+using namespace se_exceptions;
 
 Login::Login(QWidget *parent) :
     MainWindow(parent),
@@ -15,6 +18,11 @@ Login::Login(QWidget *parent) :
     _widgetShowPassword = findChild<QCheckBox *>("checkBox_showPwd");
     _widgetLogin = findChild<QPushButton *>("btn_login");
     _widgetSignup = findChild<QPushButton *>("btn_signup");
+
+    if(!_widgetUsername || !_widgetPassword || !_widgetShowPassword ||
+        !_widgetLogin || !_widgetSignup) {
+          throw GuiException{"One or more widgets in Login are null"};
+    }
 
     connect(_widgetShowPassword, &QCheckBox::stateChanged, this, &Login::_showPassword);
     connect(_widgetLogin, &QPushButton::clicked, this, &Login::_login);

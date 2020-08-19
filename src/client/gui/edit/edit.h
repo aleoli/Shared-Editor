@@ -31,11 +31,13 @@ public slots:
 signals:
   void save(const QString &token, const std::optional<QString> &password, const std::optional<QString> &newPsw, const std::optional<QString> &newPswRepeat, const std::optional<QString> &icon);
   void cancel();
+  void deleteAccount(const QString &token);
 
 private slots:
   void _showPasswords(int state);
   void _save(bool checked);
   void _cancel(bool checked);
+  void _delete(bool checked);
   void _setIcon(bool checked);
   void _setUserIcon();
 
@@ -46,5 +48,7 @@ private:
 
   QLineEdit *_widgetPassword, *_widgetNewPassword, *_widgetNewPasswordRepeat;
   QCheckBox *_widgetShowPasswords;
-  QPushButton *_widgetSave, *_widgetCancel, *_widgetIcon;
+  QPushButton *_widgetSave, *_widgetCancel, *_widgetDelete, *_widgetIcon;
+
+  bool _iconSet;
 };
