@@ -14,9 +14,12 @@
    <string>TextEditor</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: #4E596F;</string>
+   <string notr="true">background-color: #242A38;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">background-color: #4E596F;</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -423,7 +426,11 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="contents_connectedUsers"/>
+   <widget class="QWidget" name="contents_connectedUsers">
+    <property name="styleSheet">
+     <string notr="true">background-color: #4E596F;</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="dock_comments">
    <property name="minimumSize">
@@ -488,7 +495,11 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="contents_comments"/>
+   <widget class="QWidget" name="contents_comments">
+    <property name="styleSheet">
+     <string notr="true">background-color: #4E596F;</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="options">
    <property name="sizePolicy">
@@ -506,20 +517,14 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="maximumSize">
     <size>
      <width>524287</width>
-     <height>70</height>
+     <height>524287</height>
     </size>
    </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
    </property>
    <property name="styleSheet">
-    <string notr="true">QDockWidget{
-	border: 5px solid red;
-	background: transparent;
-	max-height: 40px;
-    /*titlebar-close-icon: url(close.png);
-    titlebar-normal-icon: url(undock.png);*/
-}</string>
+    <string notr="true"/>
    </property>
    <property name="floating">
     <bool>false</bool>
@@ -535,7 +540,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </attribute>
    <widget class="QWidget" name="options_contents">
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">background-color: #4E596F;</string>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -1707,18 +1712,30 @@ QToolTip{
 }
 
 QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
+	background: #4E596F;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #fff #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 QPushButton:hover {
-background: #242A38;
+	background: #242A38;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #fff #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 QPushButton:pressed {
-background: #f76163;
+	background: #f76163;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #fff #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 QToolTip{
@@ -1743,31 +1760,6 @@ QToolTip{
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_color_mark">
-       <property name="maximumSize">
-        <size>
-         <width>5</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
-       <property name="indent">
-        <number>-1</number>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="btn_color">
        <property name="maximumSize">
         <size>
@@ -1785,18 +1777,30 @@ QToolTip{
 }
 
 QPushButton {
-	background: none;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #f76163;
+	background: #4E596F;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #fff #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 QPushButton:hover {
-background: #242A38;
+	background: #242A38;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #fff #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 QPushButton:pressed {
-background: #f76163;
+	background: #f76163;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #fff #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 
 QToolTip{
@@ -1817,28 +1821,6 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_color_txt">
-       <property name="maximumSize">
-        <size>
-         <width>5</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
        </property>
       </widget>
      </item>
