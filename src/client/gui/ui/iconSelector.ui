@@ -142,13 +142,14 @@ QPushButton:focus {
     background: #4E596F;
     border-width: 1px;
     border-radius: 13px;
-    border-color: #242A38;
+    border-color: #4E596F;
     font: 12pt;
-	color: white;
+    color: white;
     padding: 10px;
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-top: 10px;
+	margin-bottom: 10px;
 	min-height: 20px;
 }
 
