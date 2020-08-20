@@ -1,11 +1,10 @@
 #include "registration.h"
 #include "../ui/ui_registration.h"
 
-#include <QFileDialog>
-
 #include "utils.h"
 #include "image_utils.h"
 #include "exceptions.h"
+#include "icon_selector.h"
 
 using namespace se_exceptions;
 
@@ -87,19 +86,14 @@ void Registration::_cancel(bool checked) {
 void Registration::_setIcon(bool checked) {
   debug("Registration::_setIcon");
 
-  auto filename = QFileDialog::getOpenFileName(this,
-    tr("Open Image"), PROFILE_PICS_PATH, tr("Image Files (*.png *.jpg *.bmp)"));
+  auto icon = IconSelector::show(this);
 
-    try {
-      auto icon = image_utils::loadRoundedImage(filename);
-      _widgetIcon->setIcon(icon);
-      _widgetIcon->setIconSize(_widgetIcon->size());
-      _user->setIcon(icon);
-      _iconSet = true;
-    }
-    catch(...) {
-      emit alert(Alert::ERROR, LOAD_ICON_FAILED);
-    }
+  if(icon) {
+    _widgetIcon->setIcon(*icon);
+    _widgetIcon->setIconSize(_widgetIcon->size());
+    _user->setIcon(*icon);
+    _iconSet = true;
+  }
 }
 
 void Registration::_setDefaultIcon() {
