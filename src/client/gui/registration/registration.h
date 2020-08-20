@@ -33,6 +33,7 @@ private slots:
   void _showPasswords(int state);
   void _signup(bool checked);
   void _cancel(bool checked);
+  void _reset(bool checked);
   void _setIcon(bool checked);
   void _setDefaultIcon();
 
@@ -42,7 +43,7 @@ private:
   Ui::Registration *ui;
   QLineEdit *_widgetUsername, *_widgetPassword, *_widgetPasswordRepeat;
   QCheckBox *_widgetShowPasswords;
-  QPushButton *_widgetSignup, *_widgetCancel, *_widgetIcon;
+  QPushButton *_widgetSignup, *_widgetCancel, *_widgetReset, *_widgetIcon;
 
   bool _iconSet;
 };

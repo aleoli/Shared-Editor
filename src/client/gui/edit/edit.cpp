@@ -5,6 +5,7 @@
 #include "image_utils.h"
 #include "exceptions.h"
 #include "icon_selector.h"
+#include "confirm.h"
 
 using namespace se_exceptions;
 
@@ -22,11 +23,12 @@ Edit::Edit(QWidget *parent) :
     _widgetSave = findChild<QPushButton *>("btn_save");
     _widgetCancel = findChild<QPushButton *>("btn_cancel");
     _widgetDelete = findChild<QPushButton *>("btn_delete");
+    _widgetReset = findChild<QPushButton *>("btn_reset");
     _widgetIcon = findChild<QPushButton *>("btn_changeProfile");
 
     if(!_widgetPassword || !_widgetNewPassword || !_widgetNewPasswordRepeat ||
         !_widgetShowPasswords || !_widgetSave || !_widgetCancel ||
-        !_widgetDelete || !_widgetIcon) {
+        !_widgetDelete || !_widgetReset || !_widgetIcon) {
           throw GuiException{"One or more widgets in Edit are null"};
     }
 
@@ -34,6 +36,7 @@ Edit::Edit(QWidget *parent) :
     connect(_widgetSave, &QPushButton::clicked, this, &Edit::_save);
     connect(_widgetCancel, &QPushButton::clicked, this, &Edit::_cancel);
     connect(_widgetDelete, &QPushButton::clicked, this, &Edit::_delete);
+    connect(_widgetReset, &QPushButton::clicked, this, &Edit::_reset);
     connect(_widgetIcon, &QPushButton::clicked, this, &Edit::_setIcon);
 }
 
@@ -109,8 +112,16 @@ void Edit::_cancel(bool checked) {
 
 void Edit::_delete(bool checked) {
   debug("Edit::_delete");
-  //TODO show confirm dialog
-  emit deleteAccount(_user->getToken());
+
+  if(Confirm::show(this))
+    emit deleteAccount(_user->getToken());
+}
+
+void Edit::_reset(bool checked) {
+  debug("Edit::_reset");
+
+  _setDefaultIcon();
+  _iconSet = true;
 }
 
 void Edit::_setIcon(bool checked) {
@@ -129,6 +140,17 @@ void Edit::_setIcon(bool checked) {
 void Edit::_setUserIcon() {
   setIcon();
   _user->setTempIcon();
+}
+
+void Edit::_setDefaultIcon() {
+  try {
+    auto icon = image_utils::loadRoundedImage(DEFAULT_ICON);
+    _widgetIcon->setIcon(icon);
+    _user->setTempIcon(icon);
+  }
+  catch(...) {
+    throw GuiException{"Failed to load predefined icon."};
+  }
 }
 
 bool Edit::_checkFields(const QString &password, const QString &newPsw, const QString &newPswRepeat){
