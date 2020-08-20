@@ -1,11 +1,10 @@
 #include "edit.h"
 #include "../ui/ui_edit.h"
 
-#include <QFileDialog>
-
 #include "utils.h"
 #include "image_utils.h"
 #include "exceptions.h"
+#include "icon_selector.h"
 
 using namespace se_exceptions;
 
@@ -117,19 +116,14 @@ void Edit::_delete(bool checked) {
 void Edit::_setIcon(bool checked) {
   debug("Edit::_setIcon");
 
-  auto filename = QFileDialog::getOpenFileName(this,
-    tr("Open Image"), PROFILE_PICS_PATH, tr("Image Files (*.png *.jpg *.bmp)"));
+  auto icon = IconSelector::show(this);
 
-    try {
-      auto icon = image_utils::loadRoundedImage(filename);
-      _widgetIcon->setIcon(icon);
-      _widgetIcon->setIconSize(_widgetIcon->size());
-      _user->setTempIcon(icon);
-      _iconSet = true;
-    }
-    catch(...) {
-      emit alert(Alert::ERROR, LOAD_ICON_FAILED);
-    }
+  if(icon) {
+    _widgetIcon->setIcon(*icon);
+    _widgetIcon->setIconSize(_widgetIcon->size());
+    _user->setTempIcon(*icon);
+    _iconSet = true;
+  }
 }
 
 void Edit::_setUserIcon() {

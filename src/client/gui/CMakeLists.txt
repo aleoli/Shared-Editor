@@ -14,6 +14,7 @@ include_directories(landing)
 include_directories(login)
 include_directories(registration)
 include_directories(texteditor)
+include_directories(dialogs)
 
 file(GLOB src_files
     "*.h"
@@ -37,6 +38,8 @@ file(GLOB src_files
     "registration/*.cpp"
     "texteditor/*.h"
     "texteditor/*.cpp"
+    "dialogs/*.h"
+    "dialogs/*.cpp"
 )
 
 add_executable(client ${src_files})
