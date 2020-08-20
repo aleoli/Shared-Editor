@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1225</width>
-    <height>600</height>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TextEditor</string>
+   <string>Text Editor</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #242A38;</string>
