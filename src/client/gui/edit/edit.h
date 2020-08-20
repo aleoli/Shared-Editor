@@ -38,8 +38,10 @@ private slots:
   void _save(bool checked);
   void _cancel(bool checked);
   void _delete(bool checked);
+  void _reset(bool checked);
   void _setIcon(bool checked);
   void _setUserIcon();
+  void _setDefaultIcon();
 
 private:
   bool _checkFields(const QString &password, const QString &newPsw, const QString &newPswRepeat);
@@ -48,7 +50,7 @@ private:
 
   QLineEdit *_widgetPassword, *_widgetNewPassword, *_widgetNewPasswordRepeat;
   QCheckBox *_widgetShowPasswords;
-  QPushButton *_widgetSave, *_widgetCancel, *_widgetDelete, *_widgetIcon;
+  QPushButton *_widgetSave, *_widgetCancel, *_widgetDelete, *_widgetIcon, *_widgetReset;
 
   bool _iconSet;
 };

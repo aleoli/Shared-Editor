@@ -20,16 +20,19 @@ Registration::Registration(QWidget *parent) :
     _widgetShowPasswords = findChild<QCheckBox *>("checkBox_showPwds");
     _widgetSignup = findChild<QPushButton *>("btn_signup");
     _widgetCancel = findChild<QPushButton *>("btn_cancel");
+    _widgetReset = findChild<QPushButton *>("btn_reset");
     _widgetIcon = findChild<QPushButton *>("btn_changeProfile");
 
     if(!_widgetUsername || !_widgetPassword || !_widgetPasswordRepeat ||
-        !_widgetShowPasswords || !_widgetSignup || !_widgetCancel || !_widgetIcon) {
+        !_widgetShowPasswords || !_widgetSignup || !_widgetCancel ||
+        !_widgetReset || !_widgetIcon) {
           throw GuiException{"One or more widgets in Registration are null"};
     }
 
     connect(_widgetShowPasswords, &QCheckBox::stateChanged, this, &Registration::_showPasswords);
     connect(_widgetSignup, &QPushButton::clicked, this, &Registration::_signup);
     connect(_widgetCancel, &QPushButton::clicked, this, &Registration::_cancel);
+    connect(_widgetReset, &QPushButton::clicked, this, &Registration::_reset);
     connect(_widgetIcon, &QPushButton::clicked, this, &Registration::_setIcon);
 }
 
@@ -83,6 +86,13 @@ void Registration::_cancel(bool checked) {
   emit cancel();
 }
 
+void Registration::_reset(bool checked) {
+  debug("Registration::_reset");
+
+  _setDefaultIcon();
+  _iconSet = false;
+}
+
 void Registration::_setIcon(bool checked) {
   debug("Registration::_setIcon");
 
@@ -103,7 +113,7 @@ void Registration::_setDefaultIcon() {
     _user->setIcon(icon);
   }
   catch(...) {
-    emit alert(Alert::ERROR, LOAD_ICON_FAILED);
+    throw GuiException{"Failed to load predefined icon."};
   }
 }
 
