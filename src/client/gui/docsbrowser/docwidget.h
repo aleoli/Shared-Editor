@@ -14,6 +14,7 @@ class DocWidget: public QWidget {
 
 public:
     explicit DocWidget(FSElement element, QWidget *parent = nullptr);
+    void paintEvent(QPaintEvent* e) override;
 
 public slots:
     virtual void clear();

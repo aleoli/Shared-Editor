@@ -14,6 +14,7 @@ Q_OBJECT
 
 public:
     explicit DocWidgetFolder(FSElement element, QWidget *parent = nullptr);
+    void paintEvent(QPaintEvent* e) override;
 
 public slots:
     virtual void clear();
