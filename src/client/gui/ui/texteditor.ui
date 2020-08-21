@@ -511,7 +511,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="minimumSize">
     <size>
      <width>1225</width>
-     <height>70</height>
+     <height>76</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -530,7 +530,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <bool>false</bool>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetVerticalTitleBar</set>
+    <set>QDockWidget::NoDockWidgetFeatures</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::NoDockWidgetArea</set>
@@ -543,128 +543,6 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
      <string notr="true">background-color: #4E596F;</string>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="btn_home">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>back to DocsBrowser</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	
-	border-image: url(:/res/text-editor/home1.png) 0 0 0 0 stretch stretch;
-	margin-left: 1px;
-	margin-bottom: 2px;
-	padding-left: 15px;
-	padding-top: 20px;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #242A38;
-}
-
-QPushButton:hover {
-	border-image: url(:/res/text-editor/home1_on.png) 0 0 0 0 stretch stretch;
-	padding-left: 15px;
-	padding-top: 20px;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #242A38;
-}
-
-QPushButton:pressed {
-	margin: 1px 1px -1px -1px;
-	padding-left: 15px;
-	padding-top: 20px;
-    border-width: 0px;
-    border-radius: 3px;
-    border-color: #242A38;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>50</width>
-         <height>31</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="ledit_rename">
-       <property name="maximumSize">
-        <size>
-         <width>71</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLineEdit {
-    border: 2px solid #242A38;
-    border-radius: 15px;
-    padding: 0 8px;
-    background: #4E596F;
-    selection-background-color: #F65964;
-	color: white;
-}</string>
-       </property>
-       <property name="frame">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>Doc name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_rename">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>rename</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="pixmap">
-        <pixmap resource="resources/res.qrc">:/res/text-editor/rename1.png</pixmap>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QPushButton" name="btn_undo">
        <property name="maximumSize">
@@ -1780,7 +1658,7 @@ QPushButton {
 	background: #4E596F;
 	border-width: 0px 0px 3px 0px;
 	border-style: none none solid none;
-	border-color: #000 #000 #fff #000;
+	border-color: #000 #000 #000 #000;
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
 }
@@ -2459,223 +2337,6 @@ QToolTip{
         <size>
          <width>20</width>
          <height>20</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_comments">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>show comments</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: #242A38;
-    border-width: 0px;
-    border-radius: 5px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #4E596F;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_share">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>share</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: #242A38;
-    border-width: 0px;
-    border-radius: 5px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #4E596F;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_connected">
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>show connected users</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QPushButton {
-	background: #242A38;
-    border-width: 0px;
-    border-radius: 5px;
-    border-color: #f76163;
-}
-
-QPushButton:hover {
-background: #4E596F;
-}
-
-QPushButton:pressed {
-background: #f76163;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_logout">
-       <property name="minimumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>logout or edit account</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-background: #4e596f;
-border: 0px solid #242a38;
-border-radius: 19px;
-}
-
-QPushButton:hover{
-padding: -1px 1px 1px -1px;
-}
-
-QPushButton:pressed {
-padding: 1px -1px -1px 1px;
-}
-
-QPushButton:focus {
-   border: none;
-   outline: none;
-}
-
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>26</height>
         </size>
        </property>
       </widget>
