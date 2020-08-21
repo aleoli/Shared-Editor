@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>274</width>
+    <width>425</width>
     <height>56</height>
    </rect>
   </property>
@@ -57,10 +57,22 @@
    </item>
    <item>
     <widget class="QLineEdit" name="ledit_rename">
+     <property name="minimumSize">
+      <size>
+       <width>229</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
-       <height>16777215</height>
+       <width>229</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="sizeIncrement">
+      <size>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
      <property name="styleSheet">
