@@ -30,6 +30,7 @@
      <property name="styleSheet">
       <string notr="true">QPushButton {
 margin-bottom:0px;
+background: rgba(255, 170, 0, 0);
 border-image: rgba(255, 170, 0, 0)  0 0 0 0 stretch stretch;
 }
 
@@ -77,7 +78,8 @@ QPushButton:focus {
      </property>
      <property name="styleSheet">
       <string notr="true">QLabel{
-border-image: rgba(255, 170, 0, 0)  0 0 0 0 stretch stretch;
+	background: rgba(255, 170, 0, 0);
+	border-image: 0 0 0 0;
 }</string>
      </property>
      <property name="text">
@@ -110,7 +112,8 @@ border-image: rgba(255, 170, 0, 0)  0 0 0 0 stretch stretch;
      </property>
      <property name="styleSheet">
       <string notr="true">QLabel{
-	border-image: rgba(255, 170, 0, 0)  0 0 0 0 stretch stretch;
+	background: rgba(255, 170, 0, 0);
+	border-image: 0 0 0 0;
 }</string>
      </property>
      <property name="lineWidth">
