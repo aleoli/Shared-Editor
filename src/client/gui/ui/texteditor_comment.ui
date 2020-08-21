@@ -78,7 +78,33 @@
      <property name="styleSheet">
       <string notr="true">border: 0px solid none;
 color: white;
-font-size: 28em;</string>
+font-size: 28em;
+margin-right: 2em;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="label_date">
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 0px solid none;
+color: white;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
