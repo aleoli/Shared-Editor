@@ -30,6 +30,8 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
 
   _scrollArea = findChild<QWidget *>("scrollArea_docs");
   _layout = new QGridLayout{_scrollArea};
+  _layout->setSpacing(50);
+  _layout->setVerticalSpacing(50);
 
   connect(_widgetHome, &QPushButton::clicked, this, &DocsBrowser::_goToHome);
   connect(_widgetNewFolder, &QPushButton::clicked, this, &DocsBrowser::_newDir);
@@ -63,14 +65,14 @@ void DocsBrowser::setIcon() {
 
 void DocsBrowser::showDir(const std::vector<FSElement> &elements) {
   this->_cleanWidgets();
-  int nCols = 4;
+  int nCols = this->_get_n_cols();
   for(int i=0; i<elements.size(); i++) {
     auto element = elements[i];
     debug(QString(element.getType() == FSElement::Type::FILE ? "FILE" : "DIR") + "\t" + element.getName());
 
     if(element.getType() == FSElement::Type::FILE) {
       auto widget = new DocWidget{std::move(element), this->_scrollArea};
-      widget->setFixedSize(200, 200);
+      widget->setFixedSize(200, 120);
       QObject::connect(widget, &DocWidget::open, this, &DocsBrowser::_openFile);
 
       this->_currentWidgets.push_back(widget);
@@ -80,7 +82,7 @@ void DocsBrowser::showDir(const std::vector<FSElement> &elements) {
       this->_layout->addWidget(widget, row, col, QFlags<Qt::AlignmentFlag>{Qt::AlignCenter, Qt::AlignVCenter});
     } else {
       auto widget = new DocWidgetFolder{std::move(element), this->_scrollArea};
-      widget->setFixedSize(200, 200);
+      widget->setFixedSize(200, 120);
       QObject::connect(widget, &DocWidgetFolder::open, this, &DocsBrowser::changeDir);
 
       this->_currentWidgetsFolder.push_back(widget);
@@ -90,6 +92,7 @@ void DocsBrowser::showDir(const std::vector<FSElement> &elements) {
       this->_layout->addWidget(widget, row, col, QFlags<Qt::AlignmentFlag>{Qt::AlignCenter, Qt::AlignVCenter});
     }
   }
+  this->_currentElements = elements;
 
   // print current history
   debug("History");
@@ -183,7 +186,7 @@ void DocsBrowser::_goUp(bool checked) {
   debug("go up");
 }
 
-std::_List_const_iterator<int> DocsBrowser::_getCurrent() {
+std::list<int>::const_iterator DocsBrowser::_getCurrent() {
   return std::next(std::find(this->_dirHistory.crbegin(), this->_dirHistory.crend(), this->_currentDir)).base();
 }
 
@@ -202,4 +205,14 @@ void DocsBrowser::_cleanWidgets() {
   }
   this->_currentWidgets.clear();
   this->_currentWidgetsFolder.clear();
+}
+
+int DocsBrowser::_get_n_cols() {
+  auto width = this->width();
+  return floor(width / (200 + 50));
+}
+
+void DocsBrowser::resizeEvent(QResizeEvent *event) {
+  debug("resize");
+  this->showDir(this->_currentElements);
 }

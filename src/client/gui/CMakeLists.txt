@@ -19,7 +19,6 @@ include_directories(dialogs)
 file(GLOB src_files
     "*.h"
     "*.cpp"
-    "res/*.qrc"
     "../*.h"
     "../*.cpp"
     "../../*.h"
@@ -42,6 +41,6 @@ file(GLOB src_files
     "dialogs/*.cpp"
 )
 
-add_executable(client ${src_files} docsbrowser/docwidget.cpp docsbrowser/docwidget.h docsbrowser/docwidget_folder.cpp docsbrowser/docwidget_folder.h)
+add_executable(client ${src_files})
 
 target_link_libraries(client ${LIBRARIES} pthread)

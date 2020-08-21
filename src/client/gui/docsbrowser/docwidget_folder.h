@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QPushButton>
+#include <QLabel>
 
 #include "FSElement.h"
 
@@ -27,6 +28,9 @@ protected:
 
 private:
     Ui::DocWidgetFolder *ui;
+
+    QLabel *_nameLabel, *_dateLabel;
+    QPushButton *_optionsBtn;
 
     const FSElement _element;
 };

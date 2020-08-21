@@ -40,6 +40,9 @@ signals:
 
   void getDir(const QString &token, std::optional<int> dirId = std::nullopt);
 
+protected:
+  void resizeEvent(QResizeEvent *event) override;
+
 private slots:
   void _account(bool checked);
   void _newFile(bool checked);
@@ -70,9 +73,12 @@ private:
   std::optional<int> _currentDir = std::nullopt;
   std::list<int> _dirHistory{};
 
+  std::vector<FSElement> _currentElements{};
+
   std::list<DocWidget *> _currentWidgets{};
   std::list<DocWidgetFolder *> _currentWidgetsFolder{};
 
-  std::_List_const_iterator<int> _getCurrent();
+  std::list<int>::const_iterator _getCurrent();
   void _cleanWidgets();
+  int _get_n_cols();
 };
