@@ -178,6 +178,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -234,6 +238,10 @@ background: #4E596F;
 }
 
 QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
 background: #f76163;
 }
 
