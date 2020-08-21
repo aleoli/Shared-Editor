@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>209</width>
+    <width>274</width>
     <height>86</height>
    </rect>
   </property>
@@ -17,6 +17,58 @@
    <string notr="true"/>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QLabel" name="label_rename">
+     <property name="maximumSize">
+      <size>
+       <width>30</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>rename</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="resources/res.qrc">:/res/text-editor/rename1.png</pixmap>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="ledit_rename">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+    border: 2px solid #242A38;
+    border-radius: 15px;
+    padding: 0 8px;
+    background: #4E596F;
+    selection-background-color: #F65964;
+	color: white;
+}</string>
+     </property>
+     <property name="frame">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>Doc name</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QPushButton" name="btn_share">
      <property name="maximumSize">
