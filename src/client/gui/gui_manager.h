@@ -91,6 +91,11 @@ private slots:
   void docsBrowserEditAccount();
   void docsBrowserActivateLink(const QString &token, const QString &link);
 
+  void textEditorLogout(const QString &token);
+  void textEditorShare(const QString &token, int fileId);
+  void textEditorClose(const QString &token, int fileId);
+  void textEditorEditFile(const QString &token, int fileId, const std::optional<QString> &name);
+
   // messages from server
   void serverErrorResponse(const QString &reason);
 
@@ -101,6 +106,8 @@ private slots:
 
   void serverNewFileResponse(int fileId);
   void serverActivateLinkResponse(const FSElement &element, const File &file);
+
+  void serverGetLinkResponse(const QString &link);
 
 private:
   void showWindow(MainWindow *window, bool clear = false);

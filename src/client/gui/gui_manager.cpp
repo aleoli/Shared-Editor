@@ -111,7 +111,10 @@ void GuiManager::connectWidgets() {
 
 
   //TextEditor
-  //TODO
+  QObject::connect(_widgetTextEditor, &TextEditor::share, this, &GuiManager::textEditorShare);
+  QObject::connect(_widgetTextEditor, &TextEditor::logout, this, &GuiManager::textEditorLogout);
+  QObject::connect(_widgetTextEditor, &TextEditor::close, this, &GuiManager::textEditorClose);
+  QObject::connect(_widgetTextEditor, &TextEditor::editFile, this, &GuiManager::textEditorEditFile);
 }
 
 void GuiManager::connectClientToServer() {
@@ -157,6 +160,8 @@ void GuiManager::connectServerToClient() {
 
   QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
   QObject::connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiManager::serverActivateLinkResponse);
+
+  QObject::connect(_manager.get(), &MessageManager::getLinkResponse, this, &GuiManager::serverGetLinkResponse);
 }
 
 void GuiManager::connected() {
@@ -260,12 +265,34 @@ void GuiManager::docsBrowserEditAccount() {
 
 void GuiManager::docsBrowserNewFile(const QString &token, const QString &name, const std::optional<int> &dirId) {
   freezeWindow();
+  _user->setFileName(name);
   emit newFileQuery(token, name, dirId);
 }
 
 void GuiManager::docsBrowserActivateLink(const QString &token, const QString &link) {
   freezeWindow();
   emit activateLinkQuery(token, link);
+}
+
+void GuiManager::textEditorLogout(const QString &token) {
+  emit logoutQuery(token);
+  _user->logout();
+  showWindow(_widgetLogin, true);
+}
+
+void GuiManager::textEditorShare(const QString &token, int fileId) {
+  freezeWindow();
+  emit getLinkQuery(token, fileId);
+}
+
+void GuiManager::textEditorClose(const QString &token, int fileId) {
+  emit closeFileQuery(token, fileId);
+  showWindow(_widgetDocsBrowser);
+}
+
+void GuiManager::textEditorEditFile(const QString &token, int fileId, const std::optional<QString> &name) {
+  //TODO freeze window?
+  emit editFileQuery(token, fileId, name);
 }
 
 /* ### MESSAGES FROM SERVER ### */
@@ -314,7 +341,15 @@ void GuiManager::serverNewFileResponse(int fileId) {
 void GuiManager::serverActivateLinkResponse(const FSElement &element, const File &file) {
   debug("GuiManager::serverActivateLinkResponse");
   //TODO questo FSElement va passato al docsbrowser che lo mette nella view
+  _user->setFileName(element.getName());
   _user->openFile(element.getId(), file);
   unfreezeWindow();
   showWindow(_widgetTextEditor, true);
+}
+
+void GuiManager::serverGetLinkResponse(const QString &link) {
+  debug("GuiManager::serverGetLinkResponse");
+  unfreezeWindow();
+  //TODO show link in dialog?
+  info("Link: " + link);
 }

@@ -105,20 +105,49 @@ void User::openFile(int fileId, const File &file, int charId, int commentId) {
   _charId = charId;
   _commentId = commentId;
   _fileOpen = true;
+  emit fileOpened();
 }
 
 void User::closeFile() {
   _fileOpen = false;
+  emit fileClosed();
 }
 
 int User::getFileId() const {
+  if(!_fileOpen) {
+    throw UserException{"File not open!"};
+  }
+
   return _fileId;
 }
 
 int User::getCharId() {
+  if(!_fileOpen) {
+    throw UserException{"File not open!"};
+  }
+
   return _charId++;
 }
 
 int User::getCommentId() {
+  if(!_fileOpen) {
+    throw UserException{"File not open!"};
+  }
+
   return _commentId++;
+}
+
+QString User::getFileName() const {
+  if(!_fileOpen) {
+    throw UserException{"File not open!"};
+  }
+
+  return _fileName;
+}
+
+void User::setFileName(const QString &name) {
+  _fileName = name;
+
+  if(_fileOpen)
+    emit fileNameChanged();
 }

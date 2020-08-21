@@ -1,6 +1,8 @@
 #include "text_edit.h"
 
-TextEdit::TextEdit(QWidget *parent) : QTextEdit(parent) {}
+TextEdit::TextEdit(QWidget *parent) : QTextEdit(parent) {
+  setStyleSheet("QWidget {background-color: white;}");
+}
 
 void TextEdit::resizeEvent(QResizeEvent *event) {
   emit resized();
