@@ -41,6 +41,9 @@ public:
   int getCharId(); // get and increment
   int getCommentId(); // get and increment
 
+  QString getFileName() const;
+  void setFileName(const QString &name);
+
   void login(const QString &token, int userId, const std::optional<QString> &icon);
   void logout();
   void openFile(int fileId, const File &file = File(), int charId = 0, int commentId = 0);
@@ -50,6 +53,9 @@ signals:
   void iconChanged();
   void loggedIn();
   void loggedOut();
+  void fileOpened();
+  void fileClosed();
+  void fileNameChanged();
   //TODO others
 
 private:
@@ -64,6 +70,7 @@ private:
   //TODO dati relativi al file: File, charId, commentId
   bool _fileOpen;
   File _file;
+  QString _fileName;
   int _fileId;
   int _charId;
   int _commentId;
