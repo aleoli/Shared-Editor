@@ -173,6 +173,12 @@ QToolTip{
        <height>30</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
@@ -225,6 +231,12 @@ QToolTip{
        <width>30</width>
        <height>30</height>
       </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
