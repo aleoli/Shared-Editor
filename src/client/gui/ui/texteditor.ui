@@ -364,6 +364,7 @@ QMenu::separator {
     <addaction name="actionItalics"/>
     <addaction name="actionUnderline"/>
     <addaction name="actionStrike"/>
+    <addaction name="actionHighlight_users_text"/>
     <addaction name="menuAlign"/>
    </widget>
    <addaction name="menuFile"/>
@@ -1100,15 +1101,28 @@ QListView#comboListView::item:hover {
     background-color: #4e596f;
 }</string>
        </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
        <property name="currentFont">
-        <font>
-         <family>Segoe UI Emoji</family>
-        </font>
+        <font/>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QComboBox" name="comboBox">
+       <property name="minimumSize">
+        <size>
+         <width>87</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>87</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
         <string notr="true">QComboBox {
     border: 1px solid  #4e596f;
@@ -1198,53 +1212,8 @@ QListView#comboListView::item:hover {
         <bool>true</bool>
        </property>
        <property name="currentText">
-        <string>6</string>
+        <string/>
        </property>
-       <item>
-        <property name="text">
-         <string>6</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>8</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>12</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>16</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>24</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>32</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>48</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>56</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>72</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item>
@@ -1756,7 +1725,7 @@ QToolTip{
         </size>
        </property>
        <property name="toolTip">
-        <string>view users' text</string>
+        <string>highlight users' text</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton:focus {
@@ -2860,6 +2829,18 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="actionHighlight_users_text">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/view_checked.png</normaloff>:/res/text-editor/view_checked.png</iconset>
+   </property>
+   <property name="text">
+    <string>Highlight users' text</string>
    </property>
   </action>
  </widget>
