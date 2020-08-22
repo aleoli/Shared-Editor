@@ -181,6 +181,12 @@ QMenu::separator {
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="btn_home">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>74</width>
@@ -240,6 +246,12 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
          <width>29</width>
          <height>27</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
