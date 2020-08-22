@@ -72,7 +72,7 @@ std::optional<QIcon> IconSelector::show(QWidget *parent) {
 
 void IconSelector::loadPredefinedIcon(const QString &name) {
   try {
-    _icon = std::optional<QIcon>(std::move(image_utils::loadRoundedImage(name)));
+    _icon = std::optional<QIcon>(std::move(image_utils::loadImage(name)));
   }
   catch(...) {
     throw GuiException{"Failed to load predefined icon."};

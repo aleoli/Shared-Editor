@@ -144,7 +144,7 @@ void Edit::_setUserIcon() {
 
 void Edit::_setDefaultIcon() {
   try {
-    auto icon = image_utils::loadRoundedImage(DEFAULT_ICON);
+    auto icon = image_utils::loadImage(DEFAULT_ICON);
     _widgetIcon->setIcon(icon);
     _user->setTempIcon(icon);
   }

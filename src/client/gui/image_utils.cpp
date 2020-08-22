@@ -11,6 +11,7 @@
 #include <QIcon>
 #include <QPainterPath>
 #include <QFileInfo>
+#include <QWindow>
 
 #include <vector>
 
@@ -59,30 +60,40 @@ std::vector<QIcon> image_utils::getAllProfilePics() {
 QIcon image_utils::loadRoundedImage(const QString &filename) {
   checkIcon(filename);
 
-  const QPixmap orig = QPixmap(filename);
+  QImage image = QImage(filename);
 
-  if(orig.isNull()) {
+  if(image.isNull()) {
    throw ImageException{"Could not load image!"};
   }
 
-  // getting size if the original picture is not square
-  int size = qMax(orig.width(), orig.height());
-  // creating a new transparent pixmap with equal sides
-  QPixmap rounded = QPixmap(size, size);
-  rounded.fill(Qt::transparent);
-  // creating circle clip area
-  QPainterPath path;
-  path.addEllipse(rounded.rect());
-  QPainter painter(&rounded);
-  painter.setClipPath(path);
-  // filling rounded area if needed
-  painter.fillRect(rounded.rect(), Qt::black);
-  // getting offsets if the original picture is not square
-  int x = qAbs(orig.width() - size) / 2;
-  int y = qAbs(orig.height() - size) / 2;
-  painter.drawPixmap(x, y, orig.width(), orig.height(), orig);
+  image = image.convertToFormat(QImage::Format_ARGB32);
+  int size = qMin(image.width(), image.height());
+  auto rect = QRect(
+          (image.width() - size) / 2,
+          (image.height() - size) / 2,
+          size,
+          size
+  );
+  image = image.copy(rect);
 
-  return QIcon(rounded);
+  QImage out_img = QImage(size, size, QImage::Format_ARGB32);
+  out_img.fill(Qt::transparent);
+
+  auto brush = QBrush(image);
+  QPainter painter (&out_img);
+  painter.setBrush(brush);
+  painter.setPen(Qt::NoPen);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.drawEllipse(0, 0, size, size);
+  painter.end();
+
+  auto pr = QWindow().devicePixelRatio();
+  auto pm = QPixmap::fromImage(out_img);
+  pm.setDevicePixelRatio(pr);
+  size *= pr;
+  pm = pm.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+  return QIcon(pm);
 }
 
 void image_utils::checkIcon(const QString &filename) {
