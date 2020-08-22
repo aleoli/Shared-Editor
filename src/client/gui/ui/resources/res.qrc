@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="res">
+    <file>text-editor/view_unchecked.png</file>
+    <file>text-editor/view_checked.png</file>
     <file>text-editor/close.png</file>
     <file>text-editor/rename1.png</file>
     <file>text-editor/home1_on.png</file>

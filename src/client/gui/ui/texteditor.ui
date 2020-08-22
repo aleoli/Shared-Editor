@@ -185,7 +185,6 @@ QMenu::separator {
 QMenu::item {
     /* sets background of menu item. set this to something non-transparent
         if you want menu color and menu item color to be different */
-	padding: 2px 25px 2px 20px;
 	border: 1px solid transparent;
 	background-color: transparent;
 	font: 10pt white &quot;Segoe UI Black&quot;;
@@ -193,6 +192,10 @@ QMenu::item {
 }
 
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::item:checked { /* when user checks item using mouse or keyboard */
     background-color: #F65964;
 }
 
@@ -1745,6 +1748,61 @@ QToolTip{
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="btn_viewUsersTxt">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>view users' text</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   outline: none;
+}
+
+QPushButton {
+	background: url(:/res/text-editor/view_unchecked.png) no-repeat  center;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+	border: 2px solid #242A38;
+}
+
+QPushButton:checked {
+	background: url(:/res/text-editor/view_checked.png) no-repeat center;
+	border: 2px solid #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_separatorR">
        <property name="maximumSize">
         <size>
@@ -2638,6 +2696,12 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionConnected_users">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
@@ -2647,6 +2711,12 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionComments">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
