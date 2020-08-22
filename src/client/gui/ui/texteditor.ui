@@ -122,6 +122,7 @@ QMenu::separator {
     <addaction name="actionDetails"/>
     <addaction name="actionPrint"/>
     <addaction name="actionShare"/>
+    <addaction name="actionClose"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="styleSheet">
@@ -270,7 +271,6 @@ QMenu::separator {
 QMenu::item {
     /* sets background of menu item. set this to something non-transparent
         if you want menu color and menu item color to be different */
-	padding: 2px 25px 2px 20px;
 	border: 1px solid transparent;
 	background-color: transparent;
 	font: 10pt white &quot;Segoe UI Black&quot;;
@@ -278,6 +278,10 @@ QMenu::item {
 }
 
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::item:checked { /* when user checks item using mouse or keyboard */
     background-color: #F65964;
 }
 
@@ -309,8 +313,8 @@ QMenu::separator {
 
 QMenu::item {
     /* sets background of menu item. set this to something non-transparent
-        if you want menu color and menu item color to be different */
-	padding: 2px 25px 2px 20px;
+        if you want menu color and menu item color to be different 
+	padding: 2px 25px 2px 20px;*/
 	border: 1px solid transparent;
 	background-color: transparent;
 	font: 10pt white &quot;Segoe UI Black&quot;;
@@ -320,6 +324,11 @@ QMenu::item {
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
     background-color: #F65964;
 }
+
+QMenu::item:checked { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
 
 QMenu::indicator {
     width: 13px;
@@ -462,15 +471,13 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <enum>Qt::RightToLeft</enum>
    </property>
    <property name="styleSheet">
-    <string notr="true">QDockWidget{
-	border: 5px solid red;   
+    <string notr="true">QDockWidget{	
 }
 
 QDockWidget::title { 
     text-align: center; 
 	color: white;
     background: #F65964;
-	/*padding-left: 5px;*/
 
 }
 
@@ -1012,6 +1019,11 @@ QToolTip{
     margin: 0 0 0 0;
 }
 
+QComboBox QAbstractItemView {
+    border: 2px solid darkgray;
+    selection-background-color: lightgray;
+}
+
 QFontComboBox:editable {
     background: white;
 }
@@ -1044,7 +1056,7 @@ QFontComboBox::drop-down:editable:on {
 QFontComboBox:on { /* shift the text when the popup opens */
     padding-top: 3px;
     padding-left: 4px;
-    background-color: #4e596f;
+    background-color: white;
 }
 
 QFontComboBox::drop-down {
@@ -1398,6 +1410,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -1416,6 +1432,12 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -1451,6 +1473,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -1469,6 +1495,12 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -1504,6 +1536,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -1522,6 +1558,12 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -1557,6 +1599,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -1575,6 +1621,12 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -1858,6 +1910,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -1876,6 +1932,12 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -1911,6 +1973,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -1929,6 +1995,12 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -1964,6 +2036,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -1982,6 +2058,9 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -2017,6 +2096,10 @@ QPushButton:pressed {
 background: #f76163;
 }
 
+QPushButton:checked {
+background: #f76163;
+}
+
 QToolTip{
 	background: none;
 	margin-left: 0px;
@@ -2035,6 +2118,9 @@ QToolTip{
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -2584,6 +2670,12 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionBold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/bold.png</normaloff>:/res/text-editor/bold.png</iconset>
@@ -2591,8 +2683,14 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Bold</string>
    </property>
+   <property name="iconText">
+    <string>Bold</string>
+   </property>
   </action>
   <action name="actionItalics">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/italics.png</normaloff>:/res/text-editor/italics.png</iconset>
@@ -2602,6 +2700,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionUnderline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/underline.png</normaloff>:/res/text-editor/underline.png</iconset>
@@ -2611,6 +2712,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionStrike">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/strike.png</normaloff>:/res/text-editor/strike.png</iconset>
@@ -2620,6 +2724,12 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionAlign_left">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/align-left.png</normaloff>:/res/text-editor/align-left.png</iconset>
@@ -2629,6 +2739,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionAlign_right">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/align-right.png</normaloff>:/res/text-editor/align-right.png</iconset>
@@ -2638,6 +2751,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionAlign_center">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/align-center.png</normaloff>:/res/text-editor/align-center.png</iconset>
@@ -2647,6 +2763,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionJustify">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/justify.png</normaloff>:/res/text-editor/justify.png</iconset>
@@ -2662,6 +2781,15 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
    <property name="text">
     <string>Share</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/close.png</normaloff>:/res/text-editor/close.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close</string>
    </property>
   </action>
  </widget>
