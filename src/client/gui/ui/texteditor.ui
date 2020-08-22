@@ -113,11 +113,9 @@ QMenu::separator {
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImport"/>
     <addaction name="actionCreate_Copy"/>
     <addaction name="actionDownload"/>
     <addaction name="actionRename"/>
-    <addaction name="actionAdd_to_my_files"/>
     <addaction name="actionDelete"/>
     <addaction name="actionDetails"/>
     <addaction name="actionPrint"/>
@@ -1113,13 +1111,13 @@ QListView#comboListView::item:hover {
       <widget class="QComboBox" name="comboBox">
        <property name="minimumSize">
         <size>
-         <width>87</width>
+         <width>62</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>87</width>
+         <width>153</width>
          <height>16777215</height>
         </size>
        </property>
@@ -1733,7 +1731,7 @@ QToolTip{
 }
 
 QPushButton {
-	background: url(:/res/text-editor/view_unchecked.png) no-repeat  center;
+	/*background: url(:/res/text-editor/view_unchecked.png) no-repeat  center;*/
     border-width: 0px;
     border-radius: 3px;
     border-color: #f76163;
@@ -1741,11 +1739,13 @@ QPushButton {
 
 QPushButton:hover {
 	border: 2px solid #242A38;
+	background: #242A38;
 }
 
 QPushButton:checked {
-	background: url(:/res/text-editor/view_checked.png) no-repeat center;
+	/*background: url(:/res/text-editor/view_checked.png) no-repeat center;*/
 	border: 2px solid #f76163;
+	background: #f76163;
 }
 
 QToolTip{
@@ -1756,6 +1756,11 @@ QToolTip{
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/view_unchecked.png</normaloff>
+         <normalon>:/res/text-editor/view_checked.png</normalon>:/res/text-editor/view_unchecked.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -2567,6 +2572,10 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionRename">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/rename2.png</normaloff>:/res/text-editor/rename2.png</iconset>
+   </property>
    <property name="text">
     <string>Rename</string>
    </property>
@@ -2641,6 +2650,10 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionFind">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/find.png</normaloff>:/res/text-editor/find.png</iconset>
+   </property>
    <property name="text">
     <string>Find</string>
    </property>
