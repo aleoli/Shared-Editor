@@ -448,8 +448,6 @@ void ServerMessageProcessor::editUser() {
 }
 
 void ServerMessageProcessor::deleteUser() {
-  // TODO: l'utente può solo cancellarsi da solo, quindi devo anche farne il logout
-  // TODO: disconnetti tutti i client collegati con questo account
   info("DeleteUser query received");
 
   try {
@@ -457,7 +455,7 @@ void ServerMessageProcessor::deleteUser() {
     auto session = Session::get(token);
 
     auto user = session.getUser();
-
+    session.close();
     user.remove();
 
     QJsonObject data;
