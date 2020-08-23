@@ -84,7 +84,7 @@ private:
     QString username;
   } Data;
 
-  std::unordered_map<quint64, Data> _clients;                // mappa client_id -> Data
-  std::unordered_map<int, std::list<quint64>> _fileClients;    // mappa file_id -> lista di client_id che lo stanno usando
+  std::unordered_map<quint64, Data> _clients{};                // mappa client_id -> Data
+  std::unordered_map<int, std::list<quint64>> _fileClients{};    // mappa file_id -> lista di client_id che lo stanno usando
   FifoMap<int, std::pair<QString, File>> _openFiles{MAX_OPEN_FILES};   //un unico posto in cui sono presenti i file, con l'aggiunta di qualche handler per gestirli
 };

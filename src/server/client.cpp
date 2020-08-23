@@ -95,8 +95,14 @@ void Client::_disconnected() {
 }
 
 void Client::disconnect(quint64 id) {
-	if(this->_id == id) {
-		this->_socket->disconnect();
-		this->_disconnected();
-	}
+  if(this->_id == id) {
+    this->_socket->disconnect();
+    this->_disconnected();
+  }
+}
+
+void Client::quit() {
+  debug("closing client " + QString::number(this->_id));
+  this->_socket->disconnect();
+  this->_disconnected();
 }
