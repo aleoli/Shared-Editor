@@ -30,6 +30,13 @@ SysConf initiate_system(const QCoreApplication &app) {
     dir.mkdir(QDir::homePath()+"/.shared_editor");
   }
 
+  // creo la cartella data, se non esiste
+  QDir dirData(QDir::homePath()+"/.shared_editor/data");
+  dir_exists = dirData.exists();
+  if(!dir_exists) {
+    dirData.mkdir(QDir::homePath()+"/.shared_editor/data");
+  }
+
   // lo devo controllare prima della creazione del DB
   bool file_exists = dir.exists("shared-editor.db");
 
