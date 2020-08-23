@@ -22,7 +22,8 @@ public:
       LOGOUT,
       NEW,
       EDIT,
-      DELETE
+      DELETE,
+      GET_USER_ICON
   };
 
   enum class FileAction {

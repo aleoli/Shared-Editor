@@ -385,6 +385,10 @@ QString FSElement_db::getPath() const {
   return QDir::homePath()+FILE_PATH+this->_path;
 }
 
+int FSElement_db::getParentId() const {
+  return this->_parent_id;
+}
+
 QString FSElement_db::getName() const {
   return this->_name;
 }

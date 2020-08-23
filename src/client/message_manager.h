@@ -49,7 +49,7 @@ signals:
   void newDirResponse(int dirId);
   void editDirResponse();
   void deleteDirResponse();
-  void getDirResponse(const std::vector<FSElement> &elements);
+  void getDirResponse(const std::vector<FSElement> &elements, QString name, int parentId);
   void moveFileResponse();
 
   void commentRemoteInsertQuery(int fileId, int userId, const File::Comment &comment);

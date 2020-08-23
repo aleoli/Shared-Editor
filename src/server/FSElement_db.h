@@ -43,6 +43,7 @@ public:
   [[nodiscard]] int getCharId() const;
   [[nodiscard]] int getCommentId() const;
   [[nodiscard]] QString getPath() const;
+  [[nodiscard]] int getParentId() const;
 
   void addCharId(int v);
   void incCommentId();

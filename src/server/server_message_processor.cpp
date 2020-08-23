@@ -80,6 +80,13 @@ void ServerMessageProcessor::process_user() {
         deleteUser();
       break;
 
+    case Message::UserAction::GET_USER_ICON:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getUserIcon();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -416,14 +423,6 @@ void ServerMessageProcessor::editUser() {
     }
 
 
-    auto username = _m.getStringOpt("username");
-    if(username) {
-      user.setUsername(*username);
-    } else {
-      debug("No username change required");
-    }
-
-
     auto icon = _m.getStringOpt("icon");
     if(icon) {
       try {
@@ -465,6 +464,25 @@ void ServerMessageProcessor::deleteUser() {
     this->_res = Message{Message::Type::USER, (int) Message::UserAction::DELETE, Message::Status::RESPONSE, data};
     this->_has_resp = true;
   } catch(SQLNoElementDeleteException&) {
+    error(ERROR_6);
+    this->sendErrorMsg(ERROR_6);
+  }
+}
+
+void ServerMessageProcessor::getUserIcon() {
+  info("GetUserIcon query received");
+
+  try {
+    auto userId = _m.getInt("userId");
+    auto user = Lazy<User>(userId);
+
+    QJsonObject data;
+    data["userId"] = userId;
+    data["icon"] = user.getValue().getIcon();
+
+    this->_res = Message{Message::Type::USER, (int) Message::UserAction::GET_USER_ICON, Message::Status::RESPONSE, data};
+    this->_has_resp = true;
+  } catch(SQLNoElementException&) {
     error(ERROR_6);
     this->sendErrorMsg(ERROR_6);
   }
@@ -972,6 +990,8 @@ void ServerMessageProcessor::getDir() {
   }
 
   QJsonObject data;
+  data["name"] = dir.getName();
+  data["parent"] = dir.getParentId();
   data["elements"] = arr;
 
   this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::GET_DIR, Message::Status::RESPONSE, data};

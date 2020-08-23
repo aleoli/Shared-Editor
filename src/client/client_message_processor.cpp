@@ -57,6 +57,13 @@ void ClientMessageProcessor::process_user() {
         deleteUser();
       break;
 
+    case Message::UserAction::GET_USER_ICON:
+      if(!isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getUserIcon();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -297,6 +304,12 @@ void ClientMessageProcessor::deleteUser() {
   emit _manager->deleteUserResponse();
 }
 
+void ClientMessageProcessor::getUserIcon() {
+  info("USER::GET_USER_ICON response received");
+
+  // TODO
+}
+
 void ClientMessageProcessor::newFile() {
   info("FILE::NEW response received");
 
@@ -496,8 +509,10 @@ void ClientMessageProcessor::getDir() {
 
   try {
     auto elements = _m.getArray("elements");
+    auto name = _m.getString("name");
+    auto parentId = _m.getInt("parent");
 
-    emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements));
+    emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements), name, parentId);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());

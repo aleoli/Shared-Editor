@@ -8,10 +8,10 @@
 
 using namespace se_exceptions;
 
-FSElement::FSElement() : _id(-1), _parentId(-1), _type(Type::FILE) {}
+FSElement::FSElement() : _id(-1), _parentId(-1), _type(Type::FILE), _creationDate(QDateTime::currentDateTimeUtc()) {}
 
 FSElement::FSElement(int id, int parentId, QString name, Type type)
-  : _id(id), _parentId(parentId), _name(std::move(name)), _type(type) {}
+  : _id(id), _parentId(parentId), _name(std::move(name)), _type(type), _creationDate(QDateTime::currentDateTimeUtc()) {}
 
 FSElement::FSElement(const QJsonObject &json) {
   checkAndAssign(json);
@@ -26,9 +26,10 @@ void FSElement::checkAndAssign(const QJsonObject &json) {
   auto parentIdValue = json["parentId"];
   auto nameValue = json["name"];
   auto typeValue = json["type"];
+  auto dateValue = json["creationDate"];
 
   if(idValue.isUndefined() || parentIdValue.isUndefined()
-    || nameValue.isUndefined() || typeValue.isUndefined()) {
+    || nameValue.isUndefined() || typeValue.isUndefined() || dateValue.isUndefined()) {
     throw FSElementFromJsonException{"The QJsonObject has some fields missing"};
   }
 
@@ -39,7 +40,7 @@ void FSElement::checkAndAssign(const QJsonObject &json) {
     throw FSElementFromJsonException{"One or more fields are not valid"};
   }
 
-  if(!nameValue.isString()) {
+  if(!nameValue.isString() || !dateValue.isString()) {
     throw FSElementFromJsonException{"One or more fields are not valid"};
   }
 
@@ -52,6 +53,7 @@ void FSElement::checkAndAssign(const QJsonObject &json) {
   _parentId = parentId;
   _name = nameValue.toString();
   _type = type;
+  _creationDate = QDateTime::fromString(dateValue.toString());
 }
 
 FSElement FSElement::fromJsonObject(const QJsonObject &json) {
@@ -69,6 +71,7 @@ QJsonObject FSElement::toJsonObject() const {
   json["parentId"] = QJsonValue(_parentId);
   json["name"] = QJsonValue(_name);
   json["type"] = QJsonValue(static_cast<int>(_type));
+  json["creationDate"] = QJsonValue(_creationDate.toString());
 
   return json;
 }
@@ -95,6 +98,10 @@ void FSElement::setName(const QString &name) {
 
 FSElement::Type FSElement::getType() const {
   return _type;
+}
+
+QDateTime FSElement::getCreationDate() const {
+  return _creationDate;
 }
 
 std::string FSElement::to_string() const {

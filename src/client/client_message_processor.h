@@ -23,6 +23,7 @@ private:
   void newUser();
   void editUser();
   void deleteUser();
+  void getUserIcon();
   void newFile();
   void getFile();
   void editFile();
