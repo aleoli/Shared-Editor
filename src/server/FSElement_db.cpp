@@ -110,32 +110,32 @@ void FSElement_db::save_record(QSqlRecord &r) {
 }
 
 void FSElement_db::remove() {
-	this->remove([](int e_id, int owner_id) -> void {});
+  this->remove([](int e_id, int owner_id) -> void {});
 }
 
 void FSElement_db::remove(const std::function<void(int, int)>& notify_fn) {
-	if(this->_type == FSElement::Type::DIRECTORY) {
-		if(this->_parent_id <= 0) {
-			// root dir
-			warn("cannot remove root dir");
+  if(this->_type == FSElement::Type::DIRECTORY) {
+    if(this->_parent_id <= 0) {
+      // root dir
+      warn("cannot remove root dir");
       throw se_exceptions::RootDirException{"cannot remove root dir"};
-		}
-		auto children = this->_children.getValues();
-		for(auto& c: children) {
-	    c->remove(notify_fn);
-	  }
-	} else if(!this->is_link()) {
-		// file non linkato
-		for(auto& s_link: this->_shared_links.getValues()) {
-			s_link->remove();
-		}
-		for(auto& link: this->_links.getValues()) {
+    }
+    auto children = this->_children.getValues();
+    for(auto& c: children) {
+      c->remove(notify_fn);
+    }
+  } else if(!this->is_link()) {
+    // file non linkato
+    for(auto& s_link: this->_shared_links.getValues()) {
+        s_link->remove();
+    }
+    for(auto& link: this->_links.getValues()) {
       notify_fn(link->getId(), link->_owner_id);
       debug(link->getName());
       link->remove();
     }
     this->del_file();
-	}
+  }
   // se è un link, è sufficiente eliminare la entry
   info(QString{"Remove "}+(this->is_link() ? "Link" : "File")+" ID: "+QString::number(this->id)+(this->_type == FSElement::Type::FILE ? " path "+this->_path : ""));
   this->_remove<FSElement_db>();
@@ -306,10 +306,10 @@ FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
 }
 
 std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
-	if(this->_type != FSElement::Type::DIRECTORY) {
-		warn("Trying to list a not-directory element");
-		throw se_exceptions::ReadException{"Trying to create a file in not-dir"};
-	}
+  if(this->_type != FSElement::Type::DIRECTORY) {
+    warn("Trying to list a not-directory element");
+    throw se_exceptions::ReadException{"Trying to create a file in not-dir"};
+  }
   if(s.getUserId() != this->_owner_id) {
     warn("Trying to access not your directory");
     throw se_exceptions::IllegalAccessException{"Trying to access not your directory"};
@@ -318,36 +318,36 @@ std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
 }
 
 void FSElement_db::mv(const Session &s, FSElement_db &fs_e) {
-	if(s.getUserId() != this->_owner_id) {
+  if(s.getUserId() != this->_owner_id) {
     warn("Trying to move not your element");
     throw se_exceptions::IllegalAccessException{"Trying to move not your element"};
   }
-	if(s.getUserId() != fs_e._owner_id) {
+  if(s.getUserId() != fs_e._owner_id) {
     warn("Trying to move to not your directory");
     throw se_exceptions::IllegalAccessException{"Trying to move to not your directory"};
   }
-	if(fs_e._type != FSElement::Type::DIRECTORY) {
+  if(fs_e._type != FSElement::Type::DIRECTORY) {
     error("Trying to move to not-directory element");
     throw se_exceptions::WriteException{"Trying to move to not-directory element"};
   }
-	debug("Moving file "+QString::number(this->id)+" from dir "+QString::number(this->_parent_id)+" to dir "+QString::number(fs_e.id));
-	this->_parent_id = fs_e.id;
-	this->save();
+  debug("Moving file "+QString::number(this->id)+" from dir "+QString::number(this->_parent_id)+" to dir "+QString::number(fs_e.id));
+  this->_parent_id = fs_e.id;
+  this->save();
   fs_e._children.addValue(new FSElement_db{*this});
 }
 
 void FSElement_db::mv(const Session &s, int new_dir_id) {
-	auto dir = FSElement_db::get(s, new_dir_id);
-	this->mv(s, dir);
+  auto dir = FSElement_db::get(s, new_dir_id);
+  this->mv(s, dir);
 }
 
 void FSElement_db::rename(const Session &s, QString name) {
-	if(s.getUserId() != this->_owner_id) {
+  if(s.getUserId() != this->_owner_id) {
     warn("Trying to rename not your element");
     throw se_exceptions::IllegalAccessException{"Trying to rename not your element"};
   }
-	this->_name = std::move(name);
-	this->save();
+  this->_name = std::move(name);
+  this->save();
 }
 
 SharedLink FSElement_db::share(const Session &s) {
@@ -359,12 +359,12 @@ SharedLink FSElement_db::share(const Session &s) {
     warn("Trying to share not your file");
     throw se_exceptions::IllegalAccessException{"Trying to share not your file"};
   }
-	if(this->is_link()) {
-		warn("Trying to share a shared file");
-		throw se_exceptions::ShareException{"Trying to share a shared file"};
-	}
+  if(this->is_link()) {
+    warn("Trying to share a shared file");
+    throw se_exceptions::ShareException{"Trying to share a shared file"};
+  }
   if(!this->_shared_links.getValues().empty()) {
-    return this->_shared_links[0];
+    return SharedLink{*this->_shared_links.getValues()[0]};
   }
   return SharedLink::create(this->id);
 }
@@ -434,7 +434,7 @@ bool FSElement_db::is_link() const {
 }
 
 [[maybe_unused]] User FSElement_db::getCreator() {
-	return this->_creator.getValue();
+  return this->_creator.getValue();
 }
 
 bool FSElement_db::path_on_disk_available() const {
