@@ -44,6 +44,7 @@ public:
   [[nodiscard]] int getCommentId() const;
   [[nodiscard]] QString getPath() const;
   [[nodiscard]] int getParentId() const;
+  std::vector<FSElement_db> getPathElements(const Session &s);
 
   void addCharId(int v);
   void incCommentId();

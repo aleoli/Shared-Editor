@@ -251,6 +251,13 @@ void ClientMessageProcessor::process_filesystem() {
         moveFile();
       break;
 
+    case Message::FileSystemAction::GET_PATH:
+      if(!isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getPath();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -523,6 +530,12 @@ void ClientMessageProcessor::moveFile() {
   info("FILESYSTEM::MOVE_FILE response received");
 
   emit _manager->moveFileResponse();
+}
+
+void ClientMessageProcessor::getPath() {
+  info("FILESYSTEM::GET_PATH response received");
+
+  // TODO
 }
 
 void ClientMessageProcessor::newComment() {

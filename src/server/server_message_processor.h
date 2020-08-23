@@ -61,4 +61,5 @@ private:
   void deleteDir();
   void getDir();
   void moveFile();
+  void getPath();
 };

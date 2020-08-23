@@ -42,6 +42,7 @@ private:
   void deleteDir();
   void getDir();
   void moveFile();
+  void getPath();
   void newComment();
   void updateComment();
   void deleteComment();

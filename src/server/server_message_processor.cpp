@@ -260,6 +260,13 @@ void ServerMessageProcessor::process_filesystem() {
         moveFile();
       break;
 
+    case Message::FileSystemAction::GET_PATH:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getPath();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -1014,6 +1021,30 @@ void ServerMessageProcessor::moveFile() {
   QJsonObject data;
 
   this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::MOVE_FILE, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::getPath() {
+  info("GetPath query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto element_id = _m.getInt("elementId");
+
+  auto element = FSElement_db::get(session, element_id);
+  auto elements = element.getPathElements(session);
+
+  QJsonArray arr;
+  for(auto& f: elements) {
+    auto obj = f.getFSElement().toJsonObject();
+    arr.append(obj);
+  }
+
+  QJsonObject data;
+  data["elements"] = arr;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::GET_PATH, Message::Status::RESPONSE, data};
   this->_has_resp = true;
 }
 

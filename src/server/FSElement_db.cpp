@@ -389,6 +389,22 @@ int FSElement_db::getParentId() const {
   return this->_parent_id;
 }
 
+std::vector<FSElement_db> FSElement_db::getPathElements(const Session &s) {
+  if(s.getUserId() != this->_owner_id) {
+    warn("Trying to access not your element");
+    throw se_exceptions::IllegalAccessException{"Trying to access not your element"};
+  }
+  std::vector<FSElement_db> res{FSElement_db{*this}};
+  if(this->_parent_id != this->id && this->_parent_id > 1) {
+    auto parent = FSElement_db::get(s, this->_parent_id);
+    auto tmp = parent.getPathElements(s);
+    res.insert(res.end(), tmp.begin(), tmp.end());
+    return res;
+  }
+  std::reverse(res.begin(), res.end());
+  return res;
+}
+
 QString FSElement_db::getName() const {
   return this->_name;
 }
