@@ -159,8 +159,19 @@ QMenu::separator {
    <property name="enabled">
     <bool>true</bool>
    </property>
+   <property name="minimumSize">
+    <size>
+     <width>723</width>
+     <height>122</height>
+    </size>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #4e596f #000;</string>
    </property>
    <property name="floating">
     <bool>false</bool>
@@ -180,27 +191,31 @@ QMenu::separator {
    <widget class="QWidget" name="content_widgets">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="btn_home">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
+      <layout class="QVBoxLayout" name="buttons_path">
+       <property name="leftMargin">
+        <number>0</number>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>74</width>
-         <height>37</height>
-        </size>
-       </property>
-       <property name="baseSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
+       <item>
+        <layout class="QHBoxLayout" name="buttons">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btn_home">
+           <property name="maximumSize">
+            <size>
+             <width>74</width>
+             <height>37</height>
+            </size>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:focus {
    border: none;
    outline: none;
 }
@@ -233,44 +248,38 @@ radius: 0.7, stop: 0 #f65964, stop: 1 #000
 background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/home.png</normaloff>:/res/home.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>29</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_new_folder">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>74</width>
-         <height>37</height>
-        </size>
-       </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/home.png</normaloff>:/res/home.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>29</width>
+             <height>27</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_new_folder">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>74</width>
+             <height>37</height>
+            </size>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:focus {
    border: none;
    outline: none;
 }
@@ -303,44 +312,44 @@ radius: 0.7, stop: 0 #f65964, stop: 1 #000
 background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/newFolder.png</normaloff>:/res/newFolder.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>36</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Ctrl+Shift+N</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-       <property name="default">
-        <bool>false</bool>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_new_file">
-       <property name="maximumSize">
-        <size>
-         <width>74</width>
-         <height>37</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/newFolder.png</normaloff>:/res/newFolder.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>36</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="shortcut">
+            <string>Ctrl+Shift+N</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_new_file">
+           <property name="maximumSize">
+            <size>
+             <width>74</width>
+             <height>37</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:focus {
    border: none;
    outline: none;
 }
@@ -373,32 +382,32 @@ radius: 0.7, stop: 0 #f65964, stop: 1 #000
 background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/newFile.png</normaloff>:/res/newFile.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>25</width>
-         <height>31</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_back">
-       <property name="maximumSize">
-        <size>
-         <width>74</width>
-         <height>37</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/newFile.png</normaloff>:/res/newFile.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>31</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_back">
+           <property name="maximumSize">
+            <size>
+             <width>74</width>
+             <height>37</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:focus {
    border: none;
    outline: none;
 }
@@ -432,38 +441,38 @@ radius: 0.7, stop: 0 #f65964, stop: 1 #000
 background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/back.png</normaloff>:/res/back.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>26</width>
-         <height>29</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Alt+Left</string>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_fwd">
-       <property name="maximumSize">
-        <size>
-         <width>74</width>
-         <height>37</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/back.png</normaloff>:/res/back.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>29</height>
+            </size>
+           </property>
+           <property name="shortcut">
+            <string>Alt+Left</string>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_fwd">
+           <property name="maximumSize">
+            <size>
+             <width>74</width>
+             <height>37</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
 background: #f65964;
 border: 1px solid #f65964;
 border-radius: 2px;
@@ -497,32 +506,32 @@ QPushButton:focus {
    border: none;
    outline: none;
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/forward.png</normaloff>:/res/forward.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>26</width>
-         <height>29</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_up">
-       <property name="maximumSize">
-        <size>
-         <width>74</width>
-         <height>37</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/forward.png</normaloff>:/res/forward.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>29</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_up">
+           <property name="maximumSize">
+            <size>
+             <width>74</width>
+             <height>37</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
 background: #f65964;
 border: 1px solid #f65964;
 border-radius: 2px;
@@ -555,32 +564,32 @@ QPushButton:focus {
    border: none;
    outline: none;
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/up.png</normaloff>:/res/up.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>26</width>
-         <height>29</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="ledit_search">
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background: #4e596f;
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/up.png</normaloff>:/res/up.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>26</width>
+             <height>29</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ledit_search">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background: #4e596f;
 border: 1px solid #4e596f;
 border-radius: 15px;
 padding-left: 20px;
@@ -588,37 +597,37 @@ padding-left: 20px;
 color: white;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string>SEARCH DOCUMENT...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_search">
-       <property name="minimumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="baseSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>SEARCH DOCUMENT...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_search">
+           <property name="minimumSize">
+            <size>
+             <width>38</width>
+             <height>38</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>38</width>
+             <height>38</height>
+            </size>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>38</width>
+             <height>38</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
 background: #4e596f;
 border: 0px solid #242a38;
 border-radius: 19px;
@@ -648,35 +657,35 @@ QPushButton:focus {
    border: none;
    outline: none;
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/search.png</normaloff>:/res/search.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>28</width>
-         <height>29</height>
-        </size>
-       </property>
-       <property name="shortcut">
-        <string>Shift+S</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboBox_order">
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">/*
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/search.png</normaloff>:/res/search.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>28</width>
+             <height>29</height>
+            </size>
+           </property>
+           <property name="shortcut">
+            <string>Shift+S</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBox_order">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/*
 border: 1px solid #4e596f;
 border-radius: 15px;
 color: white;
@@ -719,46 +728,46 @@ QComboBox QAbstractItemView{
 	selection-background-color: #f65964;
 	selection-color: white;
 }</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>15</height>
-        </size>
-       </property>
-       <item>
-        <property name="text">
-         <string>ORDER BY TITLE</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ORDER BY DATE</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ORDER BY USER</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_logout">
-       <property name="minimumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>38</width>
-         <height>38</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>16</width>
+             <height>15</height>
+            </size>
+           </property>
+           <item>
+            <property name="text">
+             <string>ORDER BY TITLE</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ORDER BY DATE</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ORDER BY USER</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_logout">
+           <property name="minimumSize">
+            <size>
+             <width>38</width>
+             <height>38</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>38</width>
+             <height>38</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
 background: #4e596f;
 border: 0px solid #242a38;
 border-radius: 19px;
@@ -776,21 +785,58 @@ QPushButton:focus {
    border: none;
    outline: none;
 }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources/res.qrc">
-         <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>26</height>
-        </size>
-       </property>
-      </widget>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>26</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="path">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_path">
+           <property name="styleSheet">
+            <string notr="true">border: none;</string>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;Path example&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="path_separator">
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border: none;</string>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>
