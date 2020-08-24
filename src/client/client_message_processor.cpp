@@ -314,7 +314,15 @@ void ClientMessageProcessor::deleteUser() {
 void ClientMessageProcessor::getUserIcon() {
   info("USER::GET_USER_ICON response received");
 
-  // TODO
+  try {
+    auto userId = _m.getInt("userId");
+    auto icon = _m.getString("icon");
+
+    emit _manager->getIconResponse(userId, icon);
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::newFile() {
@@ -535,7 +543,14 @@ void ClientMessageProcessor::moveFile() {
 void ClientMessageProcessor::getPath() {
   info("FILESYSTEM::GET_PATH response received");
 
-  // TODO
+  try {
+    auto elements = _m.getArray("elements");
+
+    emit _manager->getPathResponse(utils::jsonArrayToVector<FSElement>(elements));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::newComment() {
