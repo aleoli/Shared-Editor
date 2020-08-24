@@ -9,6 +9,7 @@
 #include <QButtonGroup>
 #include <QActionGroup>
 #include <QFont>
+#include <QColor>
 
 #include "main_window.h"
 #include "alert_messages.h"
@@ -62,6 +63,7 @@ private slots:
   void _justify();
   void _font(const QFont &font);
   void _size(int index);
+  void _highlight(bool checked);
 
 private:
   void initOptionsWidget();
@@ -69,6 +71,9 @@ private:
   void initDocks();
   void initTextEdit();
   void setAlignmentGroups();
+  void updateActions();
+  void setBorderColor(QPushButton *button, const QColor &color);
+  void updateAlignment(Qt::Alignment al);
 
   Ui::TextEditor *ui;
 
@@ -81,7 +86,7 @@ private:
   QPushButton *_widgetUndo, *_widgetRedo, *_widgetCut, *_widgetCopy, *_widgetPaste,
     *_widgetBold, *_widgetItalics, *_widgetStrike, *_widgetUnderline, *_widgetMark,
     *_widgetColor, *_widgetInsertComment, *_widgetDownload, *_widgetPrint,
-    *_widgetAlignL, *_widgetAlignC, *_widgetAlignR, *_widgetJustify;
+    *_widgetAlignL, *_widgetAlignC, *_widgetAlignR, *_widgetJustify, *_widgetHighlight;
 
   QFontComboBox *_widgetFont;
   QComboBox *_widgetSize;
@@ -91,13 +96,13 @@ private:
   *_actionBold, *_actionItalics, *_actionStrike, *_actionUnderline, *_actionMark,
   *_actionInsertComment, *_actionDownload, *_actionPrint, *_actionShare,
   *_actionShowComments, *_actionShowConnectedUsers, *_actionClose,
-  *_actionAlignL, *_actionAlignC, *_actionAlignR, *_actionJustify;
+  *_actionAlignL, *_actionAlignC, *_actionAlignR, *_actionJustify, *_actionHighlight;
   //TODO other actions
 
   OptionsWidget *_menuOptions;
   TextEdit *_textEdit;
 
-  bool _highlight; //TODO!
+  bool _highlighted, _blockSignals;
   QButtonGroup *_alignmentButtons;
   QActionGroup *_alignmentActions;
 };

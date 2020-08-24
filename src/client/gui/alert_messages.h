@@ -22,3 +22,6 @@ QString getAlertTitle(Alert alert);
 #define ICON_TOO_BIG QString("Icon too big!")
 #define SAME_PASSWORDS QString("Old password and new password are the same!")
 #define NO_CHANGES QString("No changes made!")
+#define INVALID_COLOR QString("Invalid color!")
+#define HIGHLIGHT_ON QString("Disable user highlighting first!")
+#define INVALID_SIZE QString("Invalid size!")

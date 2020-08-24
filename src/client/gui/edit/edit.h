@@ -32,7 +32,7 @@ signals:
   void save(const QString &token, const std::optional<QString> &password, const std::optional<QString> &newPsw, const std::optional<QString> &newPswRepeat, const std::optional<QString> &icon);
   void cancel();
   void deleteAccount(const QString &token);
-  virtual void alert(Alert type, const QString &what, const QString &title = EDIT_ERROR);
+  void alert(Alert type, const QString &what, const QString &title = EDIT_ERROR);
 
 private slots:
   void _showPasswords(int state);

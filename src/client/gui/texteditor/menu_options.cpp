@@ -63,3 +63,11 @@ void OptionsWidget::_rename() {
 void OptionsWidget::setFileName(const QString &name) {
   _widgetRename->setText(name);
 }
+
+void OptionsWidget::setShowCommentsChecked(bool checked) {
+  _widgetComments->setChecked(checked);
+}
+
+void OptionsWidget::setShowConnectedChecked(bool checked) {
+  _widgetConnected->setChecked(checked);
+}
