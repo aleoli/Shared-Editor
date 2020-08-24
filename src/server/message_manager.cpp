@@ -76,6 +76,13 @@ void MessageManager::addClient(quint64 clientId, const std::shared_ptr<Session>&
   _clients[clientId] = data;
 }
 
+void MessageManager::removeClient(quint64 clientId) {
+  if(!clientIsLogged(clientId)) {
+    throw ClientLoginException{"Client is not logged in"};
+  }
+  this->_clients.erase(clientId);
+}
+
 QString MessageManager::getUsername(quint64 clientId) {
   return this->_clients[clientId].username;
 }

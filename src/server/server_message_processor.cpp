@@ -462,6 +462,9 @@ void ServerMessageProcessor::deleteUser() {
     auto session = Session::get(token);
 
     auto user = session.getUser();
+
+    this->_manager->removeClient(this->_clientId);
+
     session.close();
     user.remove();
 
