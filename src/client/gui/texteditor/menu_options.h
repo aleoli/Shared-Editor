@@ -25,6 +25,8 @@ signals:
 
 public slots:
   void setFileName(const QString &name);
+  void setShowCommentsChecked(bool checked);
+  void setShowConnectedChecked(bool checked);
 
 private slots:
   void _share(bool checked);
