@@ -25,6 +25,7 @@ public slots:
 signals:
   void login(const QString &username, const QString &password);
   void signup();
+  virtual void alert(Alert type, const QString &what, const QString &title = LOGIN_ERROR);
 
 private slots:
   void _showPassword(int state);

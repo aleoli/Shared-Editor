@@ -25,7 +25,7 @@ public slots:
   void unfreeze();
 
 signals:
-  void alert(Alert type, const QString &what);
+  virtual void alert(Alert type, const QString &what, const QString &title = "");
   void exit();
 
 protected:
