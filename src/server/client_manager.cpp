@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <utility>
+#include <utils.h>
 
 std::shared_ptr<ClientManager> ClientManager::instance = nullptr;
 
@@ -39,6 +40,7 @@ void ClientManager::newConnection() {
     connect(cl, SIGNAL(disconnected(quint64)), this, SIGNAL(closeClient(quint64)));
     connect(this, SIGNAL(force_close(quint64)), cl, SLOT(disconnect(quint64)));
     connect(this, SIGNAL(send_data(quint64, QByteArray)), cl, SLOT(send(quint64, QByteArray)));
+    connect(this, &ClientManager::quit, cl, &Client::quit, Qt::QueuedConnection);
     this->_clients[this->_next_client_id] = cl;
     this->_threads[this->_next_client_id++] = t;
     t->start();
@@ -46,17 +48,25 @@ void ClientManager::newConnection() {
 }
 
 void ClientManager::disconnected(quint64 id) {
-	auto cl = this->_clients[id];
+  auto cl = this->_clients[id];
   this->_clients.erase(id);
-	auto t = this->_threads[id];
-	this->_threads.erase(id);
-	t->quit();
-	t->wait();
+  auto t = this->_threads[id];
+  this->_threads.erase(id);
+  t->quit();
+  t->wait();
   delete cl;		// viene distrutto anche il thread perchè client era il suo parent
 }
 
+void ClientManager::quitSlot() {
+  emit quit();
+  for(auto& th: this->_threads) {
+    th.second->quit();
+    th.second->wait();
+  }
+}
+
 void ClientManager::onCloseClient(quint64 id) {
-	emit this->closeClient(id);
+  emit this->closeClient(id);
 }
 
 void ClientManager::sendData(quint64 client_id, QByteArray data) {

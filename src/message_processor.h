@@ -10,7 +10,7 @@ public:
   [[nodiscard]] Message getResponse() const;
 
 protected:
-  virtual void process_message();
+  void process_message();
   virtual void process_error() = 0;
   virtual void process_user() = 0;
   virtual void process_file_edit() = 0;

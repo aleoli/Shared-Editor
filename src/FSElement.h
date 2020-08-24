@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QJsonObject>
+#include <QDateTime>
 
 class FSElement {
 public:
@@ -28,6 +29,7 @@ public:
   [[nodiscard]] QString getName() const;
   void setName(const QString &name);
   [[nodiscard]] Type getType() const;
+  [[nodiscard]] QDateTime getCreationDate() const;
   [[nodiscard]] std::string to_string() const;
 
 private:
@@ -37,4 +39,5 @@ private:
   int _parentId{};
   QString _name;
   Type _type;
+  QDateTime _creationDate{};
 };

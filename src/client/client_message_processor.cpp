@@ -57,6 +57,13 @@ void ClientMessageProcessor::process_user() {
         deleteUser();
       break;
 
+    case Message::UserAction::GET_USER_ICON:
+      if(!isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getUserIcon();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -244,6 +251,13 @@ void ClientMessageProcessor::process_filesystem() {
         moveFile();
       break;
 
+    case Message::FileSystemAction::GET_PATH:
+      if(!isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getPath();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -295,6 +309,20 @@ void ClientMessageProcessor::deleteUser() {
   info("USER::DELETE response received");
 
   emit _manager->deleteUserResponse();
+}
+
+void ClientMessageProcessor::getUserIcon() {
+  info("USER::GET_USER_ICON response received");
+
+  try {
+    auto userId = _m.getInt("userId");
+    auto icon = _m.getString("icon");
+
+    emit _manager->getIconResponse(userId, icon);
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::newFile() {
@@ -496,8 +524,10 @@ void ClientMessageProcessor::getDir() {
 
   try {
     auto elements = _m.getArray("elements");
+    auto name = _m.getString("name");
+    auto parentId = _m.getInt("parent");
 
-    emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements));
+    emit _manager->getDirResponse(utils::jsonArrayToVector<FSElement>(elements), name, parentId);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
@@ -508,6 +538,19 @@ void ClientMessageProcessor::moveFile() {
   info("FILESYSTEM::MOVE_FILE response received");
 
   emit _manager->moveFileResponse();
+}
+
+void ClientMessageProcessor::getPath() {
+  info("FILESYSTEM::GET_PATH response received");
+
+  try {
+    auto elements = _m.getArray("elements");
+
+    emit _manager->getPathResponse(utils::jsonArrayToVector<FSElement>(elements));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
 }
 
 void ClientMessageProcessor::newComment() {

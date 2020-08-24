@@ -109,6 +109,15 @@ void MessageManager::deleteUserQuery(const QString &token) {
     emit send_data(m.toQByteArray());
 }
 
+void MessageManager::getUserIconQuery(int userId) {
+  Message m{Message::Type::USER, static_cast<int>(Message::UserAction::GET_USER_ICON),
+            Message::Status::QUERY};
+
+  m.setValue("userId", userId);
+
+  emit send_data(m.toQByteArray());
+}
+
 void MessageManager::newFileQuery(const QString &token, const QString &name, const std::optional<int> &dirId) {
   Message m{Message::Type::FILE, static_cast<int>(Message::FileAction::NEW),
     Message::Status::QUERY};
@@ -290,6 +299,16 @@ void MessageManager::moveFileQuery(const QString &token, int fileId, int dirId) 
     m.setValue("dirId", dirId);
 
     emit send_data(m.toQByteArray());
+}
+
+void MessageManager::getPathQuery(const QString &token, int elementId) {
+  Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::GET_PATH),
+            Message::Status::QUERY};
+
+  m.setValue("token", token);
+  m.setValue("elementId", elementId);
+
+  emit send_data(m.toQByteArray());
 }
 
 void MessageManager::commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment) {

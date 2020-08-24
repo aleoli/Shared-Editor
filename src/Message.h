@@ -22,7 +22,8 @@ public:
       LOGOUT,
       NEW,
       EDIT,
-      DELETE
+      DELETE,
+      GET_USER_ICON
   };
 
   enum class FileAction {
@@ -63,7 +64,8 @@ public:
       EDIT_DIR,
       DELETE_DIR,
       GET_DIR,
-      MOVE_FILE
+      MOVE_FILE,
+      GET_PATH
   };
 
   enum class Status {

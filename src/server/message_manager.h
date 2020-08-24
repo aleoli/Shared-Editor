@@ -29,6 +29,7 @@ public:
   /* gestione utenti */
   //quando il processor processa un msg di login, va aggiunto a _clients
   void addClient(quint64 clientId, const std::shared_ptr<Session>& session, QString username);
+  void removeClient(quint64 clientId);
   QString getUsername(quint64 clientId);
   std::optional<quint64> getClient(int userId);             // il client in cui è connesso l'utente
   std::list<quint64> getClientsInFile(int fileId);      // tutti i client che stanno lavorando su un file
@@ -84,7 +85,7 @@ private:
     QString username;
   } Data;
 
-  std::unordered_map<quint64, Data> _clients;                // mappa client_id -> Data
-  std::unordered_map<int, std::list<quint64>> _fileClients;    // mappa file_id -> lista di client_id che lo stanno usando
+  std::unordered_map<quint64, Data> _clients{};                // mappa client_id -> Data
+  std::unordered_map<int, std::list<quint64>> _fileClients{};    // mappa file_id -> lista di client_id che lo stanno usando
   FifoMap<int, std::pair<QString, File>> _openFiles{MAX_OPEN_FILES};   //un unico posto in cui sono presenti i file, con l'aggiunta di qualche handler per gestirli
 };

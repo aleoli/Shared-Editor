@@ -22,6 +22,7 @@ signals:
 public slots:
   void send(quint64 client_id, const QByteArray& msg);
   void disconnect(quint64 id);
+  void quit();
 
 private slots:
   void read();

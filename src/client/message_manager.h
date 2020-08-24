@@ -38,6 +38,7 @@ signals:
   void fileDeletedQuery(int fileId);
   void getLinkResponse(const QString &link);
   void activateLinkResponse(const FSElement &element, const File &file);
+  void getIconResponse(int userId, const QString &icon);
 
   void remoteInsertQuery(int fileId, int userId, const std::vector<Symbol> &symbols);
   void remoteDeleteQuery(int fileId, int userId, const std::vector<SymbolId> &ids);
@@ -49,8 +50,9 @@ signals:
   void newDirResponse(int dirId);
   void editDirResponse();
   void deleteDirResponse();
-  void getDirResponse(const std::vector<FSElement> &elements);
+  void getDirResponse(const std::vector<FSElement> &elements, QString name, int parentId);
   void moveFileResponse();
+  void getPathResponse(const std::vector<FSElement> &elements);
 
   void commentRemoteInsertQuery(int fileId, int userId, const File::Comment &comment);
   void commentRemoteUpdateQuery(int fileId, int userId, const File::Comment &comment);
@@ -65,6 +67,7 @@ public slots:
   void newUserQuery(const QString &username, const QString &password, const QString &pswRepeat);
   void editUserQuery(const QString &token, const std::optional<QString> &nickname, const std::optional<QString> &oldPassword, const std::optional<QString> &password, const std::optional<QString> &pswRepeat, const std::optional<QString> &icon);
   void deleteUserQuery(const QString &token);
+  void getUserIconQuery(int userId);
 
   // newFileQuery: se il file è creato nella root, il dirId non è necessario
   void newFileQuery(const QString &token, const QString &name, const std::optional<int> &dirId = std::nullopt);
@@ -86,6 +89,7 @@ public slots:
   void deleteDirQuery(const QString &token, int dirId);
   void getDirQuery(const QString &token, const std::optional<int> &dirId = std::nullopt);
   void moveFileQuery(const QString &token, int fileId, int dirId);
+  void getPathQuery(const QString &token, int elementId);
 
   void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
