@@ -11,22 +11,17 @@ Login::Login(QWidget *parent) :
     MainWindow(parent),
     ui(new Ui::Login)
 {
-    ui->setupUi(this);
+  ui->setupUi(this);
 
-    _widgetUsername = findChild<QLineEdit *>("ledit_uname");
-    _widgetPassword  = findChild<QLineEdit *>("ledit_pwd");
-    _widgetShowPassword = findChild<QCheckBox *>("checkBox_showPwd");
-    _widgetLogin = findChild<QPushButton *>("btn_login");
-    _widgetSignup = findChild<QPushButton *>("btn_signup");
+  _widgetUsername = ui->ledit_uname;
+  _widgetPassword  = ui->ledit_pwd;
+  _widgetShowPassword = ui->checkBox_showPwd;
+  _widgetLogin = ui->btn_login;
+  _widgetSignup = ui->btn_signup;
 
-    if(!_widgetUsername || !_widgetPassword || !_widgetShowPassword ||
-        !_widgetLogin || !_widgetSignup) {
-          throw GuiException{"One or more widgets in Login are null"};
-    }
-
-    connect(_widgetShowPassword, &QCheckBox::stateChanged, this, &Login::_showPassword);
-    connect(_widgetLogin, &QPushButton::clicked, this, &Login::_login);
-    connect(_widgetSignup, &QPushButton::clicked, this, &Login::_signup);
+  connect(_widgetShowPassword, &QCheckBox::stateChanged, this, &Login::_showPassword);
+  connect(_widgetLogin, &QPushButton::clicked, this, &Login::_login);
+  connect(_widgetSignup, &QPushButton::clicked, this, &Login::_signup);
 }
 
 Login::~Login()

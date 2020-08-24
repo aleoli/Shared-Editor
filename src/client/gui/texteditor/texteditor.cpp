@@ -16,69 +16,55 @@ TextEditor::TextEditor(QWidget *parent) :
 {
   ui->setupUi(this);
 
-  _menuBar = findChild<QMenuBar *>("menubar");
-  _dockOnline = findChild<QDockWidget *>("dock_connectedUsers");
-  _dockOffline = findChild<QDockWidget *>("dock_disconnectedUsers");
-  _dockComments = findChild<QDockWidget *>("dock_comments");
-  _widgetUndo = findChild<QPushButton *>("btn_undo");
-  _widgetRedo = findChild<QPushButton *>("btn_redo");
-  _widgetCut = findChild<QPushButton *>("btn_cut");
-  _widgetCopy = findChild<QPushButton *>("btn_copy");
-  _widgetPaste = findChild<QPushButton *>("btn_paste");
-  _widgetBold = findChild<QPushButton *>("btn_bold");
-  _widgetItalics = findChild<QPushButton *>("btn_italics");
-  _widgetStrike = findChild<QPushButton *>("btn_strike");
-  _widgetUnderline = findChild<QPushButton *>("btn_underline");
-  _widgetMark = findChild<QPushButton *>("btn_mark");
-  _widgetColor = findChild<QPushButton *>("btn_color");
-  _widgetInsertComment = findChild<QPushButton *>("btn_comment");
-  _widgetDownload = findChild<QPushButton *>("btn_download");
-  _widgetPrint = findChild<QPushButton *>("btn_print");
-  _widgetAlignL = findChild<QPushButton *>("btn_alignL");
-  _widgetAlignC = findChild<QPushButton *>("btn_alignC");
-  _widgetAlignR = findChild<QPushButton *>("btn_alignR");
-  _widgetJustify = findChild<QPushButton *>("btn_justify");
-  _widgetHighlight = findChild<QPushButton *>("btn_viewUsersTxt");
+  _menuBar = ui->menubar;
+  _dockOnline = ui->dock_connectedUsers;
+  _dockOffline = ui->dock_disconnectedUsers;
+  _dockComments = ui->dock_comments;
+  _widgetUndo = ui->btn_undo;
+  _widgetRedo = ui->btn_redo;
+  _widgetCut = ui->btn_cut;
+  _widgetCopy = ui->btn_copy;
+  _widgetPaste = ui->btn_paste;
+  _widgetBold = ui->btn_bold;
+  _widgetItalics = ui->btn_italics;
+  _widgetStrike = ui->btn_strike;
+  _widgetUnderline = ui->btn_underline;
+  _widgetMark = ui->btn_mark;
+  _widgetColor = ui->btn_color;
+  _widgetInsertComment = ui->btn_comment;
+  _widgetDownload = ui->btn_download;
+  _widgetPrint = ui->btn_print;
+  _widgetAlignL = ui->btn_alignL;
+  _widgetAlignC = ui->btn_alignC;
+  _widgetAlignR = ui->btn_alignR;
+  _widgetJustify = ui->btn_justify;
+  _widgetHighlight = ui->btn_viewUsersTxt;
 
-  _widgetFont = findChild<QFontComboBox *>("fontComboBox");
-  _widgetSize = findChild<QComboBox *>("comboBox");
+  _widgetFont = ui->fontComboBox;
+  _widgetSize = ui->comboBox;
 
-  _actionUndo = findChild<QAction *>("actionUndo");
-  _actionRedo = findChild<QAction *>("actionRedo");
-  _actionCut = findChild<QAction *>("actionCut");
-  _actionCopy = findChild<QAction *>("actionCopy");
-  _actionPaste = findChild<QAction *>("actionPaste");
-  _actionBold = findChild<QAction *>("actionBold");
-  _actionItalics = findChild<QAction *>("actionItalics");
-  _actionStrike = findChild<QAction *>("actionStrike");
-  _actionUnderline = findChild<QAction *>("actionUnderline");
-  _actionMark = findChild<QAction *>("actionHighlight");
-  _actionInsertComment = findChild<QAction *>("actionComment");
-  _actionDownload = findChild<QAction *>("actionDownload");
-  _actionPrint = findChild<QAction *>("actionPrint");
-  _actionShare = findChild<QAction *>("actionShare");
-  _actionShowComments = findChild<QAction *>("actionComments");
-  _actionShowConnectedUsers = findChild<QAction *>("actionConnected_users");
-  _actionClose = findChild<QAction *>("actionClose");
-  _actionAlignL = findChild<QAction *>("actionAlign_left");
-  _actionAlignC = findChild<QAction *>("actionAlign_center");
-  _actionAlignR = findChild<QAction *>("actionAlign_right");
-  _actionJustify = findChild<QAction *>("actionJustify");
-  _actionHighlight = findChild<QAction *>("actionHighlight_users_text");
-
-  if(!_menuBar || !_dockOnline || !_dockOffline || !_dockComments || !_widgetUndo ||
-    !_widgetRedo || !_widgetCut || !_widgetCopy || !_widgetPaste || !_widgetBold ||
-    !_widgetItalics || !_widgetStrike || !_widgetUnderline || !_widgetMark ||
-    !_widgetColor || !_widgetInsertComment || !_widgetDownload || !_widgetPrint ||
-    !_widgetFont || !_widgetSize || !_actionUndo || !_actionRedo || !_actionCut ||
-    !_actionCopy || !_actionPaste || !_actionBold || !_actionItalics || !_actionStrike ||
-    !_actionUnderline || !_actionMark || !_actionInsertComment || !_actionDownload ||
-    !_actionPrint || !_actionShare || !_actionShowComments || !_actionShowConnectedUsers ||
-    !_actionClose || !_widgetAlignL || !_widgetAlignC || !_widgetAlignR || !_widgetJustify ||
-    !_actionAlignL || !_actionAlignC || !_actionAlignR || !_actionJustify ||
-    !_widgetHighlight || !_actionHighlight) {
-    throw GuiException{"One or more widgets in TextEditor are null"};
-  }
+  _actionUndo = ui->actionUndo;
+  _actionRedo = ui->actionRedo;
+  _actionCut = ui->actionCut;
+  _actionCopy = ui->actionCopy;
+  _actionPaste = ui->actionPaste;
+  _actionBold = ui->actionBold;
+  _actionItalics = ui->actionItalics;
+  _actionStrike = ui->actionStrike;
+  _actionUnderline = ui->actionUnderline;
+  _actionMark = ui->actionHighlight;
+  _actionInsertComment = ui->actionComment;
+  _actionDownload = ui->actionDownload;
+  _actionPrint = ui->actionPrint;
+  _actionShare = ui->actionShare;
+  _actionShowComments = ui->actionComments;
+  _actionShowConnectedUsers = ui->actionConnected_users;
+  _actionClose = ui->actionClose;
+  _actionAlignL = ui->actionAlign_left;
+  _actionAlignC = ui->actionAlign_center;
+  _actionAlignR = ui->actionAlign_right;
+  _actionJustify = ui->actionJustify;
+  _actionHighlight = ui->actionHighlight_users_text;
 
   initTextEdit();
   initOptionsWidget();
@@ -498,5 +484,6 @@ void TextEditor::_highlight(bool checked) {
 
   //TODO highlight on/off
 
+  //trigger background color button to change TODO change only that button
   updateActions();
 }

@@ -14,30 +14,24 @@ Edit::Edit(QWidget *parent) :
     ui(new Ui::Edit),
     _iconSet(false)
 {
-    ui->setupUi(this);
+  ui->setupUi(this);
 
-    _widgetPassword  = findChild<QLineEdit *>("ledit_pwd");
-    _widgetNewPassword  = findChild<QLineEdit *>("ledit_newPwd");
-    _widgetNewPasswordRepeat  = findChild<QLineEdit *>("lineEdit_cnfrmPwd");
-    _widgetShowPasswords = findChild<QCheckBox *>("checkBox_showPasswords");
-    _widgetSave = findChild<QPushButton *>("btn_save");
-    _widgetCancel = findChild<QPushButton *>("btn_cancel");
-    _widgetDelete = findChild<QPushButton *>("btn_delete");
-    _widgetReset = findChild<QPushButton *>("btn_reset");
-    _widgetIcon = findChild<QPushButton *>("btn_changeProfile");
+  _widgetPassword  = ui->ledit_pwd;
+  _widgetNewPassword  = ui->ledit_newPwd;
+  _widgetNewPasswordRepeat  = ui->lineEdit_cnfrmPwd;
+  _widgetShowPasswords = ui->checkBox_showPasswords;
+  _widgetSave = ui->btn_save;
+  _widgetCancel = ui->btn_cancel;
+  _widgetDelete = ui->btn_delete;
+  _widgetReset = ui->btn_reset;
+  _widgetIcon = ui->btn_changeProfile;
 
-    if(!_widgetPassword || !_widgetNewPassword || !_widgetNewPasswordRepeat ||
-        !_widgetShowPasswords || !_widgetSave || !_widgetCancel ||
-        !_widgetDelete || !_widgetReset || !_widgetIcon) {
-          throw GuiException{"One or more widgets in Edit are null"};
-    }
-
-    connect(_widgetShowPasswords, &QCheckBox::stateChanged, this, &Edit::_showPasswords);
-    connect(_widgetSave, &QPushButton::clicked, this, &Edit::_save);
-    connect(_widgetCancel, &QPushButton::clicked, this, &Edit::_cancel);
-    connect(_widgetDelete, &QPushButton::clicked, this, &Edit::_delete);
-    connect(_widgetReset, &QPushButton::clicked, this, &Edit::_reset);
-    connect(_widgetIcon, &QPushButton::clicked, this, &Edit::_setIcon);
+  connect(_widgetShowPasswords, &QCheckBox::stateChanged, this, &Edit::_showPasswords);
+  connect(_widgetSave, &QPushButton::clicked, this, &Edit::_save);
+  connect(_widgetCancel, &QPushButton::clicked, this, &Edit::_cancel);
+  connect(_widgetDelete, &QPushButton::clicked, this, &Edit::_delete);
+  connect(_widgetReset, &QPushButton::clicked, this, &Edit::_reset);
+  connect(_widgetIcon, &QPushButton::clicked, this, &Edit::_setIcon);
 }
 
 Edit::~Edit()

@@ -12,28 +12,22 @@ Registration::Registration(QWidget *parent) :
     MainWindow(parent),
     ui(new Ui::Registration), _iconSet(false)
 {
-    ui->setupUi(this);
+  ui->setupUi(this);
 
-    _widgetUsername = findChild<QLineEdit *>("ledit_uname");
-    _widgetPassword  = findChild<QLineEdit *>("ledit_pwd");
-    _widgetPasswordRepeat  = findChild<QLineEdit *>("lineEdit_cnfrmPwd");
-    _widgetShowPasswords = findChild<QCheckBox *>("checkBox_showPwds");
-    _widgetSignup = findChild<QPushButton *>("btn_signup");
-    _widgetCancel = findChild<QPushButton *>("btn_cancel");
-    _widgetReset = findChild<QPushButton *>("btn_reset");
-    _widgetIcon = findChild<QPushButton *>("btn_changeProfile");
+  _widgetUsername = ui->ledit_uname;
+  _widgetPassword  = ui->ledit_pwd;
+  _widgetPasswordRepeat  = ui->lineEdit_cnfrmPwd;
+  _widgetShowPasswords = ui->checkBox_showPwds;
+  _widgetSignup = ui->btn_signup;
+  _widgetCancel = ui->btn_cancel;
+  _widgetReset = ui->btn_reset;
+  _widgetIcon = ui->btn_changeProfile;
 
-    if(!_widgetUsername || !_widgetPassword || !_widgetPasswordRepeat ||
-        !_widgetShowPasswords || !_widgetSignup || !_widgetCancel ||
-        !_widgetReset || !_widgetIcon) {
-          throw GuiException{"One or more widgets in Registration are null"};
-    }
-
-    connect(_widgetShowPasswords, &QCheckBox::stateChanged, this, &Registration::_showPasswords);
-    connect(_widgetSignup, &QPushButton::clicked, this, &Registration::_signup);
-    connect(_widgetCancel, &QPushButton::clicked, this, &Registration::_cancel);
-    connect(_widgetReset, &QPushButton::clicked, this, &Registration::_reset);
-    connect(_widgetIcon, &QPushButton::clicked, this, &Registration::_setIcon);
+  connect(_widgetShowPasswords, &QCheckBox::stateChanged, this, &Registration::_showPasswords);
+  connect(_widgetSignup, &QPushButton::clicked, this, &Registration::_signup);
+  connect(_widgetCancel, &QPushButton::clicked, this, &Registration::_cancel);
+  connect(_widgetReset, &QPushButton::clicked, this, &Registration::_reset);
+  connect(_widgetIcon, &QPushButton::clicked, this, &Registration::_setIcon);
 }
 
 Registration::~Registration()

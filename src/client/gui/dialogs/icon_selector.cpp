@@ -18,25 +18,19 @@ IconSelector::IconSelector(QWidget *parent) :
 {
   ui->setupUi(this);
 
-  _widgetChoose  = findChild<QPushButton *>("btn_delete");
-  _widgetCancel  = findChild<QPushButton *>("btn_cancel");
-  _iconDefault  = findChild<QPushButton *>("btn_default");
-  _iconParrot = findChild<QPushButton *>("btn_parrot");
-  _iconHappyman1  = findChild<QPushButton *>("btn_happyman1");
-  _iconSoldier  = findChild<QPushButton *>("btn_soldier");
-  _iconSpaceship1  = findChild<QPushButton *>("btn_spaceship1");
-  _iconSpaceship2 = findChild<QPushButton *>("btn_spaceship2");
-  _iconSpaceship3  = findChild<QPushButton *>("btn_spaceship3");
-  _iconSpaceship4  = findChild<QPushButton *>("btn_spaceship4");
-  _iconStar  = findChild<QPushButton *>("btn_star");
-  _iconSunset = findChild<QPushButton *>("btn_sunset");
-
-  if(!_widgetChoose || !_widgetCancel || !_iconDefault || !_iconParrot ||
-     !_iconHappyman1 || !_iconSoldier || !_iconSpaceship1 || !_iconSpaceship2
-      || !_iconSpaceship3 || !_iconSpaceship4 || !_iconStar || !_iconSunset ) {
-        throw GuiException{"One or more widgets in IconSelector are null"};
-  }
-
+  _widgetChoose  = ui->btn_delete;
+  _widgetCancel  = ui->btn_cancel;
+  _iconDefault  = ui->btn_default;
+  _iconParrot = ui->btn_parrot;
+  _iconHappyman1  = ui->btn_happyman1;
+  _iconSoldier  = ui->btn_soldier;
+  _iconSpaceship1  = ui->btn_spaceship1;
+  _iconSpaceship2 = ui->btn_spaceship2;
+  _iconSpaceship3  = ui->btn_spaceship3;
+  _iconSpaceship4  = ui->btn_spaceship4;
+  _iconStar  = ui->btn_star;
+  _iconSunset = ui->btn_sunset;
+  
   connect(_widgetChoose, &QPushButton::clicked, this, &IconSelector::_choose);
   connect(_widgetCancel, &QPushButton::clicked, this, &IconSelector::_cancel);
   connect(_iconDefault, &QPushButton::clicked, this, &IconSelector::_default);
