@@ -16,15 +16,10 @@ Info::Info(QWidget *parent, const QString &windowTitle, const QString &title, co
 {
   ui->setupUi(this);
 
-  _widgetConfirm  = findChild<QPushButton *>("btn_yes");
-  _widgetCopy  = findChild<QPushButton *>("btn_no");
-  _widgetTitle  = findChild<QLabel *>("label_title");
-  _widgetText  = findChild<QLabel *>("text");
-
-
-  if(!_widgetConfirm || !_widgetCopy || !_widgetTitle || !_widgetText) {
-        throw GuiException{"One or more widgets in Copy are null"};
-  }
+  _widgetConfirm  = ui->btn_yes;
+  _widgetCopy  = ui->btn_no;
+  _widgetTitle  = ui->label_title;
+  _widgetText  = ui->text;
 
   _widgetTitle->setText(title);
   _widgetText->setText(msg);

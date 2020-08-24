@@ -12,16 +12,11 @@ OptionsWidget::OptionsWidget(QWidget *parent) :
 {
   ui->setupUi(this);
 
-  _widgetShare = findChild<QPushButton *>("btn_share");
-  _widgetComments = findChild<QPushButton *>("btn_comments");
-  _widgetConnected = findChild<QPushButton *>("btn_connected");
-  _widgetUser = findChild<QPushButton *>("btn_logout");
-  _widgetRename = findChild<QLineEdit *>("ledit_rename");
-
-  if(!_widgetShare || !_widgetComments || !_widgetConnected || !_widgetUser ||
-    !_widgetRename) {
-    throw GuiException{"One or more widgets in UserWidget are null"};
-  }
+  _widgetShare = ui->btn_share;
+  _widgetComments = ui->btn_comments;
+  _widgetConnected = ui->btn_connected;
+  _widgetUser = ui->btn_logout;
+  _widgetRename = ui->ledit_rename;
 
   connect(_widgetShare, &QPushButton::clicked, this, &OptionsWidget::_share);
   connect(_widgetComments, &QPushButton::clicked, this, &OptionsWidget::_comments);

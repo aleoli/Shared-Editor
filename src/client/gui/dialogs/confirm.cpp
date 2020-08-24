@@ -13,13 +13,9 @@ Confirm::Confirm(QWidget *parent) :
 {
   ui->setupUi(this);
 
-  _widgetConfirm  = findChild<QPushButton *>("btn_yes");
-  _widgetCancel  = findChild<QPushButton *>("btn_no");
-
-  if(!_widgetConfirm || !_widgetCancel) {
-        throw GuiException{"One or more widgets in Confirm are null"};
-  }
-
+  _widgetConfirm  = ui->btn_yes;
+  _widgetCancel  = ui->btn_no;
+  
   connect(_widgetConfirm, &QPushButton::clicked, this, &Confirm::_confirm);
   connect(_widgetCancel, &QPushButton::clicked, this, &Confirm::_cancel);
 }
