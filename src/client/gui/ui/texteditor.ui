@@ -380,7 +380,7 @@ QMenu::separator {
    <property name="minimumSize">
     <size>
      <width>150</width>
-     <height>44</height>
+     <height>46</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -447,13 +447,28 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <property name="styleSheet">
      <string notr="true">background-color: #4E596F;</string>
     </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <spacer name="online_verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>169</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QDockWidget" name="dock_comments">
    <property name="minimumSize">
     <size>
      <width>150</width>
-     <height>44</height>
+     <height>46</height>
     </size>
    </property>
    <property name="font">
@@ -514,6 +529,21 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <property name="styleSheet">
      <string notr="true">background-color: #4E596F;</string>
     </property>
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <spacer name="comments_verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>391</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QDockWidget" name="options">
@@ -2530,6 +2560,21 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     <property name="styleSheet">
      <string notr="true">background-color: #4E596F;</string>
     </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <spacer name="offline_verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>169</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </widget>
   </widget>
   <action name="actionOpen">
