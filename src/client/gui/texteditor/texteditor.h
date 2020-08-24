@@ -10,6 +10,7 @@
 #include <QActionGroup>
 #include <QFont>
 #include <QColor>
+#include <QBrush>
 
 #include "main_window.h"
 #include "alert_messages.h"
@@ -102,7 +103,9 @@ private:
   OptionsWidget *_menuOptions;
   TextEdit *_textEdit;
 
-  bool _highlighted, _blockSignals;
   QButtonGroup *_alignmentButtons;
   QActionGroup *_alignmentActions;
+
+  bool _highlighted, _blockSignals;
+  QBrush _defColor;
 };
