@@ -166,6 +166,7 @@ void TextEditor::initDocks() {
 void TextEditor::initTextEdit() {
   _textEdit = new TextEdit;
   setCentralWidget(_textEdit);
+  _defColor = _textEdit->currentCharFormat().background();
 }
 
 void TextEditor::setAlignmentGroups() {
