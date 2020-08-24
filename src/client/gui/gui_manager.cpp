@@ -8,6 +8,7 @@
 
 #include <optional>
 #include "exceptions.h"
+#include "info.h"
 
 using namespace se_exceptions;
 
@@ -194,6 +195,7 @@ void GuiManager::closeStacked() {
 void GuiManager::alert(Alert type, const QString &what) {
   //TODO show alert dialog or something
   debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + what);
+  Info::show(_stackedWidget->currentWidget(), getAlertTitle(type), what);
 }
 
 void GuiManager::showWindow(MainWindow *window, bool clear) {
@@ -350,6 +352,5 @@ void GuiManager::serverActivateLinkResponse(const FSElement &element, const File
 void GuiManager::serverGetLinkResponse(const QString &link) {
   debug("GuiManager::serverGetLinkResponse");
   unfreezeWindow();
-  //TODO show link in dialog?
-  info("Link: " + link);
+  alert(Alert::INFO, link);
 }

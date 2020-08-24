@@ -61,9 +61,6 @@ void Login::_login(bool checked) {
     _user->setUsername(username);
     emit login(username, pwd);
   }
-  else {
-    emit alert(Alert::ERROR, INCORRECT_FIELDS);
-  }
 }
 
 void Login::_signup(bool checked) {
