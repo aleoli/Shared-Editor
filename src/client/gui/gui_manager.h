@@ -62,7 +62,7 @@ signals:
   void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment);
 
-  void serverGetDirResponse(const std::vector<FSElement> &elements);
+  void serverGetDirResponse(const std::vector<FSElement> &elements, const QString &name, int parentId);
   void serverNewDirResponse(int id);
 
 public slots:

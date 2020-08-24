@@ -63,7 +63,17 @@ void DocsBrowser::setIcon() {
   _widgetAccount->setIconSize(_widgetAccount->size());
 }
 
-void DocsBrowser::showDir(const std::vector<FSElement> &elements) {
+void DocsBrowser::showDir(const std::vector<FSElement> &elements, const QString& name, int parentId) {
+  if(parentId == -1) {
+    this->_currentParent = std::nullopt;
+  } else {
+    this->_currentParent = parentId;
+  }
+
+  this->_showDir(elements);
+}
+
+void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
   this->_cleanWidgets();
   int nCols = this->_get_n_cols();
   for(int i=0; i<elements.size(); i++) {
@@ -182,8 +192,9 @@ void DocsBrowser::_goFwd(bool checked) {
 }
 
 void DocsBrowser::_goUp(bool checked) {
-  // TODO
-  debug("go up");
+  if(this->_currentParent) {
+    this->changeDir(*this->_currentParent);
+  }
 }
 
 std::list<int>::const_iterator DocsBrowser::_getCurrent() {
@@ -214,5 +225,5 @@ int DocsBrowser::_get_n_cols() {
 
 void DocsBrowser::resizeEvent(QResizeEvent *event) {
   debug("resize");
-  this->showDir(this->_currentElements);
+  this->_showDir(this->_currentElements);
 }

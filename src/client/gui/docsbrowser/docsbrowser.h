@@ -28,7 +28,7 @@ public slots:
   virtual void clear();
 
   void setIcon();
-  void showDir(const std::vector<FSElement> &elements);
+  void showDir(const std::vector<FSElement> &elements, const QString& name, int parentId);
   void changeDir(int dirId);
 
 signals:
@@ -70,6 +70,7 @@ private:
   QWidget *_scrollArea;
   QGridLayout *_layout;
 
+  std::optional<int> _currentParent = std::nullopt;
   std::optional<int> _currentDir = std::nullopt;
   std::list<int> _dirHistory{};
 
@@ -81,4 +82,5 @@ private:
   std::list<int>::const_iterator _getCurrent();
   void _cleanWidgets();
   int _get_n_cols();
+  void _showDir(const std::vector<FSElement> &elements);
 };
