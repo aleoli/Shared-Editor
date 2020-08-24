@@ -151,9 +151,9 @@ int Message::getInt(const QString &key) const {
     throw MessageDataException{"Data object has no value with key "+key};
   }
 
-  int val = value.toInt(-1);
+  int val = value.toInt(std::numeric_limits<int>::min());
 
-  if(val == -1) {
+  if(val == std::numeric_limits<int>::min()) {
     throw MessageDataException{key+" value is not an integer"};
   }
 
@@ -209,9 +209,9 @@ std::optional<int> Message::getIntOpt(const QString &key) const {
     return std::nullopt;
   }
 
-  int val = value.toInt(-1);
+  int val = value.toInt(std::numeric_limits<int>::min());
 
-  if(val == -1) {
+  if(val == std::numeric_limits<int>::min()) {
     return std::nullopt;
   }
 
