@@ -117,16 +117,19 @@ QPushButton:focus {
      </item>
     </layout>
    </item>
-   <item row="0" column="0" alignment="Qt::AlignHCenter">
+   <item row="0" column="0">
     <widget class="QLabel" name="label_title">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;</string>
+      <string notr="true">border: 0px solid none;
+color: white;
+font-size: 25px;
+qproperty-alignment: 'AlignHCenter|AlignVCenter';</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;TITLE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string/>
      </property>
      <property name="margin">
       <number>0</number>
@@ -144,11 +147,13 @@ QPushButton:focus {
      <property name="styleSheet">
       <string notr="true">border: 0px solid none;
 color: white;
-font-size: 28em;
-margin-right: 2em;</string>
+font-size: 12px;</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>

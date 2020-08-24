@@ -162,7 +162,7 @@ QMenu::separator {
    <property name="minimumSize">
     <size>
      <width>723</width>
-     <height>122</height>
+     <height>154</height>
     </size>
    </property>
    <property name="autoFillBackground">
@@ -589,14 +589,21 @@ QPushButton:focus {
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">background: #4e596f;
-border: 1px solid #4e596f;
-border-radius: 15px;
-padding-left: 20px;
-/*margin: 0 0 20 0px;*/
-color: white;
-font: &quot;Segoe UI Emoji&quot;;
-selection-background-color: #f76163;</string>
+            <string notr="true">QLineEdit{
+	background: #4e596f;
+	border: 1px solid #4e596f;
+	border-radius: 15px;
+	padding-left: 20px;
+	/*margin: 0 0 20 0px;*/
+	color: white;
+	font: 14px;
+	font: &quot;Segoe UI Emoji&quot;;
+	selection-background-color: #f76163;
+}
+
+QLineEdit:focus{
+	outline: none;
+}</string>
            </property>
            <property name="text">
             <string/>
@@ -654,7 +661,6 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
 }
 
 QPushButton:focus {
-   border: none;
    outline: none;
 }</string>
            </property>
@@ -685,20 +691,13 @@ QPushButton:focus {
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">/*
-border: 1px solid #4e596f;
-border-radius: 15px;
-color: white;
-font: &quot;Segoe UI Emoji&quot;;
-selection-background-color: #f76163;
-background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #797979, stop:0.48 #696969, stop:0.52 #5e5e5e, stop:1 #4f4f4f);*/
-
-QComboBox {
+            <string notr="true">QComboBox {
 	border: 1px solid #333333;
 	border-radius: 15px;
 	background: #4e596f;
-	padding: 1px 0px 1px 70px;
+	padding: 1px 0px 1px 40px;
 	min-width: 6em;
+	font: 14px;
 	color: #ffffff;
 }
 
@@ -713,7 +712,6 @@ QComboBox::drop-down {
 }
 
 QComboBox:focus {
-   border: none;
    outline: none;
 }
 
@@ -831,7 +829,7 @@ QToolTip{
            </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>-1</pointsize>
              <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
@@ -848,6 +846,7 @@ QToolTip{
 
 QPushButton {
 	background: transparent;
+	font: 18px;
 	color: white;
 	padding: 1 3 1 3;
 	border-width: 0px;
@@ -870,7 +869,7 @@ QToolTip{
 }</string>
            </property>
            <property name="text">
-            <string>Path example</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -883,10 +882,12 @@ QToolTip{
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">border: none;</string>
+            <string notr="true">border: none;
+color: white;
+font: 24px;</string>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#ffffff;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&gt;</string>
            </property>
           </widget>
          </item>
