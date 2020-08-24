@@ -114,18 +114,21 @@ QPushButton:focus {
      </item>
     </layout>
    </item>
-   <item row="1" column="0" colspan="3" alignment="Qt::AlignHCenter">
+   <item row="1" column="0" colspan="3">
     <widget class="QLabel" name="label_condition">
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>-1</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;</string>
+      <string notr="true">border: 0px solid none;
+color: white;
+font-size: 36px;
+qproperty-alignment: 'AlignHCenter|AlignVCenter';</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:28pt; color:#ffffff;&quot;&gt;Are you sure?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>Are you Sure?</string>
      </property>
      <property name="margin">
       <number>0</number>
