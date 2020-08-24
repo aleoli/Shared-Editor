@@ -67,7 +67,7 @@ signals:
 
 public slots:
   void closeStacked();
-  void alert(Alert type, const QString &what);
+  void alert(Alert type, const QString &what, const QString &title = "");
 
 private slots:
   // connessione del server

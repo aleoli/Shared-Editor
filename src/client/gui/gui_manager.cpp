@@ -192,10 +192,10 @@ void GuiManager::closeStacked() {
   emit quit();
 }
 
-void GuiManager::alert(Alert type, const QString &what) {
+void GuiManager::alert(Alert type, const QString &what, const QString &title) {
   //TODO show alert dialog or something
-  debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + what);
-  Info::show(_stackedWidget->currentWidget(), getAlertTitle(type), what);
+  debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + title + " " + what);
+  Info::show(_stackedWidget->currentWidget(), getAlertTitle(type), title, what);
 }
 
 void GuiManager::showWindow(MainWindow *window, bool clear) {
@@ -352,5 +352,5 @@ void GuiManager::serverActivateLinkResponse(const FSElement &element, const File
 void GuiManager::serverGetLinkResponse(const QString &link) {
   debug("GuiManager::serverGetLinkResponse");
   unfreezeWindow();
-  alert(Alert::INFO, link);
+  alert(Alert::INFO, link, GET_LINK_TITLE);
 }

@@ -28,6 +28,7 @@ public slots:
 signals:
   void signup(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon);
   void cancel();
+  virtual void alert(Alert type, const QString &what, const QString &title = REGISTRATION_ERROR);
 
 private slots:
   void _showPasswords(int state);

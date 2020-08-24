@@ -16,10 +16,10 @@ class Info : public QDialog
   Q_OBJECT
 
 public:
-  explicit Info(QWidget *parent, const QString &title, const QString &msg);
+  explicit Info(QWidget *parent, const QString &windowTitle, const QString &title, const QString &msg);
   ~Info();
 
-  static bool show(QWidget *parent, const QString &title, const QString &msg);
+  static bool show(QWidget *parent, const QString &windowTitle, const QString &title, const QString &msg);
 
 private:
   void _confirm(bool checked);
@@ -28,5 +28,5 @@ private:
   Ui::Info *ui;
 
   QPushButton *_widgetConfirm, *_widgetCopy;
-  QLabel *_widgetText;
+  QLabel *_widgetTitle, *_widgetText;
 };

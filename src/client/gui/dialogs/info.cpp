@@ -10,7 +10,7 @@
 
 using namespace se_exceptions;
 
-Info::Info(QWidget *parent, const QString &title, const QString &msg) :
+Info::Info(QWidget *parent, const QString &windowTitle, const QString &title, const QString &msg) :
   QDialog(parent),
   ui(new Ui::Info)
 {
@@ -18,15 +18,17 @@ Info::Info(QWidget *parent, const QString &title, const QString &msg) :
 
   _widgetConfirm  = findChild<QPushButton *>("btn_yes");
   _widgetCopy  = findChild<QPushButton *>("btn_no");
+  _widgetTitle  = findChild<QLabel *>("label_title");
   _widgetText  = findChild<QLabel *>("text");
 
 
-  if(!_widgetConfirm || !_widgetCopy || !_widgetText) {
+  if(!_widgetConfirm || !_widgetCopy || !_widgetTitle || !_widgetText) {
         throw GuiException{"One or more widgets in Copy are null"};
   }
 
+  _widgetTitle->setText(title);
   _widgetText->setText(msg);
-  setWindowTitle(title);
+  setWindowTitle(windowTitle);
 
   connect(_widgetConfirm, &QPushButton::clicked, this, &Info::_confirm);
   connect(_widgetCopy, &QPushButton::clicked, this, &Info::_copy);
@@ -37,8 +39,8 @@ Info::~Info()
   delete ui;
 }
 
-bool Info::show(QWidget *parent, const QString &title, const QString &msg) {
-  Info dia(parent, title, msg);
+bool Info::show(QWidget *parent, const QString &windowTitle, const QString &title, const QString &msg) {
+  Info dia(parent, windowTitle, title, msg);
   return dia.exec();
 }
 
