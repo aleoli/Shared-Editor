@@ -152,8 +152,7 @@ void TextEditor::initToolbarActions() {
 
   setAlignmentGroups();
 
-  // size ComboBox
-  _widgetSize->clear(); //TODO remove!
+  // combobox for text size
   const QList<int> standardSizes = QFontDatabase::standardSizes();
   for (int size : standardSizes)
       _widgetSize->addItem(QString::number(size));
