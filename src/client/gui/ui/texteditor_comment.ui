@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>321</width>
-    <height>207</height>
+    <width>317</width>
+    <height>240</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,8 +15,8 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{
-	background: #242A38;
-	border: 2px solid white;
+	background: white;
+	border: 2px solid #242A38;
 	border-radius: 2px;
 }</string>
   </property>
@@ -30,7 +30,8 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;</string>
+      <string notr="true">border: 1px solid #242a38;
+border-radius: 20px;</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -72,14 +73,17 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>-1</pointsize>
       </font>
      </property>
      <property name="styleSheet">
       <string notr="true">border: 0px solid none;
-color: white;
-font-size: 28em;
-margin-right: 2em;</string>
+color: #242A38;
+margin-right: 2em;
+font-size: 17px;</string>
+     </property>
+     <property name="plainText">
+      <string/>
      </property>
     </widget>
    </item>
@@ -93,18 +97,23 @@ margin-right: 2em;</string>
      </property>
      <property name="font">
       <font>
-       <pointsize>8</pointsize>
+       <pointsize>-1</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
       <string notr="true">border: 0px solid none;
-color: white;</string>
+color: #4e596f;
+margin-left: 0em;
+font: 15px;</string>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
