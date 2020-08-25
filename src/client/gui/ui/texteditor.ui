@@ -1044,64 +1044,60 @@ QToolTip{
        </property>
        <property name="styleSheet">
         <string notr="true">QComboBox {
-    border: 1px solid  #4e596f;
+    border: 0px solid  #4e596f;
     border-radius: 3px;
-    padding: 1px 18px 1px 3px;
+    padding: 1px 18px 1px 1px;
     min-width: 3em;
 	max-width: 10em;
     color: #242A38;
-	background: #f76163;
+	background: white;
     margin: 0 0 0 0;
 }
 
-QFontComboBox:!editable {
+QComboBox:!editable {
 	background: white;
-	max-height: 15px;
-	border: 0px solid none;
-	border-radius: 3px;
 }
 
 QComboBox::drop-down:editable {
 	background: #f76163;
 	margin-right: 0px;
-	padding-left: 10px;
+	padding-left: 0px;
 }
 
-QFontComboBox:!editable:on {
+QComboBox:!editable:on {
 	background: white;
 	margin-right: 0px;
 	margin-left: 5px;
 }
 
-QFontComboBox::drop-down:editable:on {
+QComboBox::drop-down:editable:on {
 	background: #4e596f;
 	margin-right: 0px;
 	margin-left: 5px;
 }
 
-QFontComboBox:on { /* shift the text when the popup opens */
+QComboBox:on { /* shift the text when the popup opens */
     padding-top: 3px;
     padding-left: 4px;
-    background-color: white;
+    background-color: #4e596f;
 }
 
-QFontComboBox::drop-down {
+QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: center right;
-    width: 27px; 
+    width: 17px; 
     right: 0px;
-	left: 15px;
+	left: 0px;
     border-top-right-radius: 3px; /* same radius as the QComboBox */
-    border-bottom-right-radius: 3px;
-    padding-right: 10px;
+	border-bottom-right-radius: 3px;
     background: #f76163;
 }
 
-QFontComboBox::down-arrow {    
+QComboBox::down-arrow {    
 	background: url(:/res/text-editor/dropdown-arrow.png) no-repeat center left;
-	height: 20px;
-	width: 22px;
-	padding-right: 0px;
+    height: 15px;
+	width: 12px;
+	padding-right: 3px;
 }
 
 QComboBox::down-arrow:on { /* shift the arrow when popup is open */
@@ -1109,8 +1105,8 @@ QComboBox::down-arrow:on { /* shift the arrow when popup is open */
     left: 1px;
 }
 
-QFontComboBox::comboListView {
-    background: red;
+QListView#comboListView {
+    background: #4e596f;
     color: white;
     min-height: 90px;
     margin: 0 0 0 0;
@@ -1128,7 +1124,9 @@ QListView#comboListView::item:hover {
         <bool>false</bool>
        </property>
        <property name="currentFont">
-        <font/>
+        <font>
+         <family>MS Reference Specialty</family>
+        </font>
        </property>
       </widget>
      </item>
@@ -1164,9 +1162,6 @@ QComboBox:editable {
 
 QComboBox:!editable {
 	background: #4e596f;
-    /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                  stop: 0 rgb(51, 51, 51), stop: 0.4 rgb(39, 39, 39),
-                                  stop: 0.5 rgb(32,32,32), stop: 1.0 rgb(38,38,38));*/
 }
 
 QComboBox::drop-down:editable {
@@ -1176,7 +1171,7 @@ QComboBox::drop-down:editable {
 }
 
 QComboBox:!editable:on {
-	background: blue;
+	background: white;
 	margin-right: 0px;
 	margin-left: 5px;
 }
