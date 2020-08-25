@@ -128,9 +128,6 @@ color: white;
 font-size: 25px;
 qproperty-alignment: 'AlignHCenter|AlignVCenter';</string>
      </property>
-     <property name="text">
-      <string/>
-     </property>
      <property name="margin">
       <number>0</number>
      </property>
@@ -147,10 +144,14 @@ qproperty-alignment: 'AlignHCenter|AlignVCenter';</string>
      <property name="styleSheet">
       <string notr="true">border: 0px solid none;
 color: white;
-font-size: 12px;</string>
+font-size: 12px;
+qproperty-alignment: 'AlignHCenter|AlignVCenter';</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::AutoText</enum>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>

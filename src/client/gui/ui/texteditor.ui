@@ -1125,7 +1125,7 @@ QListView#comboListView::item:hover {
        </property>
        <property name="currentFont">
         <font>
-         <family>MS Reference Specialty</family>
+         <family>MS Shell Dlg 2</family>
         </font>
        </property>
       </widget>
