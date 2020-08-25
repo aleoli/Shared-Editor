@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>317</width>
-    <height>240</height>
+    <height>241</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,35 +21,6 @@
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_icon">
-     <property name="maximumSize">
-      <size>
-       <width>40</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">border: 1px solid #242a38;
-border-radius: 20px;</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="resources/res.qrc">:/res/profile-pics/default.png</pixmap>
-     </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1">
     <widget class="QLabel" name="label_name">
      <property name="styleSheet">
@@ -63,6 +34,58 @@ border-radius: 20px;</string>
      </property>
      <property name="indent">
       <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="label_icon">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>35</width>
+       <height>35</height>
+      </size>
+     </property>
+     <property name="sizeIncrement">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+background: #242a38;
+border: 2px solid #242a38;
+border-radius: 17px;
+}
+
+QPushButton:focus {
+   outline: none;
+}
+
+QToolTip{
+	background: none;
+	border: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/default.png</normaloff>
+       <disabledoff>:/res/profile-pics/default.png</disabledoff>
+       <selectedoff>:/res/profile-pics/default.png</selectedoff>:/res/profile-pics/default.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>33</width>
+       <height>33</height>
+      </size>
      </property>
     </widget>
    </item>
