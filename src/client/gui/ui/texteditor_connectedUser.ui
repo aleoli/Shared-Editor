@@ -32,7 +32,7 @@
 	border-radius: 9px;
 }</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
    <property name="spacing">
     <number>6</number>
    </property>
@@ -49,26 +49,32 @@
     <number>9</number>
    </property>
    <item>
-    <widget class="QPushButton" name="label_icon">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>35</width>
-       <height>35</height>
-      </size>
-     </property>
-     <property name="sizeIncrement">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
+    <widget class="QWidget" name="icon_and_name" native="true">
      <property name="styleSheet">
-      <string notr="true">QPushButton {
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QPushButton" name="label_icon">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
 border: 1px solid #242a38;
-border-radius: 17px;
+border-radius: 14px;
 }
 
 QToolTip{
@@ -80,37 +86,40 @@ QToolTip{
 QPushButton:focus {
    outline: none;
 }</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resources/res.qrc">
-       <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>33</width>
-       <height>33</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_name">
-     <property name="styleSheet">
-      <string notr="true">border: 0px solid none;
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/res.qrc">
+          <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>25</width>
+          <height>25</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_name">
+        <property name="styleSheet">
+         <string notr="true">border: 0px solid none;
 margin-right: 1px;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-     <property name="indent">
-      <number>10</number>
-     </property>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <property name="indent">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
