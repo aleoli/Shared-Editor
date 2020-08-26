@@ -26,8 +26,7 @@
      <property name="styleSheet">
       <string notr="true">border: 0px solid none;
 color: white;
-font-size: 36px;
-qproperty-alignment: 'AlignHCenter|AlignVCenter';</string>
+font-size: 36px;</string>
      </property>
     </widget>
    </item>
