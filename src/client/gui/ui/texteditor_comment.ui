@@ -21,26 +21,78 @@
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
-    <widget class="QLabel" name="label_name">
+   <item row="2" column="3" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="label_date">
+     <property name="minimumSize">
+      <size>
+       <width>70</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;</string>
+      <string notr="true">border: 0px solid none;
+color: #4e596f;
+margin-left: 0em;
+font: 15px;</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string/>
      </property>
-     <property name="margin">
-      <number>0</number>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
-     <property name="indent">
-      <number>10</number>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="btn_save">
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	background: #f76163;
+    border-width: 1px;
+    border-radius: 13px;
+    border-color: #f76163;
+    font: 12pt;
+    color: white;
+    padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+}
+
+QPushButton:pressed {
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string>SAVE</string>
      </property>
     </widget>
    </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="label_icon">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="maximumSize">
       <size>
@@ -89,7 +141,7 @@ QToolTip{
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="1" colspan="3">
     <widget class="QPlainTextEdit" name="text">
      <property name="enabled">
       <bool>false</bool>
@@ -110,33 +162,108 @@ font-size: 17px;</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" alignment="Qt::AlignRight">
-    <widget class="QLabel" name="label_date">
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>0</height>
-      </size>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="bt_cancel">
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background: #4E596F;
+    border-width: 1px;
+    border-radius: 13px;
+    border-color: #4E596F;
+    font: 12pt;
+    color: white;
+    padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 white);
+}
+
+QPushButton:pressed {
+border-style: inset;
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>-1</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
+     <property name="text">
+      <string>CANCEL</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QLabel" name="label_name">
+     <property name="styleSheet">
+      <string notr="true">border: 0px solid none;</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <property name="indent">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="btn_options">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;
-color: #4e596f;
-margin-left: 0em;
-font: 15px;</string>
+      <string notr="true">QPushButton {
+margin-bottom:0px;
+border: none;
+background: grey;
+border-image: rgba(255, 170, 0, 0)  0 0 0 0 stretch stretch;
+}
+
+QPushButton:hover{
+padding: -0.5px 0.5px 0.5px -0.5px;
+}
+
+QPushButton:pressed{
+padding: 0.5px -0.5px -0.5px 0.5px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
      </property>
      <property name="text">
       <string/>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/options.png</normaloff>:/res/options.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>50</width>
+       <height>25</height>
+      </size>
      </property>
     </widget>
    </item>
