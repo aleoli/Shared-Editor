@@ -87,9 +87,9 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetTextEditor, &TextEditor::alert, this, &GuiManager::alert);
 
   // user/file updates
-  QObject::connect(_user.get(), &User::iconChanged, _widgetDocsBrowser, &DocsBrowser::setIcon);  QObject::connect(_user.get(), &User::iconChanged, _widgetEdit, &Edit::setIcon);
-
-  //TODO others e.g. icon in texteditor
+  QObject::connect(_user.get(), &User::iconChanged, _widgetDocsBrowser, &DocsBrowser::setIcon);
+  QObject::connect(_user.get(), &User::iconChanged, _widgetEdit, &Edit::setIcon);
+  QObject::connect(_user.get(), &User::iconChanged, _widgetTextEditor, &TextEditor::setIcon);
 
   //Login
   QObject::connect(_widgetLogin, &Login::login, this, &GuiManager::loginLogin);
@@ -148,6 +148,9 @@ void GuiManager::connectClientToServer() {
   QObject::connect(this, &GuiManager::commentLocalInsertQuery, _manager.get(), &MessageManager::commentLocalInsertQuery);
   QObject::connect(this, &GuiManager::commentLocalUpdateQuery, _manager.get(), &MessageManager::commentLocalUpdateQuery);
   QObject::connect(this, &GuiManager::commentLocalDeleteQuery, _manager.get(), &MessageManager::commentLocalDeleteQuery);
+
+  //Signals from text editor to send directly to server
+  QObject::connect(_widgetTextEditor, &TextEditor::getUserIcon, _manager.get(), &MessageManager::getUserIconQuery);
 }
 
 void GuiManager::connectServerToClient() {
@@ -163,6 +166,11 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiManager::serverActivateLinkResponse);
 
   QObject::connect(_manager.get(), &MessageManager::getLinkResponse, this, &GuiManager::serverGetLinkResponse);
+
+  //Signals to send directly to text editor
+  QObject::connect(_manager.get(), &MessageManager::userConnectedQuery, _widgetTextEditor, &TextEditor::userConnected);
+  QObject::connect(_manager.get(), &MessageManager::userDisconnectedQuery, _widgetTextEditor, &TextEditor::userDisconnected);
+  QObject::connect(_manager.get(), &MessageManager::getIconResponse, _widgetTextEditor, &TextEditor::setUserIcon);
 }
 
 void GuiManager::connected() {
