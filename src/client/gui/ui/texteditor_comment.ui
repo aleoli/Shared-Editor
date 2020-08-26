@@ -53,44 +53,6 @@ border-image: white  0 0 0 0 stretch stretch;</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="btn_save">
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	background: #f76163;
-    border-width: 1px;
-    border-radius: 13px;
-    border-color: #f76163;
-    font: 12pt;
-    color: white;
-    padding: 10px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	min-height: 20px;
-}
-
-QPushButton:hover {
-background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-}
-
-QPushButton:pressed {
-background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 black);
-}
-
-QPushButton:focus {
-   border: none;
-   outline: none;
-}</string>
-     </property>
-     <property name="text">
-      <string>SAVE</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="label_icon">
      <property name="enabled">
@@ -155,54 +117,17 @@ QToolTip{
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;
+      <string notr="true">QPlainTextEdit{
+border: 0px solid none;
 color: #242A38;
 margin-right: 2em;
 font-size: 17px;
-background: white;
-border-image: white  0 0 0 0 stretch stretch;</string>
+background: rgba(255, 170, 0, 0);
+border-image: 0 0 0 0;
+}</string>
      </property>
      <property name="plainText">
       <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="bt_cancel">
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background: #4E596F;
-    border-width: 1px;
-    border-radius: 13px;
-    border-color: #4E596F;
-    font: 12pt;
-    color: white;
-    padding: 10px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	min-height: 20px;
-}
-
-QPushButton:hover {
-background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 white);
-}
-
-QPushButton:pressed {
-border-style: inset;
-background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 black);
-}
-
-QPushButton:focus {
-   border: none;
-   outline: none;
-}</string>
-     </property>
-     <property name="text">
-      <string>CANCEL</string>
      </property>
     </widget>
    </item>
