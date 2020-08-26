@@ -27,26 +27,26 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{
-	background: #00f;
+	background: white;
 	border: 2px solid white;
-	border-radius: 2px;
+	border-radius: 9px;
 }</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
    <property name="spacing">
-    <number>0</number>
+    <number>6</number>
    </property>
    <property name="leftMargin">
-    <number>2</number>
+    <number>9</number>
    </property>
    <property name="topMargin">
-    <number>10</number>
+    <number>9</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>9</number>
    </property>
    <property name="bottomMargin">
-    <number>10</number>
+    <number>9</number>
    </property>
    <item>
     <widget class="QPushButton" name="label_icon">
@@ -67,22 +67,18 @@
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-background: #242a38;
-border: 3px solid #242a38;
-border-radius: 15px;
-margin-left: 1px;
-padding-right: 1px;
-}
-
-QPushButton:focus {
-   outline: none;
+border: 1px solid #242a38;
+border-radius: 17px;
 }
 
 QToolTip{
 	background: none;
-	border: none;
 	margin-left: 0px;
 	margin-right: 0px;
+}
+
+QPushButton:focus {
+   outline: none;
 }</string>
      </property>
      <property name="text">
@@ -103,11 +99,8 @@ QToolTip{
    <item>
     <widget class="QLabel" name="label_name">
      <property name="styleSheet">
-      <string notr="true">max-height: 30px;
-border-radius: 0px;
-border: 0px solid none;
-margin-right: 1px;
-background: white;</string>
+      <string notr="true">border: 0px solid none;
+margin-right: 1px;</string>
      </property>
      <property name="text">
       <string/>
