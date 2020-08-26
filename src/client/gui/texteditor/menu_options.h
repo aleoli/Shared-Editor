@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QIcon>
 
 namespace Ui {
 class Options;
@@ -27,6 +28,7 @@ public slots:
   void setFileName(const QString &name);
   void setShowCommentsChecked(bool checked);
   void setShowConnectedChecked(bool checked);
+  void setIcon(const QIcon &icon);
 
 private slots:
   void _share(bool checked);

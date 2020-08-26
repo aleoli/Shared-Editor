@@ -11,13 +11,19 @@
 #include <QFont>
 #include <QColor>
 #include <QBrush>
+#include <QVBoxLayout>
+#include <unordered_map>
 
 #include "main_window.h"
 #include "alert_messages.h"
 #include "comment_widget.h"
 #include "menu_options.h"
-#include "user_widget.h"
+#include "remote_user.h"
 #include "text_edit.h"
+#include "color_generator.h"
+#include "cursor.h"
+#include "Symbol.h"
+#include "SymbolId.h"
 
 namespace Ui {
 class TextEditor;
@@ -36,9 +42,18 @@ signals:
   void share(const QString &token, int fileId);
   void close(const QString &token, int fileId);
   void editFile(const QString &token, int fileId, const std::optional<QString> &name);
+  void getUserIcon(int userId);
+
+  // Messages to server
 
 public slots:
   virtual void clear();
+  void setIcon();
+
+  // Messages from server
+  void userConnected(int fileId, int userId, const QString &username);
+  void userDisconnected(int fileId, int userId);
+  void setUserIcon(int userId, const QString &icon);
 
 private slots:
   void _bold(bool checked);
@@ -75,11 +90,23 @@ private:
   void updateActions();
   void setBorderColor(QPushButton *button, const QColor &color);
   void updateAlignment(Qt::Alignment al);
+  void reloadFile();
+  void reloadComments();
+  void reloadUsers();
+  void clearLayout(QVBoxLayout *layout);
+  void addRemoteUser(int userId, const QString &username, bool online = true);
+  void setRemoteUserOnline(int userId);
+  void updateCursors();
+  void refresh(bool changeFile = false);
+  std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
+  int getCursorPosition(const SymbolId &id, int position);
+  QColor getUserColor(int userId);
 
   Ui::TextEditor *ui;
 
   QMenuBar *_menuBar;
   QDockWidget *_dockOnline, *_dockOffline, *_dockComments;
+  QVBoxLayout *_layoutOnline, *_layoutOffline, *_layoutComments;
 
   //TODO widget highlight
 
@@ -108,4 +135,9 @@ private:
 
   bool _highlighted, _blockSignals;
   QBrush _defColor;
+  std::unordered_map<int, RemoteUser*> _users;
+  RemoteUser *_me;
+  File *_file;
+  ColorGenerator _gen;
+  int _cursorPosition;
 };

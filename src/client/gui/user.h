@@ -44,6 +44,8 @@ public:
   QString getFileName() const;
   void setFileName(const QString &name);
 
+  File *getFile();
+
   void login(const QString &token, int userId, const std::optional<QString> &icon);
   void logout();
   void openFile(int fileId, const File &file = File(), int charId = 0, int commentId = 0);

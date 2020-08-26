@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include "exceptions.h"
+#include "image_utils.h"
 
 #include <QColorDialog>
 
@@ -12,7 +13,10 @@ TextEditor::TextEditor(QWidget *parent) :
     MainWindow(parent),
     ui(new Ui::TextEditor),
     _highlighted(false),
-    _blockSignals(false)
+    _blockSignals(false),
+    _me(nullptr),
+    _file(nullptr),
+    _cursorPosition(0)
 {
   ui->setupUi(this);
 
@@ -20,6 +24,10 @@ TextEditor::TextEditor(QWidget *parent) :
   _dockOnline = ui->dock_connectedUsers;
   _dockOffline = ui->dock_disconnectedUsers;
   _dockComments = ui->dock_comments;
+  _layoutOnline = ui->verticalLayout_2;
+  _layoutOffline = ui->verticalLayout_3;
+  _layoutComments = ui->verticalLayout_4;
+
   _widgetUndo = ui->btn_undo;
   _widgetRedo = ui->btn_redo;
   _widgetCut = ui->btn_cut;
@@ -78,10 +86,21 @@ TextEditor::~TextEditor()
 }
 
 void TextEditor::clear() {
-  // TODO Cose da fare quando la finestra è portata in primo piano (es. svuotare i campi)
-  //TODO reset text editor!!
+  reloadFile();
+  updateActions();
+  reloadComments();
+  reloadUsers();
+  _gen.reset();
   _menuOptions->setFileName(_user->getFileName());
   _textEdit->setFocus();
+}
+
+void TextEditor::setIcon() {
+  auto icon = _user->getIcon();
+  _menuOptions->setIcon(icon);
+
+  if(_me) //should always happen
+    _me->setIcon(icon);
 }
 
 void TextEditor::initOptionsWidget() {
@@ -243,6 +262,195 @@ void TextEditor::updateAlignment(Qt::Alignment al) {
   }
   else {
     throw GuiException{"No horizontal alignment!"};
+  }
+}
+
+void TextEditor::reloadFile() {
+  _blockSignals = true;
+
+  _textEdit->clear();
+  _file = _user->getFile();
+  refresh(true);
+
+  _blockSignals = false;
+}
+
+void TextEditor::reloadComments() {
+  clearLayout(_layoutComments);
+
+  //TODO load from file
+}
+
+void TextEditor::reloadUsers() {
+  clearLayout(_layoutOnline);
+  clearLayout(_layoutOffline);
+  _users.clear();
+
+  //add "me"
+  if(_me) delete _me;
+  _me = new RemoteUser(_user->getUserId(), _user->getUsername(), QColor("black"));
+  _me->setIcon(_user->getIcon());
+  _layoutOnline->insertWidget(0, _me);
+
+  for(auto &user : _file->getUsers()) {
+    if (user.second.userId == _user->getUserId()) continue;
+    addRemoteUser(user.second.userId, user.second.username, user.second.online);
+    emit getUserIcon(user.second.userId);
+  }
+}
+
+void TextEditor::clearLayout(QVBoxLayout *layout) {
+  //clear and destroy widgets, leave spacer
+  while(layout->count() > 1) {
+    auto widget = layout->takeAt(0);
+    delete widget;
+  }
+}
+
+void TextEditor::addRemoteUser(int userId, const QString &username, bool online) {
+  auto color = _gen.getColor();
+  auto user = new RemoteUser(userId, username, color, new Cursor(_textEdit, color));
+  _users[userId] = user;
+
+  if(online)
+    _layoutOnline->insertWidget(_layoutOnline->count()-1, user);
+  else
+    _layoutOffline->insertWidget(_layoutOffline->count()-1, user);
+}
+
+void TextEditor::setRemoteUserOnline(int userId) {
+  auto user = _users[userId];
+  user->setOnline(true);
+
+  _layoutOffline->removeWidget(user);
+  _layoutOnline->insertWidget(_layoutOnline->count()-1, user);
+}
+
+void TextEditor::refresh(bool changeFile) {
+  _blockSignals = true;
+
+  //salvo pos del cursore mio
+  std::pair<SymbolId, int> pos;
+
+  if(!changeFile)
+    pos = saveCursorPosition(_textEdit->textCursor());
+
+  //cancello
+  _textEdit->clear();
+
+  //refresh
+  QTextCursor cursor{_textEdit->document()};
+  for(auto &sym : _file->getSymbols()) {
+    auto format = sym.getFormat();
+
+    if(_highlighted) {
+      auto userId = sym.getSymbolId().getUserId();
+      format.setBackground(getUserColor(userId));
+    }
+
+    cursor.setCharFormat(format);
+    cursor.insertText(sym.getChar());
+  }
+
+  //ripristino posizione
+  if(!changeFile) {
+    cursor.setPosition(getCursorPosition(pos.first, pos.second));
+    _textEdit->setTextCursor(cursor);
+    _cursorPosition = pos.second;
+  }
+
+  _blockSignals = false;
+}
+
+std::pair<SymbolId, int> TextEditor::saveCursorPosition(const QTextCursor &cursor) {
+  int position = cursor.position();
+  SymbolId id;
+
+  if(position == 0) {
+    id = {-1,-1}; //TODO magari si può fare meglio
+  }
+  else {
+    //TODO potenziale EXCEPTION, rimuovi try/catch e gestisci
+    try {
+      debug("Pos: " + QString::number(position));
+      id = _file->symbolAt(position-1).getSymbolId();
+    }
+    catch(...) {
+      throw GuiException{"TextEditor::saveCursorPosition failed"};
+    }
+  }
+
+  return {id, position};
+}
+
+int TextEditor::getCursorPosition(const SymbolId &id, int position) {
+  int pos;
+
+  try {
+    pos = _file->symbolById(id).first + 1;
+  }
+  catch(FileSymbolsException& e) {
+    pos = position;
+  }
+
+  return pos;
+}
+
+QColor TextEditor::getUserColor(int userId) {
+  if(_me->getUserId() == userId) {
+    return _me->getColor();
+  }
+
+  if(_users.count(userId) == 0) {
+    throw GuiException{"TextEditor::getUserColor: user not present!"};
+  }
+
+  return _users[userId]->getColor();
+}
+
+/* ### SLOTS server->editor ### */
+void TextEditor::userConnected(int fileId, int userId, const QString &username) {
+  debug("TextEditor::userConnected");
+
+  if(_users.count(userId) == 0) {
+    addRemoteUser(userId, username);
+  }
+  else {
+    setRemoteUserOnline(userId);
+  }
+
+  emit getUserIcon(userId);
+}
+
+void TextEditor::userDisconnected(int fileId, int userId) {
+  debug("TextEditor::userDisconnected");
+
+  if(_users.count(userId) == 0) {
+    throw GuiException{"TextEditor::userDisconnected: user not present!?"};
+  }
+
+  auto user = _users[userId];
+  user->setOnline(false);
+
+  _layoutOnline->removeWidget(user);
+  _layoutOffline->insertWidget(_layoutOffline->count()-1, user);
+  //TODO reset cursor to first position
+}
+
+void TextEditor::setUserIcon(int userId, const QString &icon) {
+  debug("TextEditor::setUserIcon");
+
+  if(_users.count(userId) == 0) {
+    throw GuiException{"TextEditor::setUserIcon: user not present!?"};
+  }
+
+  auto user = _users[userId];
+  user->setIcon(image_utils::decodeImage(icon));
+}
+
+void TextEditor::updateCursors() {
+  for(auto &user : _users) {
+    user.second->getCursor()->updateCursorView();
   }
 }
 
@@ -480,11 +688,14 @@ void TextEditor::_highlight(bool checked) {
   _widgetHighlight->setChecked(checked);
   _actionHighlight->setChecked(checked);
 
-  if(checked)
+  if(checked) {
     _showConnected(true);
+  }
+  else {
+    _dockOffline->setVisible(false);
+  }
 
-  //TODO highlight on/off
-
-  //trigger background color button to change TODO change only that button
+  //refresh & trigger background color button to change TODO change only that button
+  refresh();
   updateActions();
 }

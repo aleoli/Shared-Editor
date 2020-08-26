@@ -151,3 +151,7 @@ void User::setFileName(const QString &name) {
   if(_fileOpen)
     emit fileNameChanged();
 }
+
+File *User::getFile() {
+  return &_file;
+}

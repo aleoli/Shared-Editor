@@ -66,3 +66,8 @@ void OptionsWidget::setShowCommentsChecked(bool checked) {
 void OptionsWidget::setShowConnectedChecked(bool checked) {
   _widgetConnected->setChecked(checked);
 }
+
+void OptionsWidget::setIcon(const QIcon &icon) {
+  _widgetUser->setIcon(icon);
+  _widgetUser->setIconSize(_widgetUser->size());
+}
