@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>317</width>
-    <height>241</height>
+    <height>280</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,9 @@
       <string notr="true">border: 0px solid none;
 color: #4e596f;
 margin-left: 0em;
-font: 15px;</string>
+font: 15px;
+background: none;
+border-image: white  0 0 0 0 stretch stretch;</string>
      </property>
      <property name="text">
       <string/>
@@ -108,9 +110,10 @@ QPushButton:focus {
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-background: #242a38;
 border: 2px solid #242a38;
 border-radius: 17px;
+background: none;
+border-image: white  0 0 0 0 stretch stretch;
 }
 
 QPushButton:focus {
@@ -155,7 +158,9 @@ QToolTip{
       <string notr="true">border: 0px solid none;
 color: #242A38;
 margin-right: 2em;
-font-size: 17px;</string>
+font-size: 17px;
+background: white;
+border-image: white  0 0 0 0 stretch stretch;</string>
      </property>
      <property name="plainText">
       <string/>
@@ -204,7 +209,9 @@ QPushButton:focus {
    <item row="0" column="1" colspan="2">
     <widget class="QLabel" name="label_name">
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;</string>
+      <string notr="true">border: 0px solid none;
+background: none;
+border-image: white  0 0 0 0 stretch stretch;</string>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -229,8 +236,8 @@ QPushButton:focus {
       <string notr="true">QPushButton {
 margin-bottom:0px;
 border: none;
-background: grey;
-border-image: rgba(255, 170, 0, 0)  0 0 0 0 stretch stretch;
+background: none;
+border-image: white  0 0 0 0 stretch stretch;
 }
 
 QPushButton:hover{
@@ -257,7 +264,7 @@ QPushButton:focus {
      </property>
      <property name="icon">
       <iconset resource="resources/res.qrc">
-       <normaloff>:/res/options.png</normaloff>:/res/options.png</iconset>
+       <normaloff>:/res/options_b.png</normaloff>:/res/options_b.png</iconset>
      </property>
      <property name="iconSize">
       <size>
