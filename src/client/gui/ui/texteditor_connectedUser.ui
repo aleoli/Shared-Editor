@@ -26,9 +26,11 @@
    <string>Connected User</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background: white;
-border: 1px solid white;
-border-radius: 11px;;</string>
+   <string notr="true">QWidget{
+	background: #00f;
+	border: 2px solid white;
+	border-radius: 2px;
+}</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
@@ -38,13 +40,13 @@ border-radius: 11px;;</string>
     <number>2</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
     <number>2</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <item>
     <widget class="QPushButton" name="label_icon">
