@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>252</width>
+    <width>224</width>
     <height>65</height>
    </rect>
   </property>
@@ -28,22 +28,28 @@
   <property name="styleSheet">
    <string notr="true">background: white;
 border: 1px solid white;
-border-radius: 11px;</string>
+border-radius: 11px;;</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
-    <number>11</number>
+    <number>2</number>
    </property>
    <property name="topMargin">
-    <number>15</number>
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
    </property>
    <property name="bottomMargin">
-    <number>15</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QPushButton" name="label_icon">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="maximumSize">
       <size>
@@ -60,8 +66,10 @@ border-radius: 11px;</string>
      <property name="styleSheet">
       <string notr="true">QPushButton {
 background: #242a38;
-border: 2px solid #242a38;
-border-radius: 17px;
+border: 3px solid #242a38;
+border-radius: 15px;
+margin-left: 1px;
+padding-right: 1px;
 }
 
 QPushButton:focus {
@@ -80,9 +88,7 @@ QToolTip{
      </property>
      <property name="icon">
       <iconset resource="resources/res.qrc">
-       <normaloff>:/res/profile-pics/default.png</normaloff>
-       <disabledoff>:/res/profile-pics/default.png</disabledoff>
-       <selectedoff>:/res/profile-pics/default.png</selectedoff>:/res/profile-pics/default.png</iconset>
+       <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -95,8 +101,11 @@ QToolTip{
    <item>
     <widget class="QLabel" name="label_name">
      <property name="styleSheet">
-      <string notr="true">border: none;
-background: none;</string>
+      <string notr="true">max-height: 30px;
+border-radius: 0px;
+border: 0px solid none;
+margin-right: 1px;
+background: white;</string>
      </property>
      <property name="text">
       <string/>
