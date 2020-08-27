@@ -464,12 +464,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     padding: 1px -1px -1px 1px;
 }
 
-QDockWidget#QToolTip{
-	background: white;
-	border: 1px solid black;
-	margin-left: 0px;
-	margin-right: 0px;
-}
+
 
 /*QDockWidget::close-button {
     subcontrol-position: top left;
@@ -490,7 +485,13 @@ QDockWidget#QToolTip{
    </attribute>
    <widget class="QWidget" name="contents_connectedUsers">
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+	opacity: 200;
+}</string>
     </property>
    </widget>
   </widget>
@@ -564,7 +565,13 @@ QDockWidget#QToolTip{
    </attribute>
    <widget class="QWidget" name="contents_comments">
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+	opacity: 200;
+}</string>
     </property>
    </widget>
   </widget>
@@ -2580,7 +2587,13 @@ QDockWidget#QToolTip{
    </attribute>
    <widget class="QWidget" name="contents_disconnectedUsers">
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+	opacity: 200;
+}</string>
     </property>
    </widget>
   </widget>
