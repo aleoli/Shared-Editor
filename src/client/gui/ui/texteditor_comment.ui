@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
-    <height>280</height>
+    <width>203</width>
+    <height>221</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>253</width>
+    <height>227</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Comment</string>
@@ -30,63 +36,6 @@
       <string notr="true">border: 0px solid none;</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="2" column="3">
-       <widget class="QLabel" name="label_date">
-        <property name="minimumSize">
-         <size>
-          <width>70</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>-1</pointsize>
-          <weight>50</weight>
-          <italic>false</italic>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border: 0px solid none;
-color: #4e596f;
-margin-left: 0em;
-font: 15px;
-background: none;
-border-image: white  0 0 0 0 stretch stretch;</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QPlainTextEdit" name="text">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>-1</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QPlainTextEdit{
-border: 0px solid none;
-color: #242A38;
-margin-right: 2em;
-font-size: 17px;
-background: rgba(255, 170, 0, 0);
-border-image: 0 0 0 0;
-}</string>
-        </property>
-        <property name="plainText">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="label_icon">
         <property name="enabled">
@@ -106,7 +55,7 @@ border-image: 0 0 0 0;
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-border: 1px solid #242a38;
+border: 3px solid #242a38;
 border-radius: 17px;
 background: none;
 border-image: white  0 0 0 0 stretch stretch;
@@ -135,13 +84,16 @@ QToolTip{
         <property name="iconSize">
          <size>
           <width>33</width>
-          <height>33</height>
+          <height>35</height>
          </size>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_name">
+        <property name="toolTip">
+         <string/>
+        </property>
         <property name="styleSheet">
          <string notr="true">QLabel{
 border: 0px solid none;
@@ -154,8 +106,8 @@ QLabel:focus {
 }
 
 QToolTip{
-	background: none;
-	border: none;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
@@ -171,7 +123,42 @@ QToolTip{
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
+      <item row="2" column="1" colspan="4">
+       <widget class="QLabel" name="label_date">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>-1</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 0px solid none;
+color: #4e596f;
+margin-left: 0em;
+font: 15px;
+background: none;
+border-image: white  0 0 0 0 stretch stretch;
+qproperty-alignment: 'AlignVCenter | AlignRight';
+qproperty-wordWrap: true;
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
        <widget class="QPushButton" name="btn_options">
         <property name="enabled">
          <bool>true</bool>
@@ -218,6 +205,39 @@ QPushButton:focus {
           <width>50</width>
           <height>25</height>
          </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="4">
+       <widget class="QPlainTextEdit" name="text">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>120</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>-1</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPlainTextEdit{
+border: 0px solid none;
+color: #242A38;
+margin-right: 2em;
+font-size: 12px;
+background: rgba(255, 170, 0, 0);
+border-image: 0 0 0 0;
+qproperty-alignment: 'AlignVTop | AlignLeft';
+qproperty-wordWrap: true;
+}</string>
+        </property>
+        <property name="plainText">
+         <string/>
         </property>
        </widget>
       </item>
