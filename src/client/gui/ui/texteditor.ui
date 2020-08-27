@@ -152,7 +152,6 @@ QMenu::separator {
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionCreate_Copy"/>
     <addaction name="actionDownload"/>
     <addaction name="actionRename"/>
     <addaction name="actionDelete"/>
@@ -210,6 +209,7 @@ QMenu::separator {
     <addaction name="actionDelete_selected"/>
     <addaction name="actionSelect_all"/>
     <addaction name="actionHighlight"/>
+    <addaction name="actionChange_text_color"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="styleSheet">
@@ -297,7 +297,6 @@ QMenu::separator {
     <property name="title">
      <string>Insert</string>
     </property>
-    <addaction name="actionSeparator"/>
     <addaction name="actionComment"/>
    </widget>
    <widget class="QMenu" name="menuFormat">
@@ -2881,6 +2880,15 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
    <property name="text">
     <string>Highlight users' text</string>
+   </property>
+  </action>
+  <action name="actionChange_text_color">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/color.png</normaloff>:/res/text-editor/color.png</iconset>
+   </property>
+   <property name="text">
+    <string>Change text color</string>
    </property>
   </action>
  </widget>

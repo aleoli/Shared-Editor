@@ -73,7 +73,7 @@
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-border: 1px solid #242a38;
+border: 3px solid #242a38;
 border-radius: 14px;
 background: none;
 border-image: white  0 0 0 0 stretch stretch;
@@ -107,6 +107,9 @@ QToolTip{
       </item>
       <item>
        <widget class="QLabel" name="label_name">
+        <property name="toolTip">
+         <string/>
+        </property>
         <property name="styleSheet">
          <string notr="true">QLabel{
 border: 0px solid none;
@@ -117,8 +120,8 @@ QLabel:focus {
 }
 
 QToolTip{
-	background: none;
-	border: none;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
