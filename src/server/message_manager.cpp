@@ -269,7 +269,7 @@ void MessageManager::addComment(quint64 clientId, int fileId, const QJsonObject 
   f.remoteAddComment(File::commentFromJsonObject(comment));
 }
 
-void MessageManager::updateComment(quint64 clientId, int fileId, const QJsonObject &comment) {
+void MessageManager::updateComment(quint64 clientId, int fileId, const Session &session, const QJsonObject &comment) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -281,13 +281,18 @@ void MessageManager::updateComment(quint64 clientId, int fileId, const QJsonObje
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
   loadFile(clientId, fileId);
+
+  auto commentStr = File::commentFromJsonObject(comment);
+  if(commentStr.identifier.getUserId() != session.getUserId()) {
+    throw CommentException{"This user is not owner of this message"};
+  }
 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;
-  f.remoteUpdateComment(File::commentFromJsonObject(comment));
+  f.remoteUpdateComment(commentStr);
 }
 
-void MessageManager::deleteComment(quint64 clientId, int fileId, const QJsonObject &comment) {
+void MessageManager::deleteComment(quint64 clientId, int fileId, const Session &session, const QJsonObject &comment) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -299,6 +304,11 @@ void MessageManager::deleteComment(quint64 clientId, int fileId, const QJsonObje
   //sempre il check per vedere se il file è caricato in memoria
   // (potrebbe essere stato rimosso)
   loadFile(clientId, fileId);
+
+  auto commentStr = File::commentFromJsonObject(comment);
+  if(commentStr.identifier.getUserId() != session.getUserId()) {
+    throw CommentException{"This user is not owner of this message"};
+  }
 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;

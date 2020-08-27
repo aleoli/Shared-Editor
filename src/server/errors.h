@@ -16,3 +16,4 @@
 #define ERROR_7 "Link not valid"
 #define ERROR_8 "This user is already logged with another client"
 #define ERROR_9 "You linked same file twice"
+#define ERROR_10 "User can not access this file"
