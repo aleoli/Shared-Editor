@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>65</height>
+    <width>218</width>
+    <height>72</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>65</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -77,14 +77,15 @@ border: 1px solid #242a38;
 border-radius: 14px;
 }
 
-QToolTip{
-	background: none;
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
 QPushButton:focus {
    outline: none;
+}
+
+QToolTip{
+	background: none;
+	border: none;
+	margin-left: 0px;
+	margin-right: 0px;
 }</string>
         </property>
         <property name="text">
@@ -96,8 +97,8 @@ QPushButton:focus {
         </property>
         <property name="iconSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>30</width>
+          <height>30</height>
          </size>
         </property>
        </widget>
@@ -105,8 +106,20 @@ QPushButton:focus {
       <item>
        <widget class="QLabel" name="label_name">
         <property name="styleSheet">
-         <string notr="true">border: 0px solid none;
-margin-right: 1px;</string>
+         <string notr="true">QLabel{
+border: 0px solid none;
+}
+
+QLabel:focus {
+   outline: none;
+}
+
+QToolTip{
+	background: none;
+	border: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
         </property>
         <property name="text">
          <string/>
