@@ -436,7 +436,8 @@ int FSElement_db::getIdForUser(const Session &s, int file_id, int user_id) {
 }
 
 bool FSElement_db::availableForUser(int user_id) {
-  return std::any_of(this->_links.getValues().begin(), this->_links.getValues().end(), [user_id](auto l) {
+  auto val = this->_links.getValues();
+  return std::any_of(val.begin(), val.end(), [user_id](auto l) {
     return l->_owner_id == user_id;
   });
 }
