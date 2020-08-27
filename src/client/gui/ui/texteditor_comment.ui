@@ -211,7 +211,7 @@ QPushButton:focus {
       <item row="1" column="1" colspan="4">
        <widget class="QPlainTextEdit" name="text">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="maximumSize">
          <size>
@@ -232,12 +232,13 @@ margin-right: 2em;
 font-size: 12px;
 background: rgba(255, 170, 0, 0);
 border-image: 0 0 0 0;
-qproperty-alignment: 'AlignVTop | AlignLeft';
-qproperty-wordWrap: true;
 }</string>
         </property>
         <property name="plainText">
          <string/>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
         </property>
        </widget>
       </item>
