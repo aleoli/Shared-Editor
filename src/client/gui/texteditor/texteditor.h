@@ -11,7 +11,7 @@
 #include <QFont>
 #include <QColor>
 #include <QBrush>
-#include <QVBoxLayout>
+#include <QListWidget>
 #include <unordered_map>
 
 #include "main_window.h"
@@ -22,6 +22,7 @@
 #include "text_edit.h"
 #include "color_generator.h"
 #include "cursor.h"
+#include "File.h"
 #include "Symbol.h"
 #include "SymbolId.h"
 
@@ -45,6 +46,9 @@ signals:
   void getUserIcon(int userId);
 
   // Messages to server
+  void commentLocalInsert(const QString &token, int fileId, const File::Comment &comment);
+  void commentLocalUpdate(const QString &token, int fileId, const File::Comment &comment);
+  void commentLocalDelete(const QString &token, int fileId, const File::Comment &comment);
 
 public slots:
   virtual void clear();
@@ -54,6 +58,9 @@ public slots:
   void userConnected(int fileId, int userId, const QString &username);
   void userDisconnected(int fileId, int userId);
   void setUserIcon(int userId, const QString &icon);
+  void commentRemoteInsert(int fileId, int userId, const File::Comment &comment);
+  void commentRemoteUpdate(int fileId, int userId, const File::Comment &comment);
+  void commentRemoteDelete(int fileId, int userId, const File::Comment &comment);
 
 private slots:
   void _bold(bool checked);
@@ -80,6 +87,8 @@ private slots:
   void _font(const QFont &font);
   void _size(int index);
   void _highlight(bool checked);
+  void _editComment(CommentWidget *widget);
+  void _deleteComment(CommentWidget *widget);
 
 private:
   void initOptionsWidget();
@@ -93,7 +102,6 @@ private:
   void reloadFile();
   void reloadComments();
   void reloadUsers();
-  void clearLayout(QVBoxLayout *layout);
   void addRemoteUser(int userId, const QString &username, bool online = true);
   void setRemoteUserOnline(int userId);
   void updateCursors();
@@ -101,12 +109,18 @@ private:
   std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
   int getCursorPosition(const SymbolId &id, int position);
   QColor getUserColor(int userId);
+  QColor getUserColorHighlight(int userId);
+  QIcon getUserLoadedIcon(int userId);
+
+  CommentWidget *loadComment(int userId, const File::Comment &comment);
+  CommentWidget *getComment(const File::Comment &comment);
+  void deleteComment(CommentWidget *widget);
 
   Ui::TextEditor *ui;
 
   QMenuBar *_menuBar;
   QDockWidget *_dockOnline, *_dockOffline, *_dockComments;
-  QVBoxLayout *_layoutOnline, *_layoutOffline, *_layoutComments;
+  QListWidget *_listOnline, *_listOffline, *_listComments;
 
   //TODO widget highlight
 
@@ -136,6 +150,7 @@ private:
   bool _highlighted, _blockSignals;
   QBrush _defColor;
   std::unordered_map<int, RemoteUser*> _users;
+  std::map<File::CommentIdentifier, CommentWidget*> _comments;
   RemoteUser *_me;
   File *_file;
   ColorGenerator _gen;

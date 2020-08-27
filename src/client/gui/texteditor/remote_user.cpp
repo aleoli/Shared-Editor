@@ -8,12 +8,13 @@
 using namespace se_exceptions;
 
 RemoteUser::RemoteUser(int userId, const QString &username, const QColor &color, Cursor *cursor, bool online) :
-    ui(new Ui::ConnectedUser),
-    _userId(userId),
-    _username(username),
-    _color(color),
-    _cursor(cursor),
-    _online(online)
+  ItemWidget(),
+  ui(new Ui::ConnectedUser),
+  _userId(userId),
+  _username(username),
+  _color(color),
+  _cursor(cursor),
+  _online(online)
 {
   ui->setupUi(this);
 
@@ -24,6 +25,8 @@ RemoteUser::RemoteUser(int userId, const QString &username, const QColor &color,
   setName(_username);
 
   setIcon(image_utils::loadImage(DEFAULT_ICON));
+
+  _item->setSizeHint(this->size());
 }
 
 RemoteUser::~RemoteUser()
@@ -43,15 +46,16 @@ void RemoteUser::setIcon(const QIcon &icon) {
   _icon = icon;
 }
 
+QIcon RemoteUser::getIcon() const {
+  return _icon;
+}
+
 void RemoteUser::setOnline(bool online) {
   _online = online;
 }
 
 QColor RemoteUser::getColor() const {
-  auto color = _color;
-  color.setAlpha(64);
-
-  return color;
+  return _color;
 }
 
 Cursor *RemoteUser::getCursor() const {

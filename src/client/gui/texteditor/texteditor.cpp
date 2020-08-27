@@ -7,6 +7,8 @@
 
 #include <QColorDialog>
 
+#include <algorithm>
+
 using namespace se_exceptions;
 
 TextEditor::TextEditor(QWidget *parent) :
@@ -24,9 +26,6 @@ TextEditor::TextEditor(QWidget *parent) :
   _dockOnline = ui->dock_connectedUsers;
   _dockOffline = ui->dock_disconnectedUsers;
   _dockComments = ui->dock_comments;
-  _layoutOnline = ui->verticalLayout_2;
-  _layoutOffline = ui->verticalLayout_3;
-  _layoutComments = ui->verticalLayout_4;
 
   _widgetUndo = ui->btn_undo;
   _widgetRedo = ui->btn_redo;
@@ -88,8 +87,8 @@ TextEditor::~TextEditor()
 void TextEditor::clear() {
   reloadFile();
   updateActions();
-  reloadComments();
   reloadUsers();
+  reloadComments();
   _gen.reset();
   _menuOptions->setFileName(_user->getFileName());
   _textEdit->setFocus();
@@ -180,6 +179,18 @@ void TextEditor::initDocks() {
   _dockComments->setFeatures(QDockWidget::NoDockWidgetFeatures);
 
   _dockOffline->setVisible(false);
+
+  _listOnline = new QListWidget(_dockOnline);
+  _listOnline->setStyleSheet("QListWidget{background-color: #4E596F;}");
+  _dockOnline->setWidget(_listOnline);
+
+  _listOffline = new QListWidget(_dockOffline);
+  _listOffline->setStyleSheet("QListWidget{background-color: #4E596F;}");
+  _dockOffline->setWidget(_listOffline);
+
+  _listComments = new QListWidget(_dockComments);
+  _listComments->setStyleSheet("QListWidget{background-color: #4E596F;}");
+  _dockComments->setWidget(_listComments);
 }
 
 void TextEditor::initTextEdit() {
@@ -276,34 +287,36 @@ void TextEditor::reloadFile() {
 }
 
 void TextEditor::reloadComments() {
-  clearLayout(_layoutComments);
+  _listComments->clear();
+  _comments.clear();
 
-  //TODO load from file
+  std::vector<File::Comment> comments;
+
+  for(auto &comment : _file->getComments()) {
+    comments.push_back(comment.second);
+  }
+  std::sort(comments.begin(), comments.end(),
+    [](const File::Comment &i, const File::Comment &j){return i.creationDate < j.creationDate;});
+
+  for(auto &comment : comments) {
+    loadComment(comment.identifier.getUserId(), comment);
+  }
 }
 
 void TextEditor::reloadUsers() {
-  clearLayout(_layoutOnline);
-  clearLayout(_layoutOffline);
+  _listOnline->clear();
+  _listOffline->clear();
   _users.clear();
 
   //add "me"
-  if(_me) delete _me;
   _me = new RemoteUser(_user->getUserId(), _user->getUsername(), QColor("black"));
   _me->setIcon(_user->getIcon());
-  _layoutOnline->insertWidget(0, _me);
+  _me->insert(0, _listOnline);
 
   for(auto &user : _file->getUsers()) {
     if (user.second.userId == _user->getUserId()) continue;
     addRemoteUser(user.second.userId, user.second.username, user.second.online);
     emit getUserIcon(user.second.userId);
-  }
-}
-
-void TextEditor::clearLayout(QVBoxLayout *layout) {
-  //clear and destroy widgets, leave spacer
-  while(layout->count() > 1) {
-    auto widget = layout->takeAt(0);
-    delete widget;
   }
 }
 
@@ -313,17 +326,19 @@ void TextEditor::addRemoteUser(int userId, const QString &username, bool online)
   _users[userId] = user;
 
   if(online)
-    _layoutOnline->insertWidget(_layoutOnline->count()-1, user);
+    user->add(_listOnline);
   else
-    _layoutOffline->insertWidget(_layoutOffline->count()-1, user);
+    user->add(_listOffline);
 }
 
 void TextEditor::setRemoteUserOnline(int userId) {
   auto user = _users[userId];
   user->setOnline(true);
 
-  _layoutOffline->removeWidget(user);
-  _layoutOnline->insertWidget(_layoutOnline->count()-1, user);
+  user->remove(_listOffline);
+  user->add(_listOnline);
+
+  _file->setOnline(userId, true);
 }
 
 void TextEditor::refresh(bool changeFile) {
@@ -345,7 +360,7 @@ void TextEditor::refresh(bool changeFile) {
 
     if(_highlighted) {
       auto userId = sym.getSymbolId().getUserId();
-      format.setBackground(getUserColor(userId));
+      format.setBackground(getUserColorHighlight(userId));
     }
 
     cursor.setCharFormat(format);
@@ -408,12 +423,39 @@ QColor TextEditor::getUserColor(int userId) {
   return _users[userId]->getColor();
 }
 
+QColor TextEditor::getUserColorHighlight(int userId) {
+  if(_me->getUserId() == userId) {
+    return QColor("white");
+  }
+
+  if(_users.count(userId) == 0) {
+    throw GuiException{"TextEditor::getUserColorHighlight: user not present!"};
+  }
+
+  auto color = _users[userId]->getColor();
+  color.setAlpha(64);
+  return color;
+}
+
+QIcon TextEditor::getUserLoadedIcon(int userId) {
+  if(_user->getUserId() == userId) {
+    return _user->getIcon();
+  }
+
+  if(_users.count(userId) == 0) {
+    throw GuiException{"TextEditor::getUserLoadedIcon: user not present!"};
+  }
+
+  return _users[userId]->getIcon();
+}
+
 /* ### SLOTS server->editor ### */
 void TextEditor::userConnected(int fileId, int userId, const QString &username) {
   debug("TextEditor::userConnected");
 
   if(_users.count(userId) == 0) {
     addRemoteUser(userId, username);
+    _file->addUser(userId, username);
   }
   else {
     setRemoteUserOnline(userId);
@@ -432,9 +474,11 @@ void TextEditor::userDisconnected(int fileId, int userId) {
   auto user = _users[userId];
   user->setOnline(false);
 
-  _layoutOnline->removeWidget(user);
-  _layoutOffline->insertWidget(_layoutOffline->count()-1, user);
+  user->remove(_listOnline);
+  user->add(_listOffline);
   //TODO reset cursor to first position
+
+  _file->setOnline(userId, false);
 }
 
 void TextEditor::setUserIcon(int userId, const QString &icon) {
@@ -445,7 +489,12 @@ void TextEditor::setUserIcon(int userId, const QString &icon) {
   }
 
   auto user = _users[userId];
-  user->setIcon(image_utils::decodeImage(icon));
+  auto decoded = image_utils::decodeImage(icon);
+  user->setIcon(decoded);
+
+  for(auto comment : _comments) {
+    if(comment.first.getUserId() == userId) comment.second->setIcon(decoded);
+  }
 }
 
 void TextEditor::updateCursors() {
@@ -574,12 +623,6 @@ void TextEditor::_color(bool checked) {
   fmt.setForeground(col);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
-}
-
-void TextEditor::_insertComment(bool checked) {
-  debug("TextEditor::_insertComment");
-
-  //TODO
 }
 
 void TextEditor::_download(bool checked) {

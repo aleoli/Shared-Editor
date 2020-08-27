@@ -8,12 +8,13 @@
 #include <QIcon>
 
 #include "cursor.h"
+#include "item_widget.h"
 
 namespace Ui {
 class ConnectedUser;
 }
 
-class RemoteUser : public QWidget
+class RemoteUser : public ItemWidget
 {
     Q_OBJECT
 
@@ -24,6 +25,7 @@ public:
 public slots:
   int getUserId() const;
   void setIcon(const QIcon &icon);
+  QIcon getIcon() const;
   void setOnline(bool online);
   QColor getColor() const;
   Cursor *getCursor() const;

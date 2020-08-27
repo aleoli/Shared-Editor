@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include "utils.h"
 #include <shared_mutex>
-#include <QDate>
+#include <QDateTime>
 
 class File {
 public:
@@ -25,7 +25,7 @@ public:
   typedef struct Comment {
     CommentIdentifier identifier;
     QString text;
-    QDate creationDate;
+    QDateTime creationDate;
   } Comment;
 
   File();
@@ -55,6 +55,7 @@ public:
 
   std::unordered_map<int, File::UserInfo> getUsers() const;
   std::vector<Symbol> getSymbols() const;
+  std::map<CommentIdentifier, Comment> getComments() const;
   Symbol& symbolAt(int pos);
   std::pair<int, Symbol&> symbolById(SymbolId id);
   int getPosition(SymbolId id);
@@ -68,6 +69,8 @@ public:
 
   void setOnline(int userId, bool val);
   bool isOnline(int userId);
+
+  QString getUsername(int userId);
 
   void store(const QString &path);
 
