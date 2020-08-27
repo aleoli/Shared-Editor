@@ -73,7 +73,7 @@ void File::checkAndAssign(const QJsonObject &json) {
 
   auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
-  auto comments = symbolsValue.toArray();
+  auto comments = commentsValue.toArray();
 
   auto ul = std::unique_lock{this->_mutex};
   _users = jsonArrayToUsers(users);
@@ -237,7 +237,7 @@ File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
 
   auto text = textV.toString();
   auto creationDateString = creationDateV.toString();
-  auto creationDate = QDate::fromString(creationDateString);
+  auto creationDate = QDateTime::fromString(creationDateString);
 
   if(!creationDate.isValid()) {
     debug("creation date is not valid");
@@ -301,6 +301,11 @@ std::unordered_map<int, File::UserInfo> File::getUsers() const {
 std::vector<Symbol> File::getSymbols() const {
   auto sl = std::shared_lock{this->_mutex};
   return _symbols;
+}
+
+std::map<File::CommentIdentifier, File::Comment> File::getComments() const {
+  auto sl = std::shared_lock{this->_mutex};
+  return _comments;
 }
 
 Symbol& File::symbolAt(int pos) {
@@ -410,6 +415,15 @@ bool File::isOnline(int userId) {
   }
 
   return _users[userId].online;
+}
+
+QString File::getUsername(int userId) {
+  auto sl = std::shared_lock{this->_mutex};
+  if(_users.count(userId) == 0) {
+    throw FileUserException{"User is not in map"};
+  }
+
+  return _users[userId].username;
 }
 
 void File::localInsert(Symbol &sym, int pos) {
@@ -571,8 +585,8 @@ void File::remoteAddComment(const Comment &comment) {
 
 void File::remoteUpdateComment(const Comment &comment) {
   auto ul = std::unique_lock{this->_mutex};
-  if(_comments.find(comment.identifier) == _comments.end()) {
-    // it does not exists
+  if(_comments.count(comment.identifier) == 0) {
+    // it does not exist
     throw CommentException{"comment not found"};
   }
   _comments[comment.identifier] = comment;
@@ -581,12 +595,8 @@ void File::remoteUpdateComment(const Comment &comment) {
 
 void File::remoteDeleteComment(const Comment &comment) {
   auto ul = std::unique_lock{this->_mutex};
-  auto it = _comments.find(comment.identifier);
-  if(it == _comments.end()) {
-    // it does not exists
-    return;
-  }
-  _comments.erase(it);
+  if(_comments.count(comment.identifier) == 0)return;
+  _comments.erase(comment.identifier);
   dirty = true;
 }
 

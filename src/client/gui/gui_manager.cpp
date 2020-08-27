@@ -110,7 +110,6 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::newFile, this, &GuiManager::docsBrowserNewFile);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::activateLink, this, &GuiManager::docsBrowserActivateLink);
 
-
   //TextEditor
   QObject::connect(_widgetTextEditor, &TextEditor::share, this, &GuiManager::textEditorShare);
   QObject::connect(_widgetTextEditor, &TextEditor::logout, this, &GuiManager::textEditorLogout);
@@ -151,6 +150,9 @@ void GuiManager::connectClientToServer() {
 
   //Signals from text editor to send directly to server
   QObject::connect(_widgetTextEditor, &TextEditor::getUserIcon, _manager.get(), &MessageManager::getUserIconQuery);
+  QObject::connect(_widgetTextEditor, &TextEditor::commentLocalInsert, _manager.get(), &MessageManager::commentLocalInsertQuery);
+  QObject::connect(_widgetTextEditor, &TextEditor::commentLocalUpdate, _manager.get(), &MessageManager::commentLocalUpdateQuery);
+  QObject::connect(_widgetTextEditor, &TextEditor::commentLocalDelete, _manager.get(), &MessageManager::commentLocalDeleteQuery);
 }
 
 void GuiManager::connectServerToClient() {
@@ -171,6 +173,9 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::userConnectedQuery, _widgetTextEditor, &TextEditor::userConnected);
   QObject::connect(_manager.get(), &MessageManager::userDisconnectedQuery, _widgetTextEditor, &TextEditor::userDisconnected);
   QObject::connect(_manager.get(), &MessageManager::getIconResponse, _widgetTextEditor, &TextEditor::setUserIcon);
+  QObject::connect(_manager.get(), &MessageManager::commentRemoteInsertQuery, _widgetTextEditor, &TextEditor::commentRemoteInsert);
+  QObject::connect(_manager.get(), &MessageManager::commentRemoteUpdateQuery, _widgetTextEditor, &TextEditor::commentRemoteUpdate);
+  QObject::connect(_manager.get(), &MessageManager::commentRemoteDeleteQuery, _widgetTextEditor, &TextEditor::commentRemoteDelete);
 }
 
 void GuiManager::connected() {
@@ -344,6 +349,7 @@ void GuiManager::serverDeleteUserResponse() {
 void GuiManager::serverNewFileResponse(int fileId) {
   debug("GuiManager::serverNewFileResponse");
   _user->openFile(fileId);
+  _user->getFile()->addUser(_user->getUserId(), _user->getUsername());
   unfreezeWindow();
   showWindow(_widgetTextEditor, true);
 }
