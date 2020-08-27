@@ -24,58 +24,89 @@
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="3" alignment="Qt::AlignRight">
-    <widget class="QLabel" name="label_date">
-     <property name="minimumSize">
-      <size>
-       <width>70</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>-1</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-      </font>
-     </property>
+   <item row="0" column="0">
+    <widget class="QWidget" name="contents" native="true">
      <property name="styleSheet">
-      <string notr="true">border: 0px solid none;
+      <string notr="true">border: 0px solid none;</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="2" column="3">
+       <widget class="QLabel" name="label_date">
+        <property name="minimumSize">
+         <size>
+          <width>70</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>-1</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 0px solid none;
 color: #4e596f;
 margin-left: 0em;
 font: 15px;
 background: none;
 border-image: white  0 0 0 0 stretch stretch;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="label_icon">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>35</width>
-       <height>35</height>
-      </size>
-     </property>
-     <property name="sizeIncrement">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-border: 2px solid #242a38;
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPlainTextEdit" name="text">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>-1</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPlainTextEdit{
+border: 0px solid none;
+color: #242A38;
+margin-right: 2em;
+font-size: 17px;
+background: rgba(255, 170, 0, 0);
+border-image: 0 0 0 0;
+}</string>
+        </property>
+        <property name="plainText">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="label_icon">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>35</width>
+          <height>35</height>
+         </size>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+border: 1px solid #242a38;
 border-radius: 17px;
 background: none;
 border-image: white  0 0 0 0 stretch stretch;
@@ -91,77 +122,65 @@ QToolTip{
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resources/res.qrc">
-       <normaloff>:/res/profile-pics/default.png</normaloff>
-       <disabledoff>:/res/profile-pics/default.png</disabledoff>
-       <selectedoff>:/res/profile-pics/default.png</selectedoff>:/res/profile-pics/default.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>33</width>
-       <height>33</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="3">
-    <widget class="QPlainTextEdit" name="text">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>-1</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPlainTextEdit{
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/res.qrc">
+          <normaloff>:/res/profile-pics/default.png</normaloff>
+          <disabledoff>:/res/profile-pics/default.png</disabledoff>
+          <selectedoff>:/res/profile-pics/default.png</selectedoff>:/res/profile-pics/default.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>33</width>
+          <height>33</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_name">
+        <property name="styleSheet">
+         <string notr="true">QLabel{
 border: 0px solid none;
-color: #242A38;
-margin-right: 2em;
-font-size: 17px;
-background: rgba(255, 170, 0, 0);
-border-image: 0 0 0 0;
-}</string>
-     </property>
-     <property name="plainText">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QLabel" name="label_name">
-     <property name="styleSheet">
-      <string notr="true">border: 0px solid none;
 background: none;
-border-image: white  0 0 0 0 stretch stretch;</string>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-     <property name="indent">
-      <number>10</number>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QPushButton" name="btn_options">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
+border-image: white  0 0 0 0 stretch stretch;
+}
+
+QLabel:focus {
+   outline: none;
+}
+
+QToolTip{
+	background: none;
+	border: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <property name="indent">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="btn_options">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
 margin-bottom:0px;
 border: none;
 background: none;
@@ -186,20 +205,23 @@ QPushButton:focus {
    border: none;
    outline: none;
 }</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resources/res.qrc">
-       <normaloff>:/res/options_b.png</normaloff>:/res/options_b.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>50</width>
-       <height>25</height>
-      </size>
-     </property>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/res.qrc">
+          <normaloff>:/res/options_b.png</normaloff>:/res/options_b.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>50</width>
+          <height>25</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
