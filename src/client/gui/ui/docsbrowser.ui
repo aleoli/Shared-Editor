@@ -202,6 +202,12 @@ QMenu::separator {
          </property>
          <item>
           <widget class="QPushButton" name="btn_home">
+           <property name="minimumSize">
+            <size>
+             <width>37</width>
+             <height>37</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
              <width>74</width>
@@ -221,9 +227,12 @@ QMenu::separator {
 }
 
 QPushButton {
-background: #f65964;
+background-color: #f65964;
 border: 1px solid #f65964;
 border-radius: 2px;
+background-image: url(:/res/home_off.png);
+background-repeat: no-repeat;
+background-position: center center;
 /*margin-left: 50px;
 margin-right: 50px;*/
 padding-top: 5px;
@@ -235,8 +244,11 @@ QPushButton:hover {
 cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
 radius: 0.7, stop: 0 #000, stop: 1 #f65964
 );*/
-background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+background-color: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+background-image: url(:/res/home_on.png);
+background-repeat: no-repeat;
+background-position: center center;
 }
 
 QPushButton:pressed {
@@ -245,16 +257,12 @@ border-style: inset;
 cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
 radius: 0.7, stop: 0 #f65964, stop: 1 #000
 );*/
-background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
               fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
 }</string>
            </property>
            <property name="text">
             <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="resources/res.qrc">
-             <normaloff>:/res/home.png</normaloff>:/res/home.png</iconset>
            </property>
            <property name="iconSize">
             <size>
