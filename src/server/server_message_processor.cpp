@@ -860,7 +860,7 @@ void ServerMessageProcessor::updateComment() {
   auto fileId = file_db.getPhysicalId();
 
   auto comment = _m.getObject("comment");
-  this->_manager->updateComment(this->_clientId, fileId, comment);
+  this->_manager->updateComment(this->_clientId, fileId, session, comment);
 
   file_db.incCommentId();
 
@@ -893,7 +893,7 @@ void ServerMessageProcessor::deleteComment() {
   auto fileId = file_db.getPhysicalId();
 
   auto comment = _m.getObject("comment");
-  this->_manager->deleteComment(this->_clientId, fileId, comment);
+  this->_manager->deleteComment(this->_clientId, fileId, session, comment);
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {

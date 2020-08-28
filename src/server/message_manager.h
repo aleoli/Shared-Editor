@@ -46,8 +46,8 @@ public:
 
   /* gestione commenti */
   void addComment(quint64 clientId, int fileId, const QJsonObject& comment);
-  void deleteComment(quint64 clientId, int fileId, const QJsonObject& comment);
-  void updateComment(quint64 clientId, int fileId, const QJsonObject& comment);
+  void deleteComment(quint64 clientId, int fileId, const Session &session, const QJsonObject& comment);
+  void updateComment(quint64 clientId, int fileId, const Session &session, const QJsonObject& comment);
 
   // chiusura fiel da parte del client -> rimozione da fileClients, NON dalla FifoMap
   void closeFile(quint64 clientId, int fileId, bool deleted=false);
