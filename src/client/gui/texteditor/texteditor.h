@@ -25,6 +25,7 @@
 #include "File.h"
 #include "Symbol.h"
 #include "SymbolId.h"
+#include "find.h"
 
 namespace Ui {
 class TextEditor;
@@ -164,4 +165,5 @@ private:
   File *_file;
   ColorGenerator _gen;
   int _cursorPosition;
+  Find *_dialogFind;
 };
