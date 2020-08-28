@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>607</width>
-    <height>267</height>
+    <height>184</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -185,78 +185,6 @@ QPushButton:focus {
      </item>
     </layout>
    </item>
-   <item row="6" column="0">
-    <widget class="QCheckBox" name="cb_caseSensitive">
-     <property name="styleSheet">
-      <string notr="true">QCheckBox {
-    spacing: 5px;
-	font-size: 11pt;
-	color:white;
-	margin-bottom: 0px;
-	margin-left: 10px;
-	border: none;
-}
-
-QCheckBox::indicator {
-    width: 13px;
-	height: 17px;
-}
-
-QCheckBox::indicator:unchecked {
-    image: url(:/res/checkbox.png);
-}
-
-QCheckBox::indicator:checked {
-    image: url(:/res/checkbox_checked.png);
-}
-
-QCheckBox:focus {
-   border: none;
-   outline: none;
-}
-</string>
-     </property>
-     <property name="text">
-      <string>Case sensitive</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QCheckBox" name="cb_wholeWords">
-     <property name="styleSheet">
-      <string notr="true">QCheckBox {
-    spacing: 5px;
-	font-size: 11pt;
-	color:white;
-	margin-bottom: 0px;
-	margin-left: 10px;
-	border: none;
-}
-
-QCheckBox::indicator {
-    width: 13px;
-	height: 17px;
-}
-
-QCheckBox::indicator:unchecked {
-    image: url(:/res/checkbox.png);
-}
-
-QCheckBox::indicator:checked {
-    image: url(:/res/checkbox_checked.png);
-}
-
-QCheckBox:focus {
-   border: none;
-   outline: none;
-}
-</string>
-     </property>
-     <property name="text">
-      <string>Whole words</string>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="3">
     <widget class="QPushButton" name="btn_search">
      <property name="minimumSize">
@@ -357,14 +285,84 @@ QLineEdit:focus{
      </property>
     </widget>
    </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="cb_caseSensitive">
+     <property name="styleSheet">
+      <string notr="true">QCheckBox {
+    spacing: 5px;
+	font-size: 11pt;
+	color:white;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	border: none;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+	height: 17px;
+}
+
+QCheckBox::indicator:unchecked {
+    image: url(:/res/checkbox.png);
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/res/checkbox_checked.png);
+}
+
+QCheckBox:focus {
+   border: none;
+   outline: none;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Case sensitive</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QCheckBox" name="cb_wholeWords">
+     <property name="styleSheet">
+      <string notr="true">QCheckBox {
+    spacing: 5px;
+	font-size: 11pt;
+	color:white;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	border: none;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+	height: 17px;
+}
+
+QCheckBox::indicator:unchecked {
+    image: url(:/res/checkbox.png);
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/res/checkbox_checked.png);
+}
+
+QCheckBox:focus {
+   border: none;
+   outline: none;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Whole words</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>ledit_search</tabstop>
   <tabstop>btn_search</tabstop>
   <tabstop>cb_backwards</tabstop>
-  <tabstop>cb_caseSensitive</tabstop>
-  <tabstop>cb_wholeWords</tabstop>
   <tabstop>btn_next</tabstop>
   <tabstop>btn_close</tabstop>
  </tabstops>

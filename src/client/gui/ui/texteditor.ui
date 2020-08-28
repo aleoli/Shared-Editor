@@ -2717,6 +2717,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Find</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="actionDelete_selected">
    <property name="text">
