@@ -135,26 +135,21 @@ void GuiManager::connectClientToServer() {
   QObject::connect(this, &GuiManager::getLinkQuery, _manager.get(), &MessageManager::getLinkQuery);
   QObject::connect(this, &GuiManager::activateLinkQuery, _manager.get(), &MessageManager::activateLinkQuery);
 
-  QObject::connect(this, &GuiManager::localInsertQuery, _manager.get(), &MessageManager::localInsertQuery);
-  QObject::connect(this, &GuiManager::localDeleteQuery, _manager.get(), &MessageManager::localDeleteQuery);
-  QObject::connect(this, &GuiManager::localUpdateQuery, _manager.get(), &MessageManager::localUpdateQuery);
-  QObject::connect(this, &GuiManager::localMoveQuery, _manager.get(), &MessageManager::localMoveQuery);
-
   QObject::connect(this, &GuiManager::newDirQuery, _manager.get(), &MessageManager::newDirQuery);
   QObject::connect(this, &GuiManager::editDirQuery, _manager.get(), &MessageManager::editDirQuery);
   QObject::connect(this, &GuiManager::deleteDirQuery, _manager.get(), &MessageManager::deleteDirQuery);
   QObject::connect(this, &GuiManager::getDirQuery, _manager.get(), &MessageManager::getDirQuery);
   QObject::connect(this, &GuiManager::moveFileQuery, _manager.get(), &MessageManager::moveFileQuery);
 
-  QObject::connect(this, &GuiManager::commentLocalInsertQuery, _manager.get(), &MessageManager::commentLocalInsertQuery);
-  QObject::connect(this, &GuiManager::commentLocalUpdateQuery, _manager.get(), &MessageManager::commentLocalUpdateQuery);
-  QObject::connect(this, &GuiManager::commentLocalDeleteQuery, _manager.get(), &MessageManager::commentLocalDeleteQuery);
-
   //Signals from text editor to send directly to server
   QObject::connect(_widgetTextEditor, &TextEditor::getUserIcon, _manager.get(), &MessageManager::getUserIconQuery);
   QObject::connect(_widgetTextEditor, &TextEditor::commentLocalInsert, _manager.get(), &MessageManager::commentLocalInsertQuery);
   QObject::connect(_widgetTextEditor, &TextEditor::commentLocalUpdate, _manager.get(), &MessageManager::commentLocalUpdateQuery);
   QObject::connect(_widgetTextEditor, &TextEditor::commentLocalDelete, _manager.get(), &MessageManager::commentLocalDeleteQuery);
+  QObject::connect(_widgetTextEditor, &TextEditor::localInsert, _manager.get(), &MessageManager::localInsertQuery);
+  QObject::connect(_widgetTextEditor, &TextEditor::localDelete, _manager.get(), &MessageManager::localDeleteQuery);
+  QObject::connect(_widgetTextEditor, &TextEditor::localUpdate, _manager.get(), &MessageManager::localUpdateQuery);
+  QObject::connect(_widgetTextEditor, &TextEditor::localMove, _manager.get(), &MessageManager::localMoveQuery);
 }
 
 void GuiManager::connectServerToClient() {
@@ -179,6 +174,10 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::commentRemoteInsertQuery, _widgetTextEditor, &TextEditor::commentRemoteInsert);
   QObject::connect(_manager.get(), &MessageManager::commentRemoteUpdateQuery, _widgetTextEditor, &TextEditor::commentRemoteUpdate);
   QObject::connect(_manager.get(), &MessageManager::commentRemoteDeleteQuery, _widgetTextEditor, &TextEditor::commentRemoteDelete);
+  QObject::connect(_manager.get(), &MessageManager::remoteInsertQuery, _widgetTextEditor, &TextEditor::remoteInsert);
+  QObject::connect(_manager.get(), &MessageManager::remoteUpdateQuery, _widgetTextEditor, &TextEditor::remoteUpdate);
+  QObject::connect(_manager.get(), &MessageManager::remoteDeleteQuery, _widgetTextEditor, &TextEditor::remoteDelete);
+  QObject::connect(_manager.get(), &MessageManager::remoteMoveQuery, _widgetTextEditor, &TextEditor::remoteMove);
 }
 
 void GuiManager::connected() {

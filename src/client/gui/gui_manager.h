@@ -50,20 +50,11 @@ signals:
   void getLinkQuery(const QString &token, int fileId);
   void activateLinkQuery(const QString &token, const QString &link);
 
-  void localInsertQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols);
-  void localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids);
-  void localUpdateQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols);
-  void localMoveQuery(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
-
   void newDirQuery(const QString &token, const QString &name, const std::optional<int> &parentId = std::nullopt);
   void editDirQuery(const QString &token, int dirId, const std::optional<QString> &name, const std::optional<int> &parentId);
   void deleteDirQuery(const QString &token, int dirId);
   void getDirQuery(const QString &token, const std::optional<int> &dirId = std::nullopt);
   void moveFileQuery(const QString &token, int fileId, int dirId);
-
-  void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
-  void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
-  void commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment);
 
 public slots:
   void closeStacked();

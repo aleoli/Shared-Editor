@@ -222,6 +222,12 @@ void TextEditor::initTextEdit() {
   _defColor = _textEdit->currentCharFormat().background();
 
   _dialogFind = new Find(this, _textEdit);
+
+  connect(_textEdit->document(), &QTextDocument::contentsChange, this, &TextEditor::_contentsChange);
+  connect(_textEdit, &QTextEdit::cursorPositionChanged, this, &TextEditor::_cursorChanged);
+  connect(_textEdit, &QTextEdit::textChanged, this, &TextEditor::_updateCursors);
+  connect(_textEdit, &TextEdit::resized, this, &TextEditor::_updateCursors);
+  connect(_textEdit, &TextEdit::scrolled, this, &TextEditor::_updateCursors);
 }
 
 void TextEditor::setAlignmentGroups() {
@@ -297,7 +303,7 @@ void TextEditor::updateAlignment(Qt::Alignment al) {
     _actionJustify->setChecked(true);
   }
   else {
-    throw GuiException{"No horizontal alignment!"};
+    throw TextEditorException{"No horizontal alignment!"};
   }
 }
 
@@ -412,11 +418,11 @@ std::pair<SymbolId, int> TextEditor::saveCursorPosition(const QTextCursor &curso
   else {
     //TODO potenziale EXCEPTION, rimuovi try/catch e gestisci
     try {
-      debug("Pos: " + QString::number(position));
+      //debug("Pos: " + QString::number(position));
       id = _file->symbolAt(position-1).getSymbolId();
     }
     catch(...) {
-      throw GuiException{"TextEditor::saveCursorPosition failed"};
+      throw TextEditorException{"TextEditor::saveCursorPosition failed"};
     }
   }
 
@@ -442,7 +448,7 @@ QColor TextEditor::getUserColor(int userId) {
   }
 
   if(_users.count(userId) == 0) {
-    throw GuiException{"TextEditor::getUserColor: user not present!"};
+    throw TextEditorException{"TextEditor::getUserColor: user not present!"};
   }
 
   return _users[userId]->getColor();
@@ -454,7 +460,7 @@ QColor TextEditor::getUserColorHighlight(int userId) {
   }
 
   if(_users.count(userId) == 0) {
-    throw GuiException{"TextEditor::getUserColorHighlight: user not present!"};
+    throw TextEditorException{"TextEditor::getUserColorHighlight: user not present!"};
   }
 
   auto color = _users[userId]->getColor();
@@ -468,7 +474,7 @@ QIcon TextEditor::getUserLoadedIcon(int userId) {
   }
 
   if(_users.count(userId) == 0) {
-    throw GuiException{"TextEditor::getUserLoadedIcon: user not present!"};
+    throw TextEditorException{"TextEditor::getUserLoadedIcon: user not present!"};
   }
 
   return _users[userId]->getIcon();
@@ -493,7 +499,7 @@ void TextEditor::userDisconnected(int fileId, int userId) {
   debug("TextEditor::userDisconnected");
 
   if(_users.count(userId) == 0) {
-    throw GuiException{"TextEditor::userDisconnected: user not present!?"};
+    throw TextEditorException{"TextEditor::userDisconnected: user not present!?"};
   }
 
   auto user = _users[userId];
@@ -510,7 +516,7 @@ void TextEditor::setUserIcon(int userId, const QString &icon) {
   debug("TextEditor::setUserIcon");
 
   if(_users.count(userId) == 0) {
-    throw GuiException{"TextEditor::setUserIcon: user not present!?"};
+    throw TextEditorException{"TextEditor::setUserIcon: user not present!?"};
   }
 
   auto user = _users[userId];
@@ -703,7 +709,7 @@ void TextEditor::_buttonAlignment(QAbstractButton *button) {
   else if(button == _widgetAlignC) _alignC();
   else if(button == _widgetAlignR) _alignR();
   else if(button == _widgetJustify) _justify();
-  else throw GuiException{"Alignment not valid!"};
+  else throw TextEditorException{"Alignment not valid!"};
 }
 
 void TextEditor::_actionAlignment(QAction *action) {
@@ -711,7 +717,7 @@ void TextEditor::_actionAlignment(QAction *action) {
   else if(action == _actionAlignC) _alignC();
   else if(action == _actionAlignR) _alignR();
   else if(action == _actionJustify) _justify();
-  else throw GuiException{"Alignment not valid!"};
+  else throw TextEditorException{"Alignment not valid!"};
 }
 
 void TextEditor::_alignL() {

@@ -223,6 +223,11 @@ namespace se_exceptions {
       ImageException(QString str): GuiException(std::move(str)) {}
   };
 
+  class TextEditorException : public GuiException {
+  public:
+      TextEditorException(QString str): GuiException(std::move(str)) {}
+  };
+
   class UserException : public SE_Exception {
   public:
       UserException(QString str): SE_Exception(std::move(str)) {}
