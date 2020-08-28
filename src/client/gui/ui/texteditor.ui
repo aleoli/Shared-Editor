@@ -465,11 +465,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
 }
 
 QWidget#QToolTip{
-	background: white;
-	border: 1px solid black;
+	border-image: white  0 0 0 0 stretch stretch;
 	margin-left: 0px;
 	margin-right: 0px;
-	opacity: 200;
 }
 
 /*QDockWidget::close-button {
@@ -492,11 +490,9 @@ QWidget#QToolTip{
    <widget class="QWidget" name="contents_connectedUsers">
     <property name="styleSheet">
      <string notr="true">QWidget#QToolTip{
-	background: white;
-	border: 1px solid black;
+	border-image: white  0 0 0 0 stretch stretch;
 	margin-left: 0px;
 	margin-right: 0px;
-	opacity: 200;
 }</string>
     </property>
    </widget>
@@ -558,11 +554,9 @@ QDockWidget#QToolTip{
 }
 
 QWidget#QToolTip{
-	background: white;
-	border: 1px solid black;
+	border-image: white  0 0 0 0 stretch stretch;
 	margin-left: 0px;
 	margin-right: 0px;
-	opacity: 200;
 }</string>
    </property>
    <property name="floating">
@@ -580,11 +574,9 @@ QWidget#QToolTip{
    <widget class="QWidget" name="contents_comments">
     <property name="styleSheet">
      <string notr="true">QWidget#QToolTip{
-	background: white;
-	border: 1px solid black;
+	border-image: white  0 0 0 0 stretch stretch;
 	margin-left: 0px;
 	margin-right: 0px;
-	opacity: 200;
 }</string>
     </property>
    </widget>
@@ -2574,13 +2566,10 @@ QDockWidget#QToolTip{
 }
 
 QWidget#QToolTip{
-	background: white;
-	border: 1px solid black;
+	border-image: white  0 0 0 0 stretch stretch;
 	margin-left: 0px;
 	margin-right: 0px;
-	opacity: 200;
 }
-
 /*QDockWidget::close-button {
     subcontrol-position: top left;
     subcontrol-origin: margin;
@@ -2610,11 +2599,9 @@ QWidget#QToolTip{
    <widget class="QWidget" name="contents_disconnectedUsers">
     <property name="styleSheet">
      <string notr="true">QWidget#QToolTip{
-	background: white;
-	border: 1px solid black;
+	border-image: white  0 0 0 0 stretch stretch;
 	margin-left: 0px;
 	margin-right: 0px;
-	opacity: 200;
 }</string>
     </property>
    </widget>
@@ -2661,9 +2648,6 @@ QWidget#QToolTip{
    <property name="text">
     <string>Rename</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
   </action>
   <action name="actionAdd_to_my_files">
    <property name="text">
@@ -2678,9 +2662,6 @@ QWidget#QToolTip{
   <action name="actionDetails">
    <property name="text">
     <string>File info</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionPrint">
@@ -2805,9 +2786,6 @@ QWidget#QToolTip{
    </property>
    <property name="text">
     <string>Connected users</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+U</string>
    </property>
   </action>
   <action name="actionComments">
@@ -3014,9 +2992,6 @@ QWidget#QToolTip{
    </property>
    <property name="text">
     <string>Change text color</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>
