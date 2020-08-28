@@ -320,12 +320,12 @@ QToolTip{
      </property>
      <property name="icon">
       <iconset resource="resources/res.qrc">
-       <normaloff>:/res/account.png</normaloff>:/res/account.png</iconset>
+       <normaloff>:/res/account_large.png</normaloff>:/res/account_large.png</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>24</width>
-       <height>26</height>
+       <width>36</width>
+       <height>38</height>
       </size>
      </property>
     </widget>
