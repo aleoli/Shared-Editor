@@ -22,6 +22,8 @@ public:
   RemoteUser(int userId, const QString &username, const QColor &color, Cursor *cursor = nullptr, bool online = true);
   ~RemoteUser();
 
+  static RemoteUser *moveRemoteUser(RemoteUser *other, QListWidget *list);
+
 public slots:
   int getUserId() const;
   void setIcon(const QIcon &icon);
