@@ -114,9 +114,12 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::activateLink, this, &GuiManager::docsBrowserActivateLink);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::getDir, this, &GuiManager::getDirQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::newDir, this, &GuiManager::newDirQuery);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::getPath, this, &GuiManager::getPathQuery);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::openFile, this, &GuiManager::getFileQuery);
 
   QObject::connect(this, &GuiManager::serverGetDirResponse, _widgetDocsBrowser, &DocsBrowser::showDir);
   QObject::connect(this, &GuiManager::serverNewDirResponse, _widgetDocsBrowser, &DocsBrowser::changeDir);
+  QObject::connect(this, &GuiManager::serverGetPathResponse, _widgetDocsBrowser, &DocsBrowser::showPath);
 
   //TextEditor
   QObject::connect(_widgetTextEditor, &TextEditor::share, this, &GuiManager::textEditorShare);
@@ -147,6 +150,7 @@ void GuiManager::connectClientToServer() {
   QObject::connect(this, &GuiManager::deleteDirQuery, _manager.get(), &MessageManager::deleteDirQuery);
   QObject::connect(this, &GuiManager::getDirQuery, _manager.get(), &MessageManager::getDirQuery);
   QObject::connect(this, &GuiManager::moveFileQuery, _manager.get(), &MessageManager::moveFileQuery);
+  QObject::connect(this, &GuiManager::getPathQuery, _manager.get(), &MessageManager::getPathQuery);
 
   //Signals from text editor to send directly to server
   QObject::connect(_widgetTextEditor, &TextEditor::getUserIcon, _manager.get(), &MessageManager::getUserIconQuery);
@@ -170,10 +174,12 @@ void GuiManager::connectServerToClient() {
 
   QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
   QObject::connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiManager::serverActivateLinkResponse);
+  QObject::connect(_manager.get(), &MessageManager::getFileResponse, this, &GuiManager::serverGetFileResponse);
   QObject::connect(_manager.get(), &MessageManager::getDirResponse, this, &GuiManager::serverGetDirResponse);
   QObject::connect(_manager.get(), &MessageManager::newDirResponse, this, &GuiManager::serverNewDirResponse);
   QObject::connect(_manager.get(), &MessageManager::deleteFileResponse, this, &GuiManager::serverDeleteFileResponse);
 
+  QObject::connect(_manager.get(), &MessageManager::getPathResponse, this, &GuiManager::serverGetPathResponse);
   QObject::connect(_manager.get(), &MessageManager::getLinkResponse, this, &GuiManager::serverGetLinkResponse);
 
   //Signals to send directly to text editor
@@ -370,6 +376,14 @@ void GuiManager::serverNewFileResponse(int fileId) {
   _user->openFile(fileId);
   _user->getFile()->addUser(_user->getUserId(), _user->getUsername());
   unfreezeWindow();
+  showWindow(_widgetTextEditor, true);
+}
+
+void GuiManager::serverGetFileResponse(const File &file, int charId, int commentId) {
+  // TODO: manca qualcosa?!?
+  /*_user->openFile(fileId);
+  _user->getFile()->addUser(_user->getUserId(), _user->getUsername());
+  // TODO: unfreezeWindow();*/
   showWindow(_widgetTextEditor, true);
 }
 

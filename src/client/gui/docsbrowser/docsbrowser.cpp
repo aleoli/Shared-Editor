@@ -11,27 +11,35 @@
 #include "docwidget.h"
 #include "docwidget_folder.h"
 
+#define DOC_WIDTH 200
+#define DOC_HEIGHT 120
+
 DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBrowser) {
   ui->setupUi(this);
 
-  _widgetHome = findChild<QPushButton *>("btn_home");
-  _widgetNewFolder = findChild<QPushButton *>("btn_new_folder");
+  _widgetHome = ui->btn_home;
+  _widgetNewFolder = ui->btn_new_folder;
 
-  _widgetBack = findChild<QPushButton *>("btn_back");
-  _widgetForward = findChild<QPushButton *>("btn_fwd");
-  _widgetUp = findChild<QPushButton *>("btn_up");
+  _widgetBack = ui->btn_back;
+  _widgetForward = ui->btn_fwd;
+  _widgetUp = ui->btn_up;
 
-  _widgetAccount = findChild<QPushButton *>("btn_logout");
-  _widgetNewFile = findChild<QPushButton *>("btn_new_file");
-  _widgetSearchButton = findChild<QPushButton *>("btn_search");
-  _widgetSearch = findChild<QLineEdit *>("ledit_search");
+  _widgetAccount = ui->btn_logout;
+  _widgetNewFile = ui->btn_new_file;
+  _widgetSearchButton = ui->btn_search;
+  _widgetSearch = ui->ledit_search;
 
-  _actionLogout = findChild<QAction *>("actionLogout");
+  _sortComboBox = ui->comboBox_order;
 
-  _scrollArea = findChild<QWidget *>("scrollArea_docs");
+  _actionLogout = ui->actionLogout;
+
+  _scrollArea = ui->scrollArea_docs;
   _layout = new QGridLayout{_scrollArea};
-  _layout->setSpacing(50);
+  _layout->setHorizontalSpacing(this->_getHSpacing());
   _layout->setVerticalSpacing(50);
+  _layout->setSizeConstraint(QLayout::SetFixedSize);
+
+  _widgetPath = ui->pathWidget;
 
   connect(_widgetHome, &QPushButton::clicked, this, &DocsBrowser::_goToHome);
   connect(_widgetNewFolder, &QPushButton::clicked, this, &DocsBrowser::_newDir);
@@ -45,6 +53,8 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
   connect(_widgetSearchButton, &QPushButton::clicked, this, &DocsBrowser::_search);
 
   connect(_actionLogout, &QAction::triggered, this, &DocsBrowser::_logout);
+
+  connect(_sortComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DocsBrowser::_changeSortType);
 }
 
 DocsBrowser::~DocsBrowser() {
@@ -76,13 +86,30 @@ void DocsBrowser::showDir(const std::vector<FSElement> &elements, const QString&
 void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
   this->_cleanWidgets();
   int nCols = this->_get_n_cols();
-  for(int i=0; i<elements.size(); i++) {
-    auto element = elements[i];
-    debug(QString(element.getType() == FSElement::Type::FILE ? "FILE" : "DIR") + "\t" + element.getName());
 
-    if(element.getType() == FSElement::Type::FILE) {
-      auto widget = new DocWidget{std::move(element), this->_scrollArea};
-      widget->setFixedSize(200, 120);
+  auto sortType = this->_currentSortType;
+  std::list<const FSElement*> listPointers{};
+  for(const auto& element: elements) {
+    listPointers.push_back(&element);
+  }
+  listPointers.sort([sortType](auto first, auto second) {
+      switch(sortType) {
+        case TITLE:
+          return first->getName() < second->getName();
+        case DATE:
+          return first->getCreationDate() < second->getCreationDate();
+      }
+      // it will be never reached
+      return first->getName() < second->getName();
+  });
+
+  int i = 0;
+  for(auto element = listPointers.begin(); element != listPointers.end(); ++element, i++) {
+    //debug(QString(element.getType() == FSElement::Type::FILE ? "FILE" : "DIR") + "\t" + element.getName());
+
+    if((*element)->getType() == FSElement::Type::FILE) {
+      auto widget = new DocWidget{**element, this->_scrollArea};
+      widget->setFixedSize(DOC_WIDTH, DOC_HEIGHT);
       QObject::connect(widget, &DocWidget::open, this, &DocsBrowser::_openFile);
 
       this->_currentWidgets.push_back(widget);
@@ -91,8 +118,8 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
       int row = floor(i / nCols);
       this->_layout->addWidget(widget, row, col, QFlags<Qt::AlignmentFlag>{Qt::AlignCenter, Qt::AlignVCenter});
     } else {
-      auto widget = new DocWidgetFolder{std::move(element), this->_scrollArea};
-      widget->setFixedSize(200, 120);
+      auto widget = new DocWidgetFolder{**element, this->_scrollArea};
+      widget->setFixedSize(DOC_WIDTH, DOC_HEIGHT);
       QObject::connect(widget, &DocWidgetFolder::open, this, &DocsBrowser::changeDir);
 
       this->_currentWidgetsFolder.push_back(widget);
@@ -115,6 +142,8 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
 void DocsBrowser::_openFile(int fileId) {
   debug("TODO");
   debug("open file " + QString::number(fileId));
+
+  emit this->openFile(_user->getToken(), fileId);
 }
 
 void DocsBrowser::changeDir(int dirId) {
@@ -122,14 +151,70 @@ void DocsBrowser::changeDir(int dirId) {
   debug("go to dir " + QString::number(dirId));
   // get current index in history
   if(this->_currentDir) {
-    auto it = std::find(this->_dirHistory.crbegin(), this->_dirHistory.crend(), this->_currentDir);
-    this->_dirHistory.erase(it.base(), this->_dirHistory.end());
+    this->_dirHistory.erase(std::next(this->_curInHistory), this->_dirHistory.end());
   }
 
   this->_currentDir = dirId;
-  this->_dirHistory.push_back(*this->_currentDir);
+  if(this->_dirHistory.empty() || this->_dirHistory.back() != *this->_currentDir) {
+    this->_dirHistory.push_back(*this->_currentDir);
+  }
+  this->_curInHistory = --this->_dirHistory.end();
 
   emit this->getDir(_user->getToken(), dirId);
+  emit this->getPath(_user->getToken(), *this->_currentDir);
+}
+
+void DocsBrowser::showPath(const std::vector<FSElement> &elements) {
+  qDeleteAll(this->_widgetPath->children());
+
+  auto layout = new QHBoxLayout{this->_widgetPath};
+  layout->setSizeConstraint(QLayout::SetFixedSize);
+  for(auto el = elements.crbegin(); el != elements.crend(); ++el) {
+    debug(el->getName());
+
+    if(el->getId() != 1) {
+      auto btn = new QPushButton{el->getName(), this->_widgetPath};
+      btn->setStyleSheet("outline: none; background: transparent; font: 18px; color: white; padding: 1 3 1 3; border-width: 0px; border-radius: 3px; text-align: left;");
+      btn->setObjectName(QString::number(el->getId()));
+      btn->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+      btn->setMaximumSize(btn->sizeHint().width(), btn->sizeHint().height());
+
+      QObject::connect(btn, &QPushButton::clicked, this, &DocsBrowser::_clickedPath);
+
+      layout->addWidget(btn);
+    }
+
+    auto lbl = new QLabel{"/", this->_widgetPath};
+    lbl->setStyleSheet("border: none; color: white; font: 24px;");
+    lbl->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    lbl->setMaximumSize(lbl->sizeHint().width(), lbl->sizeHint().height());
+    layout->addWidget(lbl);
+  }
+
+  _widgetPath->setLayout(layout);
+}
+
+void DocsBrowser::_clickedPath(bool checked) {
+  auto btn = qobject_cast<QPushButton*>(sender());
+  if(btn) {
+    bool ok;
+    auto elId = btn->objectName().toInt(&ok);
+    if(!ok) {
+      return;
+    }
+    this->_currentDir = elId;
+    emit this->getDir(_user->getToken(), elId);
+    emit this->getPath(_user->getToken(), *this->_currentDir);
+  }
+}
+
+void DocsBrowser::_changeSortType(int newSortType) {
+  if(newSortType < SortType::TITLE || newSortType > SortType::DATE) {
+    warn("Invalid sort type");
+    return;
+  }
+  this->_currentSortType = static_cast<SortType>(newSortType);
+  this->_showDir(this->_currentElements);
 }
 
 void DocsBrowser::_account(bool checked) {
@@ -172,22 +257,24 @@ void DocsBrowser::_goToHome(bool checked) {
 }
 
 void DocsBrowser::_goBack(bool checked) {
-  auto curr = this->_getCurrent();
-  if(curr-- == this->_dirHistory.begin()) {
+  if(this->_curInHistory == this->_dirHistory.begin()) {
     // is first in list, do nothing
   } else {
-    this->_currentDir = *curr;
-    emit this->getDir(_user->getToken(), *curr);
+    this->_curInHistory--;
+    this->_currentDir = *this->_curInHistory;
+    emit this->getDir(_user->getToken(), *this->_currentDir);
+    emit this->getPath(_user->getToken(), *this->_currentDir);
   }
 }
 
 void DocsBrowser::_goFwd(bool checked) {
-  auto curr = this->_getCurrent();
-  if(++curr == this->_dirHistory.end()) {
+  if(std::next(this->_curInHistory) == this->_dirHistory.end()) {
     // is last in list, do nothing
   } else {
-    this->_currentDir = *curr;
-    emit this->getDir(_user->getToken(), *curr);
+    this->_curInHistory++;
+    this->_currentDir = *this->_curInHistory;
+    emit this->getDir(_user->getToken(), *this->_currentDir);
+    emit this->getPath(_user->getToken(), *this->_currentDir);
   }
 }
 
@@ -198,7 +285,7 @@ void DocsBrowser::_goUp(bool checked) {
 }
 
 std::list<int>::const_iterator DocsBrowser::_getCurrent() {
-  return std::next(std::find(this->_dirHistory.crbegin(), this->_dirHistory.crend(), this->_currentDir)).base();
+  return this->_curInHistory;
 }
 
 void DocsBrowser::_cleanWidgets() {
@@ -218,12 +305,22 @@ void DocsBrowser::_cleanWidgets() {
   this->_currentWidgetsFolder.clear();
 }
 
-int DocsBrowser::_get_n_cols() {
-  auto width = this->width();
-  return floor(width / (200 + 50));
-}
-
 void DocsBrowser::resizeEvent(QResizeEvent *event) {
   debug("resize");
   this->_showDir(this->_currentElements);
+}
+
+int DocsBrowser::_get_n_cols() {
+  auto width = this->width();
+  auto hSpacing = this->_getHSpacing();
+  _layout->setHorizontalSpacing(hSpacing);
+  return floor(width / (DOC_WIDTH + hSpacing));
+}
+
+int DocsBrowser::_getHSpacing() {
+  auto width = this->width();
+  auto minSpacing = 30;
+  auto docHArea = DOC_WIDTH + minSpacing;
+  int n = width / docHArea;
+  return (width - (n * DOC_WIDTH)) / (n+1);
 }

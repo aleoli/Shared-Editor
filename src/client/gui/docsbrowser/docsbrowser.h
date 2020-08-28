@@ -9,6 +9,7 @@
 
 #include <QPushButton>
 #include <QLineEdit>
+#include <QComboBox>
 #include <QGridLayout>
 
 #include <optional>
@@ -30,6 +31,7 @@ public slots:
   void setIcon();
   void showDir(const std::vector<FSElement> &elements, const QString& name, int parentId);
   void changeDir(int dirId);
+  void showPath(const std::vector<FSElement> &elements);
 
 signals:
   void logout(const QString &token);
@@ -39,6 +41,8 @@ signals:
   void activateLink(const QString &token, const QString &link);
 
   void getDir(const QString &token, std::optional<int> dirId = std::nullopt);
+  void openFile(const QString &token, int fileId);
+  void getPath(const QString &token, int dirId);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;
@@ -53,10 +57,16 @@ private slots:
   void _goBack(bool checked);
   void _goFwd(bool checked);
   void _goUp(bool checked);
+  void _clickedPath(bool checked);
+  void _changeSortType(int newSortType);
 
   void _openFile(int fileId);
 
 private:
+  typedef enum {
+    TITLE, DATE
+  } SortType;
+
   Ui::DocsBrowser *ui;
 
   QPushButton *_widgetHome;
@@ -67,20 +77,27 @@ private:
   QLineEdit *_widgetSearch;
   QAction *_actionLogout;
 
+  QComboBox *_sortComboBox;
+
   QWidget *_scrollArea;
   QGridLayout *_layout;
+  QWidget *_widgetPath;
 
   std::optional<int> _currentParent = std::nullopt;
   std::optional<int> _currentDir = std::nullopt;
   std::list<int> _dirHistory{};
+  std::list<int>::iterator _curInHistory;
 
   std::vector<FSElement> _currentElements{};
 
   std::list<DocWidget *> _currentWidgets{};
   std::list<DocWidgetFolder *> _currentWidgetsFolder{};
 
+  SortType _currentSortType = TITLE;
+
   std::list<int>::const_iterator _getCurrent();
   void _cleanWidgets();
   int _get_n_cols();
   void _showDir(const std::vector<FSElement> &elements);
+  int _getHSpacing();
 };

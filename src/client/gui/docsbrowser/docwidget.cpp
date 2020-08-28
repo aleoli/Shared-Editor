@@ -9,13 +9,13 @@
 DocWidget::DocWidget(FSElement element, QWidget *parent): QWidget(parent), ui(new Ui::DocWidget), _element(std::move(element)) {
   ui->setupUi(this);
 
-  _nameLabel = findChild<QLabel *>("label_dName");
+  _nameLabel = ui->label_dName;
   _nameLabel->setText(this->_element.getName());
 
-  _dateLabel = findChild<QLabel *>("label_date");
-  _dateLabel->setText("01/01/1970");
+  _dateLabel = ui->label_date;
+  _dateLabel->setText(this->_element.getCreationDate().toString("dd-MM-yyyy hh:mm"));
 
-  _optionsBtn = findChild<QPushButton *>("btn_options");
+  _optionsBtn = ui->btn_options;
 }
 
 void DocWidget::paintEvent(QPaintEvent* e) {

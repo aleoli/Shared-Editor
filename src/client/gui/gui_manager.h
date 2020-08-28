@@ -57,13 +57,16 @@ signals:
   void deleteDirQuery(const QString &token, int dirId);
   void getDirQuery(const QString &token, const std::optional<int> &dirId = std::nullopt);
   void moveFileQuery(const QString &token, int fileId, int dirId);
+  void getPathQuery(const QString &token, int elementId);
 
+  // TODO: cat be deleted?
   void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment);
 
   void serverGetDirResponse(const std::vector<FSElement> &elements, const QString &name, int parentId);
   void serverNewDirResponse(int id);
+  void serverGetPathResponse(const std::vector<FSElement> &elements);
 
 public slots:
   void closeStacked();
@@ -111,6 +114,8 @@ private slots:
   void serverDeleteFileResponse();
 
   void serverGetLinkResponse(const QString &link);
+
+  void serverGetFileResponse(const File &file, int charId, int commentId);
 
 private:
   void showWindow(MainWindow *window, bool clear = false);
