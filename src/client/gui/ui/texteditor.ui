@@ -464,7 +464,13 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     padding: 1px -1px -1px 1px;
 }
 
-
+QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+	opacity: 200;
+}
 
 /*QDockWidget::close-button {
     subcontrol-position: top left;
@@ -549,6 +555,14 @@ QDockWidget#QToolTip{
 	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
+}
+
+QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+	opacity: 200;
 }</string>
    </property>
    <property name="floating">
@@ -2559,6 +2573,14 @@ QDockWidget#QToolTip{
 	margin-right: 0px;
 }
 
+QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+	opacity: 200;
+}
+
 /*QDockWidget::close-button {
     subcontrol-position: top left;
     subcontrol-origin: margin;
@@ -2639,6 +2661,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Rename</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="actionAdd_to_my_files">
    <property name="text">
@@ -2654,6 +2679,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>File info</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionPrint">
    <property name="icon">
@@ -2662,6 +2690,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Print</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionUndo">
@@ -2672,6 +2703,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
   <action name="actionRedo">
    <property name="icon">
@@ -2680,6 +2714,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
    </property>
   </action>
   <action name="actionCut">
@@ -2690,6 +2727,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Cut</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionCopy">
    <property name="icon">
@@ -2699,6 +2739,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Copy</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionPaste">
    <property name="icon">
@@ -2707,6 +2750,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionFind">
@@ -2730,6 +2776,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Select all</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="actionHighlight">
    <property name="icon">
@@ -2738,6 +2787,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Highlight</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
   <action name="actionConnected_users">
@@ -2754,6 +2806,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Connected users</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionComments">
    <property name="checkable">
@@ -2768,6 +2823,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Comments</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionSeparator">
@@ -2801,6 +2859,9 @@ QDockWidget#QToolTip{
    <property name="iconText">
     <string>Bold</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
   <action name="actionItalics">
    <property name="checkable">
@@ -2812,6 +2873,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Italics</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionUnderline">
@@ -2825,6 +2889,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Underline</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionStrike">
    <property name="checkable">
@@ -2836,6 +2903,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Strikethrough</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionAlign_left">
@@ -2852,6 +2922,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Align left</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionAlign_right">
    <property name="checkable">
@@ -2863,6 +2936,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Align right</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionAlign_center">
@@ -2876,6 +2952,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Align center</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionJustify">
    <property name="checkable">
@@ -2887,6 +2966,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Justify</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="actionShare">
@@ -2906,6 +2988,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Close</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionHighlight_users_text">
    <property name="checkable">
@@ -2918,6 +3003,9 @@ QDockWidget#QToolTip{
    <property name="text">
     <string>Highlight users' text</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
   </action>
   <action name="actionChange_text_color">
    <property name="icon">
@@ -2926,6 +3014,9 @@ QDockWidget#QToolTip{
    </property>
    <property name="text">
     <string>Change text color</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>
