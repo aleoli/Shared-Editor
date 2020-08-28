@@ -217,9 +217,11 @@ void TextEditor::initDocks() {
 }
 
 void TextEditor::initTextEdit() {
-  _textEdit = new TextEdit;
+  _textEdit = new TextEdit{this};
   setCentralWidget(_textEdit);
   _defColor = _textEdit->currentCharFormat().background();
+
+  _dialogFind = new Find(this, _textEdit);
 }
 
 void TextEditor::setAlignmentGroups() {
@@ -560,6 +562,7 @@ void TextEditor::_account() {
 
   if(!action) return;
 
+  _dialogFind->close();
   if(action == actionHome) emit close(_user->getToken(), _user->getFileId());
   else emit logout(_user->getToken());
 }
@@ -691,6 +694,7 @@ void TextEditor::_print(bool checked) {
 
 void TextEditor::_close(bool checked) {
   debug("TextEditor::_close");
+  _dialogFind->close();
   emit close(_user->getToken(), _user->getFileId());
 }
 
@@ -802,6 +806,7 @@ void TextEditor::_renameAction(bool checked) {
 
 void TextEditor::_deleteFile(bool checked) {
   debug("TextEditor::_deleteFile");
+  _dialogFind->close();
   emit remove(_user->getToken(), _user->getFileId());
 }
 
@@ -822,5 +827,6 @@ void TextEditor::_selectAll(bool checked) {
 
 void TextEditor::_find(bool checked) {
   debug("TextEditor::_find");
-  //TODO
+  _dialogFind->clear();
+  _dialogFind->show();
 }
