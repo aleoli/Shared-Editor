@@ -171,22 +171,6 @@ void TextEditor::initToolbarActions() {
   connect(_widgetFont, &QFontComboBox::currentFontChanged, this, &TextEditor::_font);
   connect(_widgetSize, QOverload<int>::of(&QComboBox::activated), this, &TextEditor::_size);
 
-  _actionUndo->setShortcut(QKeySequence::Undo);
-  _actionRedo->setShortcut(QKeySequence::Redo);
-  _actionCut->setShortcut(QKeySequence::Cut);
-  _actionCopy->setShortcut(QKeySequence::Copy);
-  _actionPaste->setShortcut(QKeySequence::Paste);
-  _actionBold->setShortcut(QKeySequence::Bold);
-  _actionItalics->setShortcut(QKeySequence::Italic);
-  _actionUnderline->setShortcut(QKeySequence::Underline);
-  _actionStrike->setShortcut(Qt::CTRL + Qt::Key_K);
-  _actionPrint->setShortcut(QKeySequence::Print);
-  _actionDownload->setShortcut(QKeySequence::Save);
-  _actionSelectAll->setShortcut(QKeySequence::SelectAll);
-  _actionClose->setShortcut(QKeySequence::Close);
-  _actionFind->setShortcut(QKeySequence::Find);
-  _actionInfo->setShortcut(QKeySequence::WhatsThis);
-
   setAlignmentGroups();
 
   // combobox for text size
