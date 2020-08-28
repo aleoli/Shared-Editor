@@ -52,6 +52,11 @@ signals:
   void commentLocalUpdate(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalDelete(const QString &token, int fileId, const File::Comment &comment);
 
+  void localInsert(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localDelete(const QString &token, int fileId, const std::vector<SymbolId> &ids);
+  void localUpdate(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localMove(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
+
 public slots:
   virtual void clear();
   void setIcon();
@@ -60,9 +65,15 @@ public slots:
   void userConnected(int fileId, int userId, const QString &username);
   void userDisconnected(int fileId, int userId);
   void setUserIcon(int userId, const QString &icon);
+
   void commentRemoteInsert(int fileId, int userId, const File::Comment &comment);
   void commentRemoteUpdate(int fileId, int userId, const File::Comment &comment);
   void commentRemoteDelete(int fileId, int userId, const File::Comment &comment);
+
+  void remoteInsert(int fileId, int userId, const std::vector<Symbol>& symbols);
+  void remoteDelete(int fileId, int userId, const std::vector<SymbolId>& ids);
+  void remoteUpdate(int fileId, int userId, const std::vector<Symbol>& symbols);
+  void remoteMove(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);
 
 private slots:
   void _bold(bool checked);
@@ -71,7 +82,6 @@ private slots:
   void _underline(bool checked);
   void _mark(bool checked);
   void _color(bool checked);
-  void _insertComment(bool checked);
   void _download(bool checked);
   void _print(bool checked);
   void _share();
@@ -89,14 +99,25 @@ private slots:
   void _font(const QFont &font);
   void _size(int index);
   void _highlight(bool checked);
-  void _editComment(CommentWidget *widget);
-  void _deleteComment(CommentWidget *widget);
   void _renameAction(bool checked);
   void _deleteFile(bool checked);
   void _info(bool checked);
   void _deleteText(bool checked);
   void _selectAll(bool checked);
   void _find(bool checked);
+
+  //comments
+  void _insertComment(bool checked);
+  void _editComment(CommentWidget *widget);
+  void _deleteComment(CommentWidget *widget);
+
+  //CRDT
+  void _contentsChange(int pos, int removed, int added);
+  void _handleUpdate(int pos, int nchars);
+  void _handleDelete(int pos, int removed);
+  void _handleInsert(int pos, int added);
+  void _cursorChanged();
+  void _updateCursors();
 
 private:
   void initOptionsWidget();
