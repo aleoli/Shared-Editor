@@ -13,10 +13,11 @@ public:
 
   void insert(int pos, QListWidget *list);
   void add(QListWidget *list);
-  void remove(QListWidget *list);
+  void remove();
 
   QListWidgetItem *getItem() const;
 
 protected:
   QListWidgetItem *_item;
+  QListWidget *_list;
 };

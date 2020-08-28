@@ -29,6 +29,16 @@ RemoteUser::RemoteUser(int userId, const QString &username, const QColor &color,
   _item->setSizeHint(this->size());
 }
 
+RemoteUser *RemoteUser::moveRemoteUser(RemoteUser *other, QListWidget *list) {
+  auto user = new RemoteUser(other->_userId, other->_username, other->_color, other->_cursor, other->_online);
+  user->setIcon(other->_icon);
+
+  other->remove(); //delete occurs
+  user->add(list);
+
+  return user;
+}
+
 RemoteUser::~RemoteUser()
 {
     delete ui;

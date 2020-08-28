@@ -363,11 +363,10 @@ void TextEditor::addRemoteUser(int userId, const QString &username, bool online)
 }
 
 void TextEditor::setRemoteUserOnline(int userId) {
+  // already checked presence in map
   auto user = _users[userId];
   user->setOnline(true);
-
-  user->remove(_listOffline);
-  user->add(_listOnline);
+  _users[userId] = RemoteUser::moveRemoteUser(user, _listOnline);
 
   _file->setOnline(userId, true);
 }
@@ -505,8 +504,7 @@ void TextEditor::userDisconnected(int fileId, int userId) {
   auto user = _users[userId];
   user->setOnline(false);
 
-  user->remove(_listOnline);
-  user->add(_listOffline);
+  _users[userId] = RemoteUser::moveRemoteUser(user, _listOffline);
   //TODO reset cursor to first position
 
   _file->setOnline(userId, false);

@@ -29,7 +29,7 @@ CommentWidget *TextEditor::getComment(const File::Comment &comment) {
 }
 
 void TextEditor::deleteComment(CommentWidget *widget) {
-  widget->remove(_listComments);
+  widget->remove();
   _comments.erase(widget->getCommentIdentifier());
   delete widget->getItem();
   delete widget;
