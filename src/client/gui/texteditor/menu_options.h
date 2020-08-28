@@ -29,6 +29,7 @@ public slots:
   void setShowCommentsChecked(bool checked);
   void setShowConnectedChecked(bool checked);
   void setIcon(const QIcon &icon);
+  void focusRename();
 
 private slots:
   void _share(bool checked);

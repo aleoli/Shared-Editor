@@ -94,7 +94,8 @@ private slots:
   void textEditorLogout(const QString &token);
   void textEditorShare(const QString &token, int fileId);
   void textEditorClose(const QString &token, int fileId);
-  void textEditorEditFile(const QString &token, int fileId, const std::optional<QString> &name);
+  void textEditorEdit(const QString &token, int fileId, const std::optional<QString> &name);
+  void textEditorRemove(const QString &token, int fileId);
 
   // messages from server
   void serverErrorResponse(const QString &reason);
@@ -106,6 +107,7 @@ private slots:
 
   void serverNewFileResponse(int fileId);
   void serverActivateLinkResponse(const FSElement &element, const File &file);
+  void serverDeleteFileResponse();
 
   void serverGetLinkResponse(const QString &link);
 

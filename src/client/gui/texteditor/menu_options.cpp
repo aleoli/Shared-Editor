@@ -71,3 +71,8 @@ void OptionsWidget::setIcon(const QIcon &icon) {
   _widgetUser->setIcon(icon);
   _widgetUser->setIconSize(_widgetUser->size());
 }
+
+void OptionsWidget::focusRename() {
+  _widgetRename->selectAll();
+  _widgetRename->setFocus();
+}

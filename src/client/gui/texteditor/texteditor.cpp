@@ -6,6 +6,10 @@
 #include "image_utils.h"
 
 #include <QColorDialog>
+#include <QFileDialog>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QMenu>
 
 #include <algorithm>
 
@@ -72,6 +76,13 @@ TextEditor::TextEditor(QWidget *parent) :
   _actionAlignR = ui->actionAlign_right;
   _actionJustify = ui->actionJustify;
   _actionHighlight = ui->actionHighlight_users_text;
+  _actionColor = ui->actionChange_text_color;
+  _actionRename = ui->actionRename;
+  _actionDeleteFile = ui->actionDelete;
+  _actionInfo = ui->actionDetails;
+  _actionDeleteText = ui->actionDelete_selected;
+  _actionSelectAll = ui->actionSelect_all;
+  _actionFind = ui->actionFind;
 
   initTextEdit();
   initOptionsWidget();
@@ -87,9 +98,9 @@ TextEditor::~TextEditor()
 void TextEditor::clear() {
   reloadFile();
   updateActions();
+  _gen.reset();
   reloadUsers();
   reloadComments();
-  _gen.reset();
   _menuOptions->setFileName(_user->getFileName());
   _textEdit->setFocus();
 }
@@ -149,6 +160,13 @@ void TextEditor::initToolbarActions() {
   connect(_actionShowConnectedUsers, &QAction::triggered, this, &TextEditor::_showConnected);
   connect(_actionClose, &QAction::triggered, this, &TextEditor::_close);
   connect(_actionHighlight, &QAction::triggered, this, &TextEditor::_highlight);
+  connect(_actionColor, &QAction::triggered, this, &TextEditor::_color);
+  connect(_actionRename, &QAction::triggered, this, &TextEditor::_renameAction);
+  connect(_actionDeleteFile, &QAction::triggered, this, &TextEditor::_deleteFile);
+  connect(_actionInfo, &QAction::triggered, this, &TextEditor::_info);
+  connect(_actionDeleteText, &QAction::triggered, this, &TextEditor::_deleteText);
+  connect(_actionSelectAll, &QAction::triggered, this, &TextEditor::_selectAll);
+  connect(_actionFind, &QAction::triggered, this, &TextEditor::_find);
 
   connect(_widgetFont, &QFontComboBox::currentFontChanged, this, &TextEditor::_font);
   connect(_widgetSize, QOverload<int>::of(&QComboBox::activated), this, &TextEditor::_size);
@@ -162,7 +180,12 @@ void TextEditor::initToolbarActions() {
   _actionItalics->setShortcut(QKeySequence::Italic);
   _actionUnderline->setShortcut(QKeySequence::Underline);
   _actionStrike->setShortcut(Qt::CTRL + Qt::Key_K);
-  //TODO select all, print, close, find,
+  _actionPrint->setShortcut(QKeySequence::Print);
+  _actionDownload->setShortcut(QKeySequence::Save);
+  _actionSelectAll->setShortcut(QKeySequence::SelectAll);
+  _actionClose->setShortcut(QKeySequence::Close);
+  _actionFind->setShortcut(QKeySequence::Find);
+  _actionInfo->setShortcut(QKeySequence::WhatsThis);
 
   setAlignmentGroups();
 
@@ -527,14 +550,24 @@ void TextEditor::_showConnected(bool checked) {
 }
 
 void TextEditor::_account() {
-  //TODO show menu, logout or close (and maybe edit??)
-  emit logout(_user->getToken());
-  //emit close(_user->getToken(), _user->getFileId());
+  QAction *actionHome = new QAction{QIcon(":res/home.png"), "Home"};
+  QAction *actionLogout = new QAction{QIcon(":res/logout.png"), "Logout"};
+
+  QMenu menu;
+  menu.addAction(actionHome);
+  menu.addAction(actionLogout);
+  auto action = menu.exec(QCursor::pos());
+
+  if(!action) return;
+
+  if(action == actionHome) emit close(_user->getToken(), _user->getFileId());
+  else emit logout(_user->getToken());
 }
 
 void TextEditor::_rename(const QString &name) {
   _user->setFileName(name);
-  emit editFile(_user->getToken(), _user->getFileId(), std::optional<QString>(name));
+  emit edit(_user->getToken(), _user->getFileId(), std::optional<QString>(name));
+  _textEdit->setFocus();
 }
 
 void TextEditor::_bold(bool checked) {
@@ -628,13 +661,32 @@ void TextEditor::_color(bool checked) {
 void TextEditor::_download(bool checked) {
   debug("TextEditor::_download");
 
-  //TODO
+  auto filename = QFileDialog::getSaveFileName(this, "Save to PDF", QString(), "PDF files(*.pdf)");
+  if(filename.isEmpty()) {
+    return;
+  }
+
+  QPrinter printer(QPrinter::HighResolution);
+  printer.setOutputFormat(QPrinter::PdfFormat);
+  printer.setOutputFileName(filename);
+  _textEdit->print(&printer);
+
+  emit alert(Alert::INFO, "", "PDF saved");
 }
 
 void TextEditor::_print(bool checked) {
   debug("TextEditor::_print");
 
-  //TODO
+  QPrinter printer(QPrinter::HighResolution);
+  QPrintDialog *dlg = new QPrintDialog(&printer, this);
+  dlg->setWindowTitle(tr("Print Document"));
+
+  if (dlg->exec() == QDialog::Accepted) {
+    _textEdit->print(&printer);
+    emit alert(Alert::INFO, "", "Printing requested successfully");
+  }
+
+  delete dlg;
 }
 
 void TextEditor::_close(bool checked) {
@@ -741,4 +793,34 @@ void TextEditor::_highlight(bool checked) {
   //refresh & trigger background color button to change TODO change only that button
   refresh();
   updateActions();
+}
+
+void TextEditor::_renameAction(bool checked) {
+  debug("TextEditor::_renameAction");
+  _menuOptions->focusRename();
+}
+
+void TextEditor::_deleteFile(bool checked) {
+  debug("TextEditor::_deleteFile");
+  emit remove(_user->getToken(), _user->getFileId());
+}
+
+void TextEditor::_info(bool checked) {
+  debug("TextEditor::_info");
+  //TODO
+}
+
+void TextEditor::_deleteText(bool checked) {
+  debug("TextEditor::_deleteText");
+  _textEdit->textCursor().removeSelectedText();
+}
+
+void TextEditor::_selectAll(bool checked) {
+  debug("TextEditor::_selectAll");
+  _textEdit->selectAll();
+}
+
+void TextEditor::_find(bool checked) {
+  debug("TextEditor::_find");
+  //TODO
 }
