@@ -57,8 +57,9 @@ File::CommentIdentifier CommentWidget::getCommentIdentifier() const {
 void CommentWidget::setIcon(const QIcon &icon) {
   if(icon.isNull()) return;
 
+  auto size = _widgetIcon->size();
   _widgetIcon->setIcon(icon);
-  _widgetIcon->setIconSize(_widgetIcon->size());
+  _widgetIcon->setIconSize(QSize(size.width()-2, size.height()-2));
   _icon = icon;
 }
 
@@ -76,8 +77,8 @@ File::Comment CommentWidget::getComment() const {
 }
 
 void CommentWidget::setName(const QString &name) {
-  if(name.length() > 6) {
-    auto substr = name.mid(0, 6);
+  if(name.length() > MAX_SIZE_NAME) {
+    auto substr = name.mid(0, MAX_SIZE_NAME);
     substr.append("...");
     _widgetName->setText(substr);
     _widgetName->setToolTip(name);

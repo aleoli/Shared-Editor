@@ -9,6 +9,7 @@
 #include <optional>
 #include "exceptions.h"
 #include "info.h"
+#include "confirm.h"
 
 using namespace se_exceptions;
 
@@ -114,7 +115,8 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetTextEditor, &TextEditor::share, this, &GuiManager::textEditorShare);
   QObject::connect(_widgetTextEditor, &TextEditor::logout, this, &GuiManager::textEditorLogout);
   QObject::connect(_widgetTextEditor, &TextEditor::close, this, &GuiManager::textEditorClose);
-  QObject::connect(_widgetTextEditor, &TextEditor::editFile, this, &GuiManager::textEditorEditFile);
+  QObject::connect(_widgetTextEditor, &TextEditor::edit, this, &GuiManager::textEditorEdit);
+  QObject::connect(_widgetTextEditor, &TextEditor::remove, this, &GuiManager::textEditorRemove);
 }
 
 void GuiManager::connectClientToServer() {
@@ -166,6 +168,7 @@ void GuiManager::connectServerToClient() {
 
   QObject::connect(_manager.get(), &MessageManager::newFileResponse, this, &GuiManager::serverNewFileResponse);
   QObject::connect(_manager.get(), &MessageManager::activateLinkResponse, this, &GuiManager::serverActivateLinkResponse);
+  QObject::connect(_manager.get(), &MessageManager::deleteFileResponse, this, &GuiManager::serverDeleteFileResponse);
 
   QObject::connect(_manager.get(), &MessageManager::getLinkResponse, this, &GuiManager::serverGetLinkResponse);
 
@@ -185,10 +188,7 @@ void GuiManager::connected() {
 
 void GuiManager::connectionLost() {
   warn("La connessione è stata persa");
-
   //TODO display messaggio su schermo (?)
-
-  //TODO provare a recuperare la connessione invece di chiudere (?)
   emit quit();
 }
 
@@ -201,13 +201,12 @@ void GuiManager::run() {
 void GuiManager::closeStacked() {
   debug("Pressed close button");
 
-  //TODO logica per vedere se veramente si deve chiudere l'app oppure no?
-  emit quit();
+  if(Confirm::show(_stackedWidget->currentWidget(), "Exit"))
+    emit quit();
 }
 
 void GuiManager::alert(Alert type, const QString &what, const QString &title) {
-  //TODO show alert dialog or something
-  debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + title + " " + what);
+  //debug("ALERT: " + QString::number(static_cast<int>(type)) + " " + title + " " + what);
   Info::show(_stackedWidget->currentWidget(), getAlertTitle(type), title, what);
 }
 
@@ -305,9 +304,13 @@ void GuiManager::textEditorClose(const QString &token, int fileId) {
   showWindow(_widgetDocsBrowser);
 }
 
-void GuiManager::textEditorEditFile(const QString &token, int fileId, const std::optional<QString> &name) {
-  //TODO freeze window?
+void GuiManager::textEditorEdit(const QString &token, int fileId, const std::optional<QString> &name) {
   emit editFileQuery(token, fileId, name);
+}
+
+void GuiManager::textEditorRemove(const QString &token, int fileId) {
+  freezeWindow();
+  emit deleteFileQuery(token, fileId);
 }
 
 /* ### MESSAGES FROM SERVER ### */
@@ -361,6 +364,14 @@ void GuiManager::serverActivateLinkResponse(const FSElement &element, const File
   _user->openFile(element.getId(), file);
   unfreezeWindow();
   showWindow(_widgetTextEditor, true);
+}
+
+void GuiManager::serverDeleteFileResponse() {
+  debug("GuiManager::serverDeleteFileResponse");
+  //TODO rimuovere dalla view del docsbrowser
+  _user->closeFile();
+  unfreezeWindow();
+  showWindow(_widgetDocsBrowser);
 }
 
 void GuiManager::serverGetLinkResponse(const QString &link) {

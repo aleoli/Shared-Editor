@@ -42,7 +42,8 @@ signals:
   void logout(const QString &token);
   void share(const QString &token, int fileId);
   void close(const QString &token, int fileId);
-  void editFile(const QString &token, int fileId, const std::optional<QString> &name);
+  void remove(const QString &token, int fileId);
+  void edit(const QString &token, int fileId, const std::optional<QString> &name);
   void getUserIcon(int userId);
 
   // Messages to server
@@ -89,6 +90,12 @@ private slots:
   void _highlight(bool checked);
   void _editComment(CommentWidget *widget);
   void _deleteComment(CommentWidget *widget);
+  void _renameAction(bool checked);
+  void _deleteFile(bool checked);
+  void _info(bool checked);
+  void _deleteText(bool checked);
+  void _selectAll(bool checked);
+  void _find(bool checked);
 
 private:
   void initOptionsWidget();
@@ -138,7 +145,9 @@ private:
   *_actionBold, *_actionItalics, *_actionStrike, *_actionUnderline, *_actionMark,
   *_actionInsertComment, *_actionDownload, *_actionPrint, *_actionShare,
   *_actionShowComments, *_actionShowConnectedUsers, *_actionClose,
-  *_actionAlignL, *_actionAlignC, *_actionAlignR, *_actionJustify, *_actionHighlight;
+  *_actionAlignL, *_actionAlignC, *_actionAlignR, *_actionJustify, *_actionHighlight,
+  *_actionColor, *_actionRename, *_actionDeleteFile, *_actionInfo, *_actionDeleteText,
+  *_actionSelectAll, *_actionFind;
   //TODO other actions
 
   OptionsWidget *_menuOptions;

@@ -3,6 +3,8 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 
+#define MAX_SIZE_NAME 10
+
 class ItemWidget : public QWidget {
   Q_OBJECT
 
