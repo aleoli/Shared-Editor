@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="res">
+    <file>home_off.png</file>
+    <file>home_on.png</file>
     <file>options_b.png</file>
     <file>text-editor/find.png</file>
     <file>text-editor/rename2.png</file>
