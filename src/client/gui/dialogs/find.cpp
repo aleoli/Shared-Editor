@@ -51,11 +51,19 @@ void Find::_search(bool checked) {
   auto wholeWords = _widgetWhole->checkState() == Qt::Checked ? QTextDocument::FindWholeWords : QTextDocument::FindFlags();
 
   if(!_textEdit->find(_widgetText->text(), backwards | caseSensitive | wholeWords)) {
-    _widgetMatches->setText("No matches found");
+
+    //try going to the beginning/end
+    auto cursor = QTextCursor(_textEdit->document());
+    if(backwards) cursor.movePosition(QTextCursor::End);
+    _textEdit->setTextCursor(cursor);
+
+    if(!_textEdit->find(_widgetText->text(), backwards | caseSensitive | wholeWords)) {
+      _widgetMatches->setText("No matches found");
+      return;
+    }
   }
-  else {
-    _widgetMatches->setText("Match found");
-  }
+
+  _widgetMatches->setText("Match found");
 }
 
 void Find::_cancel(bool checked) {
