@@ -507,6 +507,9 @@ void ServerMessageProcessor::newFile() {
   auto name = _m.getString("name");
 
   auto dirId = _m.getIntOpt("dirId");
+  if(dirId && *dirId == 1) {
+    dirId = std::nullopt;
+  }
 
   FSElement_db dir = (dirId && (*dirId!=0)) ? FSElement_db::get(session, *dirId) : FSElement_db::root(session.getUserId());
   auto file = dir.mkfile(session, name);
@@ -924,6 +927,9 @@ void ServerMessageProcessor::newDir() {
 
   auto name = _m.getString("name");
   auto parent_id = _m.getIntOpt("parentId");
+  if(parent_id && *parent_id == 1) {
+    parent_id = std::nullopt;
+  }
 
   auto dir = (parent_id && (*parent_id!=0)) ? FSElement_db::get(session, *parent_id) : FSElement_db::root(session.getUserId());
   auto new_dir = dir.mkdir(session, name);
@@ -988,6 +994,9 @@ void ServerMessageProcessor::getDir() {
   auto session = Session::get(token);
 
   auto dir_id = _m.getIntOpt("dirId");
+  if(dir_id && *dir_id == 1) {
+    dir_id = std::nullopt;
+  }
 
   auto dir = (dir_id && (*dir_id!=0)) ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
 
@@ -1015,6 +1024,9 @@ void ServerMessageProcessor::moveFile() {
   auto file_id = _m.getInt("fileId");
 
   auto dir_id = _m.getIntOpt("dirId");
+  if(dir_id && *dir_id == 1) {
+    dir_id = std::nullopt;
+  }
 
   auto file = FSElement_db::get(session, file_id);
   auto dir = (dir_id && (*dir_id!=0)) ? FSElement_db::get(session, *dir_id) : FSElement_db::root(session.getUserId());
@@ -1035,7 +1047,7 @@ void ServerMessageProcessor::getPath() {
 
   auto element_id = _m.getInt("elementId");
 
-  auto element = FSElement_db::get(session, element_id);
+  auto element = (element_id!=1) ? FSElement_db::get(session, element_id) : FSElement_db::root(session.getUserId());
   auto elements = element.getPathElements(session);
 
   QJsonArray arr;
