@@ -120,7 +120,8 @@ QLabel:focus {
 }
 
 QToolTip{
-	border-image: white  0 0 0 0 stretch stretch;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>

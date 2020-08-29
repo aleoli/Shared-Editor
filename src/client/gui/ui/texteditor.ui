@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1225</width>
+    <width>768</width>
     <height>596</height>
    </rect>
   </property>
@@ -73,7 +73,7 @@ QScrollBar::handle:horizontal {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1225</width>
+     <width>768</width>
      <height>56</height>
     </rect>
    </property>
@@ -86,7 +86,7 @@ QScrollBar::handle:horizontal {
    <property name="maximumSize">
     <size>
      <width>16777215</width>
-     <height>56</height>
+     <height>16777215</height>
     </size>
    </property>
    <property name="layoutDirection">
@@ -472,7 +472,8 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
 }
 
 QWidget#QToolTip{
-	border-image: white  0 0 0 0 stretch stretch;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }
@@ -497,7 +498,8 @@ QWidget#QToolTip{
    <widget class="QWidget" name="contents_connectedUsers">
     <property name="styleSheet">
      <string notr="true">QWidget#QToolTip{
-	border-image: white  0 0 0 0 stretch stretch;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
@@ -509,6 +511,12 @@ QWidget#QToolTip{
     <size>
      <width>150</width>
      <height>46</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
     </size>
    </property>
    <property name="font">
@@ -558,12 +566,6 @@ QDockWidget#QToolTip{
 	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
-}
-
-QWidget#QToolTip{
-	border-image: white  0 0 0 0 stretch stretch;
-	margin-left: 0px;
-	margin-right: 0px;
 }</string>
    </property>
    <property name="floating">
@@ -581,7 +583,8 @@ QWidget#QToolTip{
    <widget class="QWidget" name="contents_comments">
     <property name="styleSheet">
      <string notr="true">QWidget#QToolTip{
-	border-image: white  0 0 0 0 stretch stretch;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
@@ -597,14 +600,14 @@ QWidget#QToolTip{
    </property>
    <property name="minimumSize">
     <size>
-     <width>1225</width>
-     <height>76</height>
+     <width>0</width>
+     <height>0</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>524287</width>
-     <height>76</height>
+     <width>16777215</width>
+     <height>16777215</height>
     </size>
    </property>
    <property name="layoutDirection">
@@ -2573,7 +2576,8 @@ QDockWidget#QToolTip{
 }
 
 QWidget#QToolTip{
-	border-image: white  0 0 0 0 stretch stretch;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }
@@ -2606,7 +2610,8 @@ QWidget#QToolTip{
    <widget class="QWidget" name="contents_disconnectedUsers">
     <property name="styleSheet">
      <string notr="true">QWidget#QToolTip{
-	border-image: white  0 0 0 0 stretch stretch;
+	background: white;
+	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
 }</string>
