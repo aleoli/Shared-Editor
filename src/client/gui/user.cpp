@@ -145,11 +145,14 @@ QString User::getFileName() const {
   return _fileName;
 }
 
-void User::setFileName(const QString &name) {
-  _fileName = name;
+bool User::setFileName(const QString &name) {
+  if(_fileName == name) return false;
 
+  _fileName = name;
   if(_fileOpen)
     emit fileNameChanged();
+
+  return true;
 }
 
 File *User::getFile() {
