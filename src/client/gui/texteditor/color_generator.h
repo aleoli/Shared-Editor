@@ -1,20 +1,20 @@
 #pragma once
 
-#include <vector>
 #include <QColor>
 
-//TODO migliorare la logica (ovviamente), fai qualche ricerca
+#include <vector>
+#include <tuple>
+#include <array>
 
 class ColorGenerator {
 public:
   ColorGenerator();
-  explicit ColorGenerator(int maxColors);
 
   QColor getColor();
   void reset();
 
 private:
-  int _maxColors;
-  int _counter = 0;
-  std::vector<QString> _colors{"red", "blue", "green", "yellow", "pink", "brown", "orange", "grey", "purple"};
+  std::vector<std::tuple<int,int,int>> _colors;
+  std::array<int,3> _saturation{96, 176, 255};
+  std::array<int,3> _lightness{64, 96, 128};
 };
