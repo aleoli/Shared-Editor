@@ -142,7 +142,7 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
 void DocsBrowser::_openFile(int fileId) {
   debug("TODO");
   debug("open file " + QString::number(fileId));
-
+  _user->setFileId(fileId);
   emit this->openFile(_user->getToken(), fileId);
 }
 

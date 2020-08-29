@@ -37,6 +37,7 @@ public:
   QString getToken() const;
   int getUserId() const;
 
+  void setFileId(int fileId);
   int getFileId() const;
   int getCharId(); // get and increment
   int getCommentId(); // get and increment
@@ -49,6 +50,7 @@ public:
   void login(const QString &token, int userId, const std::optional<QString> &icon);
   void logout();
   void openFile(int fileId, const File &file = File(), int charId = 0, int commentId = 0);
+  void openFile(const File &file = File(), int charId = 0, int commentId = 0);
   void closeFile();
 
 signals:

@@ -101,6 +101,10 @@ int User::getUserId() const {
 
 void User::openFile(int fileId, const File &file, int charId, int commentId) {
   _fileId = fileId;
+  openFile(file, charId, commentId);
+}
+
+void User::openFile(const File &file, int charId, int commentId) {
   _file = std::move(file);
   _charId = charId;
   _commentId = commentId;
@@ -157,4 +161,8 @@ bool User::setFileName(const QString &name) {
 
 File *User::getFile() {
   return &_file;
+}
+
+void User::setFileId(int fileId) {
+  _fileId = fileId;
 }

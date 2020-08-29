@@ -380,10 +380,9 @@ void GuiManager::serverNewFileResponse(int fileId) {
 }
 
 void GuiManager::serverGetFileResponse(const File &file, int charId, int commentId) {
-  // TODO: manca qualcosa?!?
-  /*_user->openFile(fileId);
-  _user->getFile()->addUser(_user->getUserId(), _user->getUsername());
-  // TODO: unfreezeWindow();*/
+  debug("GuiManager::serverGetFileResponse");
+  _user->openFile(file, charId, commentId);
+  unfreezeWindow();
   showWindow(_widgetTextEditor, true);
 }
 
