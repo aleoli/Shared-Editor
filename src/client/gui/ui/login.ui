@@ -18,8 +18,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>16777215</width>
-    <height>16777215</height>
+    <width>598</width>
+    <height>428</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,12 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
      <widget class="QFrame" name="loginForm">
+      <property name="maximumSize">
+       <size>
+        <width>700</width>
+        <height>400</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">background: rgba(255, 170, 0, 0);
 margin: 0 60 10 60px;</string>
@@ -52,9 +58,7 @@ margin: 0 60 10 60px;</string>
                 <string notr="true">QLabel{
 	font: 8pt &quot;Segoe UI Emoji&quot;;
 	rgb(255, 255, 255);
-	/*font-size : 16px;
-	background: rgba(0,0,0,0);*/
-};</string>
+}</string>
                </property>
                <property name="text">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; font: segoe ui emoji; color:#ffffff;&quot;&gt;LOGIN&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -65,8 +69,6 @@ margin: 0 60 10 60px;</string>
               <widget class="QLabel" name="label_uname">
                <property name="styleSheet">
                 <string notr="true">QLabel{
-	text-decoration: none;
-	background: rgba(0,0,0,0);
 	margin-left: 0px;
 	margin-bottom: 0px;
 }</string>
@@ -90,7 +92,7 @@ border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
 margin: 0 0 20 0px;
-color: #94938f;
+color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
                </property>
@@ -99,80 +101,86 @@ selection-background-color: #f76163;</string>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="pwd_and_showPwd">
-             <item>
-              <layout class="QVBoxLayout" name="pwd_field">
-               <item alignment="Qt::AlignLeft">
-                <widget class="QLabel" name="label_pwd">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="layoutDirection">
-                  <enum>Qt::LeftToRight</enum>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QLabel{;
-	background: rgba(0,0,0,0);
+            <layout class="QVBoxLayout" name="pwd_field">
+             <item alignment="Qt::AlignLeft">
+              <widget class="QLabel" name="label_pwd">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QLabel{
 	margin-left: 0px;
 	margin-bottom: 0px;
+	margin-top: 10px;
 }</string>
-                 </property>
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="textFormat">
-                  <enum>Qt::AutoText</enum>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="indent">
-                  <number>-1</number>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="ledit_pwd">
-                 <property name="styleSheet">
-                  <string notr="true">background: white;
-border: 1px solid white;
+               </property>
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ffffff;&quot;&gt;Password&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="textFormat">
+                <enum>Qt::AutoText</enum>
+               </property>
+               <property name="scaledContents">
+                <bool>false</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+               <property name="indent">
+                <number>-1</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="ledit_pwd">
+               <property name="styleSheet">
+                <string notr="true">background: white;
+border:1px solid white;
 border-radius: 9px;
 padding: 1 8px;
 margin: 0 0 20 0px;
-color: #94938f;
+color: #242A38;
 font: &quot;Segoe UI Emoji&quot;;
 selection-background-color: #f76163;</string>
-                 </property>
-                 <property name="echoMode">
-                  <enum>QLineEdit::Password</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+               </property>
+               <property name="echoMode">
+                <enum>QLineEdit::Password</enum>
+               </property>
+              </widget>
              </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="showPwd">
              <item>
               <widget class="QCheckBox" name="checkBox_showPwd">
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show/hide the password&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
                </property>
                <property name="styleSheet">
-                <string notr="true">QCheckBox {
+                <string notr="true">QCheckBox:focus {
+   border: none;
+   outline: none;
+}
+
+QCheckBox {
     spacing: 5px;
 	font-size: 11pt;
 	color:white;
-	margin-bottom: -3px;
+	margin-left: 0px;
+	margin-bottom: 0px;
 }
 
 QCheckBox::indicator {
@@ -681,12 +689,16 @@ QCheckBox::indicator:checked {
               <enum>Qt::StrongFocus</enum>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sign in&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string/>
              </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
+              <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
 	background: #f76163;
-    /*border-style: outset;*/
     border-width: 1px;
     border-radius: 13px;
     border-color: #f76163;
@@ -723,42 +735,22 @@ background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
              </property>
             </widget>
            </item>
-           <item alignment="Qt::AlignBottom">
-            <widget class="QLabel" name="label_4gotPwd">
-             <property name="cursor">
-              <cursorShape>PointingHandCursor</cursorShape>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recover password&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QLabel{
-	color: white;
-	/*margin-right: 0px;*/
-	margin-bottom: 0px;
-}
-
-QLabel:hover{
-	color: #f76163;
-}</string>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Forgot password?&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QPushButton" name="btn_signup">
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;First time here?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string/>
              </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
+              <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
     background: #242A38;
-    /*border-style: outset;*/
     border-width: 1px;
     border-radius: 13px;
     border-color: #242A38;
@@ -767,7 +759,7 @@ QLabel:hover{
     padding: 10px;
 	margin-left: 0px;
 	margin-right: 0px;
-	margin-top: 0px;
+	margin-top: 10px;
 }
 
 QPushButton:hover {

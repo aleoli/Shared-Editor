@@ -6,110 +6,88 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>4095</width>
+    <height>3112</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TextEditor</string>
+   <string>Text Editor</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: #4E596F;</string>
+   <string notr="true">QMainWindow{background-color: #242A38;}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
-     <widget class="QTextEdit" name="textEdit_main">
-      <property name="styleSheet">
-       <string notr="true">background-color: white;</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QFontComboBox" name="fontComboBox">
-      <property name="styleSheet">
-       <string notr="true">QComboBox {
-    border: 1px solid blue;
-    border-radius: 3px;
-    padding: 1px 18px 1px 3px;
-    min-width: 6em;
-    color: black;
-    background-color: white;
-    margin: 0 0 0 0;
+   <property name="styleSheet">
+    <string notr="true">QWidget{
+background: #4E596F;
 }
 
-QComboBox:editable {
-    background: white;
+QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
 }
 
-QComboBox:!editable {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                  stop: 0 rgb(51, 51, 51), stop: 0.4 rgb(39, 39, 39),
-                                  stop: 0.5 rgb(32,32,32), stop: 1.0 rgb(38,38,38));
+/*VERTICAL*/
+QScrollBar:vertical {
+    background-color: #242a38 ;width: 19px; margin-left: 3px;
+	}
+
+QScrollBar::handle:vertical {background-color:#4e596f; min-height: 100px;
+border-color:#4e596f ;border-width: 3px;border-style: solid;
+	border-radius: 7px;}
+
+QScrollBar::sub-line:vertical {border: 2px solid #242a38;background-color: #242a38;
+    height: 25px;subcontrol-position: top;subcontrol-origin: margin;}
+
+QScrollBar::add-line:vertical {border: 2px solid #242a38;background-color: #242a38;
+    height: 25px;subcontrol-position: bottom;subcontrol-origin: margin;}
+
+/*HORIZONTAL*/
+QScrollBar:horizontal {
+	background-color: #242a38;
+	height: 19px;
+	margin-top:3px;
 }
 
-QComboBox::drop-down:editable {
+QScrollBar::handle:horizontal {
+	min-width: 50px;
+	background-color:#4e596f;
+	border-color: #4e596f ;border-width: 3px;border-style: solid;
+	border-radius: 7px
 }
 
-QComboBox:!editable:on {
-}
-
-QComboBox::drop-down:editable:on {
-}
-
-QComboBox:on { /* shift the text when the popup opens */
-    padding-top: 3px;
-    padding-left: 4px;
-    background-color: rgb(80, 80, 80);
-}
-
-QComboBox::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: center right;
-    width: 15px; 
-    right:3px;
-    border-top-right-radius: 3px; /* same radius as the QComboBox */
-    border-bottom-right-radius: 3px;
-    background:none;
-}
-
-QComboBox::down-arrow {
-    background: url(:/res/text-editor/dropdown-arrow.png);
-    height: 15px;
-}
-
-QComboBox::down-arrow:on { /* shift the arrow when popup is open */
-    top: 1px;
-    left: 1px;
-}
-
-QListView#comboListView {
-    background: rgb(80, 80, 80);
-    color: rgb(220, 220, 220);
-    min-height: 90px;
-    margin: 0 0 0 0;
-}
-
-QListView#comboListView::item {
-    background-color: rgb(80, 80, 80);
-}
-
-QListView#comboListView::item:hover {
-    background-color: rgb(95, 95, 95);
-}</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+/*QScrollBar::add-line:horizontal {
+	border: 2px solid #242a38;background-color: #242a38;
+    height: 25px;
+	subcontrol-position: left;
+	subcontrol-origin: margin;
+}*/
+</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>32</height>
+     <width>4095</width>
+     <height>56</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>56</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
    </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
@@ -137,8 +115,8 @@ QMenuBar::item:selected { /* when selected using mouse or keyboard */
 }
 
 QMenuBar::item:pressed {
-    background: white;
-	color: #242a38;
+    background: #F65964;
+	color: white;
 }</string>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -181,18 +159,13 @@ QMenu::separator {
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionNew"/>
-    <addaction name="separator"/>
-    <addaction name="actionImport"/>
-    <addaction name="actionCreate_Copy"/>
     <addaction name="actionDownload"/>
     <addaction name="actionRename"/>
-    <addaction name="actionAdd_to_my_files"/>
     <addaction name="actionDelete"/>
     <addaction name="actionDetails"/>
     <addaction name="actionPrint"/>
+    <addaction name="actionShare"/>
+    <addaction name="actionClose"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="styleSheet">
@@ -243,6 +216,7 @@ QMenu::separator {
     <addaction name="actionDelete_selected"/>
     <addaction name="actionSelect_all"/>
     <addaction name="actionHighlight"/>
+    <addaction name="actionChange_text_color"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="styleSheet">
@@ -255,7 +229,6 @@ QMenu::separator {
 QMenu::item {
     /* sets background of menu item. set this to something non-transparent
         if you want menu color and menu item color to be different */
-	padding: 2px 25px 2px 20px;
 	border: 1px solid transparent;
 	background-color: transparent;
 	font: 10pt white &quot;Segoe UI Black&quot;;
@@ -263,6 +236,10 @@ QMenu::item {
 }
 
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::item:checked { /* when user checks item using mouse or keyboard */
     background-color: #F65964;
 }
 
@@ -327,7 +304,6 @@ QMenu::separator {
     <property name="title">
      <string>Insert</string>
     </property>
-    <addaction name="actionSeparator"/>
     <addaction name="actionComment"/>
    </widget>
    <widget class="QMenu" name="menuFormat">
@@ -341,7 +317,6 @@ QMenu::separator {
 QMenu::item {
     /* sets background of menu item. set this to something non-transparent
         if you want menu color and menu item color to be different */
-	padding: 2px 25px 2px 20px;
 	border: 1px solid transparent;
 	background-color: transparent;
 	font: 10pt white &quot;Segoe UI Black&quot;;
@@ -349,6 +324,10 @@ QMenu::item {
 }
 
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
+QMenu::item:checked { /* when user checks item using mouse or keyboard */
     background-color: #F65964;
 }
 
@@ -380,8 +359,8 @@ QMenu::separator {
 
 QMenu::item {
     /* sets background of menu item. set this to something non-transparent
-        if you want menu color and menu item color to be different */
-	padding: 2px 25px 2px 20px;
+        if you want menu color and menu item color to be different 
+	padding: 2px 25px 2px 20px;*/
 	border: 1px solid transparent;
 	background-color: transparent;
 	font: 10pt white &quot;Segoe UI Black&quot;;
@@ -391,6 +370,11 @@ QMenu::item {
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
     background-color: #F65964;
 }
+
+QMenu::item:checked { /* when user selects item using mouse or keyboard */
+    background-color: #F65964;
+}
+
 
 QMenu::indicator {
     width: 13px;
@@ -410,6 +394,10 @@ QMenu::separator {
      <property name="title">
       <string>Align</string>
      </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/text-editor/align-left.png</normaloff>:/res/text-editor/align-left.png</iconset>
+     </property>
      <addaction name="actionAlign_left"/>
      <addaction name="actionAlign_right"/>
      <addaction name="actionAlign_center"/>
@@ -419,6 +407,7 @@ QMenu::separator {
     <addaction name="actionItalics"/>
     <addaction name="actionUnderline"/>
     <addaction name="actionStrike"/>
+    <addaction name="actionHighlight_users_text"/>
     <addaction name="menuAlign"/>
    </widget>
    <addaction name="menuFile"/>
@@ -432,135 +421,18 @@ QMenu::separator {
     <string notr="true">background-color: #242A38;</string>
    </property>
   </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <widget class="QDockWidget" name="dock_connectedUsers">
-   <property name="palette">
-    <palette>
-     <active>
-      <colorrole role="WindowText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Button">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </active>
-     <inactive>
-      <colorrole role="WindowText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Button">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </inactive>
-     <disabled>
-      <colorrole role="WindowText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>120</red>
-         <green>120</green>
-         <blue>120</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Button">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </disabled>
-    </palette>
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
+    </size>
    </property>
    <property name="font">
     <font>
@@ -599,6 +471,13 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     padding: 1px -1px -1px 1px;
 }
 
+QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
 /*QDockWidget::close-button {
     subcontrol-position: top left;
     subcontrol-origin: margin;
@@ -607,105 +486,38 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     width: 14px;
 }*/</string>
    </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable</set>
+   </property>
    <property name="windowTitle">
-    <string>Connected users</string>
+    <string>Online users</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="contents_connectedUsers"/>
+   <widget class="QWidget" name="contents_connectedUsers">
+    <property name="styleSheet">
+     <string notr="true">QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="dock_comments">
-   <property name="palette">
-    <palette>
-     <active>
-      <colorrole role="Button">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </active>
-     <inactive>
-      <colorrole role="Button">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </inactive>
-     <disabled>
-      <colorrole role="Button">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>78</red>
-         <green>89</green>
-         <blue>111</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </disabled>
-    </palette>
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>46</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
+    </size>
    </property>
    <property name="font">
     <font>
@@ -716,8 +528,2016 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
      <stylestrategy>PreferDefault</stylestrategy>
     </font>
    </property>
+   <property name="windowIcon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/comment.png</normaloff>:/res/text-editor/comment.png</iconset>
+   </property>
    <property name="layoutDirection">
     <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QDockWidget{	
+}
+
+QDockWidget::title { 
+    text-align: center; 
+	color: white;
+    background: #F65964;
+
+}
+
+QDockWidget::close-button, QDockWidget::float-button {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 0px;
+/*	icon-size: 14px; /* maximum icon size */*/
+}
+
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background: white;
+}
+
+QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
+    padding: 1px -1px -1px 1px;
+}
+
+QDockWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetClosable</set>
+   </property>
+   <property name="windowTitle">
+    <string>Comments</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="contents_comments">
+    <property name="styleSheet">
+     <string notr="true">QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="options">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>768</width>
+     <height>63</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::NoDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::NoDockWidgetArea</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="options_contents">
+    <property name="styleSheet">
+     <string notr="true">background: #4E596F;</string>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btn_undo">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>undo</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+    padding-right: 2px;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/undo.png</normaloff>:/res/text-editor/undo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+Z</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_redo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="sizeIncrement">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>redo</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+    padding-left: 2px;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/redo.png</normaloff>:/res/text-editor/redo.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+Shift+Z</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_cut">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>cut</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/cut.png</normaloff>:/res/text-editor/cut.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_copy">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>copy</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/copy.png</normaloff>:/res/text-editor/copy.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_paste">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>paste</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/paste.png</normaloff>:/res/text-editor/paste.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_separatorL">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>120</red>
+             <green>120</green>
+             <blue>120</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::VLine</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFontComboBox" name="fontComboBox">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    border: 0px solid  #4e596f;
+    border-radius: 3px;
+    padding: 1px 18px 1px 1px;
+    min-width: 3em;
+	max-width: 10em;
+    color: #242A38;
+	background: white;
+    margin: 0 0 0 0;
+}
+
+QComboBox:!editable {
+	background: white;
+}
+
+QComboBox::drop-down:editable {
+	background: #f76163;
+	margin-right: 0px;
+	padding-left: 0px;
+}
+
+QComboBox:!editable:on {
+	background: white;
+	margin-right: 0px;
+	margin-left: 5px;
+}
+
+QComboBox::drop-down:editable:on {
+	background: #4e596f;
+	margin-right: 0px;
+	margin-left: 5px;
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+    background-color: #4e596f;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 17px; 
+    right: 0px;
+	left: 0px;
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+	border-bottom-right-radius: 3px;
+    background: #f76163;
+}
+
+QComboBox::down-arrow {    
+	background: url(:/res/text-editor/dropdown-arrow.png) no-repeat center left;
+    height: 15px;
+	width: 12px;
+	padding-right: 3px;
+}
+
+QComboBox::down-arrow:on { /* shift the arrow when popup is open */
+	top: 1px;
+    left: 1px;
+}
+
+QListView#comboListView {
+    background: #4e596f;
+    color: white;
+    min-height: 90px;
+    margin: 0 0 0 0;
+}
+
+QListView#comboListView::item {
+	background: #4e596f;
+}
+
+QListView#comboListView::item:hover {
+    background-color: #4e596f;
+}</string>
+       </property>
+       <property name="editable">
+        <bool>false</bool>
+       </property>
+       <property name="currentFont">
+        <font/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox">
+       <property name="minimumSize">
+        <size>
+         <width>62</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>153</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QComboBox {
+    border: 1px solid  #4e596f;
+    border-radius: 3px;
+    padding: 1px 18px 1px 3px;
+    min-width: 3em;
+	max-width: 10em;
+    color: #242A38;
+	background: #f76163;
+    margin: 0 0 0 0;
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable {
+	background: #4e596f;
+}
+
+QComboBox::drop-down:editable {
+	background: #f76163;
+	margin-right: 0px;
+	padding-left: 10px;
+}
+
+QComboBox:!editable:on {
+	background: white;
+	margin-right: 0px;
+	margin-left: 5px;
+}
+
+QComboBox::drop-down:editable:on {
+	background: #4e596f;
+	margin-right: 0px;
+	margin-left: 5px;
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+    background-color: #4e596f;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 8px; 
+    right: 3px;
+	left: 1px;
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+    background:#4e596f;
+}
+
+QComboBox::down-arrow {    
+	background: url(:/res/text-editor/dropdown-arrow.png);
+    height: 15px;
+	width: 22px;
+	padding-right: 3px;
+}
+
+QComboBox::down-arrow:on { /* shift the arrow when popup is open */
+	top: 1px;
+    left: 1px;
+}
+
+QListView#comboListView {
+    background: #4e596f;
+    color: white;
+    min-height: 90px;
+    margin: 0 0 0 0;
+}
+
+QListView#comboListView::item {
+	background: #4e596f;
+}
+
+QListView#comboListView::item:hover {
+    background-color: #4e596f;
+}</string>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="currentText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_separatorCR">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>120</red>
+             <green>120</green>
+             <blue>120</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::VLine</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_bold">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>bold</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/bold.png</normaloff>:/res/text-editor/bold.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_italics">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>italics</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/italics.png</normaloff>:/res/text-editor/italics.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_strike">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>strikethrough</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/strike.png</normaloff>:/res/text-editor/strike.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_underline">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>underline</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/underline.png</normaloff>:/res/text-editor/underline.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_mark">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>highlight selection</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   outline: none;
+}
+
+QPushButton {
+	background: #4E596F;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #fff #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+QPushButton:hover {
+	background: #242A38;
+}
+
+QPushButton:pressed {
+	background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/mark.png</normaloff>:/res/text-editor/mark.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_color">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>change color</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   outline: none;
+}
+
+QPushButton {
+	background: #4E596F;
+	border-width: 0px 0px 3px 0px;
+	border-style: none none solid none;
+	border-color: #000 #000 #000 #000;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+QPushButton:hover {
+	background: #242A38;
+}
+
+QPushButton:pressed {
+	background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/color.png</normaloff>:/res/text-editor/color.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_viewUsersTxt">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>highlight users' text</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   outline: none;
+}
+
+QPushButton {
+	/*background: url(:/res/text-editor/view_unchecked.png) no-repeat  center;*/
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+	border: 2px solid #242A38;
+	background: #242A38;
+}
+
+QPushButton:checked {
+	/*background: url(:/res/text-editor/view_checked.png) no-repeat center;*/
+	border: 2px solid #f76163;
+	background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/view_unchecked.png</normaloff>
+         <normalon>:/res/text-editor/view_checked.png</normalon>:/res/text-editor/view_unchecked.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_separatorR">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>120</red>
+             <green>120</green>
+             <blue>120</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::VLine</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_alignL">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>align left</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/align-left.png</normaloff>:/res/text-editor/align-left.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_alignC">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>align center</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/align-center.png</normaloff>:/res/text-editor/align-center.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_alignR">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>align right</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/align-right.png</normaloff>:/res/text-editor/align-right.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_justify">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>justify</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QPushButton:checked {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/justify.png</normaloff>:/res/text-editor/justify.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_separatorCL">
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>36</red>
+             <green>42</green>
+             <blue>56</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>120</red>
+             <green>120</green>
+             <blue>120</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>78</red>
+             <green>89</green>
+             <blue>111</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::VLine</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_comment">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>insert a comment</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/comment.png</normaloff>:/res/text-editor/comment.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_download">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>download document</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/download.png</normaloff>:/res/text-editor/download.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_print">
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>print document</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: #242A38;
+}
+
+QPushButton:pressed {
+background: #f76163;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources/res.qrc">
+         <normaloff>:/res/text-editor/print.png</normaloff>:/res/text-editor/print.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_disconnectedUsers">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <family>Segoe UI Emoji</family>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
    </property>
    <property name="styleSheet">
     <string notr="true">QDockWidget{
@@ -748,6 +2568,19 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     padding: 1px -1px -1px 1px;
 }
 
+QDockWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+}
 /*QDockWidget::close-button {
     subcontrol-position: top left;
     subcontrol-origin: margin;
@@ -756,19 +2589,34 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     width: 14px;
 }*/</string>
    </property>
+   <property name="locale">
+    <locale language="Italian" country="Italy"/>
+   </property>
    <property name="floating">
     <bool>false</bool>
    </property>
    <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
+    <set>QDockWidget::DockWidgetClosable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Comments</string>
+    <string>Offline users</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
-   <widget class="QWidget" name="contents_comments"/>
+   <widget class="QWidget" name="contents_disconnectedUsers">
+    <property name="styleSheet">
+     <string notr="true">QWidget#QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+    </property>
+   </widget>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -805,6 +2653,10 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionRename">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/rename2.png</normaloff>:/res/text-editor/rename2.png</iconset>
+   </property>
    <property name="text">
     <string>Rename</string>
    </property>
@@ -825,8 +2677,15 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/print.png</normaloff>:/res/text-editor/print.png</iconset>
+   </property>
    <property name="text">
     <string>Print</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionUndo">
@@ -837,6 +2696,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
   <action name="actionRedo">
    <property name="icon">
@@ -845,6 +2707,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
    <property name="text">
     <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
    </property>
   </action>
   <action name="actionCut">
@@ -855,6 +2720,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Cut</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionCopy">
    <property name="icon">
@@ -863,6 +2731,9 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
    <property name="text">
     <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionPaste">
@@ -873,10 +2744,20 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Paste</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionFind">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/find.png</normaloff>:/res/text-editor/find.png</iconset>
+   </property>
    <property name="text">
     <string>Find</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
   <action name="actionDelete_selected">
@@ -888,20 +2769,53 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Select all</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
   </action>
   <action name="actionHighlight">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/mark.png</normaloff>:/res/text-editor/mark.png</iconset>
+   </property>
    <property name="text">
     <string>Highlight</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
   </action>
   <action name="actionConnected_users">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/connected.png</normaloff>:/res/text-editor/connected.png</iconset>
+   </property>
    <property name="text">
     <string>Connected users</string>
    </property>
   </action>
   <action name="actionComments">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/comments.png</normaloff>:/res/text-editor/comments.png</iconset>
+   </property>
    <property name="text">
     <string>Comments</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionSeparator">
@@ -919,6 +2833,12 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    </property>
   </action>
   <action name="actionBold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/bold.png</normaloff>:/res/text-editor/bold.png</iconset>
@@ -926,8 +2846,17 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Bold</string>
    </property>
+   <property name="iconText">
+    <string>Bold</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
   <action name="actionItalics">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/italics.png</normaloff>:/res/text-editor/italics.png</iconset>
@@ -935,8 +2864,14 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Italics</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionUnderline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/underline.png</normaloff>:/res/text-editor/underline.png</iconset>
@@ -944,8 +2879,14 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Underline</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionStrike">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/res/text-editor/strike.png</normaloff>:/res/text-editor/strike.png</iconset>
@@ -953,25 +2894,116 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
    <property name="text">
     <string>Strikethrough</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
   </action>
   <action name="actionAlign_left">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/align-left.png</normaloff>:/res/text-editor/align-left.png</iconset>
+   </property>
    <property name="text">
     <string>Align left</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionAlign_right">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/align-right.png</normaloff>:/res/text-editor/align-right.png</iconset>
+   </property>
    <property name="text">
     <string>Align right</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="actionAlign_center">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/align-center.png</normaloff>:/res/text-editor/align-center.png</iconset>
+   </property>
    <property name="text">
     <string>Align center</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionJustify">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/justify.png</normaloff>:/res/text-editor/justify.png</iconset>
+   </property>
    <property name="text">
     <string>Justify</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
+   </property>
+  </action>
+  <action name="actionShare">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/share.png</normaloff>:/res/text-editor/share.png</iconset>
+   </property>
+   <property name="text">
+    <string>Share</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/close.png</normaloff>:/res/text-editor/close.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionHighlight_users_text">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/view_checked.png</normaloff>:/res/text-editor/view_checked.png</iconset>
+   </property>
+   <property name="text">
+    <string>Highlight users' text</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionChange_text_color">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/text-editor/color.png</normaloff>:/res/text-editor/color.png</iconset>
+   </property>
+   <property name="text">
+    <string>Change text color</string>
    </property>
   </action>
  </widget>

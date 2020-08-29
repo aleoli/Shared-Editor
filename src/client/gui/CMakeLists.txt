@@ -5,6 +5,7 @@ include(../../../cmake/qt_libraries.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(.)
 include_directories(..)
 include_directories(../..)
 include_directories(docsbrowser)
@@ -13,10 +14,12 @@ include_directories(landing)
 include_directories(login)
 include_directories(registration)
 include_directories(texteditor)
+include_directories(dialogs)
 
 file(GLOB src_files
     "*.h"
     "*.cpp"
+    "res/*.qrc"
     "../*.h"
     "../*.cpp"
     "../../*.h"
@@ -35,6 +38,8 @@ file(GLOB src_files
     "registration/*.cpp"
     "texteditor/*.h"
     "texteditor/*.cpp"
+    "dialogs/*.h"
+    "dialogs/*.cpp"
 )
 
 add_executable(client ${src_files})

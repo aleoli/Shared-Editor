@@ -33,10 +33,10 @@ void FSElement::checkAndAssign(const QJsonObject &json) {
     throw FSElementFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  auto id = idValue.toInt(-1);
-  auto parentId = parentIdValue.toInt(-1);
+  auto id = idValue.toInt(std::numeric_limits<int>::min());
+  auto parentId = parentIdValue.toInt(std::numeric_limits<int>::min());
 
-  if(id == -1 || parentId == -1) {
+  if(id == std::numeric_limits<int>::min() || parentId == std::numeric_limits<int>::min()) {
     throw FSElementFromJsonException{"One or more fields are not valid"};
   }
 

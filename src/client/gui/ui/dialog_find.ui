@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Find</class>
+ <widget class="QWidget" name="Find">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>607</width>
+    <height>184</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Find</string>
+  </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+	background: #242A38;
+	border: 2px solid white;
+	border-radius: 2px;
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="5" column="0">
+    <widget class="QCheckBox" name="cb_backwards">
+     <property name="styleSheet">
+      <string notr="true">QCheckBox {
+    spacing: 5px;
+	font-size: 11pt;
+	color:white;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	border: none;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+	height: 17px;
+}
+
+QCheckBox::indicator:unchecked {
+    image: url(:/res/checkbox.png);
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/res/checkbox_checked.png);
+}
+
+QCheckBox:focus {
+   border: none;
+   outline: none;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Backwards</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4">
+    <widget class="QLabel" name="label_matches">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>27</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: white;
+font-size: 16px;
+qproperty-alignment: 'AlignHCenter|AlignVLeft';
+qproperty-wordWrap: true;
+border: none;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <property name="indent">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="4">
+    <layout class="QHBoxLayout" name="buttons">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="btn_close">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background: #4E596F;
+    border-width: 1px;
+    border-radius: 13px;
+    border-color: #4E596F;
+    font: 12pt;
+    color: white;
+    padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 15px;
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 white);
+}
+
+QPushButton:pressed {
+border-style: inset;
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+       </property>
+       <property name="text">
+        <string>CLOSE</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_next">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	background: #f76163;
+    border-width: 1px;
+    border-radius: 13px;
+    border-color: #f76163;
+    font: 12pt;
+    color: white;
+    padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 15px;
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+}
+
+QPushButton:pressed {
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+       </property>
+       <property name="text">
+        <string>NEXT</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="3">
+    <widget class="QPushButton" name="btn_search">
+     <property name="minimumSize">
+      <size>
+       <width>38</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>38</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>search</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+background: #4e596f;
+border: 0px solid #242a38;
+border-radius: 19px;
+padding-top: 7px;
+padding-left: 5px;
+}
+
+QPushButton:hover {
+/*background: qradialgradient(
+cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+radius: 0.7, stop: 0 #000, stop: 1 #f65964
+);*/
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4e596f, stop:1 white);
+}
+
+QPushButton:pressed {
+/*background: qradialgradient(
+cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
+radius: 0.7, stop: 0 #f65964, stop: 1 #000
+);*/
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4e596f, stop:1 #242a38);
+}
+
+QPushButton:focus {
+   outline: none;
+}
+
+QToolTip{
+	background: none;
+	border: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/search.png</normaloff>:/res/search.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>28</width>
+       <height>29</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
+    <widget class="QLineEdit" name="ledit_search">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+	background: #4e596f;
+	border: 1px solid #4e596f;
+	border-radius: 15px;
+	padding-left: 20px;
+	/*margin: 0 0 20 0px;*/
+	color: white;
+	font: 14px;
+	font: &quot;Segoe UI Emoji&quot;;
+	selection-background-color: #f76163;
+}
+
+QLineEdit:focus{
+	outline: none;
+}</string>
+     </property>
+     <property name="placeholderText">
+      <string>type to search...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="cb_caseSensitive">
+     <property name="styleSheet">
+      <string notr="true">QCheckBox {
+    spacing: 5px;
+	font-size: 11pt;
+	color:white;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	border: none;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+	height: 17px;
+}
+
+QCheckBox::indicator:unchecked {
+    image: url(:/res/checkbox.png);
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/res/checkbox_checked.png);
+}
+
+QCheckBox:focus {
+   border: none;
+   outline: none;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Case sensitive</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QCheckBox" name="cb_wholeWords">
+     <property name="styleSheet">
+      <string notr="true">QCheckBox {
+    spacing: 5px;
+	font-size: 11pt;
+	color:white;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	border: none;
+}
+
+QCheckBox::indicator {
+    width: 13px;
+	height: 17px;
+}
+
+QCheckBox::indicator:unchecked {
+    image: url(:/res/checkbox.png);
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/res/checkbox_checked.png);
+}
+
+QCheckBox:focus {
+   border: none;
+   outline: none;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Whole words</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>ledit_search</tabstop>
+  <tabstop>btn_search</tabstop>
+  <tabstop>cb_backwards</tabstop>
+  <tabstop>btn_next</tabstop>
+  <tabstop>btn_close</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

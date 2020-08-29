@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Home</class>
+ <widget class="QWidget" name="Home">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>228</width>
+    <height>106</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Home</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QWidget" name="container" native="true">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1" rowspan="2">
+       <widget class="QPushButton" name="btn_home">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="toolTip">
+         <string>back to DocsBrowser</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	
+	border-image: url(:/res/text-editor/home1.png) 0 0 0 0 stretch stretch;
+	margin-left: 1px;
+	margin-bottom: 2px;
+	padding-left: 15px;
+	padding-top: 20px;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #242A38;
+}
+
+QPushButton:hover {
+	border-image: url(:/res/text-editor/home1_on.png) 0 0 0 0 stretch stretch;
+	padding-left: 15px;
+	padding-top: 20px;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #242A38;
+}
+
+QPushButton:pressed {
+	margin: 1px 1px -1px -1px;
+	padding-left: 15px;
+	padding-top: 20px;
+    border-width: 0px;
+    border-radius: 3px;
+    border-color: #242A38;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>50</width>
+          <height>31</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="btn_move">
+        <property name="minimumSize">
+         <size>
+          <width>70</width>
+          <height>70</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>70</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>move</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 15px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: white;
+}
+
+QPushButton:pressed {
+background: #F65964;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/res.qrc">
+          <normaloff>:/res/move.png</normaloff>:/res/move.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>70</width>
+          <height>70</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="btn_share">
+        <property name="minimumSize">
+         <size>
+          <width>70</width>
+          <height>70</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>70</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>share</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton:focus {
+   border: none;
+   outline: none;
+}
+
+QPushButton {
+	background: none;
+    border-width: 0px;
+    border-radius: 15px;
+    border-color: #f76163;
+}
+
+QPushButton:hover {
+background: white;
+}
+
+QPushButton:pressed {
+background: #F65964;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/res.qrc">
+          <normaloff>:/res/share.png</normaloff>:/res/share.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>70</width>
+          <height>70</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="btn_editAccount">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>edit account</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+border: 3px solid #242a38;
+border-radius: 14px;
+background: none;
+border-image: white  0 0 0 0 stretch stretch;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QPushButton:focus {
+   outline: none;
+}
+
+QToolTip{
+	background: none;
+	border: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources/res.qrc">
+          <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>28</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

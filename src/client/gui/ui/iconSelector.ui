@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Icons</class>
+ <widget class="QWidget" name="Icons">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>582</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Set Icon</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+	background: #242A38;
+	border: 2px solid white;
+	border-radius: 2px;
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="1">
+    <widget class="QPushButton" name="btn_default">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/default.png</normaloff>:/res/profile-pics/default.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="5">
+    <layout class="QVBoxLayout" name="options">
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="btn_delete">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	background: #f76163;
+    border-width: 1px;
+    border-radius: 13px;
+    border-color: #f76163;
+    font: 12pt;
+    color: white;
+    padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+}
+
+QPushButton:pressed {
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+       </property>
+       <property name="text">
+        <string>CHOOSE FROM FILE</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_cancel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string/>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background: #4E596F;
+    border-width: 1px;
+    border-radius: 13px;
+    border-color: #4E596F;
+    font: 12pt;
+    color: white;
+    padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+
+QPushButton:hover {
+background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 white);
+}
+
+QPushButton:pressed {
+border-style: inset;
+background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+              fx:0.5, fy:0.5, stop:0 #4E596F, stop:1 black);
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+       </property>
+       <property name="text">
+        <string>CANCEL</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="3">
+    <widget class="QPushButton" name="btn_spaceship4">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/spaceship4.png</normaloff>:/res/profile-pics/spaceship4.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="4">
+    <widget class="QPushButton" name="btn_star">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/star.png</normaloff>:/res/profile-pics/star.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QPushButton" name="btn_spaceship3">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/spaceship3.png</normaloff>:/res/profile-pics/spaceship3.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QPushButton" name="btn_spaceship1">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/spaceship1.png</normaloff>:/res/profile-pics/spaceship1.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="btn_happyman1">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+border: 2px solid red;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/happyman1.png</normaloff>:/res/profile-pics/happyman1.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5">
+    <widget class="QPushButton" name="btn_sunset">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/sunset.png</normaloff>:/res/profile-pics/sunset.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QPushButton" name="btn_soldier">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/soldier.png</normaloff>:/res/profile-pics/soldier.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QPushButton" name="btn_spaceship2">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/spaceship2.png</normaloff>:/res/profile-pics/spaceship2.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="btn_parrot">
+     <property name="maximumSize">
+      <size>
+       <width>90</width>
+       <height>90</height>
+      </size>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border: 0px solid none;
+}
+
+QPushButton:hover{
+padding: -1px 1px 1px -1px;
+}
+
+QPushButton:pressed{
+padding: 1px -1px -1px 1px;
+}
+
+QToolTip{
+	background: none;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+QPushButton:focus {
+   border: none;
+   outline: none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resources/res.qrc">
+       <normaloff>:/res/profile-pics/parrot.png</normaloff>:/res/profile-pics/parrot.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>70</width>
+       <height>70</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

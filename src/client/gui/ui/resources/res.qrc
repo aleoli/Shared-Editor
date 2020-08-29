@@ -1,5 +1,21 @@
 <RCC>
   <qresource prefix="res">
+    <file>home_off.png</file>
+    <file>home_on.png</file>
+    <file>options_b.png</file>
+    <file>text-editor/find.png</file>
+    <file>text-editor/rename2.png</file>
+    <file>text-editor/view_unchecked.png</file>
+    <file>text-editor/view_checked.png</file>
+    <file>text-editor/close.png</file>
+    <file>text-editor/rename1.png</file>
+    <file>text-editor/home1_on.png</file>
+    <file>text-editor/home1.png</file>
+    <file>text-editor/comments.png</file>
+    <file>text-editor/connected.png</file>
+    <file>text-editor/share.png</file>
+    <file>text-editor/color.png</file>
+    <file>text-editor/mark.png</file>
     <file>text-editor/align-center.png</file>
     <file>text-editor/align-left.png</file>
     <file>text-editor/align-right.png</file>

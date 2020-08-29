@@ -12,6 +12,8 @@ void signalHandler(int signum);
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
+  app.setWindowIcon(QIcon(":imgs/malnati")); //TODO mettere logo
+
   SysConf conf = initiate_system(app);
   info("System successfully started");
 
@@ -19,6 +21,8 @@ int main(int argc, char **argv) {
   std::signal(SIGTERM, signalHandler);
 
   registerClasses();
+
+  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
   auto w = GuiManager::get(std::optional<SysConf>(conf));
   QObject::connect(w.get(), SIGNAL(quit()), &app, SLOT(quit()), Qt::QueuedConnection);
