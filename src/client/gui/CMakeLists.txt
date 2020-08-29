@@ -19,7 +19,6 @@ include_directories(dialogs)
 file(GLOB src_files
     "*.h"
     "*.cpp"
-    "res/*.qrc"
     "../*.h"
     "../*.cpp"
     "../../*.h"
