@@ -75,9 +75,7 @@ void TextEditor::_editComment(CommentWidget *widget) {
 
 void TextEditor::_deleteComment(CommentWidget *widget) {
   debug("TextEditor::_deleteComment");
-
-  //TODO confirm dialog?
-
+  
   auto comment = widget->getComment();
   deleteComment(widget);
   emit commentLocalDelete(_user->getToken(), _user->getFileId(), comment);

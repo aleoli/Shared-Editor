@@ -18,6 +18,8 @@
 #include "alert_messages.h"
 #include "FSElement.h"
 
+#define CONNECT_TIME_LIMIT 5000
+
 class GuiManager: public QObject
 {
   Q_OBJECT
@@ -64,6 +66,7 @@ private slots:
   // connessione del server
   void connected();
   void connectionLost();
+  void checkConnection();
 
   // messages from windows
   void loginLogin(const QString &username, const QString &password);
@@ -121,6 +124,7 @@ private:
 
   std::shared_ptr<User> _user;
   StackedWidget *_stackedWidget;
+  bool _connected;
 
   //finestre
   Login *_widgetLogin;

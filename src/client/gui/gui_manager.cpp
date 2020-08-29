@@ -5,6 +5,7 @@
 #include <QRect>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QTimer>
 
 #include <optional>
 #include "exceptions.h"
@@ -15,7 +16,8 @@ using namespace se_exceptions;
 
 std::shared_ptr<GuiManager> GuiManager::instance = nullptr;
 
-GuiManager::GuiManager(const SysConf &conf, QObject *parent): QObject(parent) {
+GuiManager::GuiManager(const SysConf &conf, QObject *parent)
+  : QObject(parent), _connected(false) {
   initThreads(conf);
 
   _stackedWidget = new StackedWidget();
@@ -182,12 +184,19 @@ void GuiManager::connectServerToClient() {
 
 void GuiManager::connected() {
   info("Connesso al server");
+  _connected = true;
   _stackedWidget->show();
 }
 
 void GuiManager::connectionLost() {
-  warn("La connessione è stata persa");
-  //TODO display messaggio su schermo (?)
+  alert(Alert::ERROR, "Connection lost.", "Connection error");
+  emit quit();
+}
+
+void GuiManager::checkConnection() {
+  if(_connected) return;
+
+  alert(Alert::ERROR, "Cannot connect to the server.", "Connection error");
   emit quit();
 }
 
@@ -195,6 +204,7 @@ void GuiManager::run() {
   info("GuiManager running");
   _serverThread->start();
   _managerThread->start();
+  QTimer::singleShot(CONNECT_TIME_LIMIT, this, &GuiManager::checkConnection);
 }
 
 void GuiManager::closeStacked() {
@@ -339,7 +349,7 @@ void GuiManager::serverEditUserResponse() {
   debug("GuiManager::serverEditUserResponse");
   _user->tempToPermanentIcon();
   unfreezeWindow();
-  showWindow(_widgetDocsBrowser); //TODO ?
+  showWindow(_widgetDocsBrowser);
 }
 
 void GuiManager::serverDeleteUserResponse() {
