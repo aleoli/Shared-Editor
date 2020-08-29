@@ -18,7 +18,7 @@ jobs:
           else
              echo "::set-env name=commit_ref::${{ github.sha }}"
           fi
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
         with:
           ref: "${{ env.commit_ref }}"
