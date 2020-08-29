@@ -27,6 +27,13 @@
 	background: white;
 	border: 2px solid #242A38;
 	border-radius: 2px;
+}
+
+QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
