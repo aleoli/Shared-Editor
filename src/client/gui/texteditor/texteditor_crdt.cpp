@@ -35,7 +35,10 @@ void TextEditor::_contentsChange(int pos, int removed, int added) {
 }
 
 void TextEditor::_handleUpdate(int pos, int nchars) {
-  if(nchars == 0) return;
+  if(nchars == 0) {
+    debug("No real update");
+    return;
+  }
 
   QTextCursor cursor(_textEdit->document());
   std::vector<Symbol> symUpdated;
@@ -81,7 +84,7 @@ void TextEditor::_handleUpdate(int pos, int nchars) {
     emit localUpdate(_user->getToken(), _user->getFileId(), symUpdated);
   }
   else {
-    debug("Fake update");
+    debug("Phantom update");
   }
 }
 

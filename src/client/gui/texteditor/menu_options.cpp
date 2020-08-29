@@ -22,7 +22,7 @@ OptionsWidget::OptionsWidget(QWidget *parent) :
   connect(_widgetComments, &QPushButton::clicked, this, &OptionsWidget::_comments);
   connect(_widgetConnected, &QPushButton::clicked, this, &OptionsWidget::_connected);
   connect(_widgetUser, &QPushButton::clicked, this, &OptionsWidget::_user);
-  connect(_widgetRename, &QLineEdit::returnPressed, this, &OptionsWidget::_rename);
+  connect(_widgetRename, &QLineEdit::editingFinished, this, &OptionsWidget::_rename);
 }
 
 OptionsWidget::~OptionsWidget()

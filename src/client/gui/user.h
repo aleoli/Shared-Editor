@@ -42,7 +42,7 @@ public:
   int getCommentId(); // get and increment
 
   QString getFileName() const;
-  void setFileName(const QString &name);
+  bool setFileName(const QString &name);
 
   File *getFile();
 

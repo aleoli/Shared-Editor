@@ -556,8 +556,9 @@ void TextEditor::_account() {
 }
 
 void TextEditor::_rename(const QString &name) {
-  _user->setFileName(name);
-  emit edit(_user->getToken(), _user->getFileId(), std::optional<QString>(name));
+  if(_user->setFileName(name)) // true if name has changed
+    emit edit(_user->getToken(), _user->getFileId(), std::optional<QString>(name));
+
   _textEdit->setFocus();
 }
 
