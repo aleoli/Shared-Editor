@@ -33,6 +33,7 @@ RemoteUser *RemoteUser::moveRemoteUser(RemoteUser *other, QListWidget *list) {
   auto user = new RemoteUser(other->_userId, other->_username, other->_color, other->_cursor, other->_online);
   user->setIcon(other->_icon);
 
+  other->_cursor = nullptr;
   other->remove(); //delete occurs
   user->add(list);
 
@@ -41,7 +42,9 @@ RemoteUser *RemoteUser::moveRemoteUser(RemoteUser *other, QListWidget *list) {
 
 RemoteUser::~RemoteUser()
 {
-    delete ui;
+  if(_cursor)
+    delete _cursor;
+  delete ui;
 }
 
 int RemoteUser::getUserId() const {

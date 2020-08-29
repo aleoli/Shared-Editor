@@ -133,7 +133,6 @@ private:
   void reloadUsers();
   void addRemoteUser(int userId, const QString &username, bool online = true);
   void setRemoteUserOnline(int userId);
-  void updateCursors();
   void refresh(bool changeFile = false);
   std::pair<SymbolId, int> saveCursorPosition(const QTextCursor &cursor);
   int getCursorPosition(const SymbolId &id, int position);
