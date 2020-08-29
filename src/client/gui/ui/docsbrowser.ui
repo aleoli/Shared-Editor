@@ -619,7 +619,7 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
            </property>
            <property name="styleSheet">
             <string notr="true">QLineEdit{
-                                                    background: #4e596f;
+                                                    background: red;
                                                     border: 1px solid #4e596f;
                                                     border-radius: 15px;
                                                     padding-left: 20px;
