@@ -15,6 +15,8 @@ class Cursor : public QLabel {
 
 public:
   Cursor(QTextEdit *parent, const QColor &color);
+  ~Cursor();
+  
   void updateCursorPosition(int position);
   void insert(const Symbol &sym, int position, const std::optional<QBrush> &backgroundColor = std::nullopt);
   void remove(int position);

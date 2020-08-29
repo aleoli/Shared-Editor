@@ -319,9 +319,9 @@ void TextEditor::reloadComments() {
 }
 
 void TextEditor::reloadUsers() {
+  _users.clear(); //Before the others! Otherwise possible segmentation fault due to cursor deleted
   _listOnline->clear();
   _listOffline->clear();
-  _users.clear();
 
   //add "me"
   _me = new RemoteUser(_user->getUserId(), _user->getUsername(), QColor("black"));
@@ -507,12 +507,6 @@ void TextEditor::setUserIcon(int userId, const QString &icon) {
 
   for(auto comment : _comments) {
     if(comment.first.getUserId() == userId) comment.second->setIcon(decoded);
-  }
-}
-
-void TextEditor::updateCursors() {
-  for(auto &user : _users) {
-    user.second->getCursor()->updateCursorView();
   }
 }
 

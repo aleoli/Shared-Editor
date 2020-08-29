@@ -21,6 +21,12 @@ Cursor::Cursor(QTextEdit *parent, const QColor &color) : QLabel(parent), _textEd
   QObject::connect(_timer, &QTimer::timeout, this, &Cursor::changeVisibility);
 }
 
+Cursor::~Cursor() {
+  _timer->stop();
+  delete _timer;
+  delete _cursor;
+}
+
 void Cursor::show() {
   if(!_isActive) {
     changeVisibility();
