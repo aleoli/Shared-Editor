@@ -14,7 +14,7 @@
    <string>Text Editor</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: #242A38;</string>
+   <string notr="true">QMainWindow{background-color: #242A38;}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -23,7 +23,7 @@ background: #4E596F;
 }
 
 QToolTip{
-	background: red;
+	background: white;
 	border: 1px solid black;
 	margin-left: 0px;
 	margin-right: 0px;
