@@ -30,6 +30,13 @@
 	background: white;
 	border: 2px solid white;
 	border-radius: 9px;
+}
+
+QToolTip{
+	background: white;
+	border: 1px solid black;
+	margin-left: 0px;
+	margin-right: 0px;
 }</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
