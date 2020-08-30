@@ -215,27 +215,15 @@ std::string File::symbolsToString() const {
 }
 
 File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
-  auto commentIdentifier = obj["commentIdentifier"];
-  if(commentIdentifier.isUndefined() || !commentIdentifier.isObject()) {
-    throw FileFromJsonException{"commentIdentifier is not an object"};
-  }
-  auto commentIdentifierObj = commentIdentifier.toObject();
-  auto userIdV = commentIdentifierObj["userId"];
-  auto commentIdV = commentIdentifierObj["commentId"];
+  auto idV = obj["id"];
   auto textV = obj["text"];
-  auto creationDateV = obj["creationDate"];
+  auto creationDateV = obj["date"];
 
-  if(userIdV.isUndefined() || commentIdV.isUndefined() || textV.isUndefined() || creationDateV.isUndefined()) {
+  if(idV.isUndefined() || textV.isUndefined() || creationDateV.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  auto userId = userIdV.toInt(-1);
-  auto commentId = commentIdV.toInt(-1);
-  if(userId == -1 || commentId == -1) {
-    throw FileFromJsonException{"One or more fields in users array are not valid"};
-  }
-
-  if(!textV.isString() || !creationDateV.isString()) {
+  if(!idV.isObject() || !textV.isString() || !creationDateV.isString()) {
     throw FileFromJsonException{"One or more fields in users array are not valid"};
   }
 
@@ -249,7 +237,7 @@ File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
   }
 
   Comment comment;
-  comment.identifier = CommentIdentifier{commentId, userId};
+  comment.identifier = CommentIdentifier::fromJsonObject(idV.toObject());
   comment.text = text;
   comment.creationDate = creationDate;
 
@@ -258,13 +246,10 @@ File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
 
 QJsonObject File::commentToJsonObject(const Comment &comment) {
   QJsonObject value;
-  QJsonObject commentIdentifier;
 
-  commentIdentifier["userId"] = comment.identifier.getUserId();
-  commentIdentifier["commentId"] = comment.identifier.getDigit();
-  value["commentIdentifier"] = commentIdentifier;
+  value["id"] = comment.identifier.toJsonObject();
   value["text"] = comment.text;
-  value["creationDate"] = comment.creationDate.toString();
+  value["date"] = comment.creationDate.toString();
 
   return value;
 }
@@ -321,7 +306,7 @@ Symbol& File::symbolAt(int pos) {
   return _symbols[pos];
 }
 
-std::pair<int, Symbol&> File::symbolById(SymbolId id) {
+std::pair<int, Symbol&> File::symbolById(const SymbolId &id) {
   int pos = 0;
   auto sl = std::shared_lock{this->_mutex};
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
@@ -337,7 +322,7 @@ std::pair<int, Symbol&> File::symbolById(SymbolId id) {
   return {pos, *result};
 }
 
-int File::getPosition(SymbolId id) {
+int File::getPosition(const SymbolId &id) {
   int pos = 0;
   auto sl = std::shared_lock{this->_mutex};
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
@@ -382,14 +367,14 @@ void File::clear() {
   _symbols.clear();
 }
 
-void File::addUser(int userId, QString username) {
+void File::addUser(int userId, const QString &username) {
   auto ul = std::unique_lock{this->_mutex};
   if(_users.count(userId) != 0) {
     throw FileUserException{"User already exists"};
   }
 
   dirty = true;
-  _users[userId] = { userId, std::move(username), true };
+  _users[userId] = { userId, username, true };
 }
 
 void File::removeUser(int userId) {
@@ -463,8 +448,8 @@ void File::localInsert(Symbol &sym, int pos) {
   _symbols.emplace(_symbols.begin() + pos, sym);
 }
 
-void File::findPosition(int userId, std::vector<Symbol::Identifier> v1,
-  std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
+void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
+  std::vector<Symbol::Identifier> &v2, std::vector<Symbol::Identifier> &position,
   int level) {
 
   Symbol::Identifier pos1, pos2;
@@ -547,7 +532,7 @@ void File::localDelete(int pos) {
   _symbols.erase(_symbols.begin()+pos);
 }
 
-int File::remoteDelete(SymbolId id) {
+int File::remoteDelete(const SymbolId &id) {
   auto ul = std::unique_lock{this->_mutex};
   int pos = 0;
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {

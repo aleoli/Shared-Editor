@@ -57,14 +57,14 @@ public:
   std::vector<Symbol> getSymbols() const;
   std::map<CommentIdentifier, Comment> getComments() const;
   Symbol& symbolAt(int pos);
-  std::pair<int, Symbol&> symbolById(SymbolId id);
-  int getPosition(SymbolId id);
+  std::pair<int, Symbol&> symbolById(const SymbolId &id);
+  int getPosition(const SymbolId &id);
   int numSymbols() const;
   std::string to_string() const;
   std::string text() const;
   void clear();
 
-  void addUser(int userId, QString username);
+  void addUser(int userId, const QString &username);
   void removeUser(int userId);
 
   void setOnline(int userId, bool val);
@@ -83,15 +83,16 @@ public:
   void localInsert(Symbol &sym, int pos);
   int remoteInsert(const Symbol &sym); // returns the position in which i inserted
   void localDelete(int pos);
-  int remoteDelete(SymbolId id); // returns the position of the deleted element
+  int remoteDelete(const SymbolId &id); // returns the position of the deleted element
   int remoteUpdate(const Symbol &sym);
 
 private:
   void checkAndAssign(const QJsonObject &json);
 
-  static void findPosition(int userId, std::vector<Symbol::Identifier> v1,
-    std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
+  static void findPosition(int userId, std::vector<Symbol::Identifier> &v1,
+    std::vector<Symbol::Identifier> &v2, std::vector<Symbol::Identifier> &position,
     int level = 0);
+  static int generateDigit(int digit1, int digit2);
 
   QJsonArray usersToJsonArray() const;
   std::string usersToString() const; //TODO vedi se rimuovere
