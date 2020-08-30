@@ -24,6 +24,7 @@ FSElement_db::FSElement_db(): Persistent() {
   this->_creator = Lazy<User>{-1};
   this->_original = Lazy<FSElement_db>{-1};
   this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+QString::number(this->id)};
+  this->_creation_date = QDateTime::currentDateTimeUtc();
 }
 
 FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
@@ -39,6 +40,7 @@ FSElement_db::FSElement_db(const FSElement_db &e): Persistent(e) {
   this->_original = e._original;
   this->_links = e._links;
   this->_shared_links = e._shared_links;
+  this->_creation_date = e._creation_date;
 }
 
 FSElement_db::FSElement_db(FSElement_db &&e) noexcept: Persistent(std::move(e)) {
@@ -54,6 +56,7 @@ FSElement_db::FSElement_db(FSElement_db &&e) noexcept: Persistent(std::move(e)) 
   this->_original = e._original;
   this->_links = e._links;
   this->_shared_links = e._shared_links;
+  this->_creation_date = e._creation_date;
 }
 
 FSElement_db::FSElement_db(const QSqlRecord& r): Persistent(r) {
@@ -69,6 +72,7 @@ FSElement_db::FSElement_db(const QSqlRecord& r): Persistent(r) {
   this->_original = Lazy<FSElement_db>{r.value("linked_from").toInt()};
   this->_links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+r.value("id").toString()};
   this->_shared_links = LazyList<SharedLink>{SharedLink::table_name, "element_id = "+r.value("id").toString()};
+  this->_creation_date = r.value("creation_date").toDateTime();
 }
 
 FSElement_db::~FSElement_db() = default;
@@ -89,6 +93,7 @@ FSElement_db& FSElement_db::operator=(const FSElement_db& e) {
   this->_original = e._original;
   this->_links = e._links;
   this->_shared_links = e._shared_links;
+  this->_creation_date = e._creation_date;
   Persistent::operator=(e);
   return *this;
 }
@@ -107,6 +112,7 @@ void FSElement_db::save_record(QSqlRecord &r) {
   r.setValue("comment_id", this->_comment_id);
   r.setValue("creator_id", this->_creator.getId());
   r.setValue("linked_from", this->_original.getId());
+  r.setValue("creation_date", this->_creation_date);
 }
 
 void FSElement_db::remove() {
@@ -155,6 +161,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
   fs_e._parent_id = parent_id;
   fs_e._owner_id = user_id;
   fs_e._creator = Lazy<User>{user_id};
+  fs_e._creation_date = QDateTime::currentDateTimeUtc();
   fs_e.save();
   fs_e._children = LazyList<FSElement_db>{FSElement_db::table_name, "parent_id = "+QString::number(fs_e.id)};
   fs_e._links = LazyList<FSElement_db>{FSElement_db::table_name, "linked_from = "+QString::number(fs_e.id)};
@@ -205,7 +212,7 @@ FSElement_db FSElement_db::clone(const Session &s) {
 }
 
 FSElement FSElement_db::getFSElement() const {
-  return FSElement{this->id, this->_parent_id, this->_name, this->_type};
+  return FSElement{this->id, this->_parent_id, this->_name, this->_type, this->_creation_date};
 }
 
 File FSElement_db::load() const {

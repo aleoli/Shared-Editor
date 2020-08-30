@@ -15,7 +15,7 @@ DocWidgetFolder::DocWidgetFolder(FSElement element, QWidget *parent): QWidget(pa
   _nameLabel->setText(this->_element.getName());
 
   _dateLabel = ui->label_date;
-  _dateLabel->setText(this->_element.getCreationDate().toString("dd-MM-yyyy hh:mm"));
+  _dateLabel->setText(this->_element.getCreationDate().toLocalTime().toString("dd-MM-yyyy hh:mm"));
 
   _optionsBtn = ui->btn_options;
 }
