@@ -5,5 +5,6 @@
 
 #define BINARY_MESSAGE 0
 #define BINARY_FILE 0
+#define ASCII_COMPACT 1
 
 #define MAX_OPEN_FILES 100

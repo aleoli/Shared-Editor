@@ -126,7 +126,11 @@ QByteArray File::toQByteArray() const {
 #if BINARY_FILE
   return doc.toBinaryData();
 #else
-  return doc.toJson(QJsonDocument::Compact);
+  #if ASCII_COMPACT
+    return doc.toJson(QJsonDocument::Compact);
+  #else
+    return doc.toJson();
+  #endif
 #endif
 }
 
