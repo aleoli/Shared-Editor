@@ -19,7 +19,7 @@ public:
   Input(QWidget *parent, const QString &title, const QString &text);
   ~Input();
 
-  static std::optional<QString> show(QWidget *parent = nullptr, const QString &title = "Input", const QString &text = "");
+  static std::optional<QString> show(QWidget *parent = nullptr, const QString &title = "Input", const QString &text = "", const QString &cancelText = "", const QString &confirmText = "");
 
 private:
   void _confirm(bool checked);

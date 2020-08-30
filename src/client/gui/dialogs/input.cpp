@@ -34,8 +34,15 @@ Input::~Input()
   delete ui;
 }
 
-std::optional<QString> Input::show(QWidget *parent, const QString &title, const QString &text) {
+std::optional<QString> Input::show(QWidget *parent, const QString &title, const QString &text, const QString &cancelText, const QString &confirmText) {
   Input dia(parent, title, text);
+
+  if(cancelText != "") {
+    dia._widgetCancel->setText(cancelText);
+  }
+  if(confirmText != "") {
+    dia._widgetConfirm->setText(confirmText);
+  }
 
   if (dia.exec()) {
     return std::optional<QString>(dia._widgetText->toPlainText());
