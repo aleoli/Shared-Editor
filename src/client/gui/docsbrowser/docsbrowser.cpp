@@ -218,9 +218,21 @@ void DocsBrowser::_changeSortType(int newSortType) {
 }
 
 void DocsBrowser::_account(bool checked) {
-  //TODO qua dovrebbe comparire un menu a tendina con le opzioni edit account e logout
-  emit editAccount();
-  //emit logout(_user->getToken());
+  auto actionEdit = new QAction{QIcon(":res/rename.png"), "Edit Account"};
+  auto actionLogout = new QAction{QIcon(":res/logout.png"), "Logout"};
+
+  QMenu menu;
+  menu.addAction(actionEdit);
+  menu.addAction(actionLogout);
+  auto action = menu.exec(QCursor::pos());
+
+  if(!action) return;
+
+  if(action == actionEdit) {
+    emit editAccount();
+  } else if(action == actionLogout) {
+    emit logout(_user->getToken());
+  }
 }
 
 void DocsBrowser::_newFile(bool checked) {
