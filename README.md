@@ -21,11 +21,6 @@ Client
 ./scripts/run_client_docker.sh -l debug
 ```
 
-StubClient
-```bash
-./scripts/run_stubClient_docker.sh -l debug
-```
-
 If you want to run it at specific commit, run this before scripts in each shell
 ```bash
 export TAG=<commit_sha>
