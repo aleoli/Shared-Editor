@@ -249,21 +249,22 @@ void TextEditor::updateActions() {
 
   updateAlignment(_textEdit->alignment());
 
-  setBorderColor(_widgetColor, fmt.foreground().color());
-
-  // TODO: FIX THIS!!
-  // temp: dato che normalmente il backgroundColor ritornato da sto metodo è nero (a meno che non lo si cambia)
-  // non posso mostrare quel colore nel pulsante, quindi mostro bianco (temporaneamente!!!)
-  auto backgroundColor = fmt.background().color();
-  if(backgroundColor == QColor::fromRgb(0,0,0) || backgroundColor == QColor::fromRgb(0,0,0,0))
-    setBorderColor(_widgetMark, QColor::fromRgb(255,255,255));
-  else
-    setBorderColor(_widgetMark, backgroundColor);
+  setBorderColor(_widgetColor, fmt.foreground(), false);
+  setBorderColor(_widgetMark, fmt.background(), true);
 
   _blockSignals = false;
 }
 
-void TextEditor::setBorderColor(QPushButton *button, const QColor &color) {
+void TextEditor::setBorderColor(QPushButton *button, const QBrush &brush, bool isBackground) {
+  auto color = brush.color();
+
+  //FIX
+  if(color.alpha() == 255 && !brush.isOpaque()) {
+    if(isBackground) color = QColor("white");
+    else color = QColor("black");
+  }
+  else if(color.alpha() == 0) color = QColor("white");
+
   auto stylesheet = button->styleSheet();
   stylesheet.append("QPushButton {border-color: " + color.name(QColor::HexArgb) + ";}");
   button->setStyleSheet(stylesheet);
@@ -621,7 +622,7 @@ void TextEditor::_mark(bool checked) {
     return;
   }
 
-  setBorderColor(_widgetMark, col);
+  setBorderColor(_widgetMark, col, true);
   auto fmt = _textEdit->currentCharFormat();
   fmt.setBackground(col);
   _textEdit->mergeCurrentCharFormat(fmt);
@@ -637,7 +638,7 @@ void TextEditor::_color(bool checked) {
     return;
   }
 
-  setBorderColor(_widgetColor, col);
+  setBorderColor(_widgetColor, col, false);
   auto fmt = _textEdit->currentCharFormat();
   fmt.setForeground(col);
   _textEdit->mergeCurrentCharFormat(fmt);
@@ -795,7 +796,7 @@ void TextEditor::_deleteFile(bool checked) {
 
 void TextEditor::_info(bool checked) {
   debug("TextEditor::_info");
-  //TODO
+  refresh();
 }
 
 void TextEditor::_deleteText(bool checked) {

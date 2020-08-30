@@ -126,7 +126,7 @@ private:
   void initTextEdit();
   void setAlignmentGroups();
   void updateActions();
-  void setBorderColor(QPushButton *button, const QColor &color);
+  void setBorderColor(QPushButton *button, const QBrush &brush, bool isBackground);
   void updateAlignment(Qt::Alignment al);
   void reloadFile();
   void reloadComments();

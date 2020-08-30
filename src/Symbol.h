@@ -75,10 +75,12 @@ private:
   void checkAndAssign(const QJsonObject &json, bool readPos = true);
   [[nodiscard]] std::string posToString() const; //TODO vedi se rimuovere
 
-  static QBrush jsonArrayToBrush(const QJsonArray &array);
-  static QJsonArray brushToJsonArray(const QBrush &b);
+  static QBrush stringToBrush(const QString &string);
+  static QString brushToString(const QBrush &b, bool isBackground);
   static QFont jsonArrayToFont(const QJsonArray &array);
   static QJsonArray fontToJsonArray(const QFont &b);
+  static QFont stringToFont(const QString &string);
+  static QString fontToString(const QFont &b);
 
   SymbolId _id;
   QChar _char;

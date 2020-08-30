@@ -68,7 +68,7 @@ bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, boo
 
 void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
   auto idValue = json["id"];
-  auto charValue = json["char"];
+  auto charValue = json["ch"];
   auto fmtValue = json["fmt"];
 
   if(idValue.isUndefined() || charValue.isUndefined() || fmtValue.isUndefined()) {
@@ -119,7 +119,7 @@ QJsonObject Symbol::toJsonObject(bool writePos) const {
   QJsonObject json;
 
   json["id"] = QJsonValue(_id.toJsonObject());
-  json["char"] = QJsonValue(_char.unicode());
+  json["ch"] = QJsonValue(_char.unicode());
   json["fmt"] = QJsonValue(serializeFormat(_fmt));
 
   if(writePos)
@@ -131,9 +131,9 @@ QJsonObject Symbol::toJsonObject(bool writePos) const {
 QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt) {
   QJsonObject json;
 
-  json["font"] = QJsonValue(fontToJsonArray(fmt.font()));
-  json["color"] = QJsonValue(brushToJsonArray(fmt.foreground()));
-  json["backgroundColor"] = QJsonValue(brushToJsonArray(fmt.background()));
+  json["fnt"] = QJsonValue(fontToString(fmt.font()));
+  json["col"] = QJsonValue(brushToString(fmt.foreground(), false));
+  json["bac"] = QJsonValue(brushToString(fmt.background(), true));
 
   return json;
 }
@@ -141,54 +141,46 @@ QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt) {
 QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
   QTextCharFormat fmt;
 
-  auto fontValue = json["font"];
-  auto colorValue = json["color"];
-  auto backgroundColorValue = json["backgroundColor"];
+  auto fontValue = json["fnt"];
+  auto colorValue = json["col"];
+  auto backgroundColorValue = json["bac"];
 
   if(fontValue.isUndefined() || colorValue.isUndefined()
       || backgroundColorValue.isUndefined()) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!fontValue.isArray() || !colorValue.isArray() || !backgroundColorValue.isArray()) {
+  if(!fontValue.isString() || !colorValue.isString() || !backgroundColorValue.isString()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
-  fmt.setFont(jsonArrayToFont(fontValue.toArray()));
-  fmt.setForeground(jsonArrayToBrush(colorValue.toArray()));
-  fmt.setBackground(jsonArrayToBrush(backgroundColorValue.toArray()));
+  fmt.setFont(stringToFont(fontValue.toString()));
+  fmt.setForeground(stringToBrush(colorValue.toString()));
+  fmt.setBackground(stringToBrush(backgroundColorValue.toString()));
 
   return fmt;
 }
 
-QJsonArray Symbol::brushToJsonArray(const QBrush &b) {
-  QByteArray data;
-  QJsonArray array;
+QString Symbol::brushToString(const QBrush &b, bool isBackground) {
+  auto color = b.color();
 
-  QDataStream ds(&data, QIODevice::WriteOnly);
-  ds.setByteOrder(QDataStream::BigEndian);
-  ds << b;
-
-  for(auto by : data) {
-    array.push_back(by);
+  if(color.alpha() == 255 && !b.isOpaque()) {
+    //FIX bug
+    if(isBackground) color.setAlpha(0);
+    else color.setAlpha(255);
   }
 
-  return array;
+  return color.name(QColor::HexArgb);
 }
 
-QBrush Symbol::jsonArrayToBrush(const QJsonArray &array) {
-  QByteArray data;
-  QBrush brush;
+QBrush Symbol::stringToBrush(const QString &string) {
+  QColor color(string);
 
-  for(auto a : array) {
-    data.append(static_cast<char>(a.toInt()));
+  if(!color.isValid()) {
+    throw SymbolFromJsonException{"Color is not valid"};
   }
 
-  QDataStream ds(&data, QIODevice::ReadOnly);
-  ds.setByteOrder(QDataStream::BigEndian);
-  ds >> brush;
-
-  return brush;
+  return QBrush(color);
 }
 
 QJsonArray Symbol::fontToJsonArray(const QFont &f) {
@@ -221,6 +213,16 @@ QFont Symbol::jsonArrayToFont(const QJsonArray &array) {
   return font;
 }
 
+QString Symbol::fontToString(const QFont &f) {
+  return f.toString();
+}
+
+QFont Symbol::stringToFont(const QString &string) {
+  QFont font;
+  font.fromString(string);
+
+  return font;
+}
 
 std::string Symbol::posToString() const {
   std::stringstream ss;
