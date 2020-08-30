@@ -7,7 +7,7 @@
 using namespace se_exceptions;
 
 #include <sstream>
-#include <cmath>
+#include <limits>
 #include <algorithm>
 #include <QChar>
 #include <QJsonDocument>
@@ -458,14 +458,15 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
   else pos1 = {0, userId};
 
   if(!v2.empty()) pos2 = v2[0];
-  else pos2 = {static_cast<int>(pow(2, level) * 32), userId};
+  else pos2 = {std::numeric_limits<int>::max(), userId};
 
   int digit1 = pos1.getDigit();
   int digit2 = pos2.getDigit();
 
   if(digit2 - digit1 > 1){
     //finished, found the position
-    int digit = (digit2 + digit1) / 2;
+    //debug("Level: " + QString::number(level));
+    int digit = generateDigit(digit1, digit2);
     position.emplace_back(digit, userId);
     return;
   }
@@ -505,6 +506,17 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
       throw FileLocalInsertException{"vector _pos is not sorted!"};
     }
   }
+}
+
+int File::generateDigit(int digit1, int digit2) {
+  quint64 val;
+
+  if(digit2 - digit1 > CRDT_STEP) val = digit1 + CRDT_STEP;
+  else val = (digit2 + digit1) / 2;
+
+  //debug("Dig1: " + QString::number(digit1) + " dig2: " + QString::number(digit2) + " val: " + QString::number(val));
+
+  return static_cast<int>(val); //for sure it fits into an int
 }
 
 int File::remoteInsert(const Symbol &sym) {
