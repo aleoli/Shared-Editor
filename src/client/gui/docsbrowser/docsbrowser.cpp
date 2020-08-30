@@ -6,6 +6,7 @@
 #include <list>
 #include <QGridLayout>
 #include <cmath>
+#include <dialogs/input.h>
 
 #include "utils.h"
 #include "docwidget.h"
@@ -237,19 +238,17 @@ void DocsBrowser::_account(bool checked) {
 
 void DocsBrowser::_newFile(bool checked) {
   // TODO: freeze window
-  bool ok;
-  QString name = QInputDialog::getText(this, "New File", "Insert file name", QLineEdit::Normal, "", &ok);
-  if(ok && !name.isEmpty()) {
-    emit newFile(_user->getToken(), name, _currentDir);
+  auto name = Input::show(this, "Insert file name", "", "Cancel", "Create");
+  if(name && !name->isEmpty()) {
+    emit newFile(_user->getToken(), *name, _currentDir);
   }
 }
 
 void DocsBrowser::_newDir(bool checked) {
   // TODO: freeze window
-  bool ok;
-  QString name = QInputDialog::getText(this, "New Directory", "Insert directory name", QLineEdit::Normal, "", &ok);
-  if(ok && !name.isEmpty()) {
-    emit newDir(_user->getToken(), name, _currentDir);
+  auto name = Input::show(this, "Insert directory name", "", "Cancel", "Create");
+  if(name && !name->isEmpty()) {
+    emit newDir(_user->getToken(), *name, _currentDir);
   }
 }
 
