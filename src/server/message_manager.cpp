@@ -324,7 +324,12 @@ void MessageManager::closeFile(quint64 clientId, int fileId, bool deleted) {
   }
 
   if(!clientHasFileOpen(clientId, fileId)) {
-    throw ClientFileException{"Client did not open the file"};
+    // users can delete files for directory
+    if(!deleted) {
+      throw ClientFileException{"Client did not open the file"};
+    } else {
+      return;
+    }
   }
 
   //rimuovo da fileClients

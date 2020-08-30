@@ -18,6 +18,7 @@ DocWidgetFolder::DocWidgetFolder(FSElement element, QWidget *parent): QWidget(pa
   _dateLabel->setText(this->_element.getCreationDate().toLocalTime().toString("dd-MM-yyyy hh:mm"));
 
   _optionsBtn = ui->btn_options;
+  QObject::connect(_optionsBtn, &QPushButton::clicked, this, &DocWidgetFolder::_openMenu);
 }
 
 void DocWidgetFolder::paintEvent(QPaintEvent* e) {
@@ -48,4 +49,8 @@ void DocWidgetFolder::clear() {
 void DocWidgetFolder::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseDoubleClickEvent(event);
   emit this->open(this->_element.getId());
+}
+
+void DocWidgetFolder::_openMenu(bool checked) {
+  emit this->openMenu(this->_element.getType() == FSElement::Type::DIRECTORY, this->_element);
 }

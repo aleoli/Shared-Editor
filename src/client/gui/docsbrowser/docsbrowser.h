@@ -23,7 +23,7 @@ class DocsBrowser : public MainWindow {
 
 public:
   explicit DocsBrowser(QWidget *parent = nullptr);
-  ~DocsBrowser();
+  ~DocsBrowser() override;
 
 public slots:
   virtual void clear();
@@ -32,6 +32,9 @@ public slots:
   void showDir(const std::vector<FSElement> &elements, const QString& name, int parentId);
   void changeDir(int dirId);
   void showPath(const std::vector<FSElement> &elements);
+  void refresh();
+
+  void getAllDirsResponse(std::list<std::pair<QString, int>> items);
 
 signals:
   void logout(const QString &token);
@@ -43,6 +46,13 @@ signals:
   void getDir(const QString &token, std::optional<int> dirId = std::nullopt);
   void openFile(const QString &token, int fileId);
   void getPath(const QString &token, int dirId);
+  void getAllDirs(const QString &token);
+
+  void share(const QString &token, int fileId);
+  void edit(const QString &token, int fileId, const std::optional<QString> &name);
+  void deleteDir(const QString &token, int dirId);
+  void deleteFile(const QString &token, int fileId);
+  void move(const QString &token, int elId, int dirId);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;
@@ -61,6 +71,8 @@ private slots:
   void _openLink(bool checked);
 
   void _openFile(int fileId);
+
+  void _openMenu(bool isDir, const FSElement& element);
 
 private:
   typedef enum {
@@ -83,6 +95,8 @@ private:
   QWidget *_scrollArea;
   QGridLayout *_layout;
   QWidget *_widgetPath;
+
+  FSElement _menuElement;
 
   std::optional<int> _currentParent = std::nullopt;
   std::optional<int> _currentDir = std::nullopt;

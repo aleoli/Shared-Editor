@@ -258,6 +258,13 @@ void ClientMessageProcessor::process_filesystem() {
         getPath();
       break;
 
+    case Message::FileSystemAction::GET_ALL_DIRS:
+      if(!isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getAllDirs();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -546,6 +553,27 @@ void ClientMessageProcessor::getPath() {
     auto elements = _m.getArray("elements");
 
     emit _manager->getPathResponse(utils::jsonArrayToVector<FSElement>(elements));
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
+}
+
+void ClientMessageProcessor::getAllDirs() {
+  info("FILESYSTEM::GET_ALL_DIRS response received");
+
+  try {
+    auto elements = _m.getArray("elements");
+
+    std::list<std::pair<QString, int>> l;
+    for(const auto& item: elements) {
+      auto obj = item.toObject();
+      auto path = obj["path"].toString();
+      auto id = obj["id"].toInt();
+      l.emplace_back(std::pair<QString, int>{path, id});
+    }
+
+    emit _manager->getAllDirsResponse(l);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());

@@ -58,6 +58,7 @@ signals:
   void getDirQuery(const QString &token, const std::optional<int> &dirId = std::nullopt);
   void moveFileQuery(const QString &token, int fileId, int dirId);
   void getPathQuery(const QString &token, int elementId);
+  void getAllDirsQuery(const QString &token);
 
   // TODO: cat be deleted?
   void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
@@ -67,6 +68,9 @@ signals:
   void serverGetDirResponse(const std::vector<FSElement> &elements, const QString &name, int parentId);
   void serverNewDirResponse(int id);
   void serverGetPathResponse(const std::vector<FSElement> &elements);
+  void serverGetAllDirsResponse(const std::list<std::pair<QString, int>>& items);
+
+  void docBrowserNeedsRefresh();
 
 public slots:
   void closeStacked();
@@ -112,6 +116,7 @@ private slots:
   void serverNewFileResponse(int fileId);
   void serverActivateLinkResponse(const FSElement &element, const File &file);
   void serverDeleteFileResponse();
+  void serverDeleteDirResponse();
 
   void serverGetLinkResponse(const QString &link);
 

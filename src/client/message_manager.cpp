@@ -311,6 +311,15 @@ void MessageManager::getPathQuery(const QString &token, int elementId) {
   emit send_data(m.toQByteArray());
 }
 
+void MessageManager::getAllDirsQuery(const QString &token) {
+  Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::GET_ALL_DIRS),
+            Message::Status::QUERY};
+
+  m.setValue("token", token);
+
+  emit send_data(m.toQByteArray());
+}
+
 void MessageManager::commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment) {
   Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_INSERT),
     Message::Status::QUERY};

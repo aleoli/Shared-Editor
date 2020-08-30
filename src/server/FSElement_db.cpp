@@ -357,6 +357,26 @@ void FSElement_db::rename(const Session &s, QString name) {
   this->save();
 }
 
+std::pair<QString, int> FSElement_db::pwd(const Session &s) {
+  if(s.getUserId() != this->_owner_id) {
+    warn("Trying to rename not your element");
+    throw se_exceptions::IllegalAccessException{"Trying to get path on not your element"};
+  }
+  QStringList l;
+  l.push_back(this->getName());
+  if(this->_parent_id <= 1) {
+    // root dir
+    return std::pair<QString, int>{l.join('/'), this->getId()};
+  }
+  auto el = FSElement_db::get(s, this->_parent_id);
+  do {
+    l.push_back(el.getName());
+    el = FSElement_db::get(s, el._parent_id);
+  } while(el._parent_id > 1);
+  std::reverse(l.begin(), l.end());
+  return std::pair<QString, int>{l.join('/'), this->getId()};
+}
+
 SharedLink FSElement_db::share(const Session &s) {
   if(this->_type != FSElement::Type::FILE) {
     error("Trying to share a not-file element");
@@ -386,6 +406,18 @@ void FSElement_db::clearCache() {
   this->_original.clear();
   this->_links.clear();
   this->_children.clear();
+}
+
+std::list<FSElement_db> FSElement_db::recursive_ls(const Session &s) {
+  auto elements = this->ls(s);
+  std::list<FSElement_db> res;
+  res.emplace_back(*this);
+  for(auto &el: elements) {
+    if(el->_type == FSElement::Type::DIRECTORY) {
+      res.splice(res.end(), el->recursive_ls(s));
+    }
+  }
+  return res;
 }
 
 QString FSElement_db::getPath() const {

@@ -267,6 +267,13 @@ void ServerMessageProcessor::process_filesystem() {
         getPath();
       break;
 
+    case Message::FileSystemAction::GET_ALL_DIRS:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getAllDirs();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -1060,6 +1067,32 @@ void ServerMessageProcessor::getPath() {
   data["elements"] = arr;
 
   this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::GET_PATH, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::getAllDirs() {
+  info("GetAllDirs query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto root = FSElement_db::root(session.getUserId());
+  auto elements = root.recursive_ls(session);
+
+  QJsonArray arr;
+  for(auto& f: elements) {
+    auto pair = f.pwd(session);
+    QJsonObject obj;
+    obj["path"] = pair.first;
+    obj["id"] = pair.second;
+    debug(pair.first);
+    arr.append(obj);
+  }
+
+  QJsonObject data;
+  data["elements"] = arr;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::GET_ALL_DIRS, Message::Status::RESPONSE, data};
   this->_has_resp = true;
 }
 

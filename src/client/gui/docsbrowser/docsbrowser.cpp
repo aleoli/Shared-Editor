@@ -2,11 +2,13 @@
 #include "../ui/ui_docsbrowser.h"
 
 #include <QAction>
-#include <QInputDialog>
 #include <list>
 #include <QGridLayout>
 #include <cmath>
-#include <dialogs/input.h>
+
+#include "dialogs/input.h"
+#include "dialogs/confirm.h"
+#include "dialogs/move.h"
 
 #include "utils.h"
 #include "docwidget.h"
@@ -74,6 +76,23 @@ void DocsBrowser::setIcon() {
   _widgetAccount->setIconSize(_widgetAccount->size());
 }
 
+void DocsBrowser::refresh() {
+  if(this->_currentDir) {
+    this->changeDir(*this->_currentDir);
+  }
+}
+
+void DocsBrowser::getAllDirsResponse(std::list<std::pair<QString, int>> items) {
+  items.remove_if([this](auto& el) {
+    return this->_menuElement.getId() == el.second || this->_menuElement.getParentId() == el.second || el.first.startsWith(this->_menuElement.getName() + "/") || el.first.contains("/"+this->_menuElement.getName()+"/");
+  });
+  auto newFolder = Move::show(items, this, "Move file", "Cancel", "Confirm");
+  if(newFolder && *newFolder > 0) {
+    debug("Move to: " + QString::number(*newFolder));
+    emit this->move(_user->getToken(), this->_menuElement.getId(), *newFolder);
+  }
+}
+
 void DocsBrowser::showDir(const std::vector<FSElement> &elements, const QString& name, int parentId) {
   if(parentId == -1) {
     this->_currentParent = std::nullopt;
@@ -112,6 +131,7 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
       auto widget = new DocWidget{**element, this->_scrollArea};
       widget->setFixedSize(DOC_WIDTH, DOC_HEIGHT);
       QObject::connect(widget, &DocWidget::open, this, &DocsBrowser::_openFile);
+      QObject::connect(widget, &DocWidget::openMenu, this, &DocsBrowser::_openMenu);
 
       this->_currentWidgets.push_back(widget);
 
@@ -122,6 +142,7 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
       auto widget = new DocWidgetFolder{**element, this->_scrollArea};
       widget->setFixedSize(DOC_WIDTH, DOC_HEIGHT);
       QObject::connect(widget, &DocWidgetFolder::open, this, &DocsBrowser::changeDir);
+      QObject::connect(widget, &DocWidgetFolder::openMenu, this, &DocsBrowser::_openMenu);
 
       this->_currentWidgetsFolder.push_back(widget);
 
@@ -141,8 +162,6 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
 }
 
 void DocsBrowser::_openFile(int fileId) {
-  debug("TODO");
-  debug("open file " + QString::number(fileId));
   _user->setFileId(fileId);
   emit this->openFile(_user->getToken(), fileId);
 }
@@ -303,12 +322,14 @@ std::list<int>::const_iterator DocsBrowser::_getCurrent() {
 void DocsBrowser::_cleanWidgets() {
   for(auto& widget: this->_currentWidgets) {
     QObject::disconnect(widget, &DocWidget::open, this, &DocsBrowser::_openFile);
+    QObject::disconnect(widget, &DocWidget::openMenu, this, &DocsBrowser::_openMenu);
     widget->hide();
     widget->setParent(nullptr);
     delete widget;
   }
   for(auto& widget: this->_currentWidgetsFolder) {
     QObject::disconnect(widget, &DocWidgetFolder::open, this, &DocsBrowser::changeDir);
+    QObject::disconnect(widget, &DocWidgetFolder::openMenu, this, &DocsBrowser::_openMenu);
     widget->hide();
     widget->setParent(nullptr);
     delete widget;
@@ -335,4 +356,51 @@ int DocsBrowser::_getHSpacing() {
   auto docHArea = DOC_WIDTH + minSpacing;
   int n = width / docHArea;
   return (width - (n * DOC_WIDTH)) / (n+1);
+}
+
+void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
+  debug(QString("Open menu ") + (isDir ? "DIR" : "FILE"));
+
+  auto actionMove = new QAction{QIcon(":res/move.png"), "Move"};
+  QAction *actionShare = nullptr;
+  if(!isDir) {
+    actionShare = new QAction{QIcon(":res/share.png"), "Share"};
+  }
+  auto actionRename = new QAction{QIcon(":res/rename.png"), "Rename"};
+  auto actionDelete = new QAction{QIcon(":res/delete.png"), "Delete"};
+
+  QMenu menu;
+  menu.addAction(actionMove);
+  if(!isDir) {
+    menu.addAction(actionShare);
+  }
+  menu.addAction(actionRename);
+  menu.addAction(actionDelete);
+  auto action = menu.exec(QCursor::pos());
+
+  if(!action) return;
+
+  if(action == actionMove) {
+    debug("Move");
+    this->_menuElement = FSElement{element};
+    emit this->getAllDirs(_user->getToken());
+  } else if(action == actionShare) {
+    debug("Share");
+    emit this->share(_user->getToken(), _user->getFileId());
+  } else if(action == actionRename) {
+    debug("Rename");
+    auto name = Input::show(this, "Insert new name", element.getName(), "Cancel", "Rename");
+    if(name && !name->isEmpty()) {
+      emit this->edit(_user->getToken(), element.getId(), name);
+    }
+  } else if(action == actionDelete) {
+    debug("Delete");
+    if(Confirm::show(this, "Are you sure to delete this file?")) {
+      if(isDir) {
+        emit this->deleteDir(_user->getToken(), element.getId());
+      } else {
+        emit this->deleteFile(_user->getToken(), element.getId());
+      }
+    }
+  }
 }
