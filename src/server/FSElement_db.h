@@ -90,6 +90,7 @@ private:
   int _owner_id;
   int _char_id;
   int _comment_id;
+  QDateTime _creation_date;
 
   Lazy<User> _creator;
   Lazy<FSElement_db> _original;

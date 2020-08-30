@@ -5,13 +5,14 @@
 #include <utility>
 
 #include "exceptions.h"
+#include "utils.h"
 
 using namespace se_exceptions;
 
 FSElement::FSElement() : _id(-1), _parentId(-1), _type(Type::FILE), _creationDate(QDateTime::currentDateTimeUtc()) {}
 
-FSElement::FSElement(int id, int parentId, QString name, Type type)
-  : _id(id), _parentId(parentId), _name(std::move(name)), _type(type), _creationDate(QDateTime::currentDateTimeUtc()) {}
+FSElement::FSElement(int id, int parentId, QString name, Type type, QDateTime creationDate)
+  : _id(id), _parentId(parentId), _name(std::move(name)), _type(type), _creationDate(std::move(creationDate)) {}
 
 FSElement::FSElement(const QJsonObject &json) {
   checkAndAssign(json);

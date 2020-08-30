@@ -12,7 +12,7 @@ public:
   };
 
   FSElement();
-  FSElement(int id, int parentId, QString name, Type type);
+  FSElement(int id, int parentId, QString name, Type type, QDateTime creationDate);
   explicit FSElement(const QJsonObject &json);
   explicit FSElement(QJsonObject &&json);
 
