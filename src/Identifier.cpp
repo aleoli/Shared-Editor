@@ -20,8 +20,8 @@ IdentifierBase::IdentifierBase(QJsonObject &&json) {
 }
 
 void IdentifierBase::checkAndAssign(const QJsonObject &json) {
-  auto digitValue = json["digit"];
-  auto userIdValue = json["userId"];
+  auto digitValue = json["d"];
+  auto userIdValue = json["u"];
 
   if(digitValue.isUndefined() || userIdValue.isUndefined()) {
     throw SymbolIdentifierFromJsonException{"The QJsonObject has some fields missing"};
@@ -49,8 +49,8 @@ IdentifierBase IdentifierBase::fromJsonObject(QJsonObject &&json) {
 QJsonObject IdentifierBase::toJsonObject() const {
   QJsonObject json;
 
-  json["digit"] = QJsonValue(_digit);
-  json["userId"] = QJsonValue(_userId);
+  json["d"] = QJsonValue(_digit);
+  json["u"] = QJsonValue(_userId);
 
   return json;
 }
