@@ -83,14 +83,27 @@ void Cursor::moveForward(int position) {
   _cursor->movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, position);
 }
 
-void Cursor::goStart() {
-  _cursor->setPosition(0);
+void Cursor::selectNext() {
+  _cursor->movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+}
+
+void Cursor::goTo(int pos) {
+  _cursor->setPosition(pos);
+}
+
+void Cursor::deleteChar() {
+  _cursor->deleteChar();
 }
 
 void Cursor::remove(int position) {
   _cursor->setPosition(position);
-
   _cursor->deleteChar();
+}
 
-  updateCursorView();
+void Cursor::removeSelected() {
+  _cursor->removeSelectedText();
+}
+
+void Cursor::clearSelection() {
+  _cursor->clearSelection();
 }

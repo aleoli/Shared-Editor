@@ -307,19 +307,20 @@ std::map<File::CommentIdentifier, File::Comment> File::getComments() const {
   return _comments;
 }
 
-Symbol& File::symbolAt(int pos) {
+Symbol& File::symbolAt(int pos, std::list<Symbol>::iterator *it) {
   auto sl = std::shared_lock{this->_mutex};
-  return _symbolAt(pos);
+  return _symbolAt(pos, it);
 }
 
-Symbol &File::_symbolAt(int pos) {
-  auto it = iteratorAt(pos);
+Symbol &File::_symbolAt(int pos, std::list<Symbol>::iterator *it) {
+  auto target = iteratorAt(pos);
 
-  if(it == _symbols.end()) {
+  if(target == _symbols.end()) {
     throw FileSymbolsException{"Invalid position"};
   }
 
-  return *it;
+  if(it != nullptr) *it = target;
+  return *target;
 }
 
 std::list<Symbol>::iterator File::iteratorAt(int pos) {
@@ -342,8 +343,21 @@ std::pair<int, Symbol&> File::symbolById(const SymbolId &id, std::list<Symbol>::
 }
 
 std::pair<int, Symbol&> File::_symbolById(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  auto res = _iteratorById(id, it);
+
+  return {res.first, *res.second};
+}
+
+std::pair<int, std::list<Symbol>::iterator> File::iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  auto sl = std::shared_lock{this->_mutex};
+  return _iteratorById(id, it);
+}
+
+std::pair<int, std::list<Symbol>::iterator> File::_iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it) {
   int pos = 0;
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [&id, &pos](const Symbol &cmp) {
+  auto start = it == nullptr ? _symbols.begin() : *it;
+
+  auto result = std::find_if(start, _symbols.end(), [&id, &pos](const Symbol &cmp) {
         bool val = cmp.getSymbolId() == id;
         if(!val) pos++;
         return val;
@@ -354,7 +368,7 @@ std::pair<int, Symbol&> File::_symbolById(const SymbolId &id, std::list<Symbol>:
   }
 
   if(it != nullptr) *it = result;
-  return {pos, *result};
+  return {pos, result};
 }
 
 int File::getPosition(const SymbolId &id, std::list<Symbol>::iterator *it) {
@@ -566,30 +580,40 @@ int File::remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it, int o
   return oldPos + pos + 1;
 }
 
-void File::localDelete(int pos) {
+void File::localDelete(int pos, std::list<Symbol>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
   if(pos < 0 || _symbols.size() <= pos) {
     throw FileSymbolsException{"Invalid delete position"};
   }
 
   dirty = true;
-  auto it = _symbols.begin(); //TODOOOOO iteratorat
-  std::advance(it, pos);
-  _symbols.erase(it);
+  auto target = it == nullptr ? iteratorAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  _symbols.erase(target);
 }
 
-int File::remoteDelete(const SymbolId &id) {
+int File::remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
 
   try {
-    std::list<Symbol>::iterator it;
-    auto pos = _symbolById(id, &it);
-    auto &symbol = pos.second;
+    int pos = 0;
+    std::list<Symbol>::iterator target;
+    if(it == nullptr || (*it)->getSymbolId() != id) {
+      auto res = _iteratorById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = std::next(target);
+    }
+    else {
+      target = *it;
+      *it = std::next(*it);
+    }
 
-    _symbols.erase(it);
+    _symbols.erase(target);
     dirty = true;
 
-    return pos.first;
+    return oldPos + pos;
   }
   catch(FileSymbolsException& e) {
     //il simbolo non esiste più

@@ -31,6 +31,10 @@ bool operator==(const SymbolId& lhs, const SymbolId& rhs) {
   return lhs._userId == rhs._userId && lhs._charId == rhs._charId;
 }
 
+bool operator!=(const SymbolId& lhs, const SymbolId& rhs) {
+  return !(lhs == rhs);
+}
+
 void SymbolId::checkAndAssign(const QJsonObject &json) {
   auto userIdValue = json["uid"];
   auto charIdValue = json["cid"];

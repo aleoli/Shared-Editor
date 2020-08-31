@@ -92,11 +92,12 @@ void TextEditor::_handleDelete(int pos, int removed) {
   if(removed == 0) return;
 
   std::vector<SymbolId> symRemoved;
+  auto it = _file->iteratorAt(pos);
 
   for(int i=0; i<removed; i++) {
       try {
-        auto id = _file->symbolAt(pos).getSymbolId();
-        _file->localDelete(pos);
+        auto id = it->getSymbolId();
+        _file->localDelete(pos, &it);
         symRemoved.push_back(id);
       }
       catch(...) {
@@ -196,7 +197,7 @@ void TextEditor::remoteInsert(int fileId, int userId, const std::vector<Symbol>&
   auto cursor = _users[userId]->getCursor();
   auto it = _file->getSymbolsStart();
   int tempPos = 0;
-  cursor->goStart();
+  cursor->goTo(0);
   QString text = "";
   QTextCharFormat fmt;
   for(auto &sym : symbols) {
@@ -225,8 +226,7 @@ void TextEditor::remoteInsert(int fileId, int userId, const std::vector<Symbol>&
 
 void TextEditor::remoteDelete(int fileId, int userId, const std::vector<SymbolId>& ids) {
   _blockSignals = true;
-
-  int pos;
+  int pos = 0;
 
   if(_users.count(userId) == 0) {
     throw TextEditorException{"User " + QString::number(userId) + " not present in the list of users!!"};
@@ -236,11 +236,25 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::vector<SymbolId
         + " chars from user " + QString::number(userId));
 
   auto cursor = _users[userId]->getCursor();
+  cursor->clearSelection();
+  auto it = _file->getSymbolsStart();
+  int tempPos = 0;
+  cursor->goTo(0);
   for(auto &id : ids) {
-    pos = _file->remoteDelete(id);
-    if(pos != -1) cursor->remove(pos);
+    pos = _file->remoteDelete(id, &it, pos);
+    if(pos == -1) continue;
+
+    if(pos != tempPos) {
+      cursor->removeSelected();
+      cursor->goTo(pos);
+      tempPos = pos;
+    }
+
+    cursor->selectNext();
   }
 
+  cursor->removeSelected();
+  cursor->updateCursorView();
   cursor->show();
   _blockSignals = false;
 }

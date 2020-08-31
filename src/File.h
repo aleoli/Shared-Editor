@@ -59,9 +59,10 @@ public:
   std::list<Symbol> getSymbols() const;
   std::list<Symbol>::iterator getSymbolsStart();
   std::map<CommentIdentifier, Comment> getComments() const;
-  Symbol& symbolAt(int pos);
+  Symbol& symbolAt(int pos, std::list<Symbol>::iterator *it = nullptr);
   std::list<Symbol>::iterator iteratorAt(int pos);
   std::pair<int, Symbol&> symbolById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
+  std::pair<int, std::list<Symbol>::iterator> iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   int getPosition(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   int numSymbols() const;
   std::string to_string() const;
@@ -87,13 +88,14 @@ public:
   //CRDT
   void localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it = nullptr);
   int remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position in which i inserted
-  void localDelete(int pos);
-  int remoteDelete(const SymbolId &id); // returns the position of the deleted element
+  void localDelete(int pos, std::list<Symbol>::iterator *it = nullptr);
+  int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position of the deleted element
   int remoteUpdate(const Symbol &sym);
 
 private:
-  Symbol& _symbolAt(int pos);
+  Symbol& _symbolAt(int pos, std::list<Symbol>::iterator *it = nullptr);
   std::pair<int, Symbol&> _symbolById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
+  std::pair<int, std::list<Symbol>::iterator> _iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   int _getPosition(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
 
   void checkAndAssign(const QJsonObject &json);

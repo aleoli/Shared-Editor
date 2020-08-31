@@ -17,6 +17,7 @@ public:
 
   friend bool operator<(const SymbolId& lhs, const SymbolId& rhs);
   friend bool operator==(const SymbolId& lhs, const SymbolId& rhs);
+  friend bool operator!=(const SymbolId& lhs, const SymbolId& rhs);
 
   static SymbolId fromJsonObject(const QJsonObject &json);
   static SymbolId fromJsonObject(QJsonObject &&json);
