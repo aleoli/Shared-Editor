@@ -38,11 +38,11 @@ public:
   static QJsonObject serializeFormat(const QTextCharFormat &fmt);
   static QTextCharFormat deserializeFormat(const QJsonObject &json);
 
-  void setSymbolId(SymbolId id);
+  void setSymbolId(const SymbolId &id);
   [[nodiscard]] SymbolId getSymbolId() const;
-  void setChar(QChar chr);
+  void setChar(const QChar &chr);
   [[nodiscard]] QChar getChar() const;
-  void setPos(std::vector<Identifier> pos);
+  void setPos(const std::vector<Identifier> &pos);
   [[nodiscard]] std::vector<Identifier> getPos() const;
   [[nodiscard]] std::string to_string() const;
   [[nodiscard]] std::string getFontInfo() const;
@@ -52,7 +52,7 @@ public:
   static bool compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground = false);
   [[nodiscard]] bool hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground = false) const;
 
-  void setFormat(QTextCharFormat fmt);
+  void setFormat(const QTextCharFormat &fmt);
   [[nodiscard]] QTextCharFormat getFormat() const;
   void setFont(const QFont& font);
   [[nodiscard]] QFont getFont() const;

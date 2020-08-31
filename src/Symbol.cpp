@@ -234,7 +234,7 @@ std::string Symbol::posToString() const {
   return ss.str();
 }
 
-void Symbol::setSymbolId(SymbolId id) {
+void Symbol::setSymbolId(const SymbolId &id) {
   _id = id;
 }
 
@@ -242,7 +242,7 @@ SymbolId Symbol::getSymbolId() const{
   return _id;
 }
 
-void Symbol::setChar(QChar chr) {
+void Symbol::setChar(const QChar &chr) {
   _char = chr;
 }
 
@@ -250,8 +250,8 @@ QChar Symbol::getChar() const{
   return _char;
 }
 
-void Symbol::setPos(std::vector<Symbol::Identifier> pos) {
-  _pos = std::move(pos);
+void Symbol::setPos(const std::vector<Symbol::Identifier> &pos) {
+  _pos = pos;
 }
 
 std::vector<Symbol::Identifier> Symbol::getPos() const{
@@ -274,8 +274,8 @@ void Symbol::update(const Symbol &s) {
   _fmt = s._fmt;
 }
 
-void Symbol::setFormat(QTextCharFormat fmt) {
-  _fmt = std::move(fmt);
+void Symbol::setFormat(const QTextCharFormat &fmt) {
+  _fmt = fmt;
 }
 
 QTextCharFormat Symbol::getFormat() const {

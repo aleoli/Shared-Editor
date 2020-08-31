@@ -2,6 +2,7 @@
 
 #include "Symbol.h"
 
+#include <list>
 #include <vector>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -11,6 +12,7 @@
 #include "utils.h"
 #include <shared_mutex>
 #include <QDateTime>
+#include <functional>
 
 class File {
 public:
@@ -31,7 +33,7 @@ public:
   File();
   File(const File &file);
   File(File &&file) noexcept;
-  File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> _symbols, std::map<CommentIdentifier, Comment> comments);
+  File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> _symbols, std::map<CommentIdentifier, Comment> comments);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -54,7 +56,7 @@ public:
   friend bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs);
 
   std::unordered_map<int, File::UserInfo> getUsers() const;
-  std::vector<Symbol> getSymbols() const;
+  std::list<Symbol> getSymbols() const;
   std::map<CommentIdentifier, Comment> getComments() const;
   Symbol& symbolAt(int pos);
   std::pair<int, Symbol&> symbolById(const SymbolId &id);
@@ -63,6 +65,7 @@ public:
   std::string to_string() const;
   std::string text() const;
   void clear();
+  void forEachSymbol(const std::function<void(const Symbol&) >& lambda);
 
   void addUser(int userId, const QString &username);
   void removeUser(int userId);
@@ -87,6 +90,10 @@ public:
   int remoteUpdate(const Symbol &sym);
 
 private:
+  Symbol& _symbolAt(int pos);
+  std::pair<int, Symbol&> _symbolById(const SymbolId &id);
+  int _getPosition(const SymbolId &id);
+  
   void checkAndAssign(const QJsonObject &json);
 
   static void findPosition(int userId, std::vector<Symbol::Identifier> &v1,
@@ -95,16 +102,16 @@ private:
   static int generateDigit(int digit1, int digit2);
 
   QJsonArray usersToJsonArray() const;
-  std::string usersToString() const; //TODO vedi se rimuovere
   static std::unordered_map<int, File::UserInfo> jsonArrayToUsers(const QJsonArray &array);
 
-  std::string symbolsToString() const; //TODO vedi se rimuovere
+  static std::list<Symbol> jsonArrayToSymbols(const QJsonArray &array);
+  QJsonArray symbolsToJsonArray() const;
 
   QJsonArray commentsToJsonArray() const;
   static std::map<CommentIdentifier, Comment> jsonArrayToComments(const QJsonArray &array);
 
   std::unordered_map<int, UserInfo> _users;
-  std::vector<Symbol> _symbols;
+  std::list<Symbol> _symbols;
   std::map<CommentIdentifier, Comment> _comments;
 
   bool dirty = false;
