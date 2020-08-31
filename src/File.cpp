@@ -290,6 +290,10 @@ std::list<Symbol> File::getSymbols() const {
   return _symbols;
 }
 
+std::list<Symbol>::iterator File::getSymbolsStart() {
+  return _symbols.begin();
+}
+
 void File::forEachSymbol(const std::function<void(const Symbol&) >& lambda) {
   auto sl = std::shared_lock{this->_mutex};
 
@@ -309,27 +313,35 @@ Symbol& File::symbolAt(int pos) {
 }
 
 Symbol &File::_symbolAt(int pos) {
-  auto size = _symbols.size();
+  auto it = iteratorAt(pos);
 
-  if(size <= pos) {
+  if(it == _symbols.end()) {
     throw FileSymbolsException{"Invalid position"};
   }
 
-  if(pos == 0) return _symbols.front();
-  if(pos == size - 1) return _symbols.back();
-
-  //TODO logic to go backwards if position is near end
-  auto it = _symbols.begin();
-  std::advance(it, pos);
   return *it;
 }
 
-std::pair<int, Symbol&> File::symbolById(const SymbolId &id) {
-  auto sl = std::shared_lock{this->_mutex};
-  return _symbolById(id);
+std::list<Symbol>::iterator File::iteratorAt(int pos) {
+  auto size = _symbols.size();
+
+  if(pos >= size) return _symbols.end();
+  if(pos == 0) return _symbols.begin();
+  if(pos == size - 1) return std::prev(_symbols.end());
+
+  //TODO logic to go backwards ..
+  auto it = _symbols.begin();
+  std::advance(it, pos);
+
+  return it;
 }
 
-std::pair<int, Symbol&> File::_symbolById(const SymbolId &id) {
+std::pair<int, Symbol&> File::symbolById(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  auto sl = std::shared_lock{this->_mutex};
+  return _symbolById(id, it);
+}
+
+std::pair<int, Symbol&> File::_symbolById(const SymbolId &id, std::list<Symbol>::iterator *it) {
   int pos = 0;
   auto result = std::find_if(_symbols.begin(), _symbols.end(), [&id, &pos](const Symbol &cmp) {
         bool val = cmp.getSymbolId() == id;
@@ -341,15 +353,16 @@ std::pair<int, Symbol&> File::_symbolById(const SymbolId &id) {
     throw FileSymbolsException{"Symbol does not exist"};
   }
 
+  if(it != nullptr) *it = result;
   return {pos, *result};
 }
 
-int File::getPosition(const SymbolId &id) {
-  return symbolById(id).first;
+int File::getPosition(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  return symbolById(id, it).first;
 }
 
-int File::_getPosition(const SymbolId &id) {
-  return _symbolById(id).first;
+int File::_getPosition(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  return _symbolById(id, it).first;
 }
 
 int File::numSymbols() const {
@@ -424,7 +437,7 @@ QString File::getUsername(int userId) {
   return _users[userId].username;
 }
 
-void File::localInsert(Symbol &sym, int pos) {
+void File::localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
   // (chi ha chiamato questo metodo poi si preoccuperà di mandare info al server)
   auto size = _symbols.size();
@@ -436,7 +449,10 @@ void File::localInsert(Symbol &sym, int pos) {
   //debug("Pos: " + QString::number(pos));
 
   std::vector<Symbol::Identifier> v1, v2;
-  auto insertPos = _symbols.begin();
+  std::list<Symbol>::iterator insertPos;
+  if(it == nullptr) insertPos = iteratorAt(pos);
+  else insertPos = *it;
+
   if(size == 0) {}
   else if(pos == 0) {
     //debug("Front insertion");
@@ -444,12 +460,10 @@ void File::localInsert(Symbol &sym, int pos) {
   }
   else if(pos == size) {
     //debug("Back insertion");
-    insertPos = _symbols.end();
     v1 = std::move(std::prev(insertPos)->getPos());
   }
   else {
     //debug("Middle insertion");
-    std::advance(insertPos, pos); //TODO go backwards if ...?
     v1 = std::move(std::prev(insertPos)->getPos());
     v2 = std::move(insertPos->getPos());
   }
@@ -524,20 +538,22 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
 }
 
 int File::generateDigit(int digit1, int digit2) {
-  quint64 val;
+  quint64 val = digit1;
 
-  if(digit2 - digit1 > CRDT_STEP) val = digit1 + CRDT_STEP;
-  else val = (digit2 + digit1) / 2;
+  if(digit2 - digit1 > CRDT_STEP) val += CRDT_STEP;
+  else val = (val + digit2) / 2;
 
   //debug("Dig1: " + QString::number(digit1) + " dig2: " + QString::number(digit2) + " val: " + QString::number(val));
 
-  return static_cast<int>(val); //for sure it fits into an int
+  return static_cast<int>(val); //surely it fits into an int
 }
 
-int File::remoteInsert(const Symbol &sym) {
+int File::remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
+
+  auto start = it == nullptr ? _symbols.begin() : *it;
   int pos = 0;
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [&sym, &pos](const Symbol &cmp) {
+  auto result = std::find_if(start, _symbols.end(), [&sym, &pos](const Symbol &cmp) {
         bool val = sym < cmp;
         if(!val) pos++;
         return val;
@@ -546,7 +562,8 @@ int File::remoteInsert(const Symbol &sym) {
   dirty = true;
   _symbols.emplace(result, sym);
 
-  return pos;
+  if(it != nullptr) *it = result;
+  return oldPos + pos + 1;
 }
 
 void File::localDelete(int pos) {
@@ -556,28 +573,28 @@ void File::localDelete(int pos) {
   }
 
   dirty = true;
-  auto it = _symbols.begin(); //TODOOOOO
+  auto it = _symbols.begin(); //TODOOOOO iteratorat
   std::advance(it, pos);
   _symbols.erase(it);
 }
 
 int File::remoteDelete(const SymbolId &id) {
   auto ul = std::unique_lock{this->_mutex};
-  int pos = 0;
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
-        bool val = id == cmp.getSymbolId();
-        if(!val) pos++;
-        return val;
-    });
 
-  if(result == std::end(_symbols)) {
-    // no eccezione qui, è un fatto che può accadere e non è un errore
+  try {
+    std::list<Symbol>::iterator it;
+    auto pos = _symbolById(id, &it);
+    auto &symbol = pos.second;
+
+    _symbols.erase(it);
+    dirty = true;
+
+    return pos.first;
+  }
+  catch(FileSymbolsException& e) {
+    //il simbolo non esiste più
     return -1;
   }
-
-  dirty = true;
-  _symbols.erase(result);
-  return pos;
 }
 
 int File::remoteUpdate(const Symbol &sym) {

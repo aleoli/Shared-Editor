@@ -114,6 +114,7 @@ void TextEditor::_handleInsert(int pos, int added) {
   std::vector<Symbol> symAdded;
 
   cursor.setPosition(pos);
+  auto it = _file->iteratorAt(pos);
   for(int i=0; i<added; i++) {
     cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
 
@@ -139,7 +140,7 @@ void TextEditor::_handleInsert(int pos, int added) {
       Symbol s{{_user->getUserId(), _user->getCharId()}, chr, fmt};
       //debug(QString::fromStdString(s.to_string()));
 
-      _file->localInsert(s, pos+i);
+      _file->localInsert(s, pos+i, &it);
       symAdded.push_back(s);
     }
   }
@@ -183,7 +184,7 @@ void TextEditor::_updateCursors() {
 
 void TextEditor::remoteInsert(int fileId, int userId, const std::vector<Symbol>& symbols) {
   _blockSignals = true;
-  int pos;
+  int pos = -1;
   auto backgroundColor = _highlighted ? std::optional<QColor>(getUserColorHighlight(userId)) : std::nullopt;
 
   if(_users.count(userId) == 0) {
@@ -193,11 +194,31 @@ void TextEditor::remoteInsert(int fileId, int userId, const std::vector<Symbol>&
   debug("Remote insert of  " + QString::number(symbols.size()) + " chars from user " + QString::number(userId));
 
   auto cursor = _users[userId]->getCursor();
+  auto it = _file->getSymbolsStart();
+  int tempPos = 0;
+  cursor->goStart();
+  QString text = "";
+  QTextCharFormat fmt;
   for(auto &sym : symbols) {
-    pos = _file->remoteInsert(sym);
-    cursor->insert(sym, pos, backgroundColor);
+    pos = _file->remoteInsert(sym, &it, pos);
+    auto movePos = pos - tempPos;
+    auto symFmt = sym.getFormat();
+
+    if(movePos != 0 || symFmt != fmt) {
+      cursor->insert(text, fmt, backgroundColor);
+      cursor->moveForward(movePos);
+      text.clear();
+    }
+
+    text.append(sym.getChar());
+    tempPos = pos + 1;
+    fmt = symFmt;
+  }
+  if(!text.isEmpty()) {
+    cursor->insert(text, fmt, backgroundColor);
   }
 
+  cursor->updateCursorView();
   cursor->show();
   _blockSignals = false;
 }
