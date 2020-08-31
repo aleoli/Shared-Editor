@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="res">
+    <file>logo.png</file>
+    <file>link.png</file>
     <file>home_off.png</file>
     <file>home_on.png</file>
     <file>options_b.png</file>

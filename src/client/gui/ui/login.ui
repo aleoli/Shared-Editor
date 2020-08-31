@@ -23,10 +23,20 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Login</string>
+   <string>Shared Editor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources/res.qrc">
+    <normaloff>:/res/logo.png</normaloff>:/res/logo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>50</width>
+    <height>64</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
