@@ -11,10 +11,20 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Text Editor</string>
+   <string>Shared Editor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources/res.qrc">
+    <normaloff>:/res/logo.png</normaloff>:/res/logo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{background-color: #242A38;}</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>50</width>
+    <height>64</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">

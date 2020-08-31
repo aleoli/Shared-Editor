@@ -11,10 +11,20 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Docs Browser</string>
+   <string>Shared Editor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources/res.qrc">
+    <normaloff>:/res/logo.png</normaloff>:/res/logo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background : #242a38;</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>50</width>
+    <height>64</height>
+   </size>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonIconOnly</enum>
@@ -173,6 +183,7 @@
     <addaction name="actionAbout"/>
     <addaction name="actionLogout"/>
     <addaction name="actionQuit"/>
+    <addaction name="actionShare_Link"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -952,6 +963,9 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionLogout">
    <property name="icon">
@@ -961,15 +975,36 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
    <property name="text">
     <string>Logout</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionHelp">
    <property name="text">
     <string>Help</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionShare_Link">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/res/link.png</normaloff>:/res/link.png</iconset>
+   </property>
+   <property name="text">
+    <string>Share Link</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
  </widget>
