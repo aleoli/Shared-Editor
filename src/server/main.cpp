@@ -29,11 +29,11 @@ int main(int argc, char *argv[]) {
 void signalHandler(int) {
   info("Closing...");
 
-  auto cm = ClientManager::get();
-  cm->quitSlot();
-
   auto mm = MessageManager::get();
   emit mm->quit();
+
+  auto cm = ClientManager::get();
+  cm->quitSlot();
 
   info("Bye bye");
   QCoreApplication::exit(0);
