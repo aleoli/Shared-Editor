@@ -360,10 +360,8 @@ void TextEditor::refresh(bool changeFile) {
   _blockSignals = true;
 
   //salvo pos del cursore mio
-  std::pair<SymbolId, int> pos;
-
-  if(!changeFile)
-    pos = saveCursorPosition(_textEdit->textCursor());
+  int pos;
+  if(!changeFile) pos = _textEdit->textCursor().position();
 
   //cancello
   _textEdit->clear();
@@ -397,9 +395,9 @@ void TextEditor::refresh(bool changeFile) {
 
   //ripristino posizione
   if(!changeFile) {
-    cursor.setPosition(getCursorPosition(pos.first, pos.second));
+    cursor.setPosition(pos);
     _textEdit->setTextCursor(cursor);
-    _cursorPosition = pos.second;
+    _cursorPosition = pos;
   }
 
   _blockSignals = false;
