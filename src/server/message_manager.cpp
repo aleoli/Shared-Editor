@@ -207,8 +207,9 @@ void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;
   auto it = f.getSymbolsStart();
-  for(const auto& sym: syms) {
-    f.remoteInsert(Symbol::fromJsonObject(sym.toObject()), &it);
+  auto symbols = Symbol::jsonArrayToSymbols(syms);
+  for(const auto &sym : symbols) {
+    f.remoteInsert(sym, &it);
   }
 }
 

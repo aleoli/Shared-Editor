@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <vector>
+#include <list>
 #include <optional>
 
 class MessageManager: public QObject {
@@ -78,7 +79,7 @@ public slots:
   void getLinkQuery(const QString &token, int fileId);
   void activateLinkQuery(const QString &token, const QString &link);
 
-  void localInsertQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localInsertQuery(const QString &token, int fileId, const std::list<Symbol> &symbols);
   void localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids);
   void localUpdateQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols);
   void localMoveQuery(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);

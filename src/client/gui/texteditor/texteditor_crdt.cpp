@@ -85,7 +85,7 @@ void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator
 void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &it) {
   auto doc = _textEdit->document();
   QTextCursor cursor(doc);
-  std::vector<Symbol> symAdded;
+  std::list<Symbol> symAdded;
 
   cursor.setPosition(pos);
   for(int i=0; i<added; i++) {

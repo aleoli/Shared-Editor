@@ -7,6 +7,7 @@
 #include <QString>
 
 Q_DECLARE_METATYPE(std::vector<Symbol>)
+Q_DECLARE_METATYPE(std::list<Symbol>)
 Q_DECLARE_METATYPE(std::vector<SymbolId>)
 Q_DECLARE_METATYPE(std::vector<FSElement>)
 Q_DECLARE_METATYPE(File)
@@ -19,6 +20,7 @@ Q_DECLARE_METATYPE(std::optional<int>)
 
 void registerClasses() {
   qRegisterMetaType<std::vector<Symbol> >();
+  qRegisterMetaType<std::list<Symbol> >();
   qRegisterMetaType<std::vector<SymbolId> >();
   qRegisterMetaType<std::vector<FSElement> >();
   qRegisterMetaType<File>();

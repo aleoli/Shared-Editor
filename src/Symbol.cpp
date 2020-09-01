@@ -15,12 +15,12 @@ Symbol::Symbol(SymbolId id, QChar chr) : _id(id), _char(chr) {}
 Symbol::Symbol(SymbolId id, QChar chr, QTextCharFormat fmt)
   : _id(id), _char(chr), _fmt(std::move(fmt)) {}
 
-Symbol::Symbol(const QJsonObject &json, bool readPos) {
-  checkAndAssign(json, readPos);
+Symbol::Symbol(const QJsonObject &json, QFont *font, QBrush *col, QBrush *bac) {
+  checkAndAssign(json, font, col, bac);
 }
 
-Symbol::Symbol(QJsonObject &&json, bool readPos) {
-  checkAndAssign(json, readPos);
+Symbol::Symbol(QJsonObject &&json, QFont *font, QBrush *col, QBrush *bac) {
+  checkAndAssign(json, font, col, bac);
 }
 
 Symbol::Symbol(const Symbol& s) = default;
@@ -73,16 +73,17 @@ bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, boo
   return _char == chr && compareFormats(_fmt, fmt, ignoreBackground);
 }
 
-void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
-  auto idValue = json["id"];
-  auto charValue = json["ch"];
-  auto fmtValue = json["fmt"];
+void Symbol::checkAndAssign (const QJsonObject &json, QFont *font, QBrush *col, QBrush *bac) {
+  auto idValue = json["i"];
+  auto charValue = json["c"];
+  auto fmtValue = json["f"];
+  auto posValue = json["p"];
 
-  if(idValue.isUndefined() || charValue.isUndefined() || fmtValue.isUndefined()) {
+  if(idValue.isUndefined() || charValue.isUndefined() || fmtValue.isUndefined() || posValue.isUndefined()) {
     throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!idValue.isObject() || !fmtValue.isObject()) {
+  if(!idValue.isObject() || !fmtValue.isObject() || !posValue.isArray()) {
     throw SymbolFromJsonException{"One or more fields are not valid"};
   }
 
@@ -93,77 +94,129 @@ void Symbol::checkAndAssign (const QJsonObject &json, bool readPos) {
   }
 
   auto idJson = idValue.toObject();
+  auto fmt = deserializeFormat(fmtValue.toObject(), font, col, bac);
 
-  auto fmt = deserializeFormat(fmtValue.toObject());
-
-  if(readPos) {
-    auto posValue = json["pos"];
-    if(posValue.isUndefined()) {
-      throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
-    }
-
-    if(!posValue.isArray()) {
-      throw SymbolFromJsonException{"One or more fields are not valid"};
-    }
-
-    _pos = utils::jsonArrayToVector<Identifier>(posValue.toArray());
-  }
-
+  _pos = utils::jsonArrayToVector<Identifier>(posValue.toArray());
   _id = SymbolId{idJson};
   _char = QChar(charUnicode);
   _fmt = fmt;
 }
 
-Symbol Symbol::fromJsonObject(const QJsonObject &json, bool readPos) {
-  return Symbol(json, readPos);
+Symbol Symbol::fromJsonObject(const QJsonObject &json, QFont *font, QBrush *col, QBrush *bac) {
+  return Symbol(json, font, col, bac);
 }
 
-Symbol Symbol::fromJsonObject(QJsonObject &&json, bool readPos) {
-  return Symbol(json, readPos);
+Symbol Symbol::fromJsonObject(QJsonObject &&json, QFont *font, QBrush *col, QBrush *bac) {
+  return Symbol(json, font, col, bac);
 }
 
-QJsonObject Symbol::toJsonObject(bool writePos) const {
+QJsonObject Symbol::toJsonObject(QFont *font, QBrush *col, QBrush *bac) const {
   QJsonObject json;
 
-  json["id"] = QJsonValue(_id.toJsonObject());
-  json["ch"] = QJsonValue(_char.unicode());
-  json["fmt"] = QJsonValue(serializeFormat(_fmt));
-
-  if(writePos)
-    json["pos"] = QJsonValue(utils::vectorToJsonArray(_pos));
+  json["i"] = QJsonValue(_id.toJsonObject());
+  json["c"] = QJsonValue(_char.unicode());
+  json["f"] = QJsonValue(serializeFormat(_fmt, font, col, bac));
+  json["p"] = QJsonValue(utils::vectorToJsonArray(_pos));
 
   return json;
 }
 
-QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt) {
+std::list<Symbol> Symbol::jsonArrayToSymbols(const QJsonArray &array){
+  std::list<Symbol> symbols;
+  QFont font;
+  QBrush col, bac;
+
+  for(auto &&el : array) {
+    symbols.push_back(Symbol::fromJsonObject(el.toObject(), &font, &col, &bac));
+  }
+
+  return symbols;
+}
+
+QJsonArray Symbol::symbolsToJsonArray(const std::list<Symbol> &symbols){
+  QJsonArray array;
+  QFont font;
+  QBrush col, bac;
+
+  //force these objects to be invalid
+  font.fromString("a");
+  col.setColor(QColor{""});
+  bac.setColor(QColor{""});
+
+  for(auto &&sym : symbols) {
+    array.push_back(sym.toJsonObject(&font, &col, &bac));
+  }
+
+  return array;
+}
+
+QJsonObject Symbol::serializeFormat(const QTextCharFormat &fmt, QFont *font, QBrush *col, QBrush *bac) {
   QJsonObject json;
 
-  json["fnt"] = QJsonValue(fontToString(fmt.font()));
-  json["col"] = QJsonValue(brushToString(fmt.foreground(), false));
-  json["bac"] = QJsonValue(brushToString(fmt.background(), true));
+  auto symFont = fmt.font();
+  auto symCol = fmt.foreground();
+  auto symBac = fmt.background();
+
+  if(font == nullptr || *font != symFont) {
+    json["f"] = QJsonValue(fontToString(symFont));
+    if(font != nullptr) *font = symFont;
+  }
+
+  if(col == nullptr || *col != symCol) {
+    json["c"] = QJsonValue(brushToString(symCol, false));
+    if(col != nullptr) *col = symCol;
+  }
+
+  if(bac == nullptr || *bac != symBac) {
+    json["b"] = QJsonValue(brushToString(symBac, true));
+    if(bac != nullptr) *bac = symBac;
+  }
 
   return json;
 }
 
-QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
+QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json, QFont *font, QBrush *col, QBrush *bac) {
   QTextCharFormat fmt;
 
-  auto fontValue = json["fnt"];
-  auto colorValue = json["col"];
-  auto backgroundColorValue = json["bac"];
+  auto fontValue = json["f"];
+  auto colorValue = json["c"];
+  auto backgroundColorValue = json["b"];
 
-  if(fontValue.isUndefined() || colorValue.isUndefined()
-      || backgroundColorValue.isUndefined()) {
-    throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+  //font
+  if(fontValue.isUndefined()) {
+    if(font == nullptr) throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+    fmt.setFont(*font);
+  }
+  else {
+    if(!fontValue.isString()) throw SymbolFromJsonException{"One or more fields are not valid"};
+    auto f = stringToFont(fontValue.toString());
+    fmt.setFont(f);
+    if(font != nullptr) *font = f;
   }
 
-  if(!fontValue.isString() || !colorValue.isString() || !backgroundColorValue.isString()) {
-    throw SymbolFromJsonException{"One or more fields are not valid"};
+  //color
+  if(colorValue.isUndefined()) {
+    if(col == nullptr) throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+    fmt.setForeground(*col);
+  }
+  else {
+    if(!colorValue.isString()) throw SymbolFromJsonException{"One or more fields are not valid"};
+    auto brush = stringToBrush(colorValue.toString());
+    fmt.setForeground(brush);
+    if(col != nullptr) *col = brush;
   }
 
-  fmt.setFont(stringToFont(fontValue.toString()));
-  fmt.setForeground(stringToBrush(colorValue.toString()));
-  fmt.setBackground(stringToBrush(backgroundColorValue.toString()));
+  //background color
+  if(backgroundColorValue.isUndefined()) {
+    if(bac == nullptr) throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+    fmt.setBackground(*bac);
+  }
+  else {
+    if(!backgroundColorValue.isString()) throw SymbolFromJsonException{"One or more fields are not valid"};
+    auto brush = stringToBrush(backgroundColorValue.toString());
+    fmt.setBackground(brush);
+    if(bac != nullptr) *bac = brush;
+  }
 
   return fmt;
 }

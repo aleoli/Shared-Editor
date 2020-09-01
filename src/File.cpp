@@ -59,9 +59,9 @@ File& File::operator=(File &&file) noexcept {
 }
 
 void File::checkAndAssign(const QJsonObject &json) {
-  auto usersValue = json["users"];
-  auto symbolsValue = json["symbols"];
-  auto commentsValue = json["comments"];
+  auto usersValue = json["usrs"];
+  auto symbolsValue = json["syms"];
+  auto commentsValue = json["cmts"];
 
   if(usersValue.isUndefined() || symbolsValue.isUndefined() || commentsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
@@ -77,7 +77,7 @@ void File::checkAndAssign(const QJsonObject &json) {
 
   auto ul = std::unique_lock{this->_mutex};
   _users = jsonArrayToUsers(users);
-  _symbols = jsonArrayToSymbols(symbols);
+  _symbols = Symbol::jsonArrayToSymbols(symbols);
   _comments = jsonArrayToComments(comments);
 }
 
@@ -112,10 +112,10 @@ File File::fromQByteArray(QByteArray &&array) {
 QJsonObject File::toJsonObject() const {
   QJsonObject json;
 
-  json["users"] = QJsonValue(usersToJsonArray());
-  json["comments"] = QJsonValue(commentsToJsonArray());
+  json["usrs"] = QJsonValue(usersToJsonArray());
+  json["cmts"] = QJsonValue(commentsToJsonArray());
   auto sl = std::shared_lock{this->_mutex};
-  json["symbols"] = QJsonValue(symbolsToJsonArray());
+  json["syms"] = QJsonValue(Symbol::symbolsToJsonArray(_symbols));
 
   return json;
 }
@@ -141,8 +141,8 @@ QJsonArray File::usersToJsonArray() const {
   for(auto &el : _users) {
     QJsonObject value;
 
-    value["uid"] = el.second.userId;
-    value["name"] = el.second.username;
+    value["id"] = el.second.userId;
+    value["nm"] = el.second.username;
     value["on"] = el.second.online;
 
     array.append(value);
@@ -160,8 +160,8 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray 
     }
 
     auto obj = el.toObject();
-    auto userIdValue = obj["uid"];
-    auto usernameValue = obj["name"];
+    auto userIdValue = obj["id"];
+    auto usernameValue = obj["nm"];
     auto onlineValue = obj["on"];
 
     if(userIdValue.isUndefined() || usernameValue.isUndefined() || onlineValue.isUndefined()) {
@@ -213,8 +213,8 @@ QJsonArray File::symbolsToJsonArray() const {
 
 File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
   auto idV = obj["id"];
-  auto textV = obj["text"];
-  auto creationDateV = obj["date"];
+  auto textV = obj["tx"];
+  auto creationDateV = obj["cd"];
 
   if(idV.isUndefined() || textV.isUndefined() || creationDateV.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
@@ -245,8 +245,8 @@ QJsonObject File::commentToJsonObject(const Comment &comment) {
   QJsonObject value;
 
   value["id"] = comment.identifier.toJsonObject();
-  value["text"] = comment.text;
-  value["date"] = comment.creationDate.toString();
+  value["tx"] = comment.text;
+  value["cd"] = comment.creationDate.toString();
 
   return value;
 }

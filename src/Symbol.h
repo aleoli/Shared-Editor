@@ -19,8 +19,8 @@ public:
   Symbol();
   Symbol(SymbolId id, QChar chr);
   Symbol(SymbolId id, QChar chr, QTextCharFormat fmt);
-  explicit Symbol(const QJsonObject &json, bool readPos = true);
-  explicit Symbol(QJsonObject &&json, bool readPos = true);
+  explicit Symbol(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
+  explicit Symbol(QJsonObject &&json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
   Symbol(const Symbol& s);
   Symbol(Symbol&& s) noexcept;
 
@@ -31,12 +31,15 @@ public:
   friend bool operator==(const Symbol& lhs, const Symbol& rhs);
   friend bool operator!=(const Symbol& lhs, const Symbol& rhs);
 
-  static Symbol fromJsonObject(const QJsonObject &json, bool readPos = true);
-  static Symbol fromJsonObject(QJsonObject &&json, bool readPos = true);
-  [[nodiscard]] QJsonObject toJsonObject(bool writePos = true) const;
+  static Symbol fromJsonObject(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
+  static Symbol fromJsonObject(QJsonObject &&json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
+  [[nodiscard]] QJsonObject toJsonObject(QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr) const;
 
-  static QJsonObject serializeFormat(const QTextCharFormat &fmt);
-  static QTextCharFormat deserializeFormat(const QJsonObject &json);
+  static std::list<Symbol> jsonArrayToSymbols(const QJsonArray &array);
+  static QJsonArray symbolsToJsonArray(const std::list<Symbol> &symbols);
+
+  static QJsonObject serializeFormat(const QTextCharFormat &format, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
+  static QTextCharFormat deserializeFormat(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
 
   void setSymbolId(const SymbolId &id);
   [[nodiscard]] SymbolId getSymbolId() const;
@@ -72,7 +75,7 @@ public:
   [[nodiscard]] QColor getBackgroundColor() const;
 
 private:
-  void checkAndAssign(const QJsonObject &json, bool readPos = true);
+  void checkAndAssign(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
   [[nodiscard]] std::string posToString() const; //TODO vedi se rimuovere
 
   static QColor fixColor(const QBrush &brush, bool isBackground);
