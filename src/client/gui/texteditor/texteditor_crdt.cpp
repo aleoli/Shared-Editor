@@ -21,11 +21,17 @@ void TextEditor::_contentsChange(int pos, int removed, int added) {
     //debug("New Values: removed: " + QString::number(removed) + " added: " + QString::number(added));
   }
 
-  if(!_isFakeUpdate(pos,removed, added)) {
+  auto it = _file->iteratorAt(pos);
+  if(!_isFakeUpdate(pos,removed, added, it)) {
     debug("TextEditor::_contentsChange | pos: " + QString::number(pos) + " removed: " + QString::number(removed) + " added: " + QString::number(added));
 
-    _handleDelete(pos, removed);
-    _handleInsert(pos, added);
+    if(removed > 0) _handleDelete(pos, removed, it);
+
+    if(added > 0) {
+      if(removed > 0) it = _file->iteratorAt(pos); // because it is not valid anymore
+      _handleInsert(pos, added, it);
+    }
+
     updateActions();
   }
   else {
@@ -35,7 +41,7 @@ void TextEditor::_contentsChange(int pos, int removed, int added) {
   _cursorPosition = pos + added;
 }
 
-bool TextEditor::_isFakeUpdate(int pos, int removed, int added) {
+bool TextEditor::_isFakeUpdate(int pos, int removed, int added, std::list<Symbol>::iterator it) {
   if(pos < 0 || removed < 0 || added < 0) return true;
   if(removed != added) return false;
   if(removed == 0) return true;
@@ -43,7 +49,6 @@ bool TextEditor::_isFakeUpdate(int pos, int removed, int added) {
   auto doc = _textEdit->document();
   QTextCursor cursor(doc);
   cursor.setPosition(pos);
-  auto it = _file->iteratorAt(pos);
 
   for(int i=0; i<removed; i++) {
     cursor.movePosition(QTextCursor::NextCharacter);
@@ -60,11 +65,8 @@ bool TextEditor::_isFakeUpdate(int pos, int removed, int added) {
   return true;
 }
 
-void TextEditor::_handleDelete(int pos, int removed) {
-  if(removed == 0) return;
-
+void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator &it) {
   std::vector<SymbolId> symRemoved;
-  auto it = _file->iteratorAt(pos);
 
   for(int i=0; i<removed; i++) {
       try {
@@ -80,15 +82,12 @@ void TextEditor::_handleDelete(int pos, int removed) {
   emit localDelete(_user->getToken(), _user->getFileId(), symRemoved);
 }
 
-void TextEditor::_handleInsert(int pos, int added) {
-  if(added == 0) return;
-
+void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &it) {
   auto doc = _textEdit->document();
   QTextCursor cursor(doc);
   std::vector<Symbol> symAdded;
 
   cursor.setPosition(pos);
-  auto it = _file->iteratorAt(pos);
   for(int i=0; i<added; i++) {
     cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
 
@@ -162,10 +161,10 @@ void TextEditor::_cursorChanged() {
 
   // se crasha vuol dire che c'è un problema da qualche parte da risolvere
   try {
-    auto pos = saveCursorPosition(cursor);
-    if(_cursorPosition == pos.second) return; // ho già registrato questo spostamento, non mando nulla
+    if(_cursorPosition == cursor.position()) return; // ho già registrato questo spostamento, non mando nulla
 
     debug("TextEditor::_cursorChanged");
+    auto pos = saveCursorPosition(cursor);
     emit localMove(_user->getToken(), _user->getFileId(), pos.first, pos.second);
 
     //debug("Cursore spostato in posizione " + QString::number(pos.second));

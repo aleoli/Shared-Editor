@@ -326,13 +326,21 @@ Symbol &File::_symbolAt(int pos, std::list<Symbol>::iterator *it) {
 std::list<Symbol>::iterator File::iteratorAt(int pos) {
   auto size = _symbols.size();
 
-  if(pos >= size) return _symbols.end();
-  if(pos == 0) return _symbols.begin();
-  if(pos == size - 1) return std::prev(_symbols.end());
+  if(pos > size || pos < 0)
+    throw FileSymbolsException{"File::iteratorAt: bad pos"};
 
-  //TODO logic to go backwards ..
-  auto it = _symbols.begin();
-  std::advance(it, pos);
+  std::list<Symbol>::iterator it;
+  int middle = size / 2;
+  if(pos <= middle) {
+    //debug("Closer to the start");
+    it = _symbols.begin();
+    std::advance(it, pos);
+  }
+  else {
+    //debug("Closer to the end");
+    it = _symbols.end();
+    std::advance(it, pos - size);
+  }
 
   return it;
 }

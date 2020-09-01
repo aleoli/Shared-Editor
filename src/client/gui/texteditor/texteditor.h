@@ -113,9 +113,9 @@ private slots:
 
   //CRDT
   void _contentsChange(int pos, int removed, int added);
-  bool _isFakeUpdate(int pos, int removed, int added);
-  void _handleDelete(int pos, int removed);
-  void _handleInsert(int pos, int added);
+  bool _isFakeUpdate(int pos, int removed, int added, std::list<Symbol>::iterator it);
+  void _handleDelete(int pos, int removed, std::list<Symbol>::iterator &it);
+  void _handleInsert(int pos, int added, std::list<Symbol>::iterator &it);
   void _cursorChanged();
   void _updateCursors();
   void _partialRefresh(int pos, int added);
