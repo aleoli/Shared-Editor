@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>321</width>
-    <height>249</height>
+    <width>407</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,85 +24,7 @@
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QLabel" name="title_port">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLabel{
-border: 0px solid none;
-color: white;
-font-size: 25px;
-qproperty-alignment: 'AlignHCenter|AlignVCenter';
-}</string>
-     </property>
-     <property name="text">
-      <string>Port:</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::AutoText</enum>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="title_IP">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLabel{
-border: 0px solid none;
-color: white;
-font-size: 25px;
-qproperty-alignment: 'AlignHCenter|AlignVCenter';
-}</string>
-     </property>
-     <property name="text">
-      <string>IP:</string>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-     <property name="indent">
-      <number>10</number>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="field_IP">
-     <property name="styleSheet">
-      <string notr="true">QLabel{
-border: 0px solid none;
-color: white;
-font-size: 20px;
-}
-</string>
-     </property>
-     <property name="text">
-      <string>130.192.0.1</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="field_port">
-     <property name="styleSheet">
-      <string notr="true">QLabel{
-border: 0px solid none;
-color: white;
-font-size: 20px;
-}
-</string>
-     </property>
-     <property name="text">
-      <string>80/80</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <layout class="QHBoxLayout" name="buttons">
      <property name="leftMargin">
       <number>10</number>
@@ -194,6 +116,126 @@ QPushButton:focus {
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="title_IP">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+border: 0px solid none;
+color: white;
+font-size: 25px;
+qproperty-alignment: 'AlignRight|AlignVCenter';
+}</string>
+     </property>
+     <property name="text">
+      <string>IP:</string>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <property name="indent">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="title_port">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+border: 0px solid none;
+color: white;
+font-size: 25px;
+qproperty-alignment: 'AlignRight|AlignVCenter';
+}</string>
+     </property>
+     <property name="text">
+      <string>Port:</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::AutoText</enum>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QPushButton" name="logo">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>110</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton:focus {
+   outline: none;
+}
+
+QPushButton {
+	background-color: #242A38;
+	background-image: url(:/res/logo.png);
+	background-repeat: no-repeat;
+	background-position: center top;
+	text-align: bottom;	
+	font: 87 italic 18pt &quot;Segoe UI Black&quot;;
+	color: #fff;/*f76163*/
+	text-decoration: none;
+	padding-bottom: 0px;
+	border: none;
+}</string>
+     </property>
+     <property name="text">
+      <string>Shared Editor</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+border: 0px solid none;
+color: white;
+font-size: 20px;
+border-bottom: 2px solid #4E596F;
+}
+</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="lineEdit_2">
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+border: 0px solid none;
+color: white;
+font-size: 20px;
+border-bottom: 2px solid #4E596F;
+}
+</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

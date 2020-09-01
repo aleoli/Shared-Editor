@@ -86,7 +86,7 @@
          <x>0</x>
          <y>0</y>
          <width>1348</width>
-         <height>562</height>
+         <height>597</height>
         </rect>
        </property>
       </widget>
@@ -100,7 +100,7 @@
      <x>0</x>
      <y>0</y>
      <width>1366</width>
-     <height>31</height>
+     <height>32</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -179,8 +179,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionHelp"/>
-    <addaction name="actionAbout"/>
     <addaction name="actionLogout"/>
     <addaction name="actionQuit"/>
     <addaction name="actionShare_Link"/>
@@ -194,7 +192,13 @@
    <property name="minimumSize">
     <size>
      <width>1072</width>
-     <height>154</height>
+     <height>120</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>120</height>
     </size>
    </property>
    <property name="autoFillBackground">
@@ -252,6 +256,9 @@
              <height>0</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="styleSheet">
             <string notr="true">QPushButton:focus {
    border: none;
@@ -265,19 +272,11 @@ border-radius: 2px;
 background-image: url(:/res/home_off.png);
 background-repeat: no-repeat;
 background-position: center center;
-/*margin-left: 50px;
-margin-right: 50px;*/
 padding-top: 5px;
 padding-bottom: 5px;
 }
 
 QPushButton:hover {
-/*background: qradialgradient(
-cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-radius: 0.7, stop: 0 #000, stop: 1 #f65964
-);*/
-background-color: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
 background-image: url(:/res/home_on.png);
 background-repeat: no-repeat;
 background-position: center center;
@@ -285,12 +284,8 @@ background-position: center center;
 
 QPushButton:pressed {
 border-style: inset;
-/*background: qradialgradient(
-cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-radius: 0.7, stop: 0 #f65964, stop: 1 #000
-);*/
-background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-              fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+background-color: white;
+border-color: white;
 }</string>
            </property>
            <property name="text">
@@ -315,6 +310,9 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
              <height>37</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
@@ -335,22 +333,14 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
                                                     }
 
                                                     QPushButton:hover {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
-                                                    );*/
-                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-                                                    }
+                                                    background-color: #4e596f;
+													border-color: #4e596f;
+													}
 
                                                     QPushButton:pressed {
                                                     border-style: inset;
-                                                    /*background: qradialgradient(
-                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
-                                                    );*/
-                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+                                                    background-color: white;
+													border-color: white;
                                                     }</string>
            </property>
            <property name="text">
@@ -388,6 +378,9 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
              <height>37</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="styleSheet">
             <string notr="true">QPushButton:focus {
                                                     border: none;
@@ -405,22 +398,14 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
                                                     }
 
                                                     QPushButton:hover {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
-                                                    );*/
-                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-                                                    }
+                                                    background-color: #4e596f;
+													border-color: #4e596f;
+													}
 
                                                     QPushButton:pressed {
                                                     border-style: inset;
-                                                    /*background: qradialgradient(
-                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
-                                                    );*/
-                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+                                                    background-color: white;
+													border-color: white;
                                                     }</string>
            </property>
            <property name="text">
@@ -449,6 +434,9 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
              <height>37</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
@@ -468,23 +456,16 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
                                                     padding-bottom: 5px;
                                                     }
 
+
                                                     QPushButton:hover {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
-                                                    );*/
-                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-                                                    }
+                                                    background-color: #4e596f;
+													border-color: #4e596f;
+													}
 
                                                     QPushButton:pressed {
                                                     border-style: inset;
-                                                    /*background: qradialgradient(
-                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
-                                                    );*/
-                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+                                                    background-color: white;
+													border-color: white;
                                                     }</string>
            </property>
            <property name="text">
@@ -510,6 +491,9 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
              <height>37</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="styleSheet">
             <string notr="true">QPushButton:focus {
                                                     border: none;
@@ -528,22 +512,14 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
                                                     }
 
                                                     QPushButton:hover {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
-                                                    );*/
-                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-                                                    }
+                                                    background-color: #4e596f;
+													border-color: #4e596f;
+													}
 
                                                     QPushButton:pressed {
                                                     border-style: inset;
-                                                    /*background: qradialgradient(
-                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
-                                                    );*/
-                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+                                                    background-color: white;
+													border-color: white;
                                                     }</string>
            </property>
            <property name="text">
@@ -575,6 +551,9 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
              <height>37</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="styleSheet">
             <string notr="true">QPushButton {
                                                     background: #f65964;
@@ -587,23 +566,16 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
                                                     padding-bottom: 5px;
                                                     }
 
+
                                                     QPushButton:hover {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
-                                                    );*/
-                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-                                                    }
+                                                    background-color: #4e596f;
+													border-color: #4e596f;
+													}
 
                                                     QPushButton:pressed {
                                                     border-style: inset;
-                                                    /*background: qradialgradient(
-                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
-                                                    );*/
-                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+                                                    background-color: white;
+													border-color: white;
                                                     }
 
                                                     QPushButton:focus {
@@ -634,6 +606,9 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
              <height>37</height>
             </size>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="styleSheet">
             <string notr="true">QPushButton {
                                                     background: #f65964;
@@ -645,23 +620,16 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
                                                     padding-bottom: 5px;
                                                     }
 
+
                                                     QPushButton:hover {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
-                                                    );*/
-                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
-                                                    }
+                                                    background-color: #4e596f;
+													border-color: #4e596f;
+													}
 
                                                     QPushButton:pressed {
                                                     border-style: inset;
-                                                    /*background: qradialgradient(
-                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
-                                                    );*/
-                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+                                                    background-color: white;
+													border-color: white;
                                                     }
 
                                                     QPushButton:focus {
@@ -718,81 +686,15 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btn_search">
-           <property name="minimumSize">
-            <size>
-             <width>38</width>
-             <height>38</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>38</width>
-             <height>38</height>
-            </size>
-           </property>
-           <property name="baseSize">
-            <size>
-             <width>38</width>
-             <height>38</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-                                                    background: #4e596f;
-                                                    border: 0px solid #242a38;
-                                                    border-radius: 19px;
-                                                    padding-top: 7px;
-                                                    padding-left: 5px;
-                                                    }
-
-                                                    QPushButton:hover {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
-                                                    );*/
-                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #4e596f, stop:1 white);
-                                                    }
-
-                                                    QPushButton:pressed {
-                                                    /*background: qradialgradient(
-                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
-                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
-                                                    );*/
-                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
-                                                    fx:0.5, fy:0.5, stop:0 #4e596f, stop:1 #242a38);
-                                                    }
-
-                                                    QPushButton:focus {
-                                                    outline: none;
-                                                    }</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="resources/res.qrc">
-             <normaloff>:/res/search.png</normaloff>:/res/search.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>28</width>
-             <height>29</height>
-            </size>
-           </property>
-           <property name="shortcut">
-            <string>Shift+S</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QComboBox" name="comboBox_order">
            <property name="maximumSize">
             <size>
              <width>16777215</width>
              <height>30</height>
             </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="styleSheet">
             <string notr="true">QComboBox {
@@ -853,15 +755,18 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
           <widget class="QPushButton" name="btn_logout">
            <property name="minimumSize">
             <size>
-             <width>38</width>
-             <height>38</height>
+             <width>42</width>
+             <height>42</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>38</width>
-             <height>38</height>
+             <width>42</width>
+             <height>42</height>
             </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="toolTip">
             <string>logout or edit account</string>
