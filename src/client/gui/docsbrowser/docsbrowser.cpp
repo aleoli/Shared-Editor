@@ -27,6 +27,7 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
 
   _widgetAccount = ui->btn_logout;
   _widgetNewFile = ui->btn_new_file;
+  _widgetOpenLink = ui->btn_open_link;
   _widgetSearchButton = ui->btn_search;
   _widgetSearch = ui->ledit_search;
 
@@ -44,6 +45,7 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
 
   connect(_widgetHome, &QPushButton::clicked, this, &DocsBrowser::_goToHome);
   connect(_widgetNewFolder, &QPushButton::clicked, this, &DocsBrowser::_newDir);
+  connect(_widgetOpenLink, &QPushButton::clicked, this, &DocsBrowser::_openLink);
 
   connect(_widgetBack, &QPushButton::clicked, this, &DocsBrowser::_goBack);
   connect(_widgetForward, &QPushButton::clicked, this, &DocsBrowser::_goFwd);
@@ -216,6 +218,13 @@ void DocsBrowser::_changeSortType(int newSortType) {
   }
   this->_currentSortType = static_cast<SortType>(newSortType);
   this->_showDir(this->_currentElements);
+}
+
+void DocsBrowser::_openLink(bool checked) {
+  auto link = Input::show(this, "Insert your link", "", "Cancel", "Open");
+  if(link && !link->isEmpty()) {
+    emit activateLink(_user->getToken(), *link);
+  }
 }
 
 void DocsBrowser::_account(bool checked) {
