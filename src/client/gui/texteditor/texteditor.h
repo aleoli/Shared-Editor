@@ -90,6 +90,7 @@ private slots:
   void _showConnected(bool checked);
   void _account();
   void _rename(const QString &name);
+  void _setFilename();
   void _close(bool checked);
   void _buttonAlignment(QAbstractButton *button);
   void _actionAlignment(QAction *action);
