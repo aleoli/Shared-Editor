@@ -15,6 +15,7 @@ QString getAlertTitle(Alert alert);
 #define REGISTRATION_ERROR QString("Registration error")
 #define EDIT_ERROR QString("Edit error")
 
+#define WRONG_PORT QString("Port must be an int between 1 and 65535!")
 #define INCORRECT_FIELDS QString("Check fields!")
 #define WRONG_PASSWORD QString("Password has to contain at least an Uppercase char, a Lowercase char, a number, and length are to be equal or more than 6")
 #define PSW_MISMATCH QString("Password and confirm password are different!")

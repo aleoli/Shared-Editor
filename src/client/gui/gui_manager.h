@@ -10,6 +10,7 @@
 #include "sys.h"
 #include "utils.h"
 #include "user.h"
+#include "connect.h"
 #include "login.h"
 #include "docsbrowser.h"
 #include "edit.h"
@@ -18,7 +19,8 @@
 #include "alert_messages.h"
 #include "FSElement.h"
 
-#define CONNECT_TIME_LIMIT 5000
+#define CONNECT_TIME_LIMIT 2000
+#define AUTO_CONNECT 0
 
 class GuiManager: public QObject
 {
@@ -36,6 +38,8 @@ public:
   void run();
 
 signals:
+  void connect(const QString &host, int port);
+  void abort();
   void quit();
 
   void loginQuery(const QString &username, const QString &password);
@@ -81,6 +85,7 @@ private slots:
   void connected();
   void connectionLost();
   void checkConnection();
+  void openConnection(const QString &host, int port);
 
   // messages from windows
   void loginLogin(const QString &username, const QString &password);
@@ -130,7 +135,7 @@ private:
   static std::shared_ptr<GuiManager> instance;
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
 
-  void initThreads(const SysConf &conf);
+  void initThreads();
   void connectWidgets();
   void connectClientToServer();
   void connectServerToClient();
@@ -144,6 +149,7 @@ private:
   bool _connected;
 
   //finestre
+  Connect *_widgetConnect;
   Login *_widgetLogin;
   DocsBrowser *_widgetDocsBrowser;
   Edit *_widgetEdit;

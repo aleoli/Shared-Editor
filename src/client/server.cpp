@@ -7,24 +7,26 @@
 
 std::shared_ptr<Server> Server::instance = nullptr;
 
-Server::Server(QString host, int port): QObject(nullptr) {
-  this->_host = host;
-  this->_port = port;
+Server::Server() {
   this->_socket = new QTcpSocket(this);
   QObject::connect(this->_socket, SIGNAL(readyRead()), this, SLOT(read()));
   QObject::connect(this->_socket, SIGNAL(connected()), this, SIGNAL(connected()));
   QObject::connect(this->_socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
 }
 
-std::shared_ptr<Server> Server::get(QString host, int port) {
+std::shared_ptr<Server> Server::get() {
   if(instance == nullptr) {
-    instance.reset(new Server{host, port});
+    instance.reset(new Server);
   }
   return instance;
 }
 
-void Server::connect() {
-  this->_socket->connectToHost(this->_host, this->_port);
+void Server::connect(const QString &host, int port) {
+  this->_socket->connectToHost(host, port);
+}
+
+void Server::abort() {
+  this->_socket->abort();
 }
 
 void Server::disconnect() {
@@ -34,7 +36,7 @@ void Server::disconnect() {
   emit this->disconnected();
 }
 
-void Server::write(QByteArray data) {
+void Server::write(const QByteArray &data) {
   QByteArray data2;
   quint32 size = data.size();
   QDataStream ds(&data2, QIODevice::WriteOnly);

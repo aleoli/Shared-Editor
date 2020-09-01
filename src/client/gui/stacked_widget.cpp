@@ -20,6 +20,8 @@ void StackedWidget::show() {
     throw GuiException{"show failed: no widgets in the StackedWidget!"};
   }
 
+  if(_show) return;
+
   _current->show();
   _show = true;
 }
@@ -59,7 +61,7 @@ void StackedWidget::addWidget(MainWindow *widget) {
 
 void StackedWidget::setCurrentWidget(MainWindow *widget) {
   if(_current == widget) return;
-  
+
   auto it = std::find(_widgets.begin(), _widgets.end(), widget);
   if (it == _widgets.end()) {
     throw GuiException{"setCurrentWidget failed: element not present!"};

@@ -18,11 +18,12 @@ std::shared_ptr<GuiManager> GuiManager::instance = nullptr;
 
 GuiManager::GuiManager(const SysConf &conf, QObject *parent)
   : QObject(parent), _connected(false) {
-  initThreads(conf);
+  initThreads();
 
   _stackedWidget = new StackedWidget();
   _user = User::get();
 
+  _widgetConnect = new Connect;
   _widgetLogin = new Login;
   _widgetDocsBrowser = new DocsBrowser;
   _widgetEdit = new Edit;
@@ -30,12 +31,14 @@ GuiManager::GuiManager(const SysConf &conf, QObject *parent)
   _widgetTextEditor = new TextEditor;
 
   // lo stacked prende l'ownership di queste finestre
+  _stackedWidget->addWidget(_widgetConnect);
   _stackedWidget->addWidget(_widgetLogin);
   _stackedWidget->addWidget(_widgetDocsBrowser);
   _stackedWidget->addWidget(_widgetEdit);
   _stackedWidget->addWidget(_widgetRegistration);
   _stackedWidget->addWidget(_widgetTextEditor);
 
+  _widgetConnect->setDefaultAddress(conf.host, conf.port);
   connectWidgets();
   connectClientToServer();
   connectServerToClient();
@@ -59,10 +62,10 @@ std::shared_ptr<GuiManager> GuiManager::get(std::optional<SysConf> conf) {
   return instance;
 }
 
-void GuiManager::initThreads(const SysConf &conf) {
+void GuiManager::initThreads() {
   // inizializzazione threads
   _manager = MessageManager::get();
-  _server = Server::get(conf.host, conf.port);
+  _server = Server::get();
 
   _serverThread = new QThread{this};
   _server->moveToThread(_serverThread);
@@ -70,7 +73,8 @@ void GuiManager::initThreads(const SysConf &conf) {
   _managerThread = new QThread{this};
   _manager->moveToThread(_managerThread);
 
-  QObject::connect(_serverThread, SIGNAL(started()), _server.get(), SLOT(connect()));
+  QObject::connect(this, SIGNAL(connect(QString, int)), _server.get(), SLOT(connect(QString, int)));
+  QObject::connect(this, SIGNAL(abort()), _server.get(), SLOT(abort()));
   QObject::connect(_server.get(), SIGNAL(connected()), this, SLOT(connected()));
   QObject::connect(_server.get(), SIGNAL(disconnected()), this, SLOT(connectionLost()));
   QObject::connect(_server.get(), SIGNAL(dataReady(QByteArray)), _manager.get(), SLOT(process_data(QByteArray)));
@@ -83,6 +87,7 @@ void GuiManager::connectWidgets() {
   QObject::connect(_stackedWidget, SIGNAL(quit()), this, SLOT(closeStacked()));
 
   // alerts
+  QObject::connect(_widgetConnect, &Connect::alert, this, &GuiManager::alert);
   QObject::connect(_widgetLogin, &Login::alert, this, &GuiManager::alert);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::alert, this, &GuiManager::alert);
   QObject::connect(_widgetEdit, &Edit::alert, this, &GuiManager::alert);
@@ -93,6 +98,10 @@ void GuiManager::connectWidgets() {
   QObject::connect(_user.get(), &User::iconChanged, _widgetDocsBrowser, &DocsBrowser::setIcon);
   QObject::connect(_user.get(), &User::iconChanged, _widgetEdit, &Edit::setIcon);
   QObject::connect(_user.get(), &User::iconChanged, _widgetTextEditor, &TextEditor::setIcon);
+
+  //Connect
+  QObject::connect(_widgetConnect, &Connect::openConnection, this, &GuiManager::openConnection);
+  QObject::connect(_widgetConnect, &Connect::quit, this, &GuiManager::quit);
 
   //Login
   QObject::connect(_widgetLogin, &Login::login, this, &GuiManager::loginLogin);
@@ -212,7 +221,8 @@ void GuiManager::connectServerToClient() {
 void GuiManager::connected() {
   info("Connesso al server");
   _connected = true;
-  _stackedWidget->show();
+  unfreezeWindow();
+  showWindow(_widgetLogin);
 }
 
 void GuiManager::connectionLost() {
@@ -223,22 +233,36 @@ void GuiManager::connectionLost() {
 void GuiManager::checkConnection() {
   if(_connected) return;
 
+  emit abort();
+  unfreezeWindow();
+  showWindow(_widgetConnect);
   alert(Alert::ERROR, "Cannot connect to the server.", "Connection error");
-  emit quit();
+}
+
+void GuiManager::openConnection(const QString &host, int port) {
+  debug("Connection " + host + " " + QString::number(port));
+  freezeWindow();
+  emit connect(host, port);
+  QTimer::singleShot(CONNECT_TIME_LIMIT, this, &GuiManager::checkConnection);
 }
 
 void GuiManager::run() {
   info("GuiManager running");
   _serverThread->start();
   _managerThread->start();
-  QTimer::singleShot(CONNECT_TIME_LIMIT, this, &GuiManager::checkConnection);
+
+#if AUTO_CONNECT
+  openConnection(_widgetConnect->getHost(), _widgetConnect->getPort());
+#else
+  _stackedWidget->show();
+#endif
 }
 
 void GuiManager::closeStacked() {
   debug("Pressed close button");
 
-  if(Confirm::show(_stackedWidget->currentWidget(), "Exit"))
-    emit quit();
+  auto current = _stackedWidget->currentWidget();
+  if(current == nullptr || current == _widgetConnect || Confirm::show(current, "Exit")) emit quit();
 }
 
 void GuiManager::alert(Alert type, const QString &what, const QString &title) {
@@ -251,16 +275,17 @@ void GuiManager::showWindow(MainWindow *window, bool clear) {
     window->clear();
 
   _stackedWidget->setCurrentWidget(window);
+  _stackedWidget->show();
 }
 
 void GuiManager::freezeWindow() {
   auto widget = static_cast<MainWindow *>(_stackedWidget->currentWidget());
-  widget->freeze();
+  if(widget != nullptr) widget->freeze();
 }
 
 void GuiManager::unfreezeWindow() {
   auto widget = static_cast<MainWindow *>(_stackedWidget->currentWidget());
-  widget->unfreeze();
+  if(widget != nullptr) widget->unfreeze();
 }
 
 /* ### LOGIN ### */
