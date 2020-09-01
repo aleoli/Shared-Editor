@@ -52,7 +52,6 @@ private slots:
   void _newFile(bool checked);
   void _newDir(bool checked);
   void _logout(bool checked);
-  void _search(bool checked);
   void _goToHome(bool checked);
   void _goBack(bool checked);
   void _goFwd(bool checked);
@@ -75,7 +74,7 @@ private:
   QPushButton *_widgetBack, *_widgetForward, *_widgetUp;
   QPushButton *_widgetOpenLink;
 
-  QPushButton *_widgetAccount, *_widgetNewFile, *_widgetSearchButton;
+  QPushButton *_widgetAccount, *_widgetNewFile;
   QLineEdit *_widgetSearch;
   QAction *_actionLogout;
 

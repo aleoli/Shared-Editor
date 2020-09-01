@@ -28,7 +28,6 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
   _widgetAccount = ui->btn_logout;
   _widgetNewFile = ui->btn_new_file;
   _widgetOpenLink = ui->btn_open_link;
-  _widgetSearchButton = ui->btn_search;
   _widgetSearch = ui->ledit_search;
 
   _sortComboBox = ui->comboBox_order;
@@ -53,7 +52,6 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
 
   connect(_widgetAccount, &QPushButton::clicked, this, &DocsBrowser::_account);
   connect(_widgetNewFile, &QPushButton::clicked, this, &DocsBrowser::_newFile);
-  connect(_widgetSearchButton, &QPushButton::clicked, this, &DocsBrowser::_search);
 
   connect(_actionLogout, &QAction::triggered, this, &DocsBrowser::_logout);
 
@@ -263,12 +261,6 @@ void DocsBrowser::_newDir(bool checked) {
 
 void DocsBrowser::_logout(bool checked) {
   emit logout(_user->getToken());
-}
-
-void DocsBrowser::_search(bool checked) {
-  //TODO qua metto la logica per attivare un link, per i miei test, ovviamente cambiala
-  auto username = _widgetSearch->text();
-  emit activateLink(_user->getToken(), username);
 }
 
 void DocsBrowser::_goToHome(bool checked) {
