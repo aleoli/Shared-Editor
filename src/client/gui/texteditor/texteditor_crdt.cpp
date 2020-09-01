@@ -36,16 +36,18 @@ void TextEditor::_contentsChange(int pos, int removed, int added) {
 }
 
 bool TextEditor::_isFakeUpdate(int pos, int removed, int added) {
+  if(pos < 0 || removed < 0 || added < 0) return true;
   if(removed != added) return false;
   if(removed == 0) return true;
 
-  QTextCursor cursor(_textEdit->document());
+  auto doc = _textEdit->document();
+  QTextCursor cursor(doc);
   cursor.setPosition(pos);
   auto it = _file->iteratorAt(pos);
 
   for(int i=0; i<removed; i++) {
     cursor.movePosition(QTextCursor::NextCharacter);
-    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto chr = doc->characterAt(pos + i);
     auto fmt = cursor.charFormat();
 
     if(!it->hasSameAttributes(chr, fmt, _highlighted)) {
@@ -81,7 +83,8 @@ void TextEditor::_handleDelete(int pos, int removed) {
 void TextEditor::_handleInsert(int pos, int added) {
   if(added == 0) return;
 
-  QTextCursor cursor(_textEdit->document());
+  auto doc = _textEdit->document();
+  QTextCursor cursor(doc);
   std::vector<Symbol> symAdded;
 
   cursor.setPosition(pos);
@@ -89,34 +92,65 @@ void TextEditor::_handleInsert(int pos, int added) {
   for(int i=0; i<added; i++) {
     cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
 
-    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto chr = doc->characterAt(pos + i);
     auto fmt = cursor.charFormat();
 
     if(chr == nullptr) {
       cursor.deletePreviousChar(); //TODO check. delete null characters
     }
     else {
-      // mettendo qua il check dell'highlight cambio anche il simbolo interno nel File
-      // così sono sicuro che il background è trasparente (es ho inserito a destra di un carattere inserito
-      // da un altro, il background sarà di quel colore erroneamente)
-      if(_highlighted) {
-        // set transparent background
-        _blockSignals = true;
-        cursor.deletePreviousChar();
-        fmt.setBackground(_defColor);
-        cursor.insertText(chr, fmt);
-        _blockSignals = false;
-      }
-
+      if(_highlighted) fmt.setBackground(_defColor);
       Symbol s{{_user->getUserId(), _user->getCharId()}, chr, fmt};
-      //debug(QString::fromStdString(s.to_string()));
-
       _file->localInsert(s, pos+i, &it);
       symAdded.push_back(s);
     }
   }
 
+  if(_highlighted) {
+    _partialRefresh(pos, added);
+  }
+
   emit localInsert(_user->getToken(), _user->getFileId(), symAdded);
+}
+
+void TextEditor::_partialRefresh(int pos, int added) {
+  _blockSignals = true;
+
+  auto doc = _textEdit->document();
+  QTextCursor cursor(doc);
+  cursor.setPosition(pos);
+  QTextCharFormat fmt;
+  QString text = "";
+
+  for(int i=0; i<added; i++) {
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor); // must be moved BEFORE catching the correct format
+    auto chr = doc->characterAt(pos + i);
+    auto format = cursor.charFormat();
+
+    if(format != fmt) {
+      if(!text.isEmpty()) {
+        fmt.setBackground(_defColor);
+        cursor.removeSelectedText();
+        cursor.setCharFormat(fmt);
+        cursor.insertText(text);
+        pos -= text.size();
+        text.clear();
+      }
+
+      fmt = format;
+    }
+
+    text.append(chr);
+  }
+
+  if(!text.isEmpty()) {
+    fmt.setBackground(_defColor);
+    cursor.removeSelectedText();
+    cursor.setCharFormat(fmt);
+    cursor.insertText(text);
+  }
+
+  _blockSignals = false;
 }
 
 

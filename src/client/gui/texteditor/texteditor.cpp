@@ -370,7 +370,9 @@ void TextEditor::refresh(bool changeFile) {
 
   //refresh
   QTextCursor cursor{_textEdit->document()};
-  for(auto &sym : _file->getSymbols()) {
+  QTextCharFormat fmt;
+  QString text = "";
+  _file->forEachSymbol([&cursor, &fmt, &text, this](const Symbol &sym){
     auto format = sym.getFormat();
 
     if(_highlighted) {
@@ -378,8 +380,19 @@ void TextEditor::refresh(bool changeFile) {
       format.setBackground(getUserColorHighlight(userId));
     }
 
-    cursor.setCharFormat(format);
-    cursor.insertText(sym.getChar());
+    if(format != fmt) {
+      cursor.setCharFormat(fmt);
+      cursor.insertText(text);
+      text.clear();
+      fmt = format;
+    }
+
+    text.append(sym.getChar());
+  });
+
+  if(!text.isEmpty()) {
+    cursor.setCharFormat(fmt);
+    cursor.insertText(text);
   }
 
   //ripristino posizione

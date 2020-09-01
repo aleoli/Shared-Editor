@@ -57,9 +57,16 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
 }
 
 bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground) {
-  return fmt1.font() == fmt2.font() &&
-         fmt1.foreground() == fmt2.foreground() &&
-         (ignoreBackground || fmt1.background() == fmt2.background());
+  auto col1 = fixColor(fmt1.foreground(), false);
+  auto col2 = fixColor(fmt2.foreground(), false);
+  bool cmp = true;
+  if(!ignoreBackground) {
+    auto backCol1 = fixColor(fmt1.background(), true);
+    auto backCol2 = fixColor(fmt2.background(), true);
+      cmp = backCol1 == backCol2;
+  }
+
+  return fmt1.font() == fmt2.font() && col1 == col2 && cmp;
 }
 
 bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground) const {
@@ -161,16 +168,19 @@ QTextCharFormat Symbol::deserializeFormat(const QJsonObject &json) {
   return fmt;
 }
 
-QString Symbol::brushToString(const QBrush &b, bool isBackground) {
-  auto color = b.color();
-
-  if(color.alpha() == 255 && !b.isOpaque()) {
+QColor Symbol::fixColor(const QBrush &brush, bool isBackground) {
+  auto color = brush.color();
+  if(color.alpha() == 255 && !brush.isOpaque()) {
     //FIX bug
     if(isBackground) color.setAlpha(0);
     else color.setAlpha(255);
   }
 
-  return color.name(QColor::HexArgb);
+  return color;
+}
+
+QString Symbol::brushToString(const QBrush &b, bool isBackground) {
+  return fixColor(b, isBackground).name(QColor::HexArgb);
 }
 
 QBrush Symbol::stringToBrush(const QString &string) {

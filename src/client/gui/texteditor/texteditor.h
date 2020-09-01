@@ -118,6 +118,7 @@ private slots:
   void _handleInsert(int pos, int added);
   void _cursorChanged();
   void _updateCursors();
+  void _partialRefresh(int pos, int added);
 
 private:
   void initOptionsWidget();

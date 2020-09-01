@@ -75,6 +75,7 @@ private:
   void checkAndAssign(const QJsonObject &json, bool readPos = true);
   [[nodiscard]] std::string posToString() const; //TODO vedi se rimuovere
 
+  static QColor fixColor(const QBrush &brush, bool isBackground);
   static QBrush stringToBrush(const QString &string);
   static QString brushToString(const QBrush &b, bool isBackground);
   static QFont jsonArrayToFont(const QJsonArray &array);
