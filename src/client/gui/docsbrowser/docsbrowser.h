@@ -59,6 +59,7 @@ private slots:
   void _goUp(bool checked);
   void _clickedPath(bool checked);
   void _changeSortType(int newSortType);
+  void _openLink(bool checked);
 
   void _openFile(int fileId);
 
@@ -72,6 +73,7 @@ private:
   QPushButton *_widgetHome;
   QPushButton *_widgetNewFolder;
   QPushButton *_widgetBack, *_widgetForward, *_widgetUp;
+  QPushButton *_widgetOpenLink;
 
   QPushButton *_widgetAccount, *_widgetNewFile, *_widgetSearchButton;
   QLineEdit *_widgetSearch;

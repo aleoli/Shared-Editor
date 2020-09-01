@@ -86,7 +86,7 @@
          <x>0</x>
          <y>0</y>
          <width>1348</width>
-         <height>563</height>
+         <height>562</height>
         </rect>
        </property>
       </widget>
@@ -100,7 +100,7 @@
      <x>0</x>
      <y>0</y>
      <width>1366</width>
-     <height>32</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -434,6 +434,70 @@ background-color: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
             <size>
              <width>25</width>
              <height>31</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_open_link">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>37</width>
+             <height>37</height>
+            </size>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:focus {
+                                                    border: none;
+                                                    outline: none;
+                                                    }
+
+                                                    QPushButton {
+                                                    background: #f65964;
+                                                    border: 1px solid #f65964;
+                                                    border-radius: 2px;
+                                                    /*margin-left: 50px;
+                                                    margin-right: 50px;*/
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    }
+
+                                                    QPushButton:hover {
+                                                    /*background: qradialgradient(
+                                                    cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+                                                    radius: 0.7, stop: 0 #000, stop: 1 #f65964
+                                                    );*/
+                                                    background: qradialgradient(cx:0.3, cy:0.5, radius: 5.5,
+                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 white);
+                                                    }
+
+                                                    QPushButton:pressed {
+                                                    border-style: inset;
+                                                    /*background: qradialgradient(
+                                                    cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
+                                                    radius: 0.7, stop: 0 #f65964, stop: 1 #000
+                                                    );*/
+                                                    background: qradialgradient(cx:0.7, cy:0.5, radius: 5.5,
+                                                    fx:0.5, fy:0.5, stop:0 #f65964, stop:1 #242a38);
+                                                    }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources/res.qrc">
+             <normaloff>:/res/link.png</normaloff>:/res/link.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>36</width>
+             <height>25</height>
             </size>
            </property>
           </widget>
