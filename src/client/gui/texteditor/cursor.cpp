@@ -53,7 +53,10 @@ void Cursor::changeVisibility() {
 
 void Cursor::insert(const Symbol &sym, int position, const std::optional<QBrush> &backgroundColor) {
   _cursor->setPosition(position);
+  insert(sym, backgroundColor);
+}
 
+void Cursor::insert(const Symbol &sym, const std::optional<QBrush> &backgroundColor) {
   auto fmt = sym.getFormat();
 
   if(backgroundColor) {
@@ -62,14 +65,45 @@ void Cursor::insert(const Symbol &sym, int position, const std::optional<QBrush>
 
   _cursor->setCharFormat(fmt);
   _cursor->insertText(sym.getChar());
+}
 
-  updateCursorView();
+void Cursor::insert(const QString &text, QTextCharFormat &fmt, const std::optional<QBrush> &backgroundColor) {
+  if(text.isEmpty()) return;
+
+  if(backgroundColor) {
+    fmt.setBackground(*backgroundColor);
+  }
+
+  _cursor->setCharFormat(fmt);
+  _cursor->insertText(text);
+}
+
+void Cursor::moveForward(int position) {
+  if(position == 0) return;
+  _cursor->movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, position);
+}
+
+void Cursor::selectNext() {
+  _cursor->movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+}
+
+void Cursor::goTo(int pos) {
+  _cursor->setPosition(pos);
+}
+
+void Cursor::deleteChar() {
+  _cursor->deleteChar();
 }
 
 void Cursor::remove(int position) {
   _cursor->setPosition(position);
-
   _cursor->deleteChar();
+}
 
-  updateCursorView();
+void Cursor::removeSelected() {
+  _cursor->removeSelectedText();
+}
+
+void Cursor::clearSelection() {
+  _cursor->clearSelection();
 }

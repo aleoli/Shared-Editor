@@ -7,7 +7,7 @@
 using namespace se_exceptions;
 
 #include <sstream>
-#include <cmath>
+#include <limits>
 #include <algorithm>
 #include <QChar>
 #include <QJsonDocument>
@@ -25,7 +25,7 @@ File::File(const File &file) {
 
 File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)), _comments(std::move(file._comments)), dirty(file.dirty) {}
 
-File::File(std::unordered_map<int, File::UserInfo> users, std::vector<Symbol> symbols, std::map<CommentIdentifier, Comment> comments)
+File::File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> symbols, std::map<CommentIdentifier, Comment> comments)
   : _users(std::move(users)), _symbols(std::move(symbols)), _comments(std::move(comments)) {}
 
 File::File(const QJsonObject &json){
@@ -77,7 +77,7 @@ void File::checkAndAssign(const QJsonObject &json) {
 
   auto ul = std::unique_lock{this->_mutex};
   _users = jsonArrayToUsers(users);
-  _symbols = utils::jsonArrayToVector<Symbol>(symbols);
+  _symbols = jsonArrayToSymbols(symbols);
   _comments = jsonArrayToComments(comments);
 }
 
@@ -115,7 +115,7 @@ QJsonObject File::toJsonObject() const {
   json["users"] = QJsonValue(usersToJsonArray());
   json["comments"] = QJsonValue(commentsToJsonArray());
   auto sl = std::shared_lock{this->_mutex};
-  json["symbols"] = QJsonValue(utils::vectorToJsonArray(_symbols));
+  json["symbols"] = QJsonValue(symbolsToJsonArray());
 
   return json;
 }
@@ -126,7 +126,11 @@ QByteArray File::toQByteArray() const {
 #if BINARY_FILE
   return doc.toBinaryData();
 #else
-  return doc.toJson(QJsonDocument::Compact);
+  #if ASCII_COMPACT
+    return doc.toJson(QJsonDocument::Compact);
+  #else
+    return doc.toJson();
+  #endif
 #endif
 }
 
@@ -137,26 +141,14 @@ QJsonArray File::usersToJsonArray() const {
   for(auto &el : _users) {
     QJsonObject value;
 
-    value["userId"] = el.second.userId;
-    value["username"] = el.second.username;
-    value["online"] = el.second.online;
+    value["uid"] = el.second.userId;
+    value["name"] = el.second.username;
+    value["on"] = el.second.online;
 
     array.append(value);
   }
 
   return array;
-}
-
-std::string File::usersToString() const {
-  std::stringstream ss;
-
-  auto sl = std::shared_lock{this->_mutex};
-  for(auto &el : _users) {
-    ss << "\tuserId: " << el.second.userId << std::endl;
-    ss << "\t\tusername: " << el.second.username.toStdString() << std::endl;
-  }
-
-  return ss.str();
 }
 
 std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray &array) {
@@ -168,9 +160,9 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray 
     }
 
     auto obj = el.toObject();
-    auto userIdValue = obj["userId"];
-    auto usernameValue = obj["username"];
-    auto onlineValue = obj["online"];
+    auto userIdValue = obj["uid"];
+    auto usernameValue = obj["name"];
+    auto onlineValue = obj["on"];
 
     if(userIdValue.isUndefined() || usernameValue.isUndefined() || onlineValue.isUndefined()) {
       throw FileFromJsonException{"The QJsonObject has some fields missing"};
@@ -194,44 +186,41 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray 
   return users;
 }
 
-std::string File::symbolsToString() const {
-  std::stringstream ss;
+std::list<Symbol> File::jsonArrayToSymbols(const QJsonArray &array) {
+  std::list<Symbol> symbols;
 
-  auto sl = std::shared_lock{this->_mutex};
-  for(auto it = _symbols.begin(); it != _symbols.end(); it++) {
-    auto &el = *it;
+  for(auto&& el : array) {
+    if(!el.isObject()) {
+      throw FileFromJsonException{"One or more fields in symbols array are not valid"};
+    }
 
-    ss << '\t' << el.to_string();
-
-    if(it+1 != _symbols.end())
-      ss << std::endl;
+    symbols.emplace_back(el.toObject());
   }
 
-  return ss.str();
+  return symbols;
+}
+
+QJsonArray File::symbolsToJsonArray() const {
+  QJsonArray array;
+
+  auto sl = std::shared_lock{this->_mutex};
+  for(auto &sym : _symbols) {
+    array.append(QJsonValue(sym.toJsonObject()));
+  }
+
+  return array;
 }
 
 File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
-  auto commentIdentifier = obj["commentIdentifier"];
-  if(commentIdentifier.isUndefined() || !commentIdentifier.isObject()) {
-    throw FileFromJsonException{"commentIdentifier is not an object"};
-  }
-  auto commentIdentifierObj = commentIdentifier.toObject();
-  auto userIdV = commentIdentifierObj["userId"];
-  auto commentIdV = commentIdentifierObj["commentId"];
+  auto idV = obj["id"];
   auto textV = obj["text"];
-  auto creationDateV = obj["creationDate"];
+  auto creationDateV = obj["date"];
 
-  if(userIdV.isUndefined() || commentIdV.isUndefined() || textV.isUndefined() || creationDateV.isUndefined()) {
+  if(idV.isUndefined() || textV.isUndefined() || creationDateV.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  auto userId = userIdV.toInt(-1);
-  auto commentId = commentIdV.toInt(-1);
-  if(userId == -1 || commentId == -1) {
-    throw FileFromJsonException{"One or more fields in users array are not valid"};
-  }
-
-  if(!textV.isString() || !creationDateV.isString()) {
+  if(!idV.isObject() || !textV.isString() || !creationDateV.isString()) {
     throw FileFromJsonException{"One or more fields in users array are not valid"};
   }
 
@@ -245,7 +234,7 @@ File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
   }
 
   Comment comment;
-  comment.identifier = CommentIdentifier{commentId, userId};
+  comment.identifier = CommentIdentifier::fromJsonObject(idV.toObject());
   comment.text = text;
   comment.creationDate = creationDate;
 
@@ -254,13 +243,10 @@ File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
 
 QJsonObject File::commentToJsonObject(const Comment &comment) {
   QJsonObject value;
-  QJsonObject commentIdentifier;
 
-  commentIdentifier["userId"] = comment.identifier.getUserId();
-  commentIdentifier["commentId"] = comment.identifier.getDigit();
-  value["commentIdentifier"] = commentIdentifier;
+  value["id"] = comment.identifier.toJsonObject();
   value["text"] = comment.text;
-  value["creationDate"] = comment.creationDate.toString();
+  value["date"] = comment.creationDate.toString();
 
   return value;
 }
@@ -298,9 +284,22 @@ std::unordered_map<int, File::UserInfo> File::getUsers() const {
   return _users;
 }
 
-std::vector<Symbol> File::getSymbols() const {
+std::list<Symbol> File::getSymbols() const {
+  warn("File::getSymbols deprecated. Use forEachSymbol instead");
   auto sl = std::shared_lock{this->_mutex};
   return _symbols;
+}
+
+std::list<Symbol>::iterator File::getSymbolsStart() {
+  return _symbols.begin();
+}
+
+void File::forEachSymbol(const std::function<void(const Symbol&) >& lambda) {
+  auto sl = std::shared_lock{this->_mutex};
+
+  for(auto &sym : _symbols) {
+    lambda(sym);
+  }
 }
 
 std::map<File::CommentIdentifier, File::Comment> File::getComments() const {
@@ -308,19 +307,65 @@ std::map<File::CommentIdentifier, File::Comment> File::getComments() const {
   return _comments;
 }
 
-Symbol& File::symbolAt(int pos) {
+Symbol& File::symbolAt(int pos, std::list<Symbol>::iterator *it) {
   auto sl = std::shared_lock{this->_mutex};
-  if(_symbols.size() <= pos) {
+  return _symbolAt(pos, it);
+}
+
+Symbol &File::_symbolAt(int pos, std::list<Symbol>::iterator *it) {
+  auto target = iteratorAt(pos);
+
+  if(target == _symbols.end()) {
     throw FileSymbolsException{"Invalid position"};
   }
 
-  return _symbols[pos];
+  if(it != nullptr) *it = target;
+  return *target;
 }
 
-std::pair<int, Symbol&> File::symbolById(SymbolId id) {
-  int pos = 0;
+std::list<Symbol>::iterator File::iteratorAt(int pos) {
+  auto size = _symbols.size();
+
+  if(pos > size || pos < 0)
+    throw FileSymbolsException{"File::iteratorAt: bad pos"};
+
+  std::list<Symbol>::iterator it;
+  int middle = size / 2;
+  if(pos <= middle) {
+    //debug("Closer to the start");
+    it = _symbols.begin();
+    std::advance(it, pos);
+  }
+  else {
+    //debug("Closer to the end");
+    it = _symbols.end();
+    std::advance(it, pos - size);
+  }
+
+  return it;
+}
+
+std::pair<int, Symbol&> File::symbolById(const SymbolId &id, std::list<Symbol>::iterator *it) {
   auto sl = std::shared_lock{this->_mutex};
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
+  return _symbolById(id, it);
+}
+
+std::pair<int, Symbol&> File::_symbolById(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  auto res = _iteratorById(id, it);
+
+  return {res.first, *res.second};
+}
+
+std::pair<int, std::list<Symbol>::iterator> File::iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  auto sl = std::shared_lock{this->_mutex};
+  return _iteratorById(id, it);
+}
+
+std::pair<int, std::list<Symbol>::iterator> File::_iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  int pos = 0;
+  auto start = it == nullptr ? _symbols.begin() : *it;
+
+  auto result = std::find_if(start, _symbols.end(), [&id, &pos](const Symbol &cmp) {
         bool val = cmp.getSymbolId() == id;
         if(!val) pos++;
         return val;
@@ -330,23 +375,16 @@ std::pair<int, Symbol&> File::symbolById(SymbolId id) {
     throw FileSymbolsException{"Symbol does not exist"};
   }
 
-  return {pos, *result};
+  if(it != nullptr) *it = result;
+  return {pos, result};
 }
 
-int File::getPosition(SymbolId id) {
-  int pos = 0;
-  auto sl = std::shared_lock{this->_mutex};
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
-        bool val = cmp.getSymbolId() == id;
-        if(!val) pos++;
-        return val;
-  });
+int File::getPosition(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  return symbolById(id, it).first;
+}
 
-  if(result == std::end(_symbols)) {
-    throw FileSymbolsException{"Symbol does not exist"};
-  }
-
-  return pos;
+int File::_getPosition(const SymbolId &id, std::list<Symbol>::iterator *it) {
+  return _symbolById(id, it).first;
 }
 
 int File::numSymbols() const {
@@ -355,12 +393,7 @@ int File::numSymbols() const {
 }
 
 std::string File::to_string() const {
-  std::stringstream ss;
-
-  ss << "User IDs: " << std::endl << usersToString() << std::endl;
-  ss << "Symbols:" << std::endl << symbolsToString();
-
-  return ss.str();
+  return text();
 }
 
 std::string File::text() const {
@@ -378,14 +411,14 @@ void File::clear() {
   _symbols.clear();
 }
 
-void File::addUser(int userId, QString username) {
+void File::addUser(int userId, const QString &username) {
   auto ul = std::unique_lock{this->_mutex};
   if(_users.count(userId) != 0) {
     throw FileUserException{"User already exists"};
   }
 
   dirty = true;
-  _users[userId] = { userId, std::move(username), true };
+  _users[userId] = { userId, username, true };
 }
 
 void File::removeUser(int userId) {
@@ -426,7 +459,7 @@ QString File::getUsername(int userId) {
   return _users[userId].username;
 }
 
-void File::localInsert(Symbol &sym, int pos) {
+void File::localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
   // (chi ha chiamato questo metodo poi si preoccuperà di mandare info al server)
   auto size = _symbols.size();
@@ -435,19 +468,26 @@ void File::localInsert(Symbol &sym, int pos) {
     throw FileSymbolsException{"Invalid insert position"};
   }
 
-  //create array position
-  int previous = pos > 0 ? pos - 1 : -1;
-  int next = pos == size ? -1 : pos;
+  //debug("Pos: " + QString::number(pos));
 
   std::vector<Symbol::Identifier> v1, v2;
+  std::list<Symbol>::iterator insertPos;
+  if(it == nullptr) insertPos = iteratorAt(pos);
+  else insertPos = *it;
 
-  if(previous != -1) {
-      auto sym2 = _symbols[previous];
-      v1 = sym2.getPos();
+  if(size == 0) {}
+  else if(pos == 0) {
+    //debug("Front insertion");
+    v2 = std::move(insertPos->getPos());
   }
-  if(next != -1) {
-      auto sym2 = _symbols[next];
-      v2 = sym2.getPos();
+  else if(pos == size) {
+    //debug("Back insertion");
+    v1 = std::move(std::prev(insertPos)->getPos());
+  }
+  else {
+    //debug("Middle insertion");
+    v1 = std::move(std::prev(insertPos)->getPos());
+    v2 = std::move(insertPos->getPos());
   }
 
   std::vector<Symbol::Identifier> position;
@@ -456,11 +496,11 @@ void File::localInsert(Symbol &sym, int pos) {
 
   sym.setPos(position);
   dirty = true;
-  _symbols.emplace(_symbols.begin() + pos, sym);
+  _symbols.emplace(insertPos, sym);
 }
 
-void File::findPosition(int userId, std::vector<Symbol::Identifier> v1,
-  std::vector<Symbol::Identifier> v2, std::vector<Symbol::Identifier> &position,
+void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
+  std::vector<Symbol::Identifier> &v2, std::vector<Symbol::Identifier> &position,
   int level) {
 
   Symbol::Identifier pos1, pos2;
@@ -469,14 +509,15 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> v1,
   else pos1 = {0, userId};
 
   if(!v2.empty()) pos2 = v2[0];
-  else pos2 = {static_cast<int>(pow(2, level) * 32), userId};
+  else pos2 = {std::numeric_limits<int>::max(), userId};
 
   int digit1 = pos1.getDigit();
   int digit2 = pos2.getDigit();
 
   if(digit2 - digit1 > 1){
     //finished, found the position
-    int digit = (digit2 + digit1) / 2;
+    //debug("Level: " + QString::number(level));
+    int digit = generateDigit(digit1, digit2);
     position.emplace_back(digit, userId);
     return;
   }
@@ -518,10 +559,23 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> v1,
   }
 }
 
-int File::remoteInsert(const Symbol &sym) {
+int File::generateDigit(int digit1, int digit2) {
+  quint64 val = digit1;
+
+  if(digit2 - digit1 > CRDT_STEP) val += CRDT_STEP;
+  else val = (val + digit2) / 2;
+
+  //debug("Dig1: " + QString::number(digit1) + " dig2: " + QString::number(digit2) + " val: " + QString::number(val));
+
+  return static_cast<int>(val); //surely it fits into an int
+}
+
+int File::remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
+
+  auto start = it == nullptr ? _symbols.begin() : *it;
   int pos = 0;
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [sym, &pos](const Symbol &cmp) {
+  auto result = std::find_if(start, _symbols.end(), [&sym, &pos](const Symbol &cmp) {
         bool val = sym < cmp;
         if(!val) pos++;
         return val;
@@ -530,44 +584,60 @@ int File::remoteInsert(const Symbol &sym) {
   dirty = true;
   _symbols.emplace(result, sym);
 
-  return pos;
+  if(it != nullptr) *it = result;
+  return oldPos + pos + 1;
 }
 
-void File::localDelete(int pos) {
+void File::localDelete(int pos, std::list<Symbol>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
   if(pos < 0 || _symbols.size() <= pos) {
     throw FileSymbolsException{"Invalid delete position"};
   }
 
   dirty = true;
-  _symbols.erase(_symbols.begin()+pos);
+  auto target = it == nullptr ? iteratorAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  _symbols.erase(target);
 }
 
-int File::remoteDelete(SymbolId id) {
+int File::remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
-  int pos = 0;
-  auto result = std::find_if(_symbols.begin(), _symbols.end(), [id, &pos](const Symbol &cmp) {
-        bool val = id == cmp.getSymbolId();
-        if(!val) pos++;
-        return val;
-    });
 
-  if(result == std::end(_symbols)) {
-    // no eccezione qui, è un fatto che può accadere e non è un errore
+  try {
+    int pos = 0;
+    std::list<Symbol>::iterator target;
+    if(it == nullptr || (*it)->getSymbolId() != id) {
+      auto res = _iteratorById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = std::next(target);
+    }
+    else {
+      target = *it;
+      *it = std::next(*it);
+    }
+
+    _symbols.erase(target);
+    dirty = true;
+
+    return oldPos + pos;
+  }
+  catch(FileSymbolsException& e) {
+    //il simbolo non esiste più
     return -1;
   }
-
-  dirty = true;
-  _symbols.erase(result);
-  return pos;
 }
 
 int File::remoteUpdate(const Symbol &sym) {
+  auto ul = std::unique_lock{this->_mutex};
+
   try {
-    auto pos = symbolById(sym.getSymbolId());
+    auto pos = _symbolById(sym.getSymbolId());
     auto &symbol = pos.second;
 
     symbol.update(sym);
+    dirty = true;
 
     return pos.first;
   }

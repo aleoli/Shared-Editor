@@ -31,9 +31,13 @@ bool operator==(const SymbolId& lhs, const SymbolId& rhs) {
   return lhs._userId == rhs._userId && lhs._charId == rhs._charId;
 }
 
+bool operator!=(const SymbolId& lhs, const SymbolId& rhs) {
+  return !(lhs == rhs);
+}
+
 void SymbolId::checkAndAssign(const QJsonObject &json) {
-  auto userIdValue = json["userId"];
-  auto charIdValue = json["charId"];
+  auto userIdValue = json["uid"];
+  auto charIdValue = json["cid"];
 
   if(userIdValue.isUndefined() || charIdValue.isUndefined()) {
     throw SymbolIdFromJsonException{"The QJsonObject has some fields missing"};
@@ -63,8 +67,8 @@ SymbolId SymbolId::fromJsonObject(QJsonObject &&json) {
 QJsonObject SymbolId::toJsonObject() const {
   QJsonObject json;
 
-  json["userId"] = QJsonValue(_userId);
-  json["charId"] = QJsonValue(_charId);
+  json["uid"] = QJsonValue(_userId);
+  json["cid"] = QJsonValue(_charId);
 
   return json;
 }

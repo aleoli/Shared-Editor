@@ -206,8 +206,9 @@ void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& 
 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;
+  auto it = f.getSymbolsStart();
   for(const auto& sym: syms) {
-    f.remoteInsert(Symbol::fromJsonObject(sym.toObject()));
+    f.remoteInsert(Symbol::fromJsonObject(sym.toObject()), &it);
   }
 }
 
@@ -226,8 +227,9 @@ void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArra
 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;
+  auto it = f.getSymbolsStart();
   for(const auto& sym: syms) {
-    f.remoteDelete(SymbolId::fromJsonObject(sym.toObject()));
+    f.remoteDelete(SymbolId::fromJsonObject(sym.toObject()), &it);
   }
 }
 
