@@ -30,4 +30,5 @@ void registerClasses() {
   qRegisterMetaType<FSElement>();
   qRegisterMetaType<std::optional<QString>>();
   qRegisterMetaType<std::optional<int>>();
+  qRegisterMetaType<std::list<std::pair<QString,int>>>();
 }

@@ -62,4 +62,5 @@ private:
   void getDir();
   void moveFile();
   void getPath();
+  void getAllDirs();
 };

@@ -7,30 +7,34 @@
 #include "FSElement.h"
 
 namespace Ui {
-    class DocWidgetFolder;
+  class DocWidgetFolder;
 }
 
 class DocWidgetFolder: public QWidget {
 Q_OBJECT
 
 public:
-    explicit DocWidgetFolder(FSElement element, QWidget *parent = nullptr);
-    void paintEvent(QPaintEvent* e) override;
+  explicit DocWidgetFolder(FSElement element, QWidget *parent = nullptr);
+  void paintEvent(QPaintEvent* e) override;
 
 public slots:
-    virtual void clear();
+  virtual void clear();
+
+private slots:
+  void _openMenu(bool checked);
 
 signals:
-    void open(int dirId);
+  void open(int dirId);
+  void openMenu(bool isDir, const FSElement& element);
 
 protected:
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
+  void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:
-    Ui::DocWidgetFolder *ui;
+  Ui::DocWidgetFolder *ui;
 
-    QLabel *_nameLabel, *_dateLabel;
-    QPushButton *_optionsBtn;
+  QLabel *_nameLabel, *_dateLabel;
+  QPushButton *_optionsBtn;
 
-    const FSElement _element;
+  const FSElement _element;
 };

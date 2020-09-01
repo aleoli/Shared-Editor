@@ -61,6 +61,7 @@ public:
   void mv(const Session &s, FSElement_db &fs_e);
   void mv(const Session &s, int new_dir_id);
   void rename(const Session &s, QString name);
+  std::pair<QString, int> pwd(const Session &s);
 
   User getCreator();
 
@@ -71,6 +72,8 @@ public:
   [[nodiscard]] bool is_link() const;
 
   void clearCache();
+
+  std::list<FSElement_db> recursive_ls(const Session &s);
 
 private:
   static FSElement_db create(int user_id, int parent_id, QString name, bool is_file = false);

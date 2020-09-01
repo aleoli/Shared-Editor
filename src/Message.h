@@ -65,7 +65,8 @@ public:
       DELETE_DIR,
       GET_DIR,
       MOVE_FILE,
-      GET_PATH
+      GET_PATH,
+      GET_ALL_DIRS
   };
 
   enum class Status {
