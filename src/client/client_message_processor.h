@@ -45,6 +45,7 @@ private:
   void moveFile();
   void getPath();
   void getAllDirs();
+  void search();
   void newComment();
   void updateComment();
   void deleteComment();

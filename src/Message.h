@@ -67,6 +67,7 @@ public:
       GET_DIR,
       MOVE_FILE,
       GET_PATH,
+      SEARCH,
       GET_ALL_DIRS
   };
 

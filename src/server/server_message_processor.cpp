@@ -274,6 +274,13 @@ void ServerMessageProcessor::process_filesystem() {
         getPath();
       break;
 
+    case Message::FileSystemAction::SEARCH:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        search();
+      break;
+
     case Message::FileSystemAction::GET_ALL_DIRS:
       if(isResponse)
         disconnect("Ricevuto messaggio con status non valido");
@@ -1087,6 +1094,34 @@ void ServerMessageProcessor::getPath() {
   data["elements"] = arr;
 
   this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::GET_PATH, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::search() {
+  info("Search query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto query = _m.getString("query");
+
+  auto l = DB::get()->get<FSElement_db>("owner_id = '"+QString::number(session.getUserId())+"'");
+
+  QJsonArray arr;
+  for(auto& f: l) {
+    if(f.getName().contains(query)) {
+      QJsonObject obj;
+      obj["id"] = f.getId();
+      obj["path"] = f.pwd(session).first;
+      obj["isDir"] = f.isDir();
+      arr.append(obj);
+    }
+  }
+
+  QJsonObject data;
+  data["elements"] = arr;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::SEARCH, Message::Status::RESPONSE, data};
   this->_has_resp = true;
 }
 

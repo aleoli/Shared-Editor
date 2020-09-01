@@ -45,6 +45,7 @@ public:
   [[nodiscard]] QString getPath() const;
   [[nodiscard]] int getParentId() const;
   std::vector<FSElement_db> getPathElements(const Session &s);
+  [[nodiscard]] bool isDir() const;
 
   void addCharId(int v);
   void incCommentId();
