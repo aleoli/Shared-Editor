@@ -113,7 +113,7 @@ private slots:
 
   //CRDT
   void _contentsChange(int pos, int removed, int added);
-  void _handleUpdate(int pos, int nchars);
+  bool _isFakeUpdate(int pos, int removed, int added);
   void _handleDelete(int pos, int removed);
   void _handleInsert(int pos, int added);
   void _cursorChanged();

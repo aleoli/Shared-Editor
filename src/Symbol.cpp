@@ -59,7 +59,7 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
 bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground) {
   return fmt1.font() == fmt2.font() &&
          fmt1.foreground() == fmt2.foreground() &&
-         ignoreBackground || fmt1.background() == fmt2.background();
+         (ignoreBackground || fmt1.background() == fmt2.background());
 }
 
 bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground) const {

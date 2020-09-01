@@ -8,8 +8,6 @@ using namespace se_exceptions;
 void TextEditor::_contentsChange(int pos, int removed, int added) {
   if(_blockSignals) return;
 
-  debug("TextEditor::_contentsChange | pos: " + QString::number(pos) + " removed: " + QString::number(removed) + " added: " + QString::number(added));
-
   int nsym = _file->numSymbols();
 
   // fix: segnalato un numero di caratteri rimossi maggiore dei caratteri presenti
@@ -23,69 +21,41 @@ void TextEditor::_contentsChange(int pos, int removed, int added) {
     //debug("New Values: removed: " + QString::number(removed) + " added: " + QString::number(added));
   }
 
-  if(removed == added) {
-    _handleUpdate(pos, removed);
-  }
-  else {
+  if(!_isFakeUpdate(pos,removed, added)) {
+    debug("TextEditor::_contentsChange | pos: " + QString::number(pos) + " removed: " + QString::number(removed) + " added: " + QString::number(added));
+
     _handleDelete(pos, removed);
     _handleInsert(pos, added);
     updateActions();
   }
-  _cursorPosition = pos + added;
-}
-
-void TextEditor::_handleUpdate(int pos, int nchars) {
-  if(nchars == 0) {
-    debug("No real update");
-    return;
-  }
-
-  QTextCursor cursor(_textEdit->document());
-  std::vector<Symbol> symUpdated;
-  bool real = false;
-
-  cursor.setPosition(pos);
-  for(int i=0; i<nchars; i++) {
-    cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
-
-    auto chr = _textEdit->document()->characterAt(pos + i);
-    auto fmt = cursor.charFormat();
-
-    auto &sym = _file->symbolAt(pos + i);
-
-    if(!sym.hasSameAttributes(chr, fmt, _highlighted)) {
-      if(_highlighted) fmt.setBackground(_defColor);
-      sym.setFormat(fmt);
-      sym.setChar(chr);
-      real = true;
-    }
-
-    symUpdated.push_back(sym);
-  }
-
-  if(real) {
-    if (_highlighted) {
-      _blockSignals = true;
-      //repeat the process, to set transparent background
-      cursor.setPosition(pos);
-      for(int i=0; i<nchars; i++) {
-        cursor.movePosition(QTextCursor::NextCharacter);
-
-        auto chr = _textEdit->document()->characterAt(pos + i);
-        auto fmt = cursor.charFormat();
-
-        cursor.deletePreviousChar();
-        fmt.setBackground(_defColor);
-        cursor.insertText(chr, fmt);
-      }
-      _blockSignals = false;
-    }
-
-    emit localUpdate(_user->getToken(), _user->getFileId(), symUpdated);
-  }
   else {
     debug("Phantom update");
   }
+
+  _cursorPosition = pos + added;
+}
+
+bool TextEditor::_isFakeUpdate(int pos, int removed, int added) {
+  if(removed != added) return false;
+  if(removed == 0) return true;
+
+  QTextCursor cursor(_textEdit->document());
+  cursor.setPosition(pos);
+  auto it = _file->iteratorAt(pos);
+
+  for(int i=0; i<removed; i++) {
+    cursor.movePosition(QTextCursor::NextCharacter);
+    auto chr = _textEdit->document()->characterAt(pos + i);
+    auto fmt = cursor.charFormat();
+
+    if(!it->hasSameAttributes(chr, fmt, _highlighted)) {
+      return false;
+    }
+
+    it = std::next(it);
+  }
+
+  return true;
 }
 
 void TextEditor::_handleDelete(int pos, int removed) {
@@ -260,6 +230,7 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::vector<SymbolId
 }
 
 void TextEditor::remoteUpdate(int fileId, int userId, const std::vector<Symbol>& symbols) {
+  throw TextEditorException{"Update not used in this version!"};
   _blockSignals = true;
   int pos;
   auto backgroundColor = _highlighted ? std::optional<QColor>(getUserColorHighlight(userId)) : std::nullopt;
