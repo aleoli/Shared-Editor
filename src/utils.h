@@ -15,6 +15,9 @@ void info(const QString& str);
 
 bool check_pass(const QString& pass);
 
+// for debugging
+QString jsonToString(const QJsonObject &json);
+
 namespace utils {
   template<typename T>
   std::vector<T> jsonArrayToVector(const QJsonArray &json) {

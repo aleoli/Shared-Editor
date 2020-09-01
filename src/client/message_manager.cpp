@@ -194,13 +194,13 @@ void MessageManager::activateLinkQuery(const QString &token, const QString &link
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localInsertQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols) {
+void MessageManager::localInsertQuery(const QString &token, int fileId, const std::list<Symbol> &symbols) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_INSERT),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
-    m.setValue("symbols", utils::vectorToJsonArray(symbols));
+    m.setValue("symbols", Symbol::symbolsToJsonArray(symbols));
 
     emit send_data(m.toQByteArray());
 }

@@ -2,6 +2,8 @@
 #include "sets.h"
 
 #include <iostream>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #define RST  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -96,4 +98,9 @@ bool check_pass(const QString& pass) {
     }
   }
   return false;
+}
+
+QString jsonToString(const QJsonObject &json) {
+  QJsonDocument doc(json);
+  return doc.toJson();
 }

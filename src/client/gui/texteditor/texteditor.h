@@ -13,6 +13,7 @@
 #include <QBrush>
 #include <QListWidget>
 #include <unordered_map>
+#include <list>
 
 #include "main_window.h"
 #include "alert_messages.h"
@@ -52,7 +53,7 @@ signals:
   void commentLocalUpdate(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalDelete(const QString &token, int fileId, const File::Comment &comment);
 
-  void localInsert(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localInsert(const QString &token, int fileId, const std::list<Symbol> &symbols);
   void localDelete(const QString &token, int fileId, const std::vector<SymbolId> &ids);
   void localUpdate(const QString &token, int fileId, const std::vector<Symbol> &symbols);
   void localMove(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
