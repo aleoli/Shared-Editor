@@ -411,7 +411,7 @@ void ClientMessageProcessor::remoteInsert() {
     auto userId = _m.getInt("userId");
     auto symbols = _m.getArray("symbols");
 
-    emit _manager->remoteInsertQuery(fileId, userId, utils::jsonArrayToVector<Symbol>(symbols));
+    emit _manager->remoteInsertQuery(fileId, userId, Symbol::jsonArrayToSymbols(symbols));
   }
   catch(SE_Exception& e) {
     disconnect(e.what());

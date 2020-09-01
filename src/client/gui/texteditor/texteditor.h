@@ -71,7 +71,7 @@ public slots:
   void commentRemoteUpdate(int fileId, int userId, const File::Comment &comment);
   void commentRemoteDelete(int fileId, int userId, const File::Comment &comment);
 
-  void remoteInsert(int fileId, int userId, const std::vector<Symbol>& symbols);
+  void remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols);
   void remoteDelete(int fileId, int userId, const std::vector<SymbolId>& ids);
   void remoteUpdate(int fileId, int userId, const std::vector<Symbol>& symbols);
   void remoteMove(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);

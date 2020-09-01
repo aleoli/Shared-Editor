@@ -186,7 +186,7 @@ void TextEditor::_updateCursors() {
 
 // Messages from server
 
-void TextEditor::remoteInsert(int fileId, int userId, const std::vector<Symbol>& symbols) {
+void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols) {
   _blockSignals = true;
   int pos = -1;
   auto backgroundColor = _highlighted ? std::optional<QColor>(getUserColorHighlight(userId)) : std::nullopt;

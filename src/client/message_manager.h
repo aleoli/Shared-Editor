@@ -41,7 +41,7 @@ signals:
   void activateLinkResponse(const FSElement &element, const File &file);
   void getIconResponse(int userId, const QString &icon);
 
-  void remoteInsertQuery(int fileId, int userId, const std::vector<Symbol> &symbols);
+  void remoteInsertQuery(int fileId, int userId, const std::list<Symbol> &symbols);
   void remoteDeleteQuery(int fileId, int userId, const std::vector<SymbolId> &ids);
   void remoteUpdateQuery(int fileId, int userId, const std::vector<Symbol> &symbols);
   void userConnectedQuery(int fileId, int userId, const QString &username);
