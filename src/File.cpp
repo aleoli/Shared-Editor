@@ -277,6 +277,10 @@ std::list<Symbol>::iterator File::getSymbolsStart() {
   return _symbols.begin();
 }
 
+std::list<Paragraph>::iterator File::getParagraphsStart() {
+  return _paragraphs.begin();
+}
+
 void File::forEachSymbol(const std::function<void(const Symbol&) >& lambda) {
   auto sl = std::shared_lock{this->_mutex};
 
@@ -612,22 +616,56 @@ int File::remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it, int 
   }
 }
 
-int File::remoteUpdate(const Symbol &sym) {
+std::optional<std::list<Symbol>::iterator> File::localUpdate(const QTextCharFormat &fmt, int pos, std::list<Symbol>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+
+  if(pos < 0 || _symbols.size() <= pos) {
+    throw FileSymbolsException{"Invalid update position"};
+  }
+
+  auto target = it == nullptr ? iteratorAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  if(target->isDifferent(fmt)) {
+    target->localUpdate(fmt);
+    dirty = true;
+
+    return std::optional<std::list<Symbol>::iterator>(target);
+  }
+
+  return std::nullopt;
+}
+
+int File::remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
 
   try {
-    auto pos = _symbolById(sym.getSymbolId());
-    auto &symbol = pos.second;
+    int pos = 0;
+    std::list<Symbol>::iterator target;
+    auto id = sym.getSymbolId();
+    if(it == nullptr || (*it)->getSymbolId() != id) {
+      auto res = _iteratorById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = std::next(target);
+    }
+    else {
+      target = *it;
+      *it = std::next(*it);
+    }
 
-    symbol.update(sym);
-    dirty = true;
+    if(target->isDifferent(sym)) {
+      dirty = true;
 
-    return pos.first;
+      target->remoteUpdate(sym);
+      return oldPos + pos;
+    }
   }
   catch(FileSymbolsException& e) {
     //il simbolo non esiste più
-    return -1;
   }
+
+  return -1;
 }
 
 void File::remoteAddComment(const Comment &comment) {
@@ -689,7 +727,6 @@ bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs) {
   return lhs.userId == rhs.userId && lhs.username == rhs.username;
 }
 
-//TODO
 void File::localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
   // (chi ha chiamato questo metodo poi si preoccuperà di mandare info al server)

@@ -60,6 +60,7 @@ public:
   std::unordered_map<int, File::UserInfo> getUsers() const;
   std::list<Symbol> getSymbols() const;
   std::list<Symbol>::iterator getSymbolsStart();
+  std::list<Paragraph>::iterator getParagraphsStart();
   std::map<CommentIdentifier, Comment> getComments() const;
   Symbol& symbolAt(int pos, std::list<Symbol>::iterator *it = nullptr);
   std::list<Symbol>::iterator iteratorAt(int pos);
@@ -92,7 +93,8 @@ public:
   int remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position in which i inserted
   void localDelete(int pos, std::list<Symbol>::iterator *it = nullptr);
   int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position of the deleted element
-  int remoteUpdate(const Symbol &sym);
+  std::optional<std::list<Symbol>::iterator> localUpdate(const QTextCharFormat &fmt, int pos, std::list<Symbol>::iterator *it = nullptr);
+  int remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1);
 
   // paragraphs
   void localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it = nullptr);

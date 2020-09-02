@@ -66,7 +66,7 @@ bool TextEditor::_isFakeUpdate(int pos, int removed, int added, std::list<Symbol
 }
 
 void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator &it) {
-  std::list<SymbolId> symRemoved;
+  std::list<Identifier> symRemoved;
   auto doc = _textEdit->document();
 
   for(int i=0; i<removed; i++) {
@@ -80,7 +80,7 @@ void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator
       }
   }
 
-  emit localDelete(_user->getToken(), _user->getFileId(), symRemoved);
+  emit localDelete(_user->getToken(), _user->getFileId(), symRemoved, std::list<Identifier>());
 }
 
 void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &it) {
@@ -110,7 +110,7 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
     _partialRefresh(pos, added);
   }
 
-  emit localInsert(_user->getToken(), _user->getFileId(), symAdded);
+  emit localInsert(_user->getToken(), _user->getFileId(), symAdded, std::list<Paragraph>()); //TODO
 }
 
 void TextEditor::_partialRefresh(int pos, int added) {
@@ -187,7 +187,7 @@ void TextEditor::_updateCursors() {
 
 // Messages from server
 
-void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols) {
+void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs) {
   _blockSignals = true;
   int pos = -1;
   auto backgroundColor = _highlighted ? std::optional<QColor>(getUserColorHighlight(userId)) : std::nullopt;
@@ -228,7 +228,7 @@ void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& s
   _blockSignals = false;
 }
 
-void TextEditor::remoteDelete(int fileId, int userId, const std::list<SymbolId>& ids) {
+void TextEditor::remoteDelete(int fileId, int userId, const std::list<Identifier>& ids, const std::list<Identifier> &paragraphs) {
   _blockSignals = true;
   int pos = 0;
 
@@ -263,7 +263,7 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::list<SymbolId>&
   _blockSignals = false;
 }
 
-void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols) {
+void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs) {
   throw TextEditorException{"Update not used in this version!"};
   _blockSignals = true;
   int pos;

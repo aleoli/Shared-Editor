@@ -190,7 +190,7 @@ void MessageManager::loadFile(int clientId, int fileId) {
   _openFiles.insert(fileId, std::pair<QString, File>{f_db.getPath(), std::move(f)});
 }
 
-void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& syms) {
+void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -205,14 +205,21 @@ void MessageManager::addSymbols(quint64 clientId, int fileId, const QJsonArray& 
 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;
+
   auto it = f.getSymbolsStart();
   auto symbols = Symbol::jsonArrayToSymbols(syms);
   for(const auto &sym : symbols) {
     f.remoteInsert(sym, &it);
   }
+
+  auto it2 = f.getParagraphsStart();
+  auto paragraphs = Paragraph::jsonArrayToParagraphs(pars);
+  for(const auto &par : paragraphs) {
+    f.remoteInsertParagraph(par, &it2);
+  }
 }
 
-void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms) {
+void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -227,13 +234,21 @@ void MessageManager::deleteSymbols(quint64 clientId, int fileId, const QJsonArra
 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;
+
   auto it = f.getSymbolsStart();
-  for(const auto& sym: syms) {
-    f.remoteDelete(SymbolId::fromJsonObject(sym.toObject()), &it);
+  auto symbols = utils::jsonArrayToList<SymbolId>(syms);
+  for(const auto &sym : symbols) {
+    f.remoteDelete(sym, &it);
+  }
+
+  auto it2 = f.getParagraphsStart();
+  auto paragraphs = utils::jsonArrayToList<ParagraphId>(pars);
+  for(const auto &par : paragraphs) {
+    f.remoteDeleteParagraph(par, &it2);
   }
 }
 
-void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms) {
+void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -248,8 +263,17 @@ void MessageManager::updateSymbols(quint64 clientId, int fileId, const QJsonArra
 
   auto sl = std::shared_lock(_openFiles.getMutex());
   File& f = _openFiles[fileId].second;
-  for(const auto& sym: syms) {
-    f.remoteUpdate(Symbol::fromJsonObject(sym.toObject()));
+
+  auto it = f.getSymbolsStart();
+  auto symbols = Symbol::jsonArrayToSymbols(syms);
+  for(const auto &sym : symbols) {
+    f.remoteUpdate(sym, &it);
+  }
+
+  auto it2 = f.getParagraphsStart();
+  auto paragraphs = Paragraph::jsonArrayToParagraphs(pars);
+  for(const auto &par : paragraphs) {
+    f.remoteUpdateParagraph(par, &it2);
   }
 }
 

@@ -39,10 +39,10 @@ public:
   // richiesta di un file da parte di un client
   const File& getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser);
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
-  void addSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
-  void deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
+  void addSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars);
+  void deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars);
   // per la modifica di un simbolo
-  void updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
+  void updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars);
 
   /* gestione commenti */
   void addComment(quint64 clientId, int fileId, const QJsonObject& comment);
