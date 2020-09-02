@@ -82,7 +82,7 @@ public:
 
   // comments
   void remoteAddComment(const Comment& comment);
-  void remoteUpdateComment(const Comment& comment);
+  void remoteUpdateComment(Comment comment);
   void remoteDeleteComment(const Comment& comment);
 
   //CRDT

@@ -56,7 +56,7 @@ void TextEditor::_insertComment(bool checked) {
   auto text = Input::show(this, "New comment");
   if(!text) return;
 
-  auto comment = File::Comment{{_user->getCommentId(), _user->getUserId()}, *text, QDateTime::currentDateTime()};
+  auto comment = File::Comment{{_user->getCommentId(), _user->getUserId()}, *text, QDateTime::currentDateTimeUtc()};
   auto widget = loadComment(_user->getUserId(), comment);
   widget->setIcon(_user->getIcon());
 
