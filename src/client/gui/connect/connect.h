@@ -5,6 +5,7 @@
 
 #include "main_window.h"
 #include "alert_messages.h"
+#include "sys.h"
 
 namespace Ui {
 class Connect;
@@ -19,7 +20,7 @@ public:
     ~Connect();
 
 signals:
-  void openConnection(const QString &host, int port);
+  void openConnection(const QString &host, int port, int ms = CONNECT_TIME_LIMIT);
   void quit();
 
 public slots:

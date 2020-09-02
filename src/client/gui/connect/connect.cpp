@@ -59,6 +59,12 @@ void Connect::_connect(bool checked) {
     return;
   }
 
+  auto host = getHost();
+  if(host.isEmpty()) {
+    emit alert(Alert::ERROR, WRONG_HOST);
+    return;
+  }
+
   emit openConnection(getHost(), port);
 }
 

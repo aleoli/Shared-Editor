@@ -18,7 +18,7 @@ using namespace se_exceptions;
 std::shared_ptr<GuiManager> GuiManager::instance = nullptr;
 
 GuiManager::GuiManager(const SysConf &conf, QObject *parent)
-  : QObject(parent), _connected(false) {
+  : QObject(parent), _connected(false), _firstTime(false) {
   initThreads();
 
   _stackedWidget = new StackedWidget();
@@ -240,14 +240,18 @@ void GuiManager::checkConnection() {
   emit abort();
   unfreezeWindow();
   showWindow(_widgetConnect);
-  alert(Alert::ERROR, "Cannot connect to the server.", "Connection error");
+
+  if(!_firstTime) {
+    alert(Alert::ERROR, "Cannot connect to the server.", "Connection error");
+  }
+  else _firstTime = false;
 }
 
-void GuiManager::openConnection(const QString &host, int port) {
+void GuiManager::openConnection(const QString &host, int port, int ms) {
   debug("Connection " + host + " " + QString::number(port));
   freezeWindow();
   emit connect(host, port);
-  QTimer::singleShot(CONNECT_TIME_LIMIT, this, &GuiManager::checkConnection);
+  QTimer::singleShot(ms, this, &GuiManager::checkConnection);
 }
 
 void GuiManager::run() {
@@ -256,7 +260,8 @@ void GuiManager::run() {
   _managerThread->start();
 
 #if AUTO_CONNECT
-  openConnection(_widgetConnect->getHost(), _widgetConnect->getPort());
+  _firstTime = true;
+  openConnection(_widgetConnect->getHost(), _widgetConnect->getPort(), 100);
 #else
   _stackedWidget->show();
 #endif
