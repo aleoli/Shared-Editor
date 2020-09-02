@@ -14,6 +14,7 @@
 #include <QListWidget>
 #include <unordered_map>
 #include <list>
+#include <QTextBlock>
 
 #include "main_window.h"
 #include "alert_messages.h"
@@ -54,8 +55,8 @@ signals:
   void commentLocalDelete(const QString &token, int fileId, const File::Comment &comment);
 
   void localInsert(const QString &token, int fileId, const std::list<Symbol> &symbols);
-  void localDelete(const QString &token, int fileId, const std::vector<SymbolId> &ids);
-  void localUpdate(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localDelete(const QString &token, int fileId, const std::list<SymbolId> &ids);
+  void localUpdate(const QString &token, int fileId, const std::list<Symbol> &symbols);
   void localMove(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
 
 public slots:
@@ -72,8 +73,8 @@ public slots:
   void commentRemoteDelete(int fileId, int userId, const File::Comment &comment);
 
   void remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols);
-  void remoteDelete(int fileId, int userId, const std::vector<SymbolId>& ids);
-  void remoteUpdate(int fileId, int userId, const std::vector<Symbol>& symbols);
+  void remoteDelete(int fileId, int userId, const std::list<SymbolId>& ids);
+  void remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols);
   void remoteMove(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);
 
 private slots:
@@ -188,5 +189,6 @@ private:
   File *_file;
   ColorGenerator _gen;
   int _cursorPosition;
+  int _nblocks;
   Find *_dialogFind;
 };

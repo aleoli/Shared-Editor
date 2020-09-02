@@ -66,7 +66,8 @@ bool TextEditor::_isFakeUpdate(int pos, int removed, int added, std::list<Symbol
 }
 
 void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator &it) {
-  std::vector<SymbolId> symRemoved;
+  std::list<SymbolId> symRemoved;
+  auto doc = _textEdit->document();
 
   for(int i=0; i<removed; i++) {
       try {
@@ -227,7 +228,7 @@ void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& s
   _blockSignals = false;
 }
 
-void TextEditor::remoteDelete(int fileId, int userId, const std::vector<SymbolId>& ids) {
+void TextEditor::remoteDelete(int fileId, int userId, const std::list<SymbolId>& ids) {
   _blockSignals = true;
   int pos = 0;
 
@@ -262,7 +263,7 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::vector<SymbolId
   _blockSignals = false;
 }
 
-void TextEditor::remoteUpdate(int fileId, int userId, const std::vector<Symbol>& symbols) {
+void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols) {
   throw TextEditorException{"Update not used in this version!"};
   _blockSignals = true;
   int pos;

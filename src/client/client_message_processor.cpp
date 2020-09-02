@@ -457,7 +457,7 @@ void ClientMessageProcessor::remoteDelete() {
     auto userId = _m.getInt("userId");
     auto ids = _m.getArray("ids");
 
-    emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToVector<SymbolId>(ids));
+    emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToList<SymbolId>(ids));
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
@@ -472,7 +472,7 @@ void ClientMessageProcessor::remoteUpdate() {
     auto userId = _m.getInt("userId");
     auto symbols = _m.getArray("symbols");
 
-    emit _manager->remoteUpdateQuery(fileId, userId, utils::jsonArrayToVector<Symbol>(symbols));
+    emit _manager->remoteUpdateQuery(fileId, userId, utils::jsonArrayToList<Symbol>(symbols));
   }
   catch(SE_Exception& e) {
     disconnect(e.what());

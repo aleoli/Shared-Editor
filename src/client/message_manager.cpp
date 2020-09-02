@@ -215,25 +215,25 @@ void MessageManager::localInsertQuery(const QString &token, int fileId, const st
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids) {
+void MessageManager::localDeleteQuery(const QString &token, int fileId, const std::list<SymbolId> &ids) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_DELETE),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
-    m.setValue("ids", utils::vectorToJsonArray(ids));
+    m.setValue("ids", utils::listToJsonArray(ids));
 
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localUpdateQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols) {
+void MessageManager::localUpdateQuery(const QString &token, int fileId, const std::list<Symbol> &symbols) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_UPDATE),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
     //TODO aggiusta per non mandare il vettore pos dei symbols
-    m.setValue("symbols", utils::vectorToJsonArray(symbols));
+    m.setValue("symbols", utils::listToJsonArray(symbols));
 
     emit send_data(m.toQByteArray());
 }

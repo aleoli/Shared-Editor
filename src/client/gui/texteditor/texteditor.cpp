@@ -22,7 +22,8 @@ TextEditor::TextEditor(QWidget *parent) :
     _blockSignals(false),
     _me(nullptr),
     _file(nullptr),
-    _cursorPosition(0)
+    _cursorPosition(0),
+    _nblocks(1)
 {
   ui->setupUi(this);
 
@@ -401,6 +402,7 @@ void TextEditor::refresh(bool changeFile) {
     _cursorPosition = pos;
   }
 
+  _nblocks = _textEdit->document()->blockCount();
   _blockSignals = false;
 }
 

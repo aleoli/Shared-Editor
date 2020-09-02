@@ -43,8 +43,8 @@ signals:
   void fileInfoResponse(const FSElement::FileInfo& fileInfo);
 
   void remoteInsertQuery(int fileId, int userId, const std::list<Symbol> &symbols);
-  void remoteDeleteQuery(int fileId, int userId, const std::vector<SymbolId> &ids);
-  void remoteUpdateQuery(int fileId, int userId, const std::vector<Symbol> &symbols);
+  void remoteDeleteQuery(int fileId, int userId, const std::list<SymbolId> &ids);
+  void remoteUpdateQuery(int fileId, int userId, const std::list<Symbol> &symbols);
   void userConnectedQuery(int fileId, int userId, const QString &username);
   void userDisconnectedQuery(int fileId, int userId);
   void remoteMoveQuery(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);
@@ -83,8 +83,8 @@ public slots:
   void getFileInfoQuery(const QString &token, int fileId);
 
   void localInsertQuery(const QString &token, int fileId, const std::list<Symbol> &symbols);
-  void localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids);
-  void localUpdateQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localDeleteQuery(const QString &token, int fileId, const std::list<SymbolId> &ids);
+  void localUpdateQuery(const QString &token, int fileId, const std::list<Symbol> &symbols);
   void localMoveQuery(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
 
   // newDirQuery: se la dir è creata nella root, il parentId non è necessario
