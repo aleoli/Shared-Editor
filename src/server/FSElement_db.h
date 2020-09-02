@@ -58,7 +58,7 @@ public:
   std::vector<FSElement_db*> ls(const Session &s);
   static FSElement_db link(const Session &s, const QString &token);
   SharedLink share(const Session &s);
-  void mv(const Session &s, FSElement_db &fs_e);
+  void mv(const Session &s, FSElement_db &fs_e, const std::optional<QString>& appendIfNameExists = std::nullopt);
   void mv(const Session &s, int new_dir_id);
   void rename(const Session &s, QString name);
   std::pair<QString, int> pwd(const Session &s);
@@ -80,6 +80,10 @@ private:
   FSElement_db clone(const Session &s);
   std::vector<FSElement_db*> getChildren();
 
+  static FSElement_db get(int userId, int id);
+  std::vector<FSElement_db*> ls(int userId);
+
+  static void checkName(int user_id, int parent_it, QString& name, std::optional<QString> append = std::nullopt);
   bool availableForUser(int user_id);
 
   void del_file();

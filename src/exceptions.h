@@ -110,6 +110,11 @@ namespace se_exceptions {
       explicit FileUserException(QString str): FileException(std::move(str)) {}
   };
 
+  class DuplicatedNameException : public FileException {
+  public:
+      explicit DuplicatedNameException(QString str): FileException(std::move(str)) {}
+  };
+
   // MessageManagerExceptions
   class MessageManagerException : public SE_Exception {
   public:
