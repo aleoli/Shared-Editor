@@ -276,7 +276,7 @@ FSElement_db FSElement_db::get(const Session &s, int id) {
 
 FSElement_db FSElement_db::get(int userId, int id) {
   auto fs_e = DB::get()->getOne<FSElement_db>(id);
-  if(fs_e._owner_id != userId) {
+  if(fs_e._owner_id != userId && !fs_e.availableForUser(userId)) {
     warn("User "+QString::number(userId)+" has tryed to access a file of user "+QString::number(fs_e._owner_id));
     throw se_exceptions::IllegalAccessException{"User "+QString::number(userId)+" has tryed to access a file of user "+QString::number(fs_e._owner_id)};
   }
@@ -497,8 +497,7 @@ int FSElement_db::getIdForUser(const Session &s, int file_id, int user_id) {
       return l->getId();
     }
   }
-  // TODO
-  throw 1;
+  throw FileUserException{"This file is not available for this user"};
 }
 
 bool FSElement_db::availableForUser(int user_id) {

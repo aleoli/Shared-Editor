@@ -2,7 +2,6 @@
 
 <qresource prefix="/imgs">
     <file alias="loading">loading.gif</file>
-    <file alias="malnati">malnati.jpg</file>
 </qresource>
 
 </RCC>
