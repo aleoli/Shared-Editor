@@ -5,6 +5,7 @@
 #include <list>
 #include <QGridLayout>
 #include <cmath>
+#include <QMenu>
 
 #include "dialogs/input.h"
 #include "dialogs/confirm.h"
@@ -43,6 +44,7 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
   _layout->setSizeConstraint(QLayout::SetFixedSize);
 
   _widgetPath = ui->pathWidget;
+  _widgetPath->setStyleSheet("background-color: transparent;");
 
   connect(_widgetHome, &QPushButton::clicked, this, &DocsBrowser::_goToHome);
   connect(_widgetNewFolder, &QPushButton::clicked, this, &DocsBrowser::_newDir);
