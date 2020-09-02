@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <list>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -28,6 +29,9 @@ public:
   static Paragraph fromJsonObject(const QJsonObject &json);
   static Paragraph fromJsonObject(QJsonObject &&json);
   [[nodiscard]] QJsonObject toJsonObject() const;
+
+  static std::list<Paragraph> jsonArrayToParagraphs(const QJsonArray &array);
+  static QJsonArray paragraphsToJsonArray(const std::list<Paragraph> &symbols);
 
   void setParagraphId(const ParagraphId &id);
   [[nodiscard]] ParagraphId getParagraphId() const;

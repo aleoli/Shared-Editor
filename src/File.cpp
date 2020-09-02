@@ -19,14 +19,16 @@ File::File() = default;
 File::File(const File &file) {
   this->_users = file._users;
   this->_symbols = file._symbols;
+  this->_paragraphs = file._paragraphs;
   this->_comments = file._comments;
   this->dirty = file.dirty;
 }
 
-File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)), _comments(std::move(file._comments)), dirty(file.dirty) {}
+File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)),
+  _paragraphs(std::move(file._paragraphs)), _comments(std::move(file._comments)), dirty(file.dirty) {}
 
-File::File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> symbols, std::map<CommentIdentifier, Comment> comments)
-  : _users(std::move(users)), _symbols(std::move(symbols)), _comments(std::move(comments)) {}
+File::File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> symbols, std::list<Paragraph> paragraphs, std::map<CommentIdentifier, Comment> comments)
+  : _users(std::move(users)), _symbols(std::move(symbols)), _paragraphs(std::move(paragraphs)), _comments(std::move(comments)) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -42,6 +44,7 @@ File& File::operator=(const File &file) {
   }
   this->_users = file._users;
   this->_symbols = file._symbols;
+  this->_paragraphs = file._paragraphs;
   this->_comments = file._comments;
   this->dirty = file.dirty;
   return *this;
@@ -53,6 +56,7 @@ File& File::operator=(File &&file) noexcept {
   }
   this->_users = std::move(file._users);
   this->_symbols = std::move(file._symbols);
+  this->_paragraphs = std::move(file._paragraphs);
   this->_comments = std::move(file._comments);
   this->dirty = file.dirty;
   return *this;
@@ -61,23 +65,26 @@ File& File::operator=(File &&file) noexcept {
 void File::checkAndAssign(const QJsonObject &json) {
   auto usersValue = json["usrs"];
   auto symbolsValue = json["syms"];
+  auto paragraphsValue = json["pars"];
   auto commentsValue = json["cmts"];
 
-  if(usersValue.isUndefined() || symbolsValue.isUndefined() || commentsValue.isUndefined()) {
+  if(usersValue.isUndefined() || symbolsValue.isUndefined() || paragraphsValue.isUndefined() || commentsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!usersValue.isArray() || !symbolsValue.isArray() || !commentsValue.isArray()) {
+  if(!usersValue.isArray() || !symbolsValue.isArray() || !paragraphsValue.isArray() || !commentsValue.isArray()) {
     throw FileFromJsonException{"One or more fields are not valid"};
   }
 
   auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
+  auto paragraphs = paragraphsValue.toArray();
   auto comments = commentsValue.toArray();
 
   auto ul = std::unique_lock{this->_mutex};
   _users = jsonArrayToUsers(users);
   _symbols = Symbol::jsonArrayToSymbols(symbols);
+  _paragraphs = Paragraph::jsonArrayToParagraphs(paragraphs);
   _comments = jsonArrayToComments(comments);
 }
 
@@ -116,6 +123,7 @@ QJsonObject File::toJsonObject() const {
   json["cmts"] = QJsonValue(commentsToJsonArray());
   auto sl = std::shared_lock{this->_mutex};
   json["syms"] = QJsonValue(Symbol::symbolsToJsonArray(_symbols));
+  json["pars"] = QJsonValue(Paragraph::paragraphsToJsonArray(_paragraphs));
 
   return json;
 }
@@ -184,31 +192,6 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray 
   }
 
   return users;
-}
-
-std::list<Symbol> File::jsonArrayToSymbols(const QJsonArray &array) {
-  std::list<Symbol> symbols;
-
-  for(auto&& el : array) {
-    if(!el.isObject()) {
-      throw FileFromJsonException{"One or more fields in symbols array are not valid"};
-    }
-
-    symbols.emplace_back(el.toObject());
-  }
-
-  return symbols;
-}
-
-QJsonArray File::symbolsToJsonArray() const {
-  QJsonArray array;
-
-  auto sl = std::shared_lock{this->_mutex};
-  for(auto &sym : _symbols) {
-    array.append(QJsonValue(sym.toJsonObject()));
-  }
-
-  return array;
 }
 
 File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
@@ -704,4 +687,37 @@ bool operator==(const File::Comment & lhs, const File::Comment & rhs) {
 
 bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs) {
   return lhs.userId == rhs.userId && lhs.username == rhs.username;
+}
+
+//TODO
+void File::localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it) {
+
+}
+
+int File::remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it, int oldPos) {
+  return -1;
+}
+
+void File::localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it) {
+
+}
+
+int File::remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it, int oldPos) {
+  return -1;
+}
+
+std::list<Paragraph>::iterator File::paragraphAt(int pos) {
+  return _paragraphs.begin();
+}
+
+std::pair<int, std::list<Paragraph>::iterator> File::paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it) {
+  return {-1, _paragraphs.begin()};
+}
+
+std::list<Paragraph>::iterator File::_paragraphAt(int pos) {
+  return _paragraphs.begin();
+}
+
+std::pair<int, std::list<Paragraph>::iterator> File::_paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it) {
+  return {-1, _paragraphs.begin()};
 }

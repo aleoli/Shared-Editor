@@ -97,6 +97,25 @@ QJsonObject Paragraph::toJsonObject() const {
   return json;
 }
 
+std::list<Paragraph> Paragraph::jsonArrayToParagraphs(const QJsonArray &array){
+  std::list<Paragraph> paragraphs;
+
+  for(auto &&el : array) {
+    paragraphs.push_back(Paragraph::fromJsonObject(el.toObject()));
+  }
+
+  return paragraphs;
+}
+
+QJsonArray Paragraph::paragraphsToJsonArray(const std::list<Paragraph> &paragraphs){
+  QJsonArray array;
+
+  for(auto &&par : paragraphs) {
+    array.push_back(par.toJsonObject());
+  }
+
+  return array;
+}
 
 void Paragraph::setParagraphId(const ParagraphId &id) {
   _id = id;

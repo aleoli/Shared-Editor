@@ -2,6 +2,7 @@
 
 #include "Symbol.h"
 #include "Identifier.h"
+#include "Paragraph.h"
 
 #include <list>
 #include <vector>
@@ -34,7 +35,7 @@ public:
   File();
   File(const File &file);
   File(File &&file) noexcept;
-  File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> _symbols, std::map<CommentIdentifier, Comment> comments);
+  File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> _symbols, std::list<Paragraph> paragraphs, std::map<CommentIdentifier, Comment> comments);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -93,11 +94,21 @@ public:
   int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position of the deleted element
   int remoteUpdate(const Symbol &sym);
 
+  // paragraphs
+  void localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it = nullptr);
+  int remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
+  void localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it = nullptr);
+  int remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
+  std::list<Paragraph>::iterator paragraphAt(int pos);
+  std::pair<int, std::list<Paragraph>::iterator> paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);
+
 private:
   Symbol& _symbolAt(int pos, std::list<Symbol>::iterator *it = nullptr);
   std::pair<int, Symbol&> _symbolById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   std::pair<int, std::list<Symbol>::iterator> _iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   int _getPosition(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
+  std::list<Paragraph>::iterator _paragraphAt(int pos);
+  std::pair<int, std::list<Paragraph>::iterator> _paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);
 
   void checkAndAssign(const QJsonObject &json);
 
@@ -109,14 +120,12 @@ private:
   QJsonArray usersToJsonArray() const;
   static std::unordered_map<int, File::UserInfo> jsonArrayToUsers(const QJsonArray &array);
 
-  static std::list<Symbol> jsonArrayToSymbols(const QJsonArray &array);
-  QJsonArray symbolsToJsonArray() const;
-
   QJsonArray commentsToJsonArray() const;
   static std::map<CommentIdentifier, Comment> jsonArrayToComments(const QJsonArray &array);
 
   std::unordered_map<int, UserInfo> _users;
   std::list<Symbol> _symbols;
+  std::list<Paragraph> _paragraphs;
   std::map<CommentIdentifier, Comment> _comments;
 
   bool dirty = false;
