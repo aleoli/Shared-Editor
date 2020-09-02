@@ -569,10 +569,10 @@ int File::remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it, int o
     });
 
   dirty = true;
-  _symbols.emplace(result, sym);
+  auto inserted = _symbols.emplace(result, sym);
 
-  if(it != nullptr) *it = result;
-  return oldPos + pos + 1;
+  if(it != nullptr) *it = inserted;
+  return oldPos + pos;
 }
 
 void File::localDelete(int pos, std::list<Symbol>::iterator *it) {
@@ -616,7 +616,7 @@ int File::remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it, int 
   }
 }
 
-std::optional<std::list<Symbol>::iterator> File::localUpdate(const QTextCharFormat &fmt, int pos, std::list<Symbol>::iterator *it) {
+std::optional<std::list<Symbol>::iterator> File::localUpdate(const QTextCharFormat &fmt, int pos, bool ignoreBackground, std::list<Symbol>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
 
   if(pos < 0 || _symbols.size() <= pos) {
@@ -626,8 +626,8 @@ std::optional<std::list<Symbol>::iterator> File::localUpdate(const QTextCharForm
   auto target = it == nullptr ? iteratorAt(pos) : *it;
   if(it != nullptr) *it = std::next(*it);
 
-  if(target->isDifferent(fmt)) {
-    target->localUpdate(fmt);
+  if(target->isDifferent(fmt, ignoreBackground)) {
+    target->localUpdate(fmt, ignoreBackground);
     dirty = true;
 
     return std::optional<std::list<Symbol>::iterator>(target);
@@ -647,11 +647,10 @@ int File::remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it, int o
       auto res = _iteratorById(id, it);
       pos = res.first;
       target = res.second;
-      if(it != nullptr) *it = std::next(target);
+      if(it != nullptr) *it = target;
     }
     else {
       target = *it;
-      *it = std::next(*it);
     }
 
     if(target->isDifferent(sym)) {

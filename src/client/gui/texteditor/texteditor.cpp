@@ -23,7 +23,9 @@ TextEditor::TextEditor(QWidget *parent) :
     _me(nullptr),
     _file(nullptr),
     _cursorPosition(0),
-    _nblocks(1)
+    _nblocks(1),
+    _updateSyms(false),
+    _updateAlignment(false)
 {
   ui->setupUi(this);
 
@@ -578,6 +580,7 @@ void TextEditor::_setFilename() {
 void TextEditor::_bold(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_bold");
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetBold->setChecked(checked);
   _actionBold->setChecked(checked);
 
@@ -590,7 +593,7 @@ void TextEditor::_bold(bool checked) {
 void TextEditor::_italics(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_italics");
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetItalics->setChecked(checked);
   _actionItalics->setChecked(checked);
 
@@ -603,7 +606,7 @@ void TextEditor::_italics(bool checked) {
 void TextEditor::_strike(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_strike");
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetStrike->setChecked(checked);
   _actionStrike->setChecked(checked);
 
@@ -616,7 +619,7 @@ void TextEditor::_strike(bool checked) {
 void TextEditor::_underline(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_underline");
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetUnderline->setChecked(checked);
   _actionUnderline->setChecked(checked);
 
@@ -634,7 +637,7 @@ void TextEditor::_mark(bool checked) {
     emit alert(Alert::ERROR, HIGHLIGHT_ON);
     return;
   }
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   QColor col = QColorDialog::getColor(_textEdit->textBackgroundColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
   if (!col.isValid()) {
     return;
@@ -650,6 +653,7 @@ void TextEditor::_mark(bool checked) {
 void TextEditor::_color(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_color");
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
 
   QColor col = QColorDialog::getColor(_textEdit->textColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
   if (!col.isValid()) {
@@ -721,6 +725,7 @@ void TextEditor::_alignL() {
   debug("TextEditor::_alignL");
   _widgetAlignL->setChecked(true);
   _actionAlignL->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignLeft);
   _textEdit->setFocus();
@@ -731,6 +736,7 @@ void TextEditor::_alignC() {
   debug("TextEditor::_alignC");
   _widgetAlignC->setChecked(true);
   _actionAlignC->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignHCenter);
   _textEdit->setFocus();
@@ -741,6 +747,7 @@ void TextEditor::_alignR() {
   debug("TextEditor::_alignR");
   _widgetAlignR->setChecked(true);
   _actionAlignR->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignRight);
   _textEdit->setFocus();
@@ -751,6 +758,7 @@ void TextEditor::_justify() {
   debug("TextEditor::_justify");
   _widgetJustify->setChecked(true);
   _actionJustify->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignJustify);
   _textEdit->setFocus();
@@ -759,6 +767,7 @@ void TextEditor::_justify() {
 void TextEditor::_font(const QFont &font) {
   if(_blockSignals) return;
   debug("TextEditor::_font");
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
 
   auto fmt = _textEdit->currentCharFormat();
   fmt.setFontFamily(font.family());
@@ -777,6 +786,7 @@ void TextEditor::_size(int index) {
     return;
   }
 
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   auto fmt = _textEdit->currentCharFormat();
   fmt.setFontPointSize(size);
   _textEdit->mergeCurrentCharFormat(fmt);

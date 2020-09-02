@@ -90,11 +90,11 @@ public:
 
   //CRDT
   void localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it = nullptr);
-  int remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position in which i inserted
+  int remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0); // returns the position in which i inserted
   void localDelete(int pos, std::list<Symbol>::iterator *it = nullptr);
-  int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position of the deleted element
-  std::optional<std::list<Symbol>::iterator> localUpdate(const QTextCharFormat &fmt, int pos, std::list<Symbol>::iterator *it = nullptr);
-  int remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1);
+  int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0); // returns the position of the deleted element
+  std::optional<std::list<Symbol>::iterator> localUpdate(const QTextCharFormat &fmt, int pos, bool ignoreBackground = false, std::list<Symbol>::iterator *it = nullptr);
+  int remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0);
 
   // paragraphs
   void localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it = nullptr);

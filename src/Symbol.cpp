@@ -61,12 +61,12 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
   return !operator==(lhs, rhs);
 }
 
-bool Symbol::isDifferent(const Symbol &other) {
-  return !Symbol::compareFormats(_fmt, other._fmt);
+bool Symbol::isDifferent(const Symbol &other, bool ignoreBackground) {
+  return !Symbol::compareFormats(_fmt, other._fmt, ignoreBackground);
 }
 
-bool Symbol::isDifferent(const QTextCharFormat &fmt) {
-  return !Symbol::compareFormats(_fmt, fmt);
+bool Symbol::isDifferent(const QTextCharFormat &fmt, bool ignoreBackground) {
+  return !Symbol::compareFormats(_fmt, fmt, ignoreBackground);
 }
 
 bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground) {
@@ -80,10 +80,6 @@ bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &
   }
 
   return fmt1.font() == fmt2.font() && col1 == col2 && cmp;
-}
-
-bool Symbol::hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground) const {
-  return _char == chr && compareFormats(_fmt, fmt, ignoreBackground);
 }
 
 void Symbol::checkAndAssign (const QJsonObject &json, QFont *font, QBrush *col, QBrush *bac) {
@@ -350,8 +346,11 @@ void Symbol::update(const Symbol &s) {
   _fmt = s._fmt;
 }
 
-void Symbol::localUpdate(const QTextCharFormat &fmt) {
+void Symbol::localUpdate(const QTextCharFormat &fmt, bool ignoreBackground) {
+  auto background = _fmt.background();
   _fmt = fmt;
+  if(ignoreBackground) _fmt.setBackground(background);
+  
   _timestamp = QDateTime::currentDateTimeUtc();
   _lastUser = _id.getFirst();
 }

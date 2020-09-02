@@ -107,3 +107,19 @@ void Cursor::removeSelected() {
 void Cursor::clearSelection() {
   _cursor->clearSelection();
 }
+
+bool Cursor::hasSelection() {
+  return _cursor->hasSelection();
+}
+
+void Cursor::mergeCharFormat(const QTextCharFormat &fmt) {
+  _cursor->mergeCharFormat(fmt);
+}
+
+int Cursor::position() {
+  return _cursor->position();
+}
+
+QTextCharFormat Cursor::charFormat() {
+  return _cursor->charFormat();
+}

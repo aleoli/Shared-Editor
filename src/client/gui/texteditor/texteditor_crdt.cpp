@@ -22,47 +22,56 @@ void TextEditor::_contentsChange(int pos, int removed, int added) {
   }
 
   auto it = _file->iteratorAt(pos);
-  if(!_isFakeUpdate(pos,removed, added, it)) {
-    debug("TextEditor::_contentsChange | pos: " + QString::number(pos) + " removed: " + QString::number(removed) + " added: " + QString::number(added));
-
-    if(removed > 0) _handleDelete(pos, removed, it);
-
-    if(added > 0) {
-      if(removed > 0) it = _file->iteratorAt(pos); // because it is not valid anymore
-      _handleInsert(pos, added, it);
-    }
-
-    updateActions();
+  switch(_checkOperation(pos,removed, added, it)) {
+    case 0:
+      debug("Phantom update");
+      break;
+    case 1:
+      _handleDeleteInsert(pos, removed, added, it);
+      break;
+    case 2:
+      _handleUpdate(pos, added, it);
+      break;
   }
-  else {
-    debug("Phantom update");
-  }
-
   _cursorPosition = pos + added;
 }
 
-bool TextEditor::_isFakeUpdate(int pos, int removed, int added, std::list<Symbol>::iterator it) {
-  if(pos < 0 || removed < 0 || added < 0) return true;
-  if(removed != added) return false;
-  if(removed == 0) return true;
+// 0: phantom update | 1: delete/insert | 2: update
+int TextEditor::_checkOperation(int pos, int removed, int added, std::list<Symbol>::iterator it) {
+  if(pos < 0 || removed < 0 || added < 0) return 0;
+  if(removed != added) return 1;
+  if(removed == 0) return 0;
+  if(_updateSyms || _updateAlignment) return 2;
 
   auto doc = _textEdit->document();
   QTextCursor cursor(doc);
   cursor.setPosition(pos);
-
+  bool update = false;
   for(int i=0; i<removed; i++) {
     cursor.movePosition(QTextCursor::NextCharacter);
     auto chr = doc->characterAt(pos + i);
     auto fmt = cursor.charFormat();
 
-    if(!it->hasSameAttributes(chr, fmt, _highlighted)) {
-      return false;
-    }
+    if(it->getChar() != chr) return 1;
+    if(!Symbol::compareFormats(it->getFormat(), fmt, _highlighted)) update = true;
 
     it = std::next(it);
   }
 
-  return true;
+  return update ? 2 : 0;
+}
+
+void TextEditor::_handleDeleteInsert(int pos, int removed, int added, std::list<Symbol>::iterator &it) {
+  debug("TextEditor::_contentsChange | pos: " + QString::number(pos) + " removed: " + QString::number(removed) + " added: " + QString::number(added));
+
+  if(removed > 0) _handleDelete(pos, removed, it);
+
+  if(added > 0) {
+    if(removed > 0) it = _file->iteratorAt(pos); // because it is not valid anymore
+    _handleInsert(pos, added, it);
+  }
+
+  updateActions();
 }
 
 void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator &it) {
@@ -111,6 +120,45 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
   }
 
   emit localInsert(_user->getToken(), _user->getFileId(), symAdded, std::list<Paragraph>()); //TODO
+}
+
+void TextEditor::_handleUpdate(int pos, int added, std::list<Symbol>::iterator &it) {
+  if(_updateSyms) {
+    _handleSymbolUpdate(pos, added, it);
+    _updateSyms = false;
+  }
+  else if(_updateAlignment) {
+    _handleAlignmentUpdate(pos, added, it);
+    _updateAlignment = false;
+  }
+  else {
+    _handleSymbolUpdate(pos, added, it);
+  }
+}
+
+void TextEditor::_handleSymbolUpdate(int pos, int added, std::list<Symbol>::iterator &it) {
+  debug("Symbol update");
+  auto doc = _textEdit->document();
+  QTextCursor cursor(doc);
+  std::list<Symbol> symUpdated;
+
+  cursor.setPosition(pos);
+  for(int i=0; i<added; i++) {
+    cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
+
+    auto fmt = cursor.charFormat();
+
+    auto opt = _file->localUpdate(fmt, pos+i, _highlighted, &it);
+
+    if(opt)
+      symUpdated.push_back(**opt);
+  }
+
+  emit localUpdate(_user->getToken(), _user->getFileId(), symUpdated, std::list<Paragraph>());
+}
+
+void TextEditor::_handleAlignmentUpdate(int pos, int added, std::list<Symbol>::iterator &it) {
+  debug("Alignment update");
 }
 
 void TextEditor::_partialRefresh(int pos, int added) {
@@ -189,7 +237,7 @@ void TextEditor::_updateCursors() {
 
 void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs) {
   _blockSignals = true;
-  int pos = -1;
+  int pos = 0;
   auto backgroundColor = _highlighted ? std::optional<QColor>(getUserColorHighlight(userId)) : std::nullopt;
 
   if(_users.count(userId) == 0) {
@@ -205,18 +253,18 @@ void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& s
   QString text = "";
   QTextCharFormat fmt;
   for(auto &sym : symbols) {
-    pos = _file->remoteInsert(sym, &it, pos);
-    auto movePos = pos - tempPos;
+    auto newpos = _file->remoteInsert(sym, &it, pos);
     auto symFmt = sym.getFormat();
 
-    if(movePos != 0 || symFmt != fmt) {
+    // se i caratteri inseriti non sono consecutivi o hanno formato diverso
+    if(newpos - pos != 1 || symFmt != fmt) {
       cursor->insert(text, fmt, backgroundColor);
-      cursor->moveForward(movePos);
+      cursor->goTo(newpos);
       text.clear();
     }
 
     text.append(sym.getChar());
-    tempPos = pos + 1;
+    pos = newpos;
     fmt = symFmt;
   }
   if(!text.isEmpty()) {
@@ -264,10 +312,9 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::list<Identifier
 }
 
 void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs) {
-  throw TextEditorException{"Update not used in this version!"};
   _blockSignals = true;
-  int pos;
-  auto backgroundColor = _highlighted ? std::optional<QColor>(getUserColorHighlight(userId)) : std::nullopt;
+  int pos = 0;
+  auto backgroundColor = getUserColorHighlight(userId);
 
   if(_users.count(userId) == 0) {
     throw TextEditorException{"User " + QString::number(userId) + " not present in the list of users!!"};
@@ -277,14 +324,34 @@ void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& s
         + " chars from user " + QString::number(userId));
 
   auto cursor = _users[userId]->getCursor();
+  auto it = _file->getSymbolsStart();
+  QTextCharFormat fmt;
+  cursor->goTo(0);
   for(auto &sym : symbols) {
-    pos = _file->remoteUpdate(sym);
-    if(pos != -1) {
-      cursor->remove(pos);
-      cursor->insert(sym, pos, backgroundColor);
+    int newpos = _file->remoteUpdate(sym, &it, pos); //pos of current char
+    auto newfmt = it->getFormat();
+    if(newpos == -1) continue;
+
+    if(newpos - pos != 0 || !Symbol::compareFormats(fmt, newfmt, _highlighted)) {
+      if(_highlighted) fmt.setBackground(backgroundColor);
+      cursor->mergeCharFormat(fmt);
+      cursor->clearSelection();
+      cursor->goTo(newpos);
     }
+
+    cursor->selectNext();
+    std::advance(it, 1);
+    pos = newpos + 1;
+    fmt = newfmt;
   }
 
+  if(cursor->hasSelection()) {
+    if(_highlighted) fmt.setBackground(backgroundColor);
+    cursor->mergeCharFormat(fmt);
+    cursor->clearSelection();
+  }
+
+  cursor->updateCursorView();
   cursor->show();
   _blockSignals = false;
 }

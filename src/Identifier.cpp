@@ -27,11 +27,11 @@ void Identifier::checkAndAssign(const QJsonObject &json) {
     throw IdentifierFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  auto first = firstValue.toInt(-1);
-  auto second = secondValue.toInt(-1);
+  auto first = firstValue.toInt(-10);
+  auto second = secondValue.toInt(-10);
 
-  if(first < 0 || second < 0) {
-    throw IdentifierFromJsonException{"One or more fields are not valid"};
+  if(first == -10 || second == -10) {
+    throw IdentifierFromJsonException{"One or more fields UD are not valid"};
   }
 
   _first = first;

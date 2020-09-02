@@ -116,9 +116,13 @@ private slots:
 
   //CRDT
   void _contentsChange(int pos, int removed, int added);
-  bool _isFakeUpdate(int pos, int removed, int added, std::list<Symbol>::iterator it);
+  int _checkOperation(int pos, int removed, int added, std::list<Symbol>::iterator it);
+  void _handleDeleteInsert(int pos, int removed, int added, std::list<Symbol>::iterator &it);
   void _handleDelete(int pos, int removed, std::list<Symbol>::iterator &it);
   void _handleInsert(int pos, int added, std::list<Symbol>::iterator &it);
+  void _handleUpdate(int pos, int added, std::list<Symbol>::iterator &it);
+  void _handleSymbolUpdate(int pos, int added, std::list<Symbol>::iterator &it);
+  void _handleAlignmentUpdate(int pos, int added, std::list<Symbol>::iterator &it);
   void _cursorChanged();
   void _updateCursors();
   void _partialRefresh(int pos, int added);
@@ -181,7 +185,7 @@ private:
   QButtonGroup *_alignmentButtons;
   QActionGroup *_alignmentActions;
 
-  bool _highlighted, _blockSignals;
+  bool _highlighted, _blockSignals, _updateSyms, _updateAlignment;
   QBrush _defColor;
   std::unordered_map<int, RemoteUser*> _users;
   std::map<File::CommentIdentifier, CommentWidget*> _comments;
