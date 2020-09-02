@@ -27,6 +27,12 @@ public:
   friend bool operator==(const Paragraph& lhs, const Paragraph& rhs);
   friend bool operator!=(const Paragraph& lhs, const Paragraph& rhs);
 
+  bool isDifferent(const Paragraph &other);
+  bool isDifferent(Qt::Alignment alignment);
+
+  void localUpdate(Qt::Alignment alignment);
+  void remoteUpdate(const Paragraph &other);
+
   static Paragraph fromJsonObject(const QJsonObject &json);
   static Paragraph fromJsonObject(QJsonObject &&json);
   [[nodiscard]] QJsonObject toJsonObject() const;

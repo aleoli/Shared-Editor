@@ -691,33 +691,191 @@ bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs) {
 
 //TODO
 void File::localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+  // (chi ha chiamato questo metodo poi si preoccuperà di mandare info al server)
+  auto size = _paragraphs.size();
 
+  if(pos < 0 || pos > size) {
+    throw FileParagraphsException{"Invalid insert position"};
+  }
+
+  //debug("Pos: " + QString::number(pos));
+
+  std::vector<Identifier> v1, v2;
+  std::list<Paragraph>::iterator insertPos;
+  if(it == nullptr) insertPos = paragraphAt(pos);
+  else insertPos = *it;
+
+  if(size == 0) {}
+  else if(pos == 0) {
+    //debug("Front insertion");
+    v2 = std::move(insertPos->getPos());
+  }
+  else if(pos == size) {
+    //debug("Back insertion");
+    v1 = std::move(std::prev(insertPos)->getPos());
+  }
+  else {
+    //debug("Middle insertion");
+    v1 = std::move(std::prev(insertPos)->getPos());
+    v2 = std::move(insertPos->getPos());
+  }
+
+  std::vector<Identifier> position;
+
+  findPosition(par.getParagraphId().getFirst(), v1, v2, position);
+
+  par.setPos(position);
+  dirty = true;
+  _paragraphs.emplace(insertPos, par);
 }
 
 int File::remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it, int oldPos) {
-  return -1;
+  auto ul = std::unique_lock{this->_mutex};
+
+  auto start = it == nullptr ? _paragraphs.begin() : *it;
+  int pos = 0;
+  auto result = std::find_if(start, _paragraphs.end(), [&par, &pos](const Paragraph &cmp) {
+        bool val = par < cmp;
+        if(!val) pos++;
+        return val;
+    });
+
+  dirty = true;
+  _paragraphs.emplace(result, par);
+
+  if(it != nullptr) *it = result;
+  return oldPos + pos + 1;
 }
 
 void File::localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+  if(pos < 0 || _paragraphs.size() <= pos) {
+    throw FileParagraphsException{"Invalid delete position"};
+  }
 
+  dirty = true;
+  auto target = it == nullptr ? paragraphAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  _paragraphs.erase(target);
 }
 
 int File::remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it, int oldPos) {
+  auto ul = std::unique_lock{this->_mutex};
+
+  try {
+    int pos = 0;
+    std::list<Paragraph>::iterator target;
+    if(it == nullptr || (*it)->getParagraphId() != id) {
+      auto res = paragraphById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = std::next(target);
+    }
+    else {
+      target = *it;
+      *it = std::next(*it);
+    }
+
+    _paragraphs.erase(target);
+    dirty = true;
+
+    return oldPos + pos;
+  }
+  catch(FileParagraphsException& e) {
+    //il simbolo non esiste più
+    return -1;
+  }
+}
+
+std::optional<std::list<Paragraph>::iterator> File::localUpdateParagraph(Qt::Alignment alignment, int pos, std::list<Paragraph>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+  if(pos < 0 || _paragraphs.size() <= pos) {
+    throw FileParagraphsException{"Invalid update position"};
+  }
+
+  auto target = it == nullptr ? paragraphAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  if(target->isDifferent(alignment)) {
+    target->localUpdate(alignment);
+    dirty = true;
+
+    return std::optional<std::list<Paragraph>::iterator>(target);
+  }
+
+  return std::nullopt;
+}
+
+int File::remoteUpdateParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it, int oldPos) {
+  auto ul = std::unique_lock{this->_mutex};
+
+  try {
+    int pos = 0;
+    std::list<Paragraph>::iterator target;
+    auto id = par.getParagraphId();
+    if(it == nullptr || (*it)->getParagraphId() != id) {
+      auto res = paragraphById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = std::next(target);
+    }
+    else {
+      target = *it;
+      *it = std::next(*it);
+    }
+
+    if(target->isDifferent(par)) {
+      dirty = true;
+
+      target->remoteUpdate(par);
+      return oldPos + pos;
+    }
+  }
+  catch(FileParagraphsException& e) {
+    //il simbolo non esiste più
+  }
+
   return -1;
 }
 
 std::list<Paragraph>::iterator File::paragraphAt(int pos) {
-  return _paragraphs.begin();
+  auto size = _paragraphs.size();
+
+  if(pos > size || pos < 0)
+    throw FileParagraphsException{"File::paragraphAt: bad pos"};
+
+  std::list<Paragraph>::iterator it;
+  int middle = size / 2;
+  if(pos <= middle) {
+    //debug("Closer to the start");
+    it = _paragraphs.begin();
+    std::advance(it, pos);
+  }
+  else {
+    //debug("Closer to the end");
+    it = _paragraphs.end();
+    std::advance(it, pos - size);
+  }
+
+  return it;
 }
 
 std::pair<int, std::list<Paragraph>::iterator> File::paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it) {
-  return {-1, _paragraphs.begin()};
-}
+  int pos = 0;
+  auto start = it == nullptr ? _paragraphs.begin() : *it;
 
-std::list<Paragraph>::iterator File::_paragraphAt(int pos) {
-  return _paragraphs.begin();
-}
+  auto result = std::find_if(start, _paragraphs.end(), [&id, &pos](const Paragraph &cmp) {
+        bool val = cmp.getParagraphId() == id;
+        if(!val) pos++;
+        return val;
+  });
 
-std::pair<int, std::list<Paragraph>::iterator> File::_paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it) {
-  return {-1, _paragraphs.begin()};
+  if(result == std::end(_paragraphs)) {
+    throw FileParagraphsException{"Paragraph does not exist"};
+  }
+
+  if(it != nullptr) *it = result;
+  return {pos, result};
 }

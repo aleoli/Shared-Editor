@@ -105,6 +105,11 @@ namespace se_exceptions {
       explicit FileSymbolsException(QString str): FileException(std::move(str)) {}
   };
 
+  class FileParagraphsException : public FileException {
+  public:
+      explicit FileParagraphsException(QString str): FileException(std::move(str)) {}
+  };
+
   class FileUserException : public FileException {
   public:
       explicit FileUserException(QString str): FileException(std::move(str)) {}

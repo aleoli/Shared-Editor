@@ -29,6 +29,9 @@ public:
   friend bool operator==(const Symbol& lhs, const Symbol& rhs);
   friend bool operator!=(const Symbol& lhs, const Symbol& rhs);
 
+  bool isDifferent(const Symbol &other);
+  bool isDifferent(const QTextCharFormat &fmt);
+
   static Symbol fromJsonObject(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
   static Symbol fromJsonObject(QJsonObject &&json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
   [[nodiscard]] QJsonObject toJsonObject(QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr) const;
@@ -49,6 +52,8 @@ public:
   [[nodiscard]] std::string getFontInfo() const;
 
   void update(const Symbol &s);
+  void localUpdate(const QTextCharFormat &fmt);
+  void remoteUpdate(const Symbol &other);
 
   static bool compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground = false);
   [[nodiscard]] bool hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground = false) const;

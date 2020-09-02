@@ -61,6 +61,14 @@ bool operator!=(const Symbol& lhs, const Symbol& rhs) {
   return !operator==(lhs, rhs);
 }
 
+bool Symbol::isDifferent(const Symbol &other) {
+  return !Symbol::compareFormats(_fmt, other._fmt);
+}
+
+bool Symbol::isDifferent(const QTextCharFormat &fmt) {
+  return !Symbol::compareFormats(_fmt, fmt);
+}
+
 bool Symbol::compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground) {
   auto col1 = fixColor(fmt1.foreground(), false);
   auto col2 = fixColor(fmt2.foreground(), false);
@@ -340,6 +348,18 @@ std::string Symbol::to_string() const{
 void Symbol::update(const Symbol &s) {
   _char = s._char;
   _fmt = s._fmt;
+}
+
+void Symbol::localUpdate(const QTextCharFormat &fmt) {
+  _fmt = fmt;
+  _timestamp = QDateTime::currentDateTimeUtc();
+  _lastUser = _id.getFirst();
+}
+
+void Symbol::remoteUpdate(const Symbol &other) {
+  _fmt = other._fmt;
+  _timestamp = other._timestamp;
+  _lastUser = other._lastUser;
 }
 
 void Symbol::setFormat(const QTextCharFormat &fmt) {

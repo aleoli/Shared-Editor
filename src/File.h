@@ -99,6 +99,8 @@ public:
   int remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   void localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it = nullptr);
   int remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
+  std::optional<std::list<Paragraph>::iterator> localUpdateParagraph(Qt::Alignment alignment, int pos, std::list<Paragraph>::iterator *it = nullptr);
+  int remoteUpdateParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   std::list<Paragraph>::iterator paragraphAt(int pos);
   std::pair<int, std::list<Paragraph>::iterator> paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);
 
@@ -107,9 +109,6 @@ private:
   std::pair<int, Symbol&> _symbolById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   std::pair<int, std::list<Symbol>::iterator> _iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   int _getPosition(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
-  std::list<Paragraph>::iterator _paragraphAt(int pos);
-  std::pair<int, std::list<Paragraph>::iterator> _paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);
-
   void checkAndAssign(const QJsonObject &json);
 
   static void findPosition(int userId, std::vector<Identifier> &v1,

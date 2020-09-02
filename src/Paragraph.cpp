@@ -56,6 +56,26 @@ bool operator!=(const Paragraph& lhs, const Paragraph& rhs) {
   return !operator==(lhs, rhs);
 }
 
+bool Paragraph::isDifferent(const Paragraph &other) {
+  return _alignment != other._alignment;
+}
+
+bool Paragraph::isDifferent(Qt::Alignment alignment) {
+  return _alignment != alignment;
+}
+
+void Paragraph::localUpdate(Qt::Alignment alignment) {
+  _alignment = alignment;
+  _timestamp = QDateTime::currentDateTimeUtc();
+  _lastUser = _id.getFirst();
+}
+
+void Paragraph::remoteUpdate(const Paragraph &other) {
+  _alignment = other._alignment;
+  _timestamp = other._timestamp;
+  _lastUser = other._lastUser;
+}
+
 void Paragraph::checkAndAssign (const QJsonObject &json) {
   auto idValue = json["i"];
   auto alignmentValue = json["a"];
