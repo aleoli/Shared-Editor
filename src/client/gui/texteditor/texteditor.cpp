@@ -812,7 +812,7 @@ void TextEditor::_deleteFile(bool checked) {
 
 void TextEditor::_info(bool checked) {
   debug("TextEditor::_info");
-  refresh();
+  emit fileInfo(_user->getToken(), _user->getFileId());
 }
 
 void TextEditor::_deleteText(bool checked) {

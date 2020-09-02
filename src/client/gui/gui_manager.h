@@ -55,6 +55,7 @@ signals:
   void deleteFileQuery(const QString &token, int fileId);
   void getLinkQuery(const QString &token, int fileId);
   void activateLinkQuery(const QString &token, const QString &link);
+  void getFileInfoQuery(const QString &token, int fileId);
 
   void newDirQuery(const QString &token, const QString &name, const std::optional<int> &parentId = std::nullopt);
   void editDirQuery(const QString &token, int dirId, const std::optional<QString> &name, const std::optional<int> &parentId);
@@ -63,11 +64,6 @@ signals:
   void moveFileQuery(const QString &token, int fileId, int dirId);
   void getPathQuery(const QString &token, int elementId);
   void getAllDirsQuery(const QString &token);
-
-  // TODO: cat be deleted?
-  void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
-  void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
-  void commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment);
 
   void serverGetDirResponse(const std::vector<FSElement> &elements, const QString &name, int parentId);
   void serverNewDirResponse(int id);
@@ -109,6 +105,7 @@ private slots:
   void textEditorClose(const QString &token, int fileId);
   void textEditorEdit(const QString &token, int fileId, const std::optional<QString> &name);
   void textEditorRemove(const QString &token, int fileId);
+  void textEditorFileInfo(const QString &token, int fileId);
 
   // messages from server
   void serverErrorResponse(const QString &reason);
@@ -122,6 +119,7 @@ private slots:
   void serverActivateLinkResponse(const FSElement &element, const File &file);
   void serverDeleteFileResponse();
   void serverDeleteDirResponse();
+  void serverFileInfoResponse(const FSElement::FileInfo& fileInfo);
 
   void serverGetLinkResponse(const QString &link);
 

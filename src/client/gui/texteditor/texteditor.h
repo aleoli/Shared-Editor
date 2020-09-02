@@ -47,6 +47,7 @@ signals:
   void remove(const QString &token, int fileId);
   void edit(const QString &token, int fileId, const std::optional<QString> &name);
   void getUserIcon(int userId);
+  void fileInfo(const QString &token, int fileId);
 
   // Messages to server
   void commentLocalInsert(const QString &token, int fileId, const File::Comment &comment);

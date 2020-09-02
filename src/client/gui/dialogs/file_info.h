@@ -7,6 +7,8 @@
 
 #include <optional>
 
+#include "FSElement.h"
+
 namespace Ui {
 class Details;
 }
@@ -16,10 +18,10 @@ class FileInfo : public QDialog
   Q_OBJECT
 
 public:
-  explicit FileInfo(QWidget *parent);
+  explicit FileInfo(QWidget *parent, const FSElement::FileInfo& fileInfo);
   ~FileInfo();
 
-  static bool show(QWidget *parent);
+  static bool show(QWidget *parent, const FSElement::FileInfo& fileInfo);
 
 private:
   void _close(bool checked);
@@ -27,5 +29,4 @@ private:
   Ui::Details *ui;
 
   QPushButton *_widgetClose;
-  QLabel *_widgetName, *_widgetPath, *_widgetOwner, *_widgetModified, *_widgetCreated;
 };

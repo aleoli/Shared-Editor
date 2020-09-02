@@ -123,6 +123,13 @@ void ClientMessageProcessor::process_file() {
         activateLink();
       break;
 
+    case Message::FileAction::FILE_INFO:
+      if(!isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getFileInfo();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }

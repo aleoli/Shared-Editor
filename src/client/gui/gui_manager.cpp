@@ -11,6 +11,7 @@
 #include "exceptions.h"
 #include "info.h"
 #include "confirm.h"
+#include "file_info.h"
 
 using namespace se_exceptions;
 
@@ -145,6 +146,7 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetTextEditor, &TextEditor::close, this, &GuiManager::textEditorClose);
   QObject::connect(_widgetTextEditor, &TextEditor::edit, this, &GuiManager::textEditorEdit);
   QObject::connect(_widgetTextEditor, &TextEditor::remove, this, &GuiManager::textEditorRemove);
+  QObject::connect(_widgetTextEditor, &TextEditor::fileInfo, this, &GuiManager::textEditorFileInfo);
 }
 
 void GuiManager::connectClientToServer() {
@@ -162,6 +164,7 @@ void GuiManager::connectClientToServer() {
   QObject::connect(this, &GuiManager::deleteFileQuery, _manager.get(), &MessageManager::deleteFileQuery);
   QObject::connect(this, &GuiManager::getLinkQuery, _manager.get(), &MessageManager::getLinkQuery);
   QObject::connect(this, &GuiManager::activateLinkQuery, _manager.get(), &MessageManager::activateLinkQuery);
+  QObject::connect(this, &GuiManager::getFileInfoQuery, _manager.get(), &MessageManager::getFileInfoQuery);
 
   QObject::connect(this, &GuiManager::newDirQuery, _manager.get(), &MessageManager::newDirQuery);
   QObject::connect(this, &GuiManager::editDirQuery, _manager.get(), &MessageManager::editDirQuery);
@@ -198,6 +201,7 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::newDirResponse, this, &GuiManager::serverNewDirResponse);
   QObject::connect(_manager.get(), &MessageManager::deleteFileResponse, this, &GuiManager::serverDeleteFileResponse);
   QObject::connect(_manager.get(), &MessageManager::deleteDirResponse, this, &GuiManager::serverDeleteDirResponse);
+  QObject::connect(_manager.get(), &MessageManager::fileInfoResponse, this, &GuiManager::serverFileInfoResponse);
 
   QObject::connect(_manager.get(), &MessageManager::getPathResponse, this, &GuiManager::serverGetPathResponse);
   QObject::connect(_manager.get(), &MessageManager::getAllDirsResponse, this, &GuiManager::serverGetAllDirsResponse);
@@ -374,6 +378,11 @@ void GuiManager::textEditorRemove(const QString &token, int fileId) {
   emit deleteFileQuery(token, fileId);
 }
 
+void GuiManager::textEditorFileInfo(const QString &token, int fileId) {
+  freezeWindow();
+  emit getFileInfoQuery(token, fileId);
+}
+
 /* ### MESSAGES FROM SERVER ### */
 
 void GuiManager::serverErrorResponse(const QString &reason) {
@@ -452,4 +461,10 @@ void GuiManager::serverGetLinkResponse(const QString &link) {
   debug("GuiManager::serverGetLinkResponse");
   unfreezeWindow();
   alert(Alert::INFO, link, GET_LINK_TITLE);
+}
+
+void GuiManager::serverFileInfoResponse(const FSElement::FileInfo& fileInfo) {
+  debug("GuiManager::serverFileInfoResponse");
+  unfreezeWindow();
+  FileInfo::show(_stackedWidget->currentWidget(), fileInfo);
 }
