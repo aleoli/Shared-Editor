@@ -316,7 +316,7 @@ void TextEditor::reloadComments() {
     [](const File::Comment &i, const File::Comment &j){return i.creationDate < j.creationDate;});
 
   for(auto &comment : comments) {
-    loadComment(comment.identifier.getUserId(), comment);
+    loadComment(comment.identifier.getFirst(), comment);
   }
 }
 
@@ -375,7 +375,7 @@ void TextEditor::refresh(bool changeFile) {
     auto format = sym.getFormat();
 
     if(_highlighted) {
-      auto userId = sym.getSymbolId().getUserId();
+      auto userId = sym.getSymbolId().getFirst();
       format.setBackground(getUserColorHighlight(userId));
     }
 
@@ -519,7 +519,7 @@ void TextEditor::setUserIcon(int userId, const QString &icon) {
   user->setIcon(decoded);
 
   for(auto comment : _comments) {
-    if(comment.first.getUserId() == userId) comment.second->setIcon(decoded);
+    if(comment.first.getFirst() == userId) comment.second->setIcon(decoded);
   }
 }
 

@@ -470,7 +470,7 @@ void File::localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it) {
 
   //debug("Pos: " + QString::number(pos));
 
-  std::vector<Symbol::Identifier> v1, v2;
+  std::vector<Identifier> v1, v2;
   std::list<Symbol>::iterator insertPos;
   if(it == nullptr) insertPos = iteratorAt(pos);
   else insertPos = *it;
@@ -490,20 +490,20 @@ void File::localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it) {
     v2 = std::move(insertPos->getPos());
   }
 
-  std::vector<Symbol::Identifier> position;
+  std::vector<Identifier> position;
 
-  findPosition(sym.getSymbolId().getUserId(), v1, v2, position);
+  findPosition(sym.getSymbolId().getFirst(), v1, v2, position);
 
   sym.setPos(position);
   dirty = true;
   _symbols.emplace(insertPos, sym);
 }
 
-void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
-  std::vector<Symbol::Identifier> &v2, std::vector<Symbol::Identifier> &position,
+void File::findPosition(int userId, std::vector<Identifier> &v1,
+  std::vector<Identifier> &v2, std::vector<Identifier> &position,
   int level) {
 
-  Symbol::Identifier pos1, pos2;
+  Identifier pos1, pos2;
 
   if(!v1.empty()) pos1 = v1[0];
   else pos1 = {0, userId};
@@ -511,8 +511,8 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
   if(!v2.empty()) pos2 = v2[0];
   else pos2 = {std::numeric_limits<int>::max(), userId};
 
-  int digit1 = pos1.getDigit();
-  int digit2 = pos2.getDigit();
+  int digit1 = pos1.getFirst();
+  int digit2 = pos2.getFirst();
 
   if(digit2 - digit1 > 1){
     //finished, found the position
@@ -534,8 +534,8 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
 
   else if(digit2 == digit1) {
     //must go deeper
-    int userId1 = pos1.getUserId();
-    int userId2 = pos2.getUserId();
+    int userId1 = pos1.getSecond();
+    int userId2 = pos2.getSecond();
 
     if (userId1 < userId2) {
       position.push_back(pos1);

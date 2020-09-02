@@ -285,7 +285,7 @@ void MessageManager::updateComment(quint64 clientId, int fileId, const Session &
   loadFile(clientId, fileId);
 
   auto commentStr = File::commentFromJsonObject(comment);
-  if(commentStr.identifier.getUserId() != session.getUserId()) {
+  if(commentStr.identifier.getFirst() != session.getUserId()) {
     throw CommentException{"This user is not owner of this message"};
   }
 
@@ -308,7 +308,7 @@ void MessageManager::deleteComment(quint64 clientId, int fileId, const Session &
   loadFile(clientId, fileId);
 
   auto commentStr = File::commentFromJsonObject(comment);
-  if(commentStr.identifier.getUserId() != session.getUserId()) {
+  if(commentStr.identifier.getFirst() != session.getUserId()) {
     throw CommentException{"This user is not owner of this message"};
   }
 

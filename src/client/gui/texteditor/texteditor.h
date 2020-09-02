@@ -25,7 +25,6 @@
 #include "cursor.h"
 #include "File.h"
 #include "Symbol.h"
-#include "SymbolId.h"
 #include "find.h"
 
 namespace Ui {

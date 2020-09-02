@@ -2,7 +2,6 @@
 
 #include "File.h"
 #include "Symbol.h"
-#include "SymbolId.h"
 #include "FSElement.h"
 #include <QString>
 

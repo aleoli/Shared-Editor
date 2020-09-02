@@ -70,19 +70,19 @@ namespace se_exceptions {
   };
 
   // File related exceptions
-  class SymbolIdFromJsonException : public SE_Exception {
-  public:
-      explicit SymbolIdFromJsonException(QString str): SE_Exception(std::move(str)) {}
-  };
-
   class SymbolFromJsonException : public SE_Exception {
   public:
       explicit SymbolFromJsonException(QString str): SE_Exception(std::move(str)) {}
   };
 
-  class SymbolIdentifierFromJsonException : public SymbolFromJsonException {
+  class ParagraphFromJsonException : public SE_Exception {
   public:
-      explicit SymbolIdentifierFromJsonException(QString str): SymbolFromJsonException(std::move(str)) {}
+      explicit ParagraphFromJsonException(QString str): SE_Exception(std::move(str)) {}
+  };
+
+  class IdentifierFromJsonException : public SymbolFromJsonException {
+  public:
+      explicit IdentifierFromJsonException(QString str): SymbolFromJsonException(std::move(str)) {}
   };
 
   class FileException : public SE_Exception {

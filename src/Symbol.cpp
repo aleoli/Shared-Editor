@@ -313,11 +313,11 @@ QChar Symbol::getChar() const{
   return _char;
 }
 
-void Symbol::setPos(const std::vector<Symbol::Identifier> &pos) {
+void Symbol::setPos(const std::vector<Identifier> &pos) {
   _pos = pos;
 }
 
-std::vector<Symbol::Identifier> Symbol::getPos() const{
+std::vector<Identifier> Symbol::getPos() const{
   return _pos;
 }
 

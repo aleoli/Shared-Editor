@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Symbol.h"
+#include "Identifier.h"
 
 #include <list>
 #include <vector>
@@ -16,7 +17,7 @@
 
 class File {
 public:
-  typedef IdentifierBase CommentIdentifier;
+  typedef Identifier CommentIdentifier;
 
   typedef struct {
     int userId;
@@ -100,8 +101,8 @@ private:
 
   void checkAndAssign(const QJsonObject &json);
 
-  static void findPosition(int userId, std::vector<Symbol::Identifier> &v1,
-    std::vector<Symbol::Identifier> &v2, std::vector<Symbol::Identifier> &position,
+  static void findPosition(int userId, std::vector<Identifier> &v1,
+    std::vector<Identifier> &v2, std::vector<Identifier> &position,
     int level = 0);
   static int generateDigit(int digit1, int digit2);
 

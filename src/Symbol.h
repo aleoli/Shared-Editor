@@ -1,7 +1,5 @@
 #pragma once
 
-#include "SymbolId.h"
-
 #include <string>
 #include <QChar>
 #include <vector>
@@ -11,11 +9,10 @@
 #include <QTextCharFormat>
 
 #include "Identifier.h"
+typedef Identifier SymbolId;
 
 class Symbol {
 public:
-  typedef IdentifierBase Identifier;
-
   Symbol();
   Symbol(SymbolId id, QChar chr);
   Symbol(SymbolId id, QChar chr, QTextCharFormat fmt);
