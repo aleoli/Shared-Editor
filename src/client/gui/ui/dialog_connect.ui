@@ -66,6 +66,18 @@ qproperty-alignment: 'AlignRight|AlignVCenter';
     </item>
     <item row="1" column="1">
      <widget class="QLineEdit" name="ledit_IP">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">QLineEdit{
 background: white;
@@ -179,17 +191,22 @@ QPushButton:focus {
     </item>
     <item row="2" column="1">
      <widget class="QLineEdit" name="ledit_Port">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="styleSheet">
        <string notr="true">QLineEdit{
 background: white;
 border:1px solid white;
 border-radius: 9px;
-padding: 1 8px;
+padding: 1 10px;
 color: #242A38;
 margin-right: 11px;
 margin-top: 2px;
 selection-background-color: #f76163;
-margin-bottom: 0px;
 }
 </string>
       </property>
@@ -199,6 +216,12 @@ margin-bottom: 0px;
      <widget class="QLabel" name="title_IP">
       <property name="enabled">
        <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
@@ -210,12 +233,12 @@ margin-bottom: 0px;
        <string notr="true">QLabel{
 border: 0px solid none;
 color: white;
-font-size: 25px;
-qproperty-alignment: 'AlignRight|AlignVCenter';
+font-size: 27px;
+qproperty-alignment: 'AlignLeft|AlignVCenter';
 }</string>
       </property>
       <property name="text">
-       <string>Address:</string>
+       <string>Addresss:</string>
       </property>
       <property name="margin">
        <number>0</number>
@@ -259,6 +282,13 @@ QPushButton {
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>ledit_IP</tabstop>
+  <tabstop>ledit_Port</tabstop>
+  <tabstop>btn_yes</tabstop>
+  <tabstop>btn_no</tabstop>
+  <tabstop>logo</tabstop>
+ </tabstops>
  <resources>
   <include location="resources/res.qrc"/>
  </resources>
