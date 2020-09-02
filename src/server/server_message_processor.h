@@ -46,6 +46,7 @@ private:
   void deleteFile();
   void getLink();
   void activateLink();
+  void getFileInfo();
 
   void localInsert();
   void localDelete();

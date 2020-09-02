@@ -40,6 +40,7 @@ signals:
   void getLinkResponse(const QString &link);
   void activateLinkResponse(const FSElement &element, const File &file);
   void getIconResponse(int userId, const QString &icon);
+  void fileInfoResponse(const FSElement::FileInfo& fileInfo);
 
   void remoteInsertQuery(int fileId, int userId, const std::list<Symbol> &symbols);
   void remoteDeleteQuery(int fileId, int userId, const std::vector<SymbolId> &ids);
