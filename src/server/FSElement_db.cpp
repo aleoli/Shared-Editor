@@ -147,6 +147,22 @@ void FSElement_db::remove(const std::function<void(int, int)>& notify_fn) {
   this->_remove<FSElement_db>();
 }
 
+void FSElement_db::checkName(int user_id, std::optional<int> file_id, int parent_id, QString &name, std::optional<QString> append) {
+  if(parent_id != -1) {
+    auto parent = FSElement_db::get(user_id, parent_id);
+    auto brothers = parent.ls(user_id);
+    for(const auto& b: brothers) {
+      if((!file_id || *file_id != b->getId()) && name == b->getName()) {
+        if(append) {
+          name += *append;
+        } else {
+          throw DuplicatedNameException{"File " + name + " already exists in this directory"};
+        }
+      }
+    }
+  }
+}
+
 FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool is_file) {
   FSElement_db fs_e{};
   if(is_file) {
@@ -156,6 +172,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
   } else {
     fs_e._path = "";
   }
+  FSElement_db::checkName(user_id, std::nullopt, parent_id, name);
   fs_e._name = std::move(name);
   fs_e._type = is_file ? FSElement::Type::FILE : FSElement::Type::DIRECTORY;
   fs_e._parent_id = parent_id;
@@ -254,10 +271,14 @@ void FSElement_db::del_file() {
 }
 
 FSElement_db FSElement_db::get(const Session &s, int id) {
+  return FSElement_db::get(s.getUserId(), id);
+}
+
+FSElement_db FSElement_db::get(int userId, int id) {
   auto fs_e = DB::get()->getOne<FSElement_db>(id);
-  if(fs_e._owner_id != s.getUserId()) {
-    warn("User "+QString::number(s.getUserId())+" has tryed to access a file of user "+QString::number(fs_e._owner_id));
-    throw se_exceptions::IllegalAccessException{"User "+QString::number(s.getUserId())+" has tryed to access a file of user "+QString::number(fs_e._owner_id)};
+  if(fs_e._owner_id != userId) {
+    warn("User "+QString::number(userId)+" has tryed to access a file of user "+QString::number(fs_e._owner_id));
+    throw se_exceptions::IllegalAccessException{"User "+QString::number(userId)+" has tryed to access a file of user "+QString::number(fs_e._owner_id)};
   }
   return fs_e;
 }
@@ -313,18 +334,22 @@ FSElement_db FSElement_db::mkfile(const Session &s, QString name) {
 }
 
 std::vector<FSElement_db*> FSElement_db::ls(const Session &s) {
+  return this->ls(s.getUserId());
+}
+
+std::vector<FSElement_db*> FSElement_db::ls(int userId) {
   if(this->_type != FSElement::Type::DIRECTORY) {
     warn("Trying to list a not-directory element");
     throw se_exceptions::ReadException{"Trying to create a file in not-dir"};
   }
-  if(s.getUserId() != this->_owner_id) {
+  if(userId != this->_owner_id) {
     warn("Trying to access not your directory");
     throw se_exceptions::IllegalAccessException{"Trying to access not your directory"};
   }
   return this->getChildren();
 }
 
-void FSElement_db::mv(const Session &s, FSElement_db &fs_e) {
+void FSElement_db::mv(const Session &s, FSElement_db &fs_e, const std::optional<QString>& appendIfNameExists) {
   if(s.getUserId() != this->_owner_id) {
     warn("Trying to move not your element");
     throw se_exceptions::IllegalAccessException{"Trying to move not your element"};
@@ -339,6 +364,7 @@ void FSElement_db::mv(const Session &s, FSElement_db &fs_e) {
   }
   debug("Moving file "+QString::number(this->id)+" from dir "+QString::number(this->_parent_id)+" to dir "+QString::number(fs_e.id));
   this->_parent_id = fs_e.id;
+  FSElement_db::checkName(s.getUserId(), this->id, this->_parent_id, this->_name, appendIfNameExists);
   this->save();
   fs_e._children.addValue(new FSElement_db{*this});
 }
@@ -353,6 +379,7 @@ void FSElement_db::rename(const Session &s, QString name) {
     warn("Trying to rename not your element");
     throw se_exceptions::IllegalAccessException{"Trying to rename not your element"};
   }
+  FSElement_db::checkName(s.getUserId(), this->id, this->_parent_id, name);
   this->_name = std::move(name);
   this->save();
 }

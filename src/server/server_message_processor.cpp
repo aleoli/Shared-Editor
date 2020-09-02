@@ -667,7 +667,7 @@ void ServerMessageProcessor::activateLink() {
     auto user_root = FSElement_db::root(session.getUserId());
 
     auto file = FSElement_db::link(session, link_token);
-    file.mv(session, user_root);
+    file.mv(session, user_root, " (link)");
 
     auto fileId = file.getPhysicalId();
 

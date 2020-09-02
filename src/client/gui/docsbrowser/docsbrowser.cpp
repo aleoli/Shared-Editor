@@ -390,7 +390,7 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
   } else if(action == actionRename) {
     debug("Rename");
     auto name = Input::show(this, "Insert new name", element.getName(), "Cancel", "Rename");
-    if(name && !name->isEmpty()) {
+    if(name && !name->isEmpty() && element.getName() != *name) {
       emit this->edit(_user->getToken(), element.getId(), name);
     }
   } else if(action == actionDelete) {
