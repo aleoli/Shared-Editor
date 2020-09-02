@@ -65,7 +65,7 @@ DocsBrowser::~DocsBrowser() {
 }
 
 void DocsBrowser::clear() {
-  // TODO Cose da fare quando la finestra è portata in primo piano (es. svuotare i campi)
+  this->_widgetSearch->setText("");
   setIcon();
 
   emit this->_goToHome(true);

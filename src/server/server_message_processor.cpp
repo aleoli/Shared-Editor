@@ -34,10 +34,10 @@ bool ServerMessageProcessor::shouldSendToAll() const {
 }
 
 void ServerMessageProcessor::process_error() {
-  // TODO: non so cosa farmene dell'errore lato server, disconnetto il client?!?
   info("ERROR message received");
   auto reason = _m.getString("reason");
   warn(reason);
+  disconnect(reason);
 }
 
 void ServerMessageProcessor::process_user() {
@@ -281,8 +281,7 @@ void ServerMessageProcessor::process_filesystem() {
 
 void ServerMessageProcessor::disconnect(const QString& why) {
   error(why);
-  // TODO
-  // emit _manager->connection_error();
+  emit _manager->connection_error(this->_clientId);
 }
 
 void ServerMessageProcessor::sendErrorMsg(const QString& reason) {
@@ -317,8 +316,6 @@ void ServerMessageProcessor::login() {
     if(icon != "") {
       data["icon"] = icon;
     }
-
-    // TODO: set other fields
 
     this->_manager->addClient(this->_clientId, s, username);
 
@@ -388,8 +385,6 @@ void ServerMessageProcessor::newUser() {
     QJsonObject data;
     data["token"] = s->getToken();
     data["userId"] = s->getUser().getId();
-
-    // TODO: set other fields
 
     this->_manager->addClient(this->_clientId, s, username);
 
@@ -524,7 +519,7 @@ void ServerMessageProcessor::newFile() {
   QJsonObject data;
   data["fileId"] = file.getId();
 
-  this->_manager->getFile(this->_clientId, file.getId(), std::nullopt, true);
+  this->_manager->getFile(this->_clientId, file.getId(), std::nullopt);
 
   this->_res = Message{Message::Type::FILE, (int) Message::FileAction::NEW, Message::Status::RESPONSE, data};
   this->_has_resp = true;
@@ -673,7 +668,7 @@ void ServerMessageProcessor::activateLink() {
 
     QJsonObject data;
     data["element"] = file.getFSElement().toJsonObject();
-    data["file"] = this->_manager->getFile(this->_clientId, fileId, file.getId(), true).toJsonObject();
+    data["file"] = this->_manager->getFile(this->_clientId, fileId, file.getId()).toJsonObject();
 
     this->_res = Message{Message::Type::FILE, (int) Message::FileAction::ACTIVATE_LINK, Message::Status::RESPONSE, data};
     this->_has_resp = true;

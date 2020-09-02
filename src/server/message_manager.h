@@ -37,7 +37,7 @@ public:
 
   /* gestione file */
   // richiesta di un file da parte di un client
-  File getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser, bool first_access=false);
+  const File& getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser);
   // aggiunta/rimozione/modifica di un simbolo nel file (da rivedere un attimo i parametri)
   void addSymbols(quint64 clientId, int fileId, const QJsonArray& syms);
   void deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms);

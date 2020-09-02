@@ -12,7 +12,7 @@ void signalHandler(int signum);
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
-  app.setWindowIcon(QIcon(":imgs/malnati")); //TODO mettere logo
+  QApplication::setWindowIcon(QIcon(":res/logo.png"));
 
   SysConf conf = initiate_system(app);
   info("System successfully started");

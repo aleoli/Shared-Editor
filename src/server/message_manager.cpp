@@ -145,7 +145,7 @@ void MessageManager::sendToAll(quint64 clientId, int fileId, QByteArray data) {
   }
 }
 
-File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser, bool first_access) {
+const File& MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fileIdUser) {
   if(!clientIsLogged(clientId)) {
     throw ClientLoginException{"Client is not logged in"};
   }
@@ -177,7 +177,6 @@ File MessageManager::getFile(quint64 clientId, int fileId, std::optional<int> fi
     f.setOnline(tmp.session->getUserId(), true);
   }
 
-  // TODO: it is calling copy constructor on file!!
   return f;
 }
 
