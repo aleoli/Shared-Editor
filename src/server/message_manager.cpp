@@ -18,7 +18,7 @@ MessageManager::MessageManager(QObject *parent): QObject(parent) {
   // start disk manager
   auto dm = DiskManager::get();
   dm->setFileMap(&this->_openFiles);
-  QObject::connect(this, &MessageManager::quit, dm.get(), &DiskManager::quit);
+  QObject::connect(this, &MessageManager::_quit, dm.get(), &DiskManager::quit);
 }
 
 MessageManager::~MessageManager() = default;
@@ -341,7 +341,7 @@ void MessageManager::closeFile(quint64 clientId, int fileId, bool deleted) {
   auto& tmp = _clients[clientId];
   tmp.fileIsOpen = false;
 
-  auto sl = std::shared_lock(_openFiles.getMutex());
+  auto sl = std::unique_lock(_openFiles.getMutex());
   if(deleted) {
     _openFiles[fileId].second.removeUser(tmp.session->getUserId());
   } else {
@@ -361,4 +361,13 @@ bool MessageManager::clientHasFileOpen(quint64 clientId, int fileId) {
 
 bool MessageManager::clientHasFileOpen(quint64 clientId) {
   return _clients[clientId].fileIsOpen;
+}
+
+void MessageManager::quit() {
+  for(auto& cl: this->_clients) {
+    if(cl.second.fileIsOpen) {
+      this->closeFile(cl.first, cl.second.fileId);
+    }
+  }
+  emit this->_quit();
 }

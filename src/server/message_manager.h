@@ -59,11 +59,12 @@ signals:
   void send_data(std::list<quint64> client_list, QByteArray data);
   void connection_error(quint64 client_id);
 
-  void quit();
+  void _quit();
 
 public slots:
   void process_data(quint64 client_id, const QByteArray& data);
   void clientDisconnected(quint64 clientId);
+  void quit();
 
 private:
   static std::shared_ptr<MessageManager> instance;
