@@ -39,7 +39,7 @@ signals:
   void fileDeletedQuery(int fileId);
   void getLinkResponse(const QString &link);
   void activateLinkResponse(const FSElement &element, const File &file);
-  void getIconResponse(int userId, const QString &icon);
+  void getIconResponse(int userId, bool found, const std::optional<QString> &icon);
   void fileInfoResponse(const FSElement::FileInfo& fileInfo);
 
   void remoteInsertQuery(int fileId, int userId, const std::list<Symbol> &symbols);

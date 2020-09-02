@@ -335,9 +335,10 @@ void ClientMessageProcessor::getUserIcon() {
 
   try {
     auto userId = _m.getInt("userId");
-    auto icon = _m.getString("icon");
+    auto found = _m.getBool("found");
+    auto icon = _m.getStringOpt("icon");
 
-    emit _manager->getIconResponse(userId, icon);
+    emit _manager->getIconResponse(userId, found, icon);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
