@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=0.1
+Type=Application
+Terminal=false
+Exec=/bin/sharededitor -l debug -s SERVER_IP
+Name=SharedEditor
+Comment=SharedEditor
+Icon=HOME/.sharededitor/logo.png
