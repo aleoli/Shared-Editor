@@ -7,23 +7,24 @@
 
 using namespace se_exceptions;
 
-Paragraph::Paragraph() = default;
+Paragraph::Paragraph() : _timestamp(QDateTime()) {}
 
-Paragraph::Paragraph(ParagraphId id) : _id(id), _alignment(Qt::AlignLeft) {}
+Paragraph::Paragraph(ParagraphId id) : _id(id), _alignment(Qt::AlignLeft), _timestamp(QDateTime()) {}
 
 Paragraph::Paragraph(ParagraphId id, Qt::Alignment alignment)
-  : _id(id), _alignment(alignment) {}
+  : _id(id), _alignment(alignment), _timestamp(QDateTime()) {}
 
-Paragraph::Paragraph(const QJsonObject &json) {
+Paragraph::Paragraph(const QJsonObject &json) : _timestamp(QDateTime()) {
   checkAndAssign(json);
 }
 
-Paragraph::Paragraph(QJsonObject &&json) {
+Paragraph::Paragraph(QJsonObject &&json) : _timestamp(QDateTime()) {
   checkAndAssign(json);
 }
 
 Paragraph::Paragraph(const Paragraph& s) = default;
-Paragraph::Paragraph(Paragraph&& s) noexcept: _id(s._id), _alignment(s._alignment), _pos(std::move(s._pos)) {}
+Paragraph::Paragraph(Paragraph&& s) noexcept: _id(s._id), _alignment(s._alignment),
+  _pos(std::move(s._pos)), _timestamp(std::move(s._timestamp)), _lastUser(s._lastUser){}
 
 Paragraph &Paragraph::operator=(const Paragraph &s) = default;
 Paragraph &Paragraph::operator=(Paragraph &&s) noexcept {
@@ -33,6 +34,8 @@ Paragraph &Paragraph::operator=(Paragraph &&s) noexcept {
   this->_id = s._id;
   this->_alignment = s._alignment;
   this->_pos = std::move(s._pos);
+  this->_timestamp = std::move(s._timestamp);
+  this->_lastUser == s._lastUser;
   return *this;
 }
 
@@ -46,7 +49,7 @@ bool operator<(const Paragraph& lhs, const Paragraph& rhs) {
 
 bool operator==(const Paragraph& lhs, const Paragraph& rhs) {
   return lhs._id == rhs._id && lhs._alignment == rhs._alignment &&
-    lhs._pos == rhs._pos;
+    lhs._pos == rhs._pos && lhs._timestamp == rhs._timestamp && lhs._lastUser == rhs._lastUser;
 }
 
 bool operator!=(const Paragraph& lhs, const Paragraph& rhs) {
@@ -139,4 +142,20 @@ void Paragraph::setAlignment(Qt::Alignment alignment) {
 
 Qt::Alignment Paragraph::getAlignment() const {
   return _alignment;
+}
+
+QDateTime Paragraph::getTimestamp() const {
+  return _timestamp;
+}
+
+void Paragraph::setTimestamp(const QDateTime &time) {
+  _timestamp = time;
+}
+
+bool Paragraph::isOlder(const QDateTime &time, int userId) {
+  if(_timestamp == time) {
+    return _lastUser > userId;
+  }
+
+  return _timestamp < time;
 }

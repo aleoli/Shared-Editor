@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QDateTime>
 
 #include "Identifier.h"
 typedef Identifier ParagraphId;
@@ -39,6 +40,9 @@ public:
   [[nodiscard]] std::vector<Identifier> getPos() const;
   void setAlignment(Qt::Alignment alignment);
   [[nodiscard]] Qt::Alignment getAlignment() const;
+  [[nodiscard]] QDateTime getTimestamp() const;
+  void setTimestamp(const QDateTime &time);
+  bool isOlder(const QDateTime &time, int userId);
 
 private:
   void checkAndAssign(const QJsonObject &json);
@@ -46,4 +50,6 @@ private:
   ParagraphId _id;
   std::vector<Identifier> _pos;
   Qt::Alignment _alignment;
+  QDateTime _timestamp;
+  int _lastUser;
 };

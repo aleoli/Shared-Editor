@@ -8,23 +8,25 @@
 
 using namespace se_exceptions;
 
-Symbol::Symbol() = default;
+Symbol::Symbol() : _timestamp(QDateTime()) {}
 
-Symbol::Symbol(SymbolId id, QChar chr) : _id(id), _char(chr) {}
+Symbol::Symbol(SymbolId id, QChar chr) : _id(id), _char(chr), _timestamp(QDateTime()) {}
 
 Symbol::Symbol(SymbolId id, QChar chr, QTextCharFormat fmt)
-  : _id(id), _char(chr), _fmt(std::move(fmt)) {}
+  : _id(id), _char(chr), _fmt(std::move(fmt)), _timestamp(QDateTime()) {}
 
-Symbol::Symbol(const QJsonObject &json, QFont *font, QBrush *col, QBrush *bac) {
+Symbol::Symbol(const QJsonObject &json, QFont *font, QBrush *col, QBrush *bac)
+   : _timestamp(QDateTime()) {
   checkAndAssign(json, font, col, bac);
 }
 
-Symbol::Symbol(QJsonObject &&json, QFont *font, QBrush *col, QBrush *bac) {
+Symbol::Symbol(QJsonObject &&json, QFont *font, QBrush *col, QBrush *bac)
+   : _timestamp(QDateTime()) {
   checkAndAssign(json, font, col, bac);
 }
 
 Symbol::Symbol(const Symbol& s) = default;
-Symbol::Symbol(Symbol&& s) noexcept: _id(s._id), _char(s._char), _pos(std::move(s._pos)), _fmt(std::move(s._fmt)) {}
+Symbol::Symbol(Symbol&& s) noexcept: _id(s._id), _char(s._char), _pos(std::move(s._pos)), _fmt(std::move(s._fmt)), _timestamp(std::move(s._timestamp)), _lastUser(s._lastUser) {}
 
 Symbol &Symbol::operator=(const Symbol &s) = default;
 Symbol &Symbol::operator=(Symbol &&s) noexcept {
@@ -35,6 +37,8 @@ Symbol &Symbol::operator=(Symbol &&s) noexcept {
   this->_char = s._char;
   this->_pos = std::move(s._pos);
   this->_fmt = std::move(s._fmt);
+  this->_timestamp = std::move(s._timestamp);
+  this->_lastUser = s._lastUser;
   return *this;
 }
 
@@ -49,7 +53,8 @@ bool operator<(const Symbol& lhs, const Symbol& rhs) {
 bool operator==(const Symbol& lhs, const Symbol& rhs) {
   return lhs._id == rhs._id && lhs._char == rhs._char &&
     lhs._pos == rhs._pos &&
-    Symbol::compareFormats(lhs._fmt, rhs._fmt);
+    Symbol::compareFormats(lhs._fmt, rhs._fmt) && lhs._timestamp == rhs._timestamp &&
+    lhs._lastUser == rhs._lastUser;
 }
 
 bool operator!=(const Symbol& lhs, const Symbol& rhs) {
@@ -421,4 +426,20 @@ void Symbol::setBackgroundColor(const QColor &color) {
 
 QColor Symbol::getBackgroundColor() const {
   return _fmt.background().color();
+}
+
+QDateTime Symbol::getTimestamp() const {
+  return _timestamp;
+}
+
+void Symbol::setTimestamp(const QDateTime &time) {
+  _timestamp = time;
+}
+
+bool Symbol::isOlder(const QDateTime &time, int userId) {
+  if(_timestamp == time) {
+    return _lastUser > userId;
+  }
+
+  return _timestamp < time;
 }

@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QTextCharFormat>
+#include <QDateTime>
 
 #include "Identifier.h"
 typedef Identifier SymbolId;
@@ -70,6 +71,9 @@ public:
   [[nodiscard]] QColor getColor() const;
   void setBackgroundColor(const QColor &color);
   [[nodiscard]] QColor getBackgroundColor() const;
+  [[nodiscard]] QDateTime getTimestamp() const;
+  void setTimestamp(const QDateTime &time);
+  bool isOlder(const QDateTime &time, int userId);
 
 private:
   void checkAndAssign(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
@@ -87,4 +91,6 @@ private:
   QChar _char;
   std::vector<Identifier> _pos;
   QTextCharFormat _fmt;
+  QDateTime _timestamp;
+  int _lastUser;
 };
