@@ -31,7 +31,7 @@ CommentWidget::CommentWidget(const File::Comment &comment, const QString &userna
 
   setIcon(image_utils::loadImage(DEFAULT_ICON));
   _widgetText->setPlainText(_comment.text);
-  _widgetDate->setText(_comment.creationDate.toString("dd.MM.yyyy hh:mm:ss"));
+  _widgetDate->setText(_comment.creationDate.toLocalTime().toString("dd.MM.yyyy hh:mm:ss"));
 
   _item->setSizeHint(this->size());
 

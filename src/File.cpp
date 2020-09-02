@@ -226,7 +226,7 @@ File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
 
   auto text = textV.toString();
   auto creationDateString = creationDateV.toString();
-  auto creationDate = QDateTime::fromString(creationDateString);
+  auto creationDate = QDateTime::fromString(creationDateString, "dd.MM.yyyy hh:mm:ss.zzz t");
 
   if(!creationDate.isValid()) {
     debug("creation date is not valid");
@@ -246,7 +246,7 @@ QJsonObject File::commentToJsonObject(const Comment &comment) {
 
   value["id"] = comment.identifier.toJsonObject();
   value["tx"] = comment.text;
-  value["cd"] = comment.creationDate.toString();
+  value["cd"] = comment.creationDate.toString("dd.MM.yyyy hh:mm:ss.zzz t");
 
   return value;
 }
@@ -653,12 +653,14 @@ void File::remoteAddComment(const Comment &comment) {
   dirty = true;
 }
 
-void File::remoteUpdateComment(const Comment &comment) {
+void File::remoteUpdateComment(Comment comment) {
   auto ul = std::unique_lock{this->_mutex};
   if(_comments.count(comment.identifier) == 0) {
     // it does not exist
     throw CommentException{"comment not found"};
   }
+  auto old = _comments[comment.identifier];
+  comment.creationDate = old.creationDate;
   _comments[comment.identifier] = comment;
   dirty = true;
 }
