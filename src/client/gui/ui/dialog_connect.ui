@@ -238,7 +238,7 @@ qproperty-alignment: 'AlignLeft|AlignVCenter';
 }</string>
       </property>
       <property name="text">
-       <string>Addresss:</string>
+       <string>Address:</string>
       </property>
       <property name="margin">
        <number>0</number>
