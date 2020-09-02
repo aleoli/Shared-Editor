@@ -86,7 +86,7 @@
          <x>0</x>
          <y>0</y>
          <width>1348</width>
-         <height>629</height>
+         <height>627</height>
         </rect>
        </property>
       </widget>
@@ -735,6 +735,12 @@ border-color: white;
           <size>
            <width>500</width>
            <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
           </size>
          </property>
          <property name="styleSheet">
