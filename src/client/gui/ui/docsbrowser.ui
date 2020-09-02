@@ -86,104 +86,13 @@
          <x>0</x>
          <y>0</y>
          <width>1348</width>
-         <height>597</height>
+         <height>629</height>
         </rect>
        </property>
       </widget>
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1366</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QMenuBar {
-                    background-color: #f65964;
-                    spacing: 3px; /* spacing between menu bar items */
-                    font: 12pt white &quot;Segoe UI Emoji&quot;;
-                    color: #fff;
-                    padding: 5 0 0 10px;
-                    }
-
-                    QMenuBar::item {
-                    padding: 1px 4px;
-                    background: transparent;
-                    border-radius: 2px;
-                    }
-
-                    QMenuBar::item:selected { /* when selected using mouse or keyboard */
-                    background: #4e596f;
-                    }
-
-                    QMenuBar::item:pressed {
-                    background: white;
-                    color: #242a38;
-                    }</string>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="font">
-     <font>
-      <family>Segoe UI Emoji</family>
-      <weight>50</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QMenu { /* sets background of the menu */
-                        background-color: #f65964;
-                        border: 1px solid #4e596f;
-                        border-radius: 1px;
-                        }
-
-                        QMenu::item {
-                        /* sets background of menu item. set this to something non-transparent
-                        if you want menu color and menu item color to be different */
-                        padding: 2px 25px 2px 20px;
-                        border: 1px solid transparent;
-                        background-color: transparent;
-                        font: 10pt white &quot;Segoe UI Black&quot;;
-                        color: #fff;
-                        }
-
-                        QMenu::item:selected { /* when user selects item using mouse or keyboard */
-                        background-color: white;
-                        color: #242a38 ;
-                        }
-
-                        QMenu::indicator {
-                        width: 13px;
-                        height: 13px;
-                        color: #fff;
-                        background: transparent;
-                        }
-
-                        QMenu::separator {
-                        height: 2px;
-                        background: transparent;
-                        margin-left: 10px;
-                        margin-right: 5px;
-                        color: #fff;
-                        }</string>
-    </property>
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionLogout"/>
-    <addaction name="actionQuit"/>
-    <addaction name="actionShare_Link"/>
-   </widget>
-   <addaction name="menuFile"/>
   </widget>
   <widget class="QDockWidget" name="widgets">
    <property name="enabled">
@@ -205,9 +114,9 @@
     <bool>false</bool>
    </property>
    <property name="styleSheet">
-    <string notr="true">	border-width: 0px 0px 3px 0px;
-                    border-style: none none solid none;
-                    border-color: #000 #000 #4e596f #000;</string>
+    <string notr="true">QDockWidget{
+	background: #f65964;
+}</string>
    </property>
    <property name="floating">
     <bool>false</bool>
@@ -225,6 +134,11 @@
     <number>4</number>
    </attribute>
    <widget class="QWidget" name="content_widgets">
+    <property name="styleSheet">
+     <string notr="true">QWidget{
+	border-bottom: 3px solid #f65964;
+}</string>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QVBoxLayout" name="buttons_path">
