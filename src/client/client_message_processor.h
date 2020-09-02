@@ -31,6 +31,7 @@ private:
   void fileDeleted();
   void getLink();
   void activateLink();
+  void getFileInfo();
   void remoteInsert();
   void remoteDelete();
   void remoteUpdate();

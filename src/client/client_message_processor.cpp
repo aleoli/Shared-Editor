@@ -410,6 +410,23 @@ void ClientMessageProcessor::activateLink() {
   }
 }
 
+void ClientMessageProcessor::getFileInfo() {
+  info("FILE::FILE_INFO response received");
+
+  try {
+    FSElement::FileInfo fi;
+    fi.name = _m.getString("name");
+    fi.path = _m.getString("path");
+    fi.owner = _m.getString("owner");
+    fi.created = QDateTime::fromString(_m.getString("created"));
+
+    emit _manager->fileInfoResponse(fi);
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
+}
+
 void ClientMessageProcessor::remoteInsert() {
   info("FILE_EDIT::REMOTE_INSERT query received");
 

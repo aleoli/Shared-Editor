@@ -146,6 +146,13 @@ void ServerMessageProcessor::process_file() {
         activateLink();
       break;
 
+    case Message::FileAction::FILE_INFO:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        getFileInfo();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -695,6 +702,24 @@ void ServerMessageProcessor::activateLink() {
     warn(ERROR_9);
     this->sendErrorMsg(ERROR_9);
   }
+}
+
+void ServerMessageProcessor::getFileInfo() {
+  info("FileInfo query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto file_db = FSElement_db::get(session, _m.getInt("fileId"));
+
+  QJsonObject data;
+  data["name"] = file_db.getName();
+  data["path"] = file_db.pwd(session).first;
+  data["owner"] = file_db.getCreator().getUsername();
+  data["created"] = file_db.getFSElement().getCreationDate().toString();
+
+  this->_res = Message{Message::Type::FILE, (int) Message::FileAction::FILE_INFO, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
 }
 
 

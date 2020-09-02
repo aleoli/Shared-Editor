@@ -11,6 +11,13 @@ public:
     DIRECTORY
   };
 
+  typedef struct FileInfo {
+    QString name;
+    QString path;
+    QString owner;
+    QDateTime created;
+  } FileInfo;
+
   FSElement();
   FSElement(int id, int parentId, QString name, Type type, QDateTime creationDate);
   explicit FSElement(const QJsonObject &json);

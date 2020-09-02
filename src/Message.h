@@ -34,7 +34,8 @@ public:
       DELETE,
       FILE_DELETED,
       GET_LINK,
-      ACTIVATE_LINK
+      ACTIVATE_LINK,
+      FILE_INFO
   };
 
   enum class FileEditAction {

@@ -40,6 +40,7 @@ signals:
   void getLinkResponse(const QString &link);
   void activateLinkResponse(const FSElement &element, const File &file);
   void getIconResponse(int userId, const QString &icon);
+  void fileInfoResponse(const FSElement::FileInfo& fileInfo);
 
   void remoteInsertQuery(int fileId, int userId, const std::list<Symbol> &symbols);
   void remoteDeleteQuery(int fileId, int userId, const std::vector<SymbolId> &ids);
@@ -79,6 +80,7 @@ public slots:
   void deleteFileQuery(const QString &token, int fileId);
   void getLinkQuery(const QString &token, int fileId);
   void activateLinkQuery(const QString &token, const QString &link);
+  void getFileInfoQuery(const QString &token, int fileId);
 
   void localInsertQuery(const QString &token, int fileId, const std::list<Symbol> &symbols);
   void localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids);
