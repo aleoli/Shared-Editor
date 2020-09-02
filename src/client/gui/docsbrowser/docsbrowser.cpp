@@ -117,7 +117,7 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
         case TITLE:
           return first->getName() < second->getName();
         case DATE:
-          return first->getCreationDate() < second->getCreationDate();
+          return first->getCreationDate() > second->getCreationDate();
       }
       // it will be never reached
       return first->getName() < second->getName();
