@@ -147,12 +147,12 @@ void FSElement_db::remove(const std::function<void(int, int)>& notify_fn) {
   this->_remove<FSElement_db>();
 }
 
-void FSElement_db::checkName(int user_id, int parent_id, QString &name, std::optional<QString> append) {
+void FSElement_db::checkName(int user_id, std::optional<int> file_id, int parent_id, QString &name, std::optional<QString> append) {
   if(parent_id != -1) {
     auto parent = FSElement_db::get(user_id, parent_id);
     auto brothers = parent.ls(user_id);
     for(const auto& b: brothers) {
-      if(name == b->getName()) {
+      if((!file_id || *file_id != b->getId()) && name == b->getName()) {
         if(append) {
           name += *append;
         } else {
@@ -172,7 +172,7 @@ FSElement_db FSElement_db::create(int user_id, int parent_id, QString name, bool
   } else {
     fs_e._path = "";
   }
-  FSElement_db::checkName(user_id, parent_id, name);
+  FSElement_db::checkName(user_id, std::nullopt, parent_id, name);
   fs_e._name = std::move(name);
   fs_e._type = is_file ? FSElement::Type::FILE : FSElement::Type::DIRECTORY;
   fs_e._parent_id = parent_id;
@@ -364,7 +364,7 @@ void FSElement_db::mv(const Session &s, FSElement_db &fs_e, const std::optional<
   }
   debug("Moving file "+QString::number(this->id)+" from dir "+QString::number(this->_parent_id)+" to dir "+QString::number(fs_e.id));
   this->_parent_id = fs_e.id;
-  FSElement_db::checkName(s.getUserId(), this->_parent_id, this->_name, appendIfNameExists);
+  FSElement_db::checkName(s.getUserId(), this->id, this->_parent_id, this->_name, appendIfNameExists);
   this->save();
   fs_e._children.addValue(new FSElement_db{*this});
 }
@@ -379,7 +379,7 @@ void FSElement_db::rename(const Session &s, QString name) {
     warn("Trying to rename not your element");
     throw se_exceptions::IllegalAccessException{"Trying to rename not your element"};
   }
-  FSElement_db::checkName(s.getUserId(), this->_parent_id, name);
+  FSElement_db::checkName(s.getUserId(), this->id, this->_parent_id, name);
   this->_name = std::move(name);
   this->save();
 }

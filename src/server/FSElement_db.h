@@ -83,7 +83,7 @@ private:
   static FSElement_db get(int userId, int id);
   std::vector<FSElement_db*> ls(int userId);
 
-  static void checkName(int user_id, int parent_it, QString& name, std::optional<QString> append = std::nullopt);
+  static void checkName(int user_id, std::optional<int> file_id, int parent_it, QString& name, std::optional<QString> append = std::nullopt);
   bool availableForUser(int user_id);
 
   void del_file();
