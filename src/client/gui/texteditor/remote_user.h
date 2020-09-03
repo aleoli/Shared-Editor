@@ -31,6 +31,7 @@ public slots:
   void setOnline(bool online);
   QColor getColor() const;
   Cursor *getCursor() const;
+  void setDeleted();
 
 private slots:
 

@@ -496,20 +496,26 @@ void ServerMessageProcessor::deleteUser() {
 void ServerMessageProcessor::getUserIcon() {
   info("GetUserIcon query received");
 
+  auto userId = _m.getInt("userId");
+  auto user = Lazy<User>(userId);
+
+  QJsonObject data;
+  data["userId"] = userId;
   try {
-    auto userId = _m.getInt("userId");
-    auto user = Lazy<User>(userId);
+    user.getValue();
+    data["found"] = true;
 
-    QJsonObject data;
-    data["userId"] = userId;
-    data["icon"] = user.getValue().getIcon();
-
-    this->_res = Message{Message::Type::USER, (int) Message::UserAction::GET_USER_ICON, Message::Status::RESPONSE, data};
-    this->_has_resp = true;
-  } catch(SQLNoElementException&) {
-    error(ERROR_6);
-    this->sendErrorMsg(ERROR_6);
+    auto icon = user.getValue().getIcon();
+    if(!icon.isEmpty()) {
+      data["icon"] = icon;
+    }
+  } catch(SQLNoElementSelectException& ex) {
+    // user does not exist
+    data["found"] = false;
   }
+
+  this->_res = Message{Message::Type::USER, (int) Message::UserAction::GET_USER_ICON, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
 }
 
 

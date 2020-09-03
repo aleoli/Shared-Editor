@@ -160,6 +160,16 @@ int Message::getInt(const QString &key) const {
   return val;
 }
 
+bool Message::getBool(const QString &key) const {
+  auto value = _data[key];
+
+  if(value.isUndefined()) {
+    throw MessageDataException{"Data object has no value with key "+key};
+  }
+
+  return value.toBool(false);
+}
+
 QString Message::getString(const QString &key) const {
   auto value = _data[key];
 

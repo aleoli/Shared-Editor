@@ -507,7 +507,7 @@ void TextEditor::userDisconnected(int fileId, int userId) {
   _file->setOnline(userId, false);
 }
 
-void TextEditor::setUserIcon(int userId, const QString &icon) {
+void TextEditor::setUserIcon(int userId, bool found, const std::optional<QString> &icon) {
   debug("TextEditor::setUserIcon");
 
   if(_users.count(userId) == 0) {
@@ -515,11 +515,15 @@ void TextEditor::setUserIcon(int userId, const QString &icon) {
   }
 
   auto user = _users[userId];
-  auto decoded = image_utils::decodeImage(icon);
-  user->setIcon(decoded);
+  if(found && icon) {
+    auto decoded = image_utils::decodeImage(*icon);
+    user->setIcon(decoded);
 
-  for(auto comment : _comments) {
-    if(comment.first.getUserId() == userId) comment.second->setIcon(decoded);
+    for(auto comment : _comments) {
+      if(comment.first.getUserId() == userId) comment.second->setIcon(decoded);
+    }
+  } else if(!found) {
+    user->setDeleted();
   }
 }
 

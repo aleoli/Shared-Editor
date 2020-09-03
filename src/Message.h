@@ -103,6 +103,7 @@ public:
   [[nodiscard]] std::string to_string() const;
 
   [[nodiscard]] int getInt(const QString &key) const;
+  [[nodiscard]] bool getBool(const QString &key) const;
   [[nodiscard]] QString getString(const QString &key) const;
   [[nodiscard]] QJsonObject getObject(const QString &key) const;
   [[nodiscard]] QJsonArray getArray(const QString &key) const;
