@@ -35,7 +35,7 @@ Paragraph &Paragraph::operator=(Paragraph &&s) noexcept {
   this->_alignment = s._alignment;
   this->_pos = std::move(s._pos);
   this->_timestamp = std::move(s._timestamp);
-  this->_lastUser == s._lastUser;
+  this->_lastUser = s._lastUser;
   return *this;
 }
 

@@ -23,7 +23,7 @@ public:
     ~Edit();
 
 public slots:
-    virtual void clear();
+  void clear() override;
 
 public slots:
   void setIcon();

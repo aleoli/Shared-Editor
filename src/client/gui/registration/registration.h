@@ -23,7 +23,7 @@ public:
     ~Registration();
 
 public slots:
-    virtual void clear();
+    void clear() override;
 
 signals:
   void signup(const QString &username, const QString &password, const QString &pswRepeat, const std::optional<QString> &icon);

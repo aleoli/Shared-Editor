@@ -18,7 +18,7 @@ public:
   void paintEvent(QPaintEvent* e) override;
 
 public slots:
-  virtual void clear();
+  void clear();
 
 private slots:
   void _openMenu(bool checked);

@@ -24,7 +24,7 @@ signals:
   void quit();
 
 public slots:
-  virtual void clear();
+  void clear() override;
   void setDefaultAddress(const QString &host, int port);
   QString getHost() const;
   int getPort();
