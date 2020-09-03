@@ -13,13 +13,14 @@ class Server: public QObject {
 public:
   Server(const Server&) = delete;
   Server& operator=(const Server&) = delete;
-  Server(QObject *parent = nullptr) = delete;
+  Server(QObject *parent) = delete;
 
-  static std::shared_ptr<Server> get(QString host = DEF_HOST, int port = DEF_PORT);
+  static std::shared_ptr<Server> get();
 
 public slots:
-  void connect();
-  void write(QByteArray data);
+  void connect(const QString &host, int port);
+  void abort();
+  void write(const QByteArray &data);
   void disconnect();
 
 private slots:
@@ -27,19 +28,17 @@ private slots:
 
 signals:
   void connection_error();
-  void dataReady(QByteArray data);
+  void dataReady(const QByteArray &data);
   void connected();
   void disconnected();
 
 private:
   static std::shared_ptr<Server> instance;
-  Server(QString host, int port);
+  Server();
 
   void readSize();
   void readData();
 
-  QString _host;
-  int _port;
   QTcpSocket *_socket;
   QByteArray _in_buffer;
   quint32 _in_size = 0;

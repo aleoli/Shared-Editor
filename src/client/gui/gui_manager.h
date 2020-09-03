@@ -10,6 +10,7 @@
 #include "sys.h"
 #include "utils.h"
 #include "user.h"
+#include "connect.h"
 #include "login.h"
 #include "docsbrowser.h"
 #include "edit.h"
@@ -17,8 +18,6 @@
 #include "texteditor.h"
 #include "alert_messages.h"
 #include "FSElement.h"
-
-#define CONNECT_TIME_LIMIT 5000
 
 class GuiManager: public QObject
 {
@@ -36,6 +35,8 @@ public:
   void run();
 
 signals:
+  void connect(const QString &host, int port);
+  void abort();
   void quit();
 
   void loginQuery(const QString &username, const QString &password);
@@ -51,6 +52,7 @@ signals:
   void deleteFileQuery(const QString &token, int fileId);
   void getLinkQuery(const QString &token, int fileId);
   void activateLinkQuery(const QString &token, const QString &link);
+  void getFileInfoQuery(const QString &token, int fileId);
 
   void newDirQuery(const QString &token, const QString &name, const std::optional<int> &parentId = std::nullopt);
   void editDirQuery(const QString &token, int dirId, const std::optional<QString> &name, const std::optional<int> &parentId);
@@ -59,11 +61,6 @@ signals:
   void moveFileQuery(const QString &token, int fileId, int dirId);
   void getPathQuery(const QString &token, int elementId);
   void getAllDirsQuery(const QString &token);
-
-  // TODO: cat be deleted?
-  void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
-  void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);
-  void commentLocalDeleteQuery(const QString &token, int fileId, const File::Comment &comment);
 
   void serverGetDirResponse(const std::vector<FSElement> &elements, const QString &name, int parentId);
   void serverNewDirResponse(int id);
@@ -81,6 +78,7 @@ private slots:
   void connected();
   void connectionLost();
   void checkConnection();
+  void openConnection(const QString &host, int port, int ms = CONNECT_TIME_LIMIT);
 
   // messages from windows
   void loginLogin(const QString &username, const QString &password);
@@ -104,6 +102,7 @@ private slots:
   void textEditorClose(const QString &token, int fileId);
   void textEditorEdit(const QString &token, int fileId, const std::optional<QString> &name);
   void textEditorRemove(const QString &token, int fileId);
+  void textEditorFileInfo(const QString &token, int fileId);
 
   // messages from server
   void serverErrorResponse(const QString &reason);
@@ -117,6 +116,7 @@ private slots:
   void serverActivateLinkResponse(const FSElement &element, const File &file);
   void serverDeleteFileResponse();
   void serverDeleteDirResponse();
+  void serverFileInfoResponse(const FSElement::FileInfo& fileInfo);
 
   void serverGetLinkResponse(const QString &link);
 
@@ -130,7 +130,7 @@ private:
   static std::shared_ptr<GuiManager> instance;
   explicit GuiManager(const SysConf &conf, QObject *parent = nullptr);
 
-  void initThreads(const SysConf &conf);
+  void initThreads();
   void connectWidgets();
   void connectClientToServer();
   void connectServerToClient();
@@ -141,9 +141,10 @@ private:
 
   std::shared_ptr<User> _user;
   StackedWidget *_stackedWidget;
-  bool _connected;
+  bool _connected, _firstTime;
 
   //finestre
+  Connect *_widgetConnect;
   Login *_widgetLogin;
   DocsBrowser *_widgetDocsBrowser;
   Edit *_widgetEdit;

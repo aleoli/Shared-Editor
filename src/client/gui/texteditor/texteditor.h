@@ -47,6 +47,7 @@ signals:
   void remove(const QString &token, int fileId);
   void edit(const QString &token, int fileId, const std::optional<QString> &name);
   void getUserIcon(int userId);
+  void fileInfo(const QString &token, int fileId);
 
   // Messages to server
   void commentLocalInsert(const QString &token, int fileId, const File::Comment &comment);
@@ -90,6 +91,7 @@ private slots:
   void _showConnected(bool checked);
   void _account();
   void _rename(const QString &name);
+  void _setFilename();
   void _close(bool checked);
   void _buttonAlignment(QAbstractButton *button);
   void _actionAlignment(QAction *action);

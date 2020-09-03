@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(.)
 include_directories(..)
 include_directories(../..)
+include_directories(connect)
 include_directories(docsbrowser)
 include_directories(edit)
 include_directories(landing)
@@ -26,6 +27,8 @@ file(GLOB src_files
     "../../*.cpp"
     "ui/*.ui"
     "ui/resources/*.qrc"
+    "connect/*.h"
+    "connect/*.cpp"
     "docsbrowser/*.h"
     "docsbrowser/*.cpp"
     "edit/*.h"

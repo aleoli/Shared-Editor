@@ -101,7 +101,7 @@ void TextEditor::clear() {
   _gen.reset();
   reloadUsers();
   reloadComments();
-  _menuOptions->setFileName(_user->getFileName());
+  _setFilename();
   _textEdit->setFocus();
 }
 
@@ -123,6 +123,7 @@ void TextEditor::initOptionsWidget() {
   connect(_menuOptions, &OptionsWidget::connected, this, &TextEditor::_showConnected);
   connect(_menuOptions, &OptionsWidget::user, this, &TextEditor::_account);
   connect(_menuOptions, &OptionsWidget::rename, this, &TextEditor::_rename);
+  connect(_user.get(), &User::fileNameChanged, this, &TextEditor::_setFilename);
 }
 
 void TextEditor::initToolbarActions() {
@@ -568,6 +569,10 @@ void TextEditor::_rename(const QString &name) {
   _textEdit->setFocus();
 }
 
+void TextEditor::_setFilename() {
+  _menuOptions->setFileName(_user->getFileName());
+}
+
 void TextEditor::_bold(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_bold");
@@ -807,7 +812,7 @@ void TextEditor::_deleteFile(bool checked) {
 
 void TextEditor::_info(bool checked) {
   debug("TextEditor::_info");
-  refresh();
+  emit fileInfo(_user->getToken(), _user->getFileId());
 }
 
 void TextEditor::_deleteText(bool checked) {
