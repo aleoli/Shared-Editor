@@ -55,6 +55,7 @@ signals:
   void getDirResponse(const std::vector<FSElement> &elements, QString name, int parentId);
   void moveFileResponse();
   void getPathResponse(const std::vector<FSElement> &elements);
+  void searchResponse(const std::list<SearchResult> &results);
   void getAllDirsResponse(const std::list<std::pair<QString, int>> &items);
 
   void commentRemoteInsertQuery(int fileId, int userId, const File::Comment &comment);
@@ -95,6 +96,7 @@ public slots:
   void moveFileQuery(const QString &token, int fileId, int dirId);
   void getPathQuery(const QString &token, int elementId);
   void getAllDirsQuery(const QString &token);
+  void searchQuery(const QString &token, const QString &query);
 
   void commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalUpdateQuery(const QString &token, int fileId, const File::Comment &comment);

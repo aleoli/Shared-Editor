@@ -4,6 +4,12 @@
 #include <QJsonObject>
 #include <QDateTime>
 
+typedef struct SearchResult {
+  int id;
+  QString path;
+  bool isDir;
+} SearchResult;
+
 class FSElement {
 public:
   enum class Type {

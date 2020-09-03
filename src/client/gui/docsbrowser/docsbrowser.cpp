@@ -4,8 +4,10 @@
 #include <QAction>
 #include <list>
 #include <QGridLayout>
+#include <QListWidget>
 #include <cmath>
 #include <QMenu>
+#include <QTimer>
 
 #include "dialogs/input.h"
 #include "dialogs/confirm.h"
@@ -56,6 +58,8 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
 
   connect(_widgetAccount, &QPushButton::clicked, this, &DocsBrowser::_account);
   connect(_widgetNewFile, &QPushButton::clicked, this, &DocsBrowser::_newFile);
+  connect(_widgetSearch, &QLineEdit::textChanged, this, &DocsBrowser::_search);
+  connect(_widgetSearch, &QLineEdit::editingFinished, this, &DocsBrowser::_closeSearch);
 
   connect(_actionLogout, &QAction::triggered, this, &DocsBrowser::_logout);
 
@@ -216,6 +220,62 @@ void DocsBrowser::showPath(const std::vector<FSElement> &elements) {
   _widgetPath->setLayout(layout);
 }
 
+void DocsBrowser::searchResponse(const std::list<SearchResult> &results) {
+  debug("Search: " + QString::number(results.size()) + " items found");
+
+  if(this->_listWidget == nullptr) {
+    this->_listWidget = new QListWidget{this};
+    this->_listWidget->setStyleSheet("QListView{ border: 1px solid #333333; border-radius: 15px; background: #4e596f; padding: 10px 0px 0px 10px; min-width: 6em; font: 14px; color: #ffffff;}"
+      "QListView::item {height: 40px; border-style: solid; border-width: 0px; border-bottom-width: 1px; border-color: white;}"
+      "QListView::item::hover {background-color: #f65964;}");
+    this->_listWidget->setCursor(Qt::PointingHandCursor);
+    auto pos = this->_widgetSearch->mapToGlobal(this->rect().topLeft());
+    auto mainPos = this->mapToGlobal(this->rect().topLeft());
+    pos -= mainPos;
+    pos.setY(pos.y() + this->_widgetSearch->height());
+    this->_listWidget->move(pos);
+    this->_listWidget->setMaximumWidth(this->_widgetSearch->width());
+    this->_listWidget->setMinimumWidth(this->_widgetSearch->width());
+    this->_listWidget->setMinimumHeight(300);
+    this->_listWidget->setMaximumHeight(400);
+
+    QObject::connect(this->_listWidget, &QListWidget::itemClicked, this, &DocsBrowser::_clickedSearch);
+  }
+
+  this->_listWidget->clear();
+  for(const auto& res: results) {
+    this->_listWidget->addItem(res.path);
+  }
+  this->_listWidget->show();
+
+  this->_searchResults = results;
+}
+
+void DocsBrowser::_clickedSearch(QListWidgetItem *item) {
+  SearchResult sr;
+  for(const auto& i: this->_searchResults) {
+    if(i.path == item->text()) {
+      sr = i;
+      break;
+    }
+  }
+
+  debug(QString::number(sr.id) + " " + (sr.isDir ? "DIR" : "FILE"));
+  this->_widgetSearch->setText("");
+
+  if(sr.isDir) {
+    this->changeDir(sr.id);
+  } else {
+    this->_openFile(sr.id);
+  }
+}
+
+void DocsBrowser::_closeSearch() {
+  QTimer::singleShot(100, [this]() {
+    emit this->_widgetSearch->setText("");
+  });
+}
+
 void DocsBrowser::_clickedPath(bool checked) {
   auto btn = qobject_cast<QPushButton*>(sender());
   if(btn) {
@@ -282,6 +342,19 @@ void DocsBrowser::_newDir(bool checked) {
 
 void DocsBrowser::_logout(bool checked) {
   emit logout(_user->getToken());
+}
+
+void DocsBrowser::_search(const QString& text) {
+  debug(text);
+  if(text.size() >= 3) {
+    emit this->search(_user->getToken(), text);
+  } else if(this->_listWidget != nullptr) {
+    this->_listWidget->hide();
+    this->_listWidget->deleteLater();
+    this->_listWidget->setParent(nullptr);
+    this->_listWidget = nullptr;
+    this->_searchResults.clear();
+  }
 }
 
 void DocsBrowser::_goToHome(bool checked) {

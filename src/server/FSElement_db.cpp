@@ -386,7 +386,7 @@ void FSElement_db::rename(const Session &s, QString name) {
 
 std::pair<QString, int> FSElement_db::pwd(const Session &s) {
   if(s.getUserId() != this->_owner_id) {
-    warn("Trying to rename not your element");
+    warn("Trying to get path on not your element");
     throw se_exceptions::IllegalAccessException{"Trying to get path on not your element"};
   }
   QStringList l;
@@ -469,6 +469,10 @@ std::vector<FSElement_db> FSElement_db::getPathElements(const Session &s) {
   }
   std::reverse(res.begin(), res.end());
   return res;
+}
+
+bool FSElement_db::isDir() const {
+  return this->_type == FSElement::Type::DIRECTORY;
 }
 
 QString FSElement_db::getName() const {
