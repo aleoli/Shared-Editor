@@ -1,4 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2018.3.4\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=F:\Winprograms\qt\5.12.4\mingw73_64\lib\cmake -G "CodeBlocks - MinGW Makefiles" F:\Desktop\prova_qtextedit
--- Configuring done
--- Generating done
--- Build files have been written to: F:/Desktop/prova_qtextedit/cmake-build-debug
