@@ -6,6 +6,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QDateTime>
+#include <QTextBlockFormat>
 
 #include "Identifier.h"
 typedef Identifier ParagraphId;
@@ -14,7 +15,7 @@ class Paragraph {
 public:
   Paragraph();
   Paragraph(ParagraphId id);
-  Paragraph(ParagraphId id, Qt::Alignment alignment);
+  Paragraph(ParagraphId id, const QTextBlockFormat &fmt);
   explicit Paragraph(const QJsonObject &json);
   explicit Paragraph(QJsonObject &&json);
   Paragraph(const Paragraph& s);
@@ -27,10 +28,10 @@ public:
   friend bool operator==(const Paragraph& lhs, const Paragraph& rhs);
   friend bool operator!=(const Paragraph& lhs, const Paragraph& rhs);
 
-  bool isDifferent(const Paragraph &other);
-  bool isDifferent(Qt::Alignment alignment);
+  bool isDifferent(const Paragraph &other) const;
+  bool isDifferent(const QTextBlockFormat &fmt) const;
 
-  void localUpdate(Qt::Alignment alignment);
+  void localUpdate(const QTextBlockFormat &fmt);
   void remoteUpdate(const Paragraph &other, const QDateTime &timestamp, int userId);
 
   static Paragraph fromJsonObject(const QJsonObject &json);
@@ -44,18 +45,20 @@ public:
   [[nodiscard]] ParagraphId getParagraphId() const;
   void setPos(const std::vector<Identifier> &pos);
   [[nodiscard]] std::vector<Identifier> getPos() const;
-  void setAlignment(Qt::Alignment alignment);
-  [[nodiscard]] Qt::Alignment getAlignment() const;
+  void setFormat(const QTextBlockFormat &fmt);
+  [[nodiscard]] QTextBlockFormat getFormat() const;
   [[nodiscard]] QDateTime getTimestamp() const;
   void setTimestamp(const QDateTime &time);
   bool isOlder(const QDateTime &time, int userId);
 
 private:
   void checkAndAssign(const QJsonObject &json);
+  static QJsonObject serializeFormat(const QTextBlockFormat &fmt);
+  static QTextBlockFormat deserializeFormat(const QJsonObject &obj);
 
   ParagraphId _id;
   std::vector<Identifier> _pos;
-  Qt::Alignment _alignment;
+  QTextBlockFormat _fmt;
   QDateTime _timestamp;
   int _lastUser;
 };

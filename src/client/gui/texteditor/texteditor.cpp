@@ -304,6 +304,9 @@ void TextEditor::reloadFile() {
   _textEdit->clear();
   _file = _user->getFile();
   refresh(true);
+  QTextCharFormat fmt;
+  fmt.setForeground(QBrush("black"));
+  _textEdit->mergeCurrentCharFormat(fmt);
 
   _blockSignals = false;
 }
@@ -402,8 +405,7 @@ void TextEditor::refresh(bool changeFile) {
   // set alignment
   int block = 0;
   _file->forEachParagraph([&block, this](const Paragraph &par) {
-    debug("block: " + QString::number(block) + " alignment: " + QString::number(static_cast<int>(par.getAlignment())));
-    setAlignmentInBlock(block++, par.getAlignment());
+    setFormatInBlock(block++, par.getFormat());
   });
 
   //ripristino posizione

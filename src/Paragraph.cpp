@@ -9,10 +9,10 @@ using namespace se_exceptions;
 
 Paragraph::Paragraph() : _timestamp(QDateTime()) {}
 
-Paragraph::Paragraph(ParagraphId id) : _id(id), _alignment(Qt::AlignLeft), _timestamp(QDateTime()) {}
+Paragraph::Paragraph(ParagraphId id) : _id(id), _fmt(QTextBlockFormat()), _timestamp(QDateTime()) {}
 
-Paragraph::Paragraph(ParagraphId id, Qt::Alignment alignment)
-  : _id(id), _alignment(alignment), _timestamp(QDateTime()) {}
+Paragraph::Paragraph(ParagraphId id, const QTextBlockFormat &fmt)
+  : _id(id), _fmt(fmt), _timestamp(QDateTime()) {}
 
 Paragraph::Paragraph(const QJsonObject &json) : _timestamp(QDateTime()) {
   checkAndAssign(json);
@@ -23,7 +23,7 @@ Paragraph::Paragraph(QJsonObject &&json) : _timestamp(QDateTime()) {
 }
 
 Paragraph::Paragraph(const Paragraph& s) = default;
-Paragraph::Paragraph(Paragraph&& s) noexcept: _id(s._id), _alignment(s._alignment),
+Paragraph::Paragraph(Paragraph&& s) noexcept: _id(s._id), _fmt(s._fmt),
   _pos(std::move(s._pos)), _timestamp(std::move(s._timestamp)), _lastUser(s._lastUser){}
 
 Paragraph &Paragraph::operator=(const Paragraph &s) = default;
@@ -32,7 +32,7 @@ Paragraph &Paragraph::operator=(Paragraph &&s) noexcept {
     return *this;
   }
   this->_id = s._id;
-  this->_alignment = s._alignment;
+  this->_fmt = s._fmt;
   this->_pos = std::move(s._pos);
   this->_timestamp = std::move(s._timestamp);
   this->_lastUser = s._lastUser;
@@ -48,7 +48,7 @@ bool operator<(const Paragraph& lhs, const Paragraph& rhs) {
 }
 
 bool operator==(const Paragraph& lhs, const Paragraph& rhs) {
-  return lhs._id == rhs._id && lhs._alignment == rhs._alignment &&
+  return lhs._id == rhs._id && !lhs.isDifferent(rhs) &&
     lhs._pos == rhs._pos && lhs._timestamp == rhs._timestamp && lhs._lastUser == rhs._lastUser;
 }
 
@@ -56,50 +56,43 @@ bool operator!=(const Paragraph& lhs, const Paragraph& rhs) {
   return !operator==(lhs, rhs);
 }
 
-bool Paragraph::isDifferent(const Paragraph &other) {
-  return _alignment != other._alignment;
+bool Paragraph::isDifferent(const Paragraph &other) const {
+  return isDifferent(other._fmt);
 }
 
-bool Paragraph::isDifferent(Qt::Alignment alignment) {
-  return _alignment != alignment;
+bool Paragraph::isDifferent(const QTextBlockFormat &fmt) const {
+  // to add new attributes, add a check here
+  return _fmt.alignment() != fmt.alignment();
 }
 
-void Paragraph::localUpdate(Qt::Alignment alignment) {
-  _alignment = alignment;
+void Paragraph::localUpdate(const QTextBlockFormat &fmt) {
+  _fmt = fmt;
   _timestamp = QDateTime::currentDateTimeUtc();
   _lastUser = _id.getFirst();
 }
 
 void Paragraph::remoteUpdate(const Paragraph &other, const QDateTime &timestamp, int userId) {
-  _alignment = other._alignment;
+  _fmt = other._fmt;
   _timestamp = timestamp;
   _lastUser = userId;
 }
 
-void Paragraph::checkAndAssign (const QJsonObject &json) {
+void Paragraph::checkAndAssign(const QJsonObject &json) {
   auto idValue = json["i"];
-  auto alignmentValue = json["a"];
+  auto fmtValue = json["f"];
   auto posValue = json["p"];
 
-  if(idValue.isUndefined() || alignmentValue.isUndefined() || posValue.isUndefined()) {
-    throw SymbolFromJsonException{"The QJsonObject has some fields missing"};
+  if(idValue.isUndefined() || fmtValue.isUndefined() || posValue.isUndefined()) {
+    throw ParagraphFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!idValue.isObject() || !posValue.isArray()) {
-    throw SymbolFromJsonException{"One or more fields are not valid"};
+  if(!fmtValue.isObject() || !idValue.isObject() || !posValue.isArray()) {
+    throw ParagraphFromJsonException{"One or more fields are not valid"};
   }
-
-  auto alignment = alignmentValue.toInt(-1);
-
-  if(alignment < 0) {
-    throw SymbolFromJsonException{"One or more fields are not valid"};
-  }
-
-  auto idJson = idValue.toObject();
 
   _pos = utils::jsonArrayToVector<Identifier>(posValue.toArray());
-  _id = ParagraphId{idJson};
-  _alignment = Qt::AlignmentFlag(alignment);
+  _id = ParagraphId{idValue.toObject()};
+  _fmt = deserializeFormat(fmtValue.toObject());
 }
 
 Paragraph Paragraph::fromJsonObject(const QJsonObject &json) {
@@ -114,7 +107,7 @@ QJsonObject Paragraph::toJsonObject() const {
   QJsonObject json;
 
   json["i"] = QJsonValue(_id.toJsonObject());
-  json["a"] = QJsonValue(static_cast<int>(_alignment));
+  json["f"] = QJsonValue(serializeFormat(_fmt));
   json["p"] = QJsonValue(utils::vectorToJsonArray(_pos));
 
   return json;
@@ -156,12 +149,12 @@ std::vector<Identifier> Paragraph::getPos() const{
   return _pos;
 }
 
-void Paragraph::setAlignment(Qt::Alignment alignment) {
-  _alignment = alignment;
+void Paragraph::setFormat(const QTextBlockFormat &fmt) {
+  _fmt = fmt;
 }
 
-Qt::Alignment Paragraph::getAlignment() const {
-  return _alignment;
+QTextBlockFormat Paragraph::getFormat() const {
+  return _fmt;
 }
 
 QDateTime Paragraph::getTimestamp() const {
@@ -178,4 +171,32 @@ bool Paragraph::isOlder(const QDateTime &time, int userId) {
   }
 
   return _timestamp < time;
+}
+
+QJsonObject Paragraph::serializeFormat(const QTextBlockFormat &fmt) {
+  QJsonObject json;
+
+  json["a"] = static_cast<int>(fmt.alignment());
+  //to add new attributes, serialize them here
+
+  return json;
+}
+
+QTextBlockFormat Paragraph::deserializeFormat(const QJsonObject &obj) {
+  QTextBlockFormat fmt;
+  auto alignmentValue = obj["a"];
+  //to add new attributes, deserialize them here
+
+  if(alignmentValue.isUndefined()) {
+    throw ParagraphFromJsonException{"The QJsonObject has some fields missing"};
+  }
+
+  auto alignment = alignmentValue.toInt(-1);
+
+  if(alignment < 0) {
+    throw ParagraphFromJsonException{"One or more fields are not valid"};
+  }
+
+  fmt.setAlignment(static_cast<Qt::Alignment>(alignment));
+  return fmt;
 }

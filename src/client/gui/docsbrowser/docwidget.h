@@ -24,7 +24,7 @@ private slots:
   void _openMenu(bool checked);
 
 signals:
-  void open(int fileId);
+  void open(int fileId, const QString &name);
   void openMenu(bool isDir, const FSElement& element);
 
 protected:

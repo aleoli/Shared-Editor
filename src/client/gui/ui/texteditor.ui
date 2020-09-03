@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>4095</width>
-    <height>3112</height>
+    <width>1366</width>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,7 +83,7 @@ QScrollBar::handle:horizontal {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>4095</width>
+     <width>1366</width>
      <height>56</height>
     </rect>
    </property>
@@ -610,7 +610,7 @@ QDockWidget#QToolTip{
    </property>
    <property name="minimumSize">
     <size>
-     <width>768</width>
+     <width>808</width>
      <height>63</height>
     </size>
    </property>
@@ -1187,13 +1187,13 @@ QListView#comboListView::item:hover {
       <widget class="QComboBox" name="comboBox">
        <property name="minimumSize">
         <size>
-         <width>62</width>
+         <width>74</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>153</width>
+         <width>193</width>
          <height>16777215</height>
         </size>
        </property>

@@ -161,9 +161,9 @@ private:
 
   int paragraphByPos(int pos);
   int numParagraphs();
-  Qt::Alignment alignmentByPos(int pos);
-  Qt::Alignment alignmentByBlock(int blockNumber);
-  void setAlignmentInBlock(int blockNumber, Qt::Alignment alignment);
+  QTextBlockFormat formatByPos(int pos);
+  QTextBlockFormat formatByBlock(int blockNumber);
+  void setFormatInBlock(int blockNumber, const QTextBlockFormat &fmt);
 
   Ui::TextEditor *ui;
 
