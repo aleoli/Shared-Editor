@@ -15,6 +15,7 @@
 #include <shared_mutex>
 #include <QDateTime>
 #include <functional>
+#include <QTextBlockFormat>
 
 class File {
 public:
@@ -102,7 +103,7 @@ public:
   int remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   void localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it = nullptr);
   int remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
-  std::optional<std::list<Paragraph>::iterator> localUpdateParagraph(Qt::Alignment alignment, int pos, std::list<Paragraph>::iterator *it = nullptr);
+  std::optional<std::list<Paragraph>::iterator> localUpdateParagraph(const QTextBlockFormat &fmt, int pos, std::list<Paragraph>::iterator *it = nullptr);
   int remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTime &timestamp, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   std::list<Paragraph>::iterator paragraphAt(int pos);
   std::pair<int, std::list<Paragraph>::iterator> paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);

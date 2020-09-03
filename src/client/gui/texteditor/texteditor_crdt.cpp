@@ -143,7 +143,7 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
 
     for(int i=0; i<added; i++) {
       try {
-        Paragraph p{{_user->getUserId(), _user->getCharId()}, alignmentByBlock(parPos+i)}; //TODO new counter: paragraphId
+        Paragraph p{{_user->getUserId(), _user->getCharId()}, formatByBlock(parPos+i)}; //TODO new counter: paragraphId
         _file->localInsertParagraph(p, parPos+i, &parIt);
         parAdded.push_back(p);
       }
@@ -178,7 +178,7 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
     // check if update paragraph happened
     auto curPar = paragraphByPos(pos + i);
     if(curPar != lastPar) {
-      auto opt = _file->localUpdateParagraph(alignmentByBlock(curPar), curPar, &parIt);
+      auto opt = _file->localUpdateParagraph(formatByBlock(curPar), curPar, &parIt);
       if(opt) parUpdated.push_back(**opt);
       lastPar = curPar;
     }
@@ -244,9 +244,9 @@ void TextEditor::_handleAlignmentUpdate(int pos, int added) {
 
   //debug("Start par: " + QString::number(startPar) + " end: " + QString::number(endPar));
 
-  for(int i = startPar; i<endPar; i++) {
-    auto alignment = alignmentByBlock(startPar);
-    auto opt = _file->localUpdateParagraph(alignment, i, &it);
+  for(int i = startPar; i<=endPar; i++) {
+    auto blockFmt = formatByBlock(startPar);
+    auto opt = _file->localUpdateParagraph(blockFmt, i, &it);
 
     if(opt) parUpdated.push_back(**opt);
   }
@@ -479,19 +479,17 @@ int TextEditor::numParagraphs() {
   return _textEdit->document()->blockCount();
 }
 
-Qt::Alignment TextEditor::alignmentByPos(int pos) {
-  return _textEdit->document()->findBlock(pos).blockFormat().alignment();
+QTextBlockFormat TextEditor::formatByPos(int pos) {
+  return _textEdit->document()->findBlock(pos).blockFormat();
 }
 
-Qt::Alignment TextEditor::alignmentByBlock(int blockNumber) {
-  return _textEdit->document()->findBlockByNumber(blockNumber).blockFormat().alignment();
+QTextBlockFormat TextEditor::formatByBlock(int blockNumber) {
+  return _textEdit->document()->findBlockByNumber(blockNumber).blockFormat();
 }
 
-void TextEditor::setAlignmentInBlock(int blockNumber, Qt::Alignment alignment) {
+void TextEditor::setFormatInBlock(int blockNumber, const QTextBlockFormat &fmt) {
   auto cursor = QTextCursor(_textEdit->document());
   cursor.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor, blockNumber);
-  QTextBlockFormat fmt;
-  fmt.setAlignment(alignment);
   cursor.mergeBlockFormat(fmt);
 }
 
@@ -501,7 +499,7 @@ void TextEditor::_remoteInsertParagraphs(const std::list<Paragraph> &paragraphs)
 
   for(auto &par : paragraphs) {
     pos = _file->remoteInsertParagraph(par, &it, pos);
-    setAlignmentInBlock(pos, par.getAlignment());
+    setFormatInBlock(pos, par.getFormat());
   }
 }
 
@@ -521,7 +519,7 @@ void TextEditor::_remoteUpdateParagraphs(const std::list<Paragraph> &paragraphs,
     int newpos = _file->remoteUpdateParagraph(par, userId, timestamp, &it, pos);
     if(newpos == -1) continue;
 
-    setAlignmentInBlock(newpos, par.getAlignment());
+    setFormatInBlock(newpos, par.getFormat());
     pos = newpos + 1;
     std::advance(it, 1);
   }

@@ -402,8 +402,7 @@ void TextEditor::refresh(bool changeFile) {
   // set alignment
   int block = 0;
   _file->forEachParagraph([&block, this](const Paragraph &par) {
-    debug("block: " + QString::number(block) + " alignment: " + QString::number(static_cast<int>(par.getAlignment())));
-    setAlignmentInBlock(block++, par.getAlignment());
+    setFormatInBlock(block++, par.getFormat());
   });
 
   //ripristino posizione

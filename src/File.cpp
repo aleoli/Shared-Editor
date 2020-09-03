@@ -837,17 +837,20 @@ int File::remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::ite
   }
 }
 
-std::optional<std::list<Paragraph>::iterator> File::localUpdateParagraph(Qt::Alignment alignment, int pos, std::list<Paragraph>::iterator *it) {
+std::optional<std::list<Paragraph>::iterator> File::localUpdateParagraph(const QTextBlockFormat &fmt, int pos, std::list<Paragraph>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
-  if(pos < 0 || _paragraphs.size() <= pos) {
+  auto size = _paragraphs.size();
+  if(pos < 0 || size < pos) {
     throw FileParagraphsException{"Invalid update position"};
   }
+
+  if(size == pos) return std::nullopt; //FIX bug
 
   auto target = it == nullptr ? paragraphAt(pos) : *it;
   if(it != nullptr) *it = std::next(*it);
 
-  if(target->isDifferent(alignment)) {
-    target->localUpdate(alignment);
+  if(target->isDifferent(fmt)) {
+    target->localUpdate(fmt);
     dirty = true;
 
     return std::optional<std::list<Paragraph>::iterator>(target);
