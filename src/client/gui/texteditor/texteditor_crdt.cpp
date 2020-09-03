@@ -40,8 +40,8 @@ void TextEditor::_contentsChange(int pos, int removed, int added) {
 int TextEditor::_checkOperation(int pos, int removed, int added, std::list<Symbol>::iterator it) {
   if(pos < 0 || removed < 0 || added < 0) return 0;
   if(removed != added) return 1;
-  if(removed == 0) return 0;
   if(_updateSyms || _updateAlignment) return 2;
+  if(removed == 0) return 0;
 
   auto doc = _textEdit->document();
   QTextCursor cursor(doc);
@@ -133,8 +133,32 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
   std::list<Symbol> symAdded;
   std::list<Paragraph> parAdded, parUpdated;
 
+  // check alignment
+  auto numPars = numParagraphs();
+  if(_nblocks < numPars) {
+    auto added = numPars - _nblocks;
+    _nblocks = numPars;
+    auto parPos = paragraphByPos(pos) + 1;
+    auto parIt = _file->paragraphAt(parPos);
+
+    for(int i=0; i<added; i++) {
+      try {
+        Paragraph p{{_user->getUserId(), _user->getCharId()}, alignmentByBlock(parPos+i)}; //TODO new counter: paragraphId
+        _file->localInsertParagraph(p, parPos+i, &parIt);
+        parAdded.push_back(p);
+      }
+      catch(...) {
+        throw TextEditorException("handleInsert: try to insert a paragraph at an invalid position in File");
+      }
+    }
+  }
+
+  // check symbols
   cursor.setPosition(pos);
-  //TODO check update alignment!
+  auto parPos = paragraphByPos(pos);
+  auto parIt = _file->paragraphAt(parPos);
+  int lastPar = -1;
+
   for(int i=0; i<added; i++) {
     cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
 
@@ -150,30 +174,18 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
       _file->localInsert(s, pos+i, &it);
       symAdded.push_back(s);
     }
+
+    // check if update paragraph happened
+    auto curPar = paragraphByPos(pos + i);
+    if(curPar != lastPar) {
+      auto opt = _file->localUpdateParagraph(alignmentByBlock(curPar), curPar, &parIt);
+      if(opt) parUpdated.push_back(**opt);
+      lastPar = curPar;
+    }
   }
 
   if(_highlighted) {
     _partialRefresh(pos, added);
-  }
-
-  // check alignment
-  auto numPars = numParagraphs();
-  if(_nblocks < numPars) {
-    auto added = numPars - _nblocks;
-    _nblocks = numPars;
-    auto parPos = paragraphByPos(pos) + 1;
-    auto it = _file->paragraphAt(parPos);
-
-    for(int i=0; i<added; i++) {
-      try {
-        Paragraph p{{_user->getUserId(), _user->getCharId()}, alignmentByBlock(parPos+i)}; //TODO new counter: paragraphId
-        _file->localInsertParagraph(p, parPos+i, &it);
-        parAdded.push_back(p);
-      }
-      catch(...) {
-        throw TextEditorException("handleDelete: try to delete a paragraph at an invalid position in File");
-      }
-    }
   }
 
   emit localInsert(_user->getToken(), _user->getFileId(), symAdded, parAdded);
@@ -227,7 +239,10 @@ void TextEditor::_handleAlignmentUpdate(int pos, int added) {
 
   int startPar = paragraphByPos(pos);
   int endPar = paragraphByPos(pos + added);
+  if(endPar == startPar) endPar++;
   auto it = _file->paragraphAt(startPar);
+
+  //debug("Start par: " + QString::number(startPar) + " end: " + QString::number(endPar));
 
   for(int i = startPar; i<endPar; i++) {
     auto alignment = alignmentByBlock(startPar);
@@ -236,6 +251,7 @@ void TextEditor::_handleAlignmentUpdate(int pos, int added) {
     if(opt) parUpdated.push_back(**opt);
   }
 
+  //debug("Size: " + QString::number(parUpdated.size()));
   if(!parUpdated.empty()) {
     auto timestamp = QDateTime::currentDateTimeUtc();
     emit localUpdate(_user->getToken(), _user->getFileId(), std::list<Symbol>(), parUpdated, timestamp);
