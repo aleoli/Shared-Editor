@@ -125,4 +125,5 @@ private:
   int _get_n_cols();
   void _showDir(const std::vector<FSElement> &elements);
   int _getHSpacing();
+  static bool _checkName(const QString &name);
 };

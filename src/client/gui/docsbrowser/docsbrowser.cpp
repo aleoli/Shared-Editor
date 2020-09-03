@@ -12,6 +12,7 @@
 #include "dialogs/input.h"
 #include "dialogs/confirm.h"
 #include "dialogs/move.h"
+#include "dialogs/info.h"
 
 #include "utils.h"
 #include "docwidget.h"
@@ -19,6 +20,8 @@
 
 #define DOC_WIDTH 200
 #define DOC_HEIGHT 120
+
+#define ALLOWED_CHARS " _-?!()"
 
 DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBrowser) {
   ui->setupUi(this);
@@ -131,8 +134,6 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
 
   int i = 0;
   for(auto element = listPointers.begin(); element != listPointers.end(); ++element, i++) {
-    //debug(QString(element.getType() == FSElement::Type::FILE ? "FILE" : "DIR") + "\t" + element.getName());
-
     if((*element)->getType() == FSElement::Type::FILE) {
       auto widget = new DocWidget{**element, this->_scrollArea};
       widget->setFixedSize(DOC_WIDTH, DOC_HEIGHT);
@@ -326,14 +327,22 @@ void DocsBrowser::_account(bool checked) {
 void DocsBrowser::_newFile(bool checked) {
   auto name = Input::show(this, "Insert file name", "", "Cancel", "Create");
   if(name && !name->isEmpty()) {
-    emit newFile(_user->getToken(), *name, _currentDir);
+    if(!DocsBrowser::_checkName(*name)) {
+      Info::show(this, "Name not allowed", "Name not allowed", QString{"This name is not allowed, you can use alphanumerical chars and '"}+ALLOWED_CHARS+"' only");
+    } else {
+      emit newFile(_user->getToken(), *name, _currentDir);
+    }
   }
 }
 
 void DocsBrowser::_newDir(bool checked) {
   auto name = Input::show(this, "Insert directory name", "", "Cancel", "Create");
   if(name && !name->isEmpty()) {
-    emit newDir(_user->getToken(), *name, _currentDir);
+    if(!DocsBrowser::_checkName(*name)) {
+      Info::show(this, "Name not allowed", "Name not allowed", QString{"This name is not allowed, you can use alphanumerical chars and '"}+ALLOWED_CHARS+"' only");
+    } else {
+      emit newDir(_user->getToken(), *name, _currentDir);
+    }
   }
 }
 
@@ -468,7 +477,11 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
     debug("Rename");
     auto name = Input::show(this, "Insert new name", element.getName(), "Cancel", "Rename");
     if(name && !name->isEmpty() && element.getName() != *name) {
-      emit this->edit(_user->getToken(), element.getId(), name);
+      if(!DocsBrowser::_checkName(*name)) {
+        Info::show(this, "Name not allowed", "Name not allowed", QString{"This name is not allowed, you can use alphanumerical chars and '"}+ALLOWED_CHARS+"' only");
+      } else {
+        emit this->edit(_user->getToken(), element.getId(), name);
+      }
     }
   } else if(action == actionDelete) {
     debug("Delete");
@@ -480,4 +493,16 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
       }
     }
   }
+}
+
+bool DocsBrowser::_checkName(const QString &name) {
+  auto isAllowed = [](const QChar& c) {
+    auto allowed = QString(ALLOWED_CHARS);
+    return std::any_of(allowed.begin(), allowed.end(), [c](const auto& allowedC) {
+      return c == allowedC;
+    });
+  };
+  return std::all_of(name.begin(), name.end(), [isAllowed](const auto& c) {
+    return c.isLower() || c.isUpper() || c.isNumber() || isAllowed(c);
+  });
 }
