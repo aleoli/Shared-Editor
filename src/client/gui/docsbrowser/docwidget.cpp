@@ -46,7 +46,7 @@ void DocWidget::clear() {
 
 void DocWidget::mouseDoubleClickEvent(QMouseEvent *event) {
   QWidget::mouseDoubleClickEvent(event);
-  emit this->open(this->_element.getId());
+  emit this->open(this->_element.getId(), this->_element.getName());
 }
 
 void DocWidget::_openMenu(bool checked) {

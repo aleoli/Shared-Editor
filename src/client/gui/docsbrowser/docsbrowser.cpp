@@ -168,8 +168,9 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
   debug("");
 }
 
-void DocsBrowser::_openFile(int fileId) {
+void DocsBrowser::_openFile(int fileId, const QString &name) {
   _user->setFileId(fileId);
+  _user->setFileName(name);
   emit this->openFile(_user->getToken(), fileId);
 }
 
@@ -266,7 +267,8 @@ void DocsBrowser::_clickedSearch(QListWidgetItem *item) {
   if(sr.isDir) {
     this->changeDir(sr.id);
   } else {
-    this->_openFile(sr.id);
+    auto index = item->text().lastIndexOf("/");
+    this->_openFile(sr.id, index == -1 ? item->text() : item->text().mid(index + 1));
   }
 }
 

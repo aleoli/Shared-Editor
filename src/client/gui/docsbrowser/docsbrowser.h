@@ -75,7 +75,7 @@ private slots:
   void _changeSortType(int newSortType);
   void _openLink(bool checked);
 
-  void _openFile(int fileId);
+  void _openFile(int fileId, const QString &name);
 
   void _openMenu(bool isDir, const FSElement& element);
   void _clickedSearch(QListWidgetItem *item);
