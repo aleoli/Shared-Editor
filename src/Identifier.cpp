@@ -6,76 +6,85 @@
 
 using namespace se_exceptions;
 
-IdentifierBase::IdentifierBase() : _digit(-1), _userId(-1) {}
+Identifier::Identifier() : _first(-1), _second(-1) {}
 
-IdentifierBase::IdentifierBase(int digit, int userId)
-        : _digit(digit), _userId(userId) {}
+Identifier::Identifier(int first, int second)
+        : _first(first), _second(second) {}
 
-IdentifierBase::IdentifierBase(const QJsonObject &json) {
+Identifier::Identifier(const QJsonObject &json) {
   checkAndAssign(json);
 }
 
-IdentifierBase::IdentifierBase(QJsonObject &&json) {
+Identifier::Identifier(QJsonObject &&json) {
   checkAndAssign(json);
 }
 
-void IdentifierBase::checkAndAssign(const QJsonObject &json) {
-  auto digitValue = json["d"];
-  auto userIdValue = json["u"];
+void Identifier::checkAndAssign(const QJsonObject &json) {
+  auto firstValue = json["1"];
+  auto secondValue = json["2"];
 
-  if(digitValue.isUndefined() || userIdValue.isUndefined()) {
-    throw SymbolIdentifierFromJsonException{"The QJsonObject has some fields missing"};
+  if(firstValue.isUndefined() || secondValue.isUndefined()) {
+    throw IdentifierFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  auto digit = digitValue.toInt(-1);
-  auto userId = userIdValue.toInt(-1);
+  auto first = firstValue.toInt(-10);
+  auto second = secondValue.toInt(-10);
 
-  if(digit < 0 || userId < 0) {
-    throw SymbolIdentifierFromJsonException{"One or more fields are not valid"};
+  if(first == -10 || second == -10) {
+    throw IdentifierFromJsonException{"One or more fields UD are not valid"};
   }
 
-  _digit = digit;
-  _userId = userId;
+  _first = first;
+  _second = second;
 }
 
-IdentifierBase IdentifierBase::fromJsonObject(const QJsonObject &json) {
-  return IdentifierBase(json);
+Identifier Identifier::fromJsonObject(const QJsonObject &json) {
+  return Identifier(json);
 }
 
-IdentifierBase IdentifierBase::fromJsonObject(QJsonObject &&json) {
-  return IdentifierBase(json);
+Identifier Identifier::fromJsonObject(QJsonObject &&json) {
+  return Identifier(json);
 }
 
-QJsonObject IdentifierBase::toJsonObject() const {
+QJsonObject Identifier::toJsonObject() const {
   QJsonObject json;
 
-  json["d"] = QJsonValue(_digit);
-  json["u"] = QJsonValue(_userId);
+  json["1"] = QJsonValue(_first);
+  json["2"] = QJsonValue(_second);
 
   return json;
 }
 
-bool operator==(const IdentifierBase& lhs, const IdentifierBase& rhs) {
-  return lhs._digit == rhs._digit && lhs._userId == rhs._userId;
+bool operator==(const Identifier& lhs, const Identifier& rhs) {
+  return lhs._first == rhs._first && lhs._second == rhs._second;
 }
 
-bool operator<(const IdentifierBase& lhs, const IdentifierBase& rhs) {
-  if(lhs._digit == rhs._digit)
-    return lhs._userId < rhs._userId;
-
-  return lhs._digit < rhs._digit;
+bool operator!=(const Identifier& lhs, const Identifier& rhs) {
+  return !(lhs == rhs);
 }
 
-int IdentifierBase::getDigit() const {
-  return _digit;
+
+bool operator<(const Identifier& lhs, const Identifier& rhs) {
+  if(lhs._first == rhs._first)
+    return lhs._second < rhs._second;
+
+  return lhs._first < rhs._first;
 }
 
-int IdentifierBase::getUserId() const {
-  return _userId;
+int Identifier::getFirst() const {
+  return _first;
 }
 
-std::string IdentifierBase::to_string() const {
+int Identifier::getSecond() const {
+  return _second;
+}
+
+QString Identifier::toString() const {
+  return QString::number(_first) + "-" + QString::number(_second);
+}
+
+std::string Identifier::to_string() const {
   std::stringstream ss;
-  ss << _digit << "-" << _userId;
+  ss << _first << "-" << _second;
   return ss.str();
 }

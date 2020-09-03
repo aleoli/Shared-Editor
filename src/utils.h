@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <vector>
+#include <list>
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
@@ -32,6 +33,28 @@ namespace utils {
 
   template<typename T>
   QJsonArray vectorToJsonArray(const std::vector<T> &vect) {
+    QJsonArray json;
+
+    for(auto &&element : vect) {
+      json.push_back(QJsonValue(element.toJsonObject()));
+    }
+
+    return json;
+  }
+
+  template<typename T>
+  std::list<T> jsonArrayToList(const QJsonArray &json) {
+    std::list<T> vect;
+
+    for(auto &&element : json) {
+      vect.emplace_back(element.toObject());
+    }
+
+    return vect;
+  }
+
+  template<typename T>
+  QJsonArray listToJsonArray(const std::list<T> &vect) {
     QJsonArray json;
 
     for(auto &&element : vect) {

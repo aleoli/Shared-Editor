@@ -14,6 +14,8 @@
 #include <QListWidget>
 #include <unordered_map>
 #include <list>
+#include <QTextBlock>
+#include <QTextBlockFormat>
 
 #include "main_window.h"
 #include "alert_messages.h"
@@ -25,7 +27,6 @@
 #include "cursor.h"
 #include "File.h"
 #include "Symbol.h"
-#include "SymbolId.h"
 #include "find.h"
 
 namespace Ui {
@@ -54,9 +55,9 @@ signals:
   void commentLocalUpdate(const QString &token, int fileId, const File::Comment &comment);
   void commentLocalDelete(const QString &token, int fileId, const File::Comment &comment);
 
-  void localInsert(const QString &token, int fileId, const std::list<Symbol> &symbols);
-  void localDelete(const QString &token, int fileId, const std::vector<SymbolId> &ids);
-  void localUpdate(const QString &token, int fileId, const std::vector<Symbol> &symbols);
+  void localInsert(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs);
+  void localDelete(const QString &token, int fileId, const std::list<Identifier> &ids, const std::list<Identifier> &paragraphs);
+  void localUpdate(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp);
   void localMove(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
 
 public slots:
@@ -72,12 +73,15 @@ public slots:
   void commentRemoteUpdate(int fileId, int userId, const File::Comment &comment);
   void commentRemoteDelete(int fileId, int userId, const File::Comment &comment);
 
-  void remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols);
-  void remoteDelete(int fileId, int userId, const std::vector<SymbolId>& ids);
-  void remoteUpdate(int fileId, int userId, const std::vector<Symbol>& symbols);
+  void remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs);
+  void remoteDelete(int fileId, int userId, const std::list<Identifier>& ids, const std::list<Identifier> &paragraphs);
+  void remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp);
   void remoteMove(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);
 
 private slots:
+  void _setUndoredo();
+  void _undo(bool checked);
+  void _redo(bool checked);
   void _bold(bool checked);
   void _italics(bool checked);
   void _strike(bool checked);
@@ -116,12 +120,19 @@ private slots:
 
   //CRDT
   void _contentsChange(int pos, int removed, int added);
-  bool _isFakeUpdate(int pos, int removed, int added, std::list<Symbol>::iterator it);
+  int _checkOperation(int pos, int removed, int added, std::list<Symbol>::iterator it);
+  void _handleDeleteInsert(int pos, int removed, int added, std::list<Symbol>::iterator &it);
   void _handleDelete(int pos, int removed, std::list<Symbol>::iterator &it);
   void _handleInsert(int pos, int added, std::list<Symbol>::iterator &it);
+  void _handleUpdate(int pos, int added, std::list<Symbol>::iterator &it);
+  void _handleSymbolUpdate(int pos, int added, std::list<Symbol>::iterator &it);
+  void _handleAlignmentUpdate(int pos, int added);
   void _cursorChanged();
   void _updateCursors();
   void _partialRefresh(int pos, int added);
+  void _remoteInsertParagraphs(const std::list<Paragraph> &paragraphs);
+  void _remoteDeleteParagraphs(const std::list<ParagraphId> &paragraphs);
+  void _remoteUpdateParagraphs(const std::list<Paragraph> &paragraphs, int userId, const QDateTime &timestamp);
 
 private:
   void initOptionsWidget();
@@ -147,6 +158,12 @@ private:
   CommentWidget *loadComment(int userId, const File::Comment &comment);
   CommentWidget *getComment(const File::Comment &comment);
   void deleteComment(CommentWidget *widget);
+
+  int paragraphByPos(int pos);
+  int numParagraphs();
+  Qt::Alignment alignmentByPos(int pos);
+  Qt::Alignment alignmentByBlock(int blockNumber);
+  void setAlignmentInBlock(int blockNumber, Qt::Alignment alignment);
 
   Ui::TextEditor *ui;
 
@@ -181,7 +198,7 @@ private:
   QButtonGroup *_alignmentButtons;
   QActionGroup *_alignmentActions;
 
-  bool _highlighted, _blockSignals;
+  bool _highlighted, _blockSignals, _updateSyms, _updateAlignment, _undoredo;
   QBrush _defColor;
   std::unordered_map<int, RemoteUser*> _users;
   std::map<File::CommentIdentifier, CommentWidget*> _comments;
@@ -189,5 +206,6 @@ private:
   File *_file;
   ColorGenerator _gen;
   int _cursorPosition;
+  int _nblocks;
   Find *_dialogFind;
 };

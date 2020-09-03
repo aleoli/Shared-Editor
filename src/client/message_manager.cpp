@@ -204,36 +204,39 @@ void MessageManager::getFileInfoQuery(const QString &token, int fileId) {
   emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localInsertQuery(const QString &token, int fileId, const std::list<Symbol> &symbols) {
+void MessageManager::localInsertQuery(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_INSERT),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
     m.setValue("symbols", Symbol::symbolsToJsonArray(symbols));
+    m.setValue("paragraphs", Paragraph::paragraphsToJsonArray(paragraphs));
 
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localDeleteQuery(const QString &token, int fileId, const std::vector<SymbolId> &ids) {
+void MessageManager::localDeleteQuery(const QString &token, int fileId, const std::list<Identifier> &ids, const std::list<Identifier> &paragraphs) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_DELETE),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
-    m.setValue("ids", utils::vectorToJsonArray(ids));
+    m.setValue("ids", utils::listToJsonArray(ids));
+    m.setValue("paragraphs", utils::listToJsonArray(paragraphs));
 
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localUpdateQuery(const QString &token, int fileId, const std::vector<Symbol> &symbols) {
+void MessageManager::localUpdateQuery(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_UPDATE),
     Message::Status::QUERY};
 
     m.setValue("token", token);
     m.setValue("fileId", fileId);
-    //TODO aggiusta per non mandare il vettore pos dei symbols
-    m.setValue("symbols", utils::vectorToJsonArray(symbols));
+    m.setValue("symbols", Symbol::symbolsToJsonArray(symbols));
+    m.setValue("paragraphs", Paragraph::paragraphsToJsonArray(paragraphs));
+    m.setValue("timestamp", timestamp.toString("dd.MM.yyyy hh:mm:ss.zzz t"));
 
     emit send_data(m.toQByteArray());
 }

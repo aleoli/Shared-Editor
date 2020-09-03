@@ -28,6 +28,10 @@ public:
   void remove(int position);
   void removeSelected();
   void clearSelection();
+  bool hasSelection();
+  int position();
+  void mergeCharFormat(const QTextCharFormat &fmt);
+  QTextCharFormat charFormat();
   void show();
 
 public slots:

@@ -747,7 +747,8 @@ void ServerMessageProcessor::localInsert() {
   auto fileId = file_db.getPhysicalId();
 
   auto symbols = _m.getArray("symbols");
-  this->_manager->addSymbols(this->_clientId, fileId, symbols);
+  auto paragraphs = _m.getArray("paragraphs");
+  this->_manager->addSymbols(this->_clientId, fileId, symbols, paragraphs);
 
   file_db.addCharId(symbols.count());
 
@@ -760,7 +761,8 @@ void ServerMessageProcessor::localInsert() {
 
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-    data["symbols"] = _m.getArray("symbols");
+    data["symbols"] = symbols;
+    data["paragraphs"] = paragraphs;
     data["userId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_INSERT, Message::Status::QUERY, data};
@@ -779,7 +781,8 @@ void ServerMessageProcessor::localDelete() {
   auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto ids = _m.getArray("ids");
-  this->_manager->deleteSymbols(this->_clientId, fileId, ids);
+  auto paragraphs = _m.getArray("paragraphs");
+  this->_manager->deleteSymbols(this->_clientId, fileId, ids, paragraphs);
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {
@@ -791,6 +794,7 @@ void ServerMessageProcessor::localDelete() {
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
     data["ids"] = ids;
+    data["paragraphs"] = paragraphs;
     data["userId"] = session.getUserId();
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_DELETE, Message::Status::QUERY, data};
@@ -809,7 +813,9 @@ void ServerMessageProcessor::localUpdate() {
   auto fileId = FSElement_db::get(session, _m.getInt("fileId")).getPhysicalId();
 
   auto symbols = _m.getArray("symbols");
-  this->_manager->updateSymbols(this->_clientId, fileId, symbols);
+  auto paragraphs = _m.getArray("paragraphs");
+  auto timestamp = _m.getString("timestamp");
+  this->_manager->updateSymbols(this->_clientId, fileId, symbols, paragraphs, QDateTime::fromString(timestamp, "dd.MM.yyyy hh:mm:ss.zzz t"));
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {
@@ -820,8 +826,10 @@ void ServerMessageProcessor::localUpdate() {
 
     QJsonObject data;
     data["fileId"] = FSElement_db::getIdForUser(session, _m.getInt("fileId"), userId);
-    data["symbols"] = _m.getArray("symbols");
+    data["symbols"] = symbols;
+    data["paragraphs"] = paragraphs;
     data["userId"] = session.getUserId();
+    data["timestamp"] = timestamp;
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());

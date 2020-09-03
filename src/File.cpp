@@ -14,19 +14,25 @@ using namespace se_exceptions;
 #include <QFile>
 #include <utility>
 
-File::File() = default;
+File::File() {
+  //add first paragraph
+  auto par = Paragraph{};
+  localInsertParagraph(par, 0);
+}
 
 File::File(const File &file) {
   this->_users = file._users;
   this->_symbols = file._symbols;
+  this->_paragraphs = file._paragraphs;
   this->_comments = file._comments;
   this->dirty = file.dirty;
 }
 
-File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)), _comments(std::move(file._comments)), dirty(file.dirty) {}
+File::File(File &&file) noexcept: _users(std::move(file._users)), _symbols(std::move(file._symbols)),
+  _paragraphs(std::move(file._paragraphs)), _comments(std::move(file._comments)), dirty(file.dirty) {}
 
-File::File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> symbols, std::map<CommentIdentifier, Comment> comments)
-  : _users(std::move(users)), _symbols(std::move(symbols)), _comments(std::move(comments)) {}
+File::File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> symbols, std::list<Paragraph> paragraphs, std::map<CommentIdentifier, Comment> comments)
+  : _users(std::move(users)), _symbols(std::move(symbols)), _paragraphs(std::move(paragraphs)), _comments(std::move(comments)) {}
 
 File::File(const QJsonObject &json){
   checkAndAssign(json);
@@ -42,6 +48,7 @@ File& File::operator=(const File &file) {
   }
   this->_users = file._users;
   this->_symbols = file._symbols;
+  this->_paragraphs = file._paragraphs;
   this->_comments = file._comments;
   this->dirty = file.dirty;
   return *this;
@@ -53,6 +60,7 @@ File& File::operator=(File &&file) noexcept {
   }
   this->_users = std::move(file._users);
   this->_symbols = std::move(file._symbols);
+  this->_paragraphs = std::move(file._paragraphs);
   this->_comments = std::move(file._comments);
   this->dirty = file.dirty;
   return *this;
@@ -61,23 +69,26 @@ File& File::operator=(File &&file) noexcept {
 void File::checkAndAssign(const QJsonObject &json) {
   auto usersValue = json["usrs"];
   auto symbolsValue = json["syms"];
+  auto paragraphsValue = json["pars"];
   auto commentsValue = json["cmts"];
 
-  if(usersValue.isUndefined() || symbolsValue.isUndefined() || commentsValue.isUndefined()) {
+  if(usersValue.isUndefined() || symbolsValue.isUndefined() || paragraphsValue.isUndefined() || commentsValue.isUndefined()) {
     throw FileFromJsonException{"The QJsonObject has some fields missing"};
   }
 
-  if(!usersValue.isArray() || !symbolsValue.isArray() || !commentsValue.isArray()) {
+  if(!usersValue.isArray() || !symbolsValue.isArray() || !paragraphsValue.isArray() || !commentsValue.isArray()) {
     throw FileFromJsonException{"One or more fields are not valid"};
   }
 
   auto users = usersValue.toArray();
   auto symbols = symbolsValue.toArray();
+  auto paragraphs = paragraphsValue.toArray();
   auto comments = commentsValue.toArray();
 
   auto ul = std::unique_lock{this->_mutex};
   _users = jsonArrayToUsers(users);
   _symbols = Symbol::jsonArrayToSymbols(symbols);
+  _paragraphs = Paragraph::jsonArrayToParagraphs(paragraphs);
   _comments = jsonArrayToComments(comments);
 }
 
@@ -116,6 +127,7 @@ QJsonObject File::toJsonObject() const {
   json["cmts"] = QJsonValue(commentsToJsonArray());
   auto sl = std::shared_lock{this->_mutex};
   json["syms"] = QJsonValue(Symbol::symbolsToJsonArray(_symbols));
+  json["pars"] = QJsonValue(Paragraph::paragraphsToJsonArray(_paragraphs));
 
   return json;
 }
@@ -184,31 +196,6 @@ std::unordered_map<int, File::UserInfo> File::jsonArrayToUsers(const QJsonArray 
   }
 
   return users;
-}
-
-std::list<Symbol> File::jsonArrayToSymbols(const QJsonArray &array) {
-  std::list<Symbol> symbols;
-
-  for(auto&& el : array) {
-    if(!el.isObject()) {
-      throw FileFromJsonException{"One or more fields in symbols array are not valid"};
-    }
-
-    symbols.emplace_back(el.toObject());
-  }
-
-  return symbols;
-}
-
-QJsonArray File::symbolsToJsonArray() const {
-  QJsonArray array;
-
-  auto sl = std::shared_lock{this->_mutex};
-  for(auto &sym : _symbols) {
-    array.append(QJsonValue(sym.toJsonObject()));
-  }
-
-  return array;
 }
 
 File::Comment File::commentFromJsonObject(const QJsonObject &obj) {
@@ -294,11 +281,23 @@ std::list<Symbol>::iterator File::getSymbolsStart() {
   return _symbols.begin();
 }
 
+std::list<Paragraph>::iterator File::getParagraphsStart() {
+  return _paragraphs.begin();
+}
+
 void File::forEachSymbol(const std::function<void(const Symbol&) >& lambda) {
   auto sl = std::shared_lock{this->_mutex};
 
   for(auto &sym : _symbols) {
     lambda(sym);
+  }
+}
+
+void File::forEachParagraph(const std::function<void(const Paragraph&) >& lambda) {
+  auto sl = std::shared_lock{this->_mutex};
+
+  for(auto &par : _paragraphs) {
+    lambda(par);
   }
 }
 
@@ -470,7 +469,7 @@ void File::localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it) {
 
   //debug("Pos: " + QString::number(pos));
 
-  std::vector<Symbol::Identifier> v1, v2;
+  std::vector<Identifier> v1, v2;
   std::list<Symbol>::iterator insertPos;
   if(it == nullptr) insertPos = iteratorAt(pos);
   else insertPos = *it;
@@ -490,20 +489,20 @@ void File::localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it) {
     v2 = std::move(insertPos->getPos());
   }
 
-  std::vector<Symbol::Identifier> position;
+  std::vector<Identifier> position;
 
-  findPosition(sym.getSymbolId().getUserId(), v1, v2, position);
+  findPosition(sym.getSymbolId().getFirst(), v1, v2, position);
 
   sym.setPos(position);
   dirty = true;
   _symbols.emplace(insertPos, sym);
 }
 
-void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
-  std::vector<Symbol::Identifier> &v2, std::vector<Symbol::Identifier> &position,
+void File::findPosition(int userId, std::vector<Identifier> &v1,
+  std::vector<Identifier> &v2, std::vector<Identifier> &position,
   int level) {
 
-  Symbol::Identifier pos1, pos2;
+  Identifier pos1, pos2;
 
   if(!v1.empty()) pos1 = v1[0];
   else pos1 = {0, userId};
@@ -511,8 +510,8 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
   if(!v2.empty()) pos2 = v2[0];
   else pos2 = {std::numeric_limits<int>::max(), userId};
 
-  int digit1 = pos1.getDigit();
-  int digit2 = pos2.getDigit();
+  int digit1 = pos1.getFirst();
+  int digit2 = pos2.getFirst();
 
   if(digit2 - digit1 > 1){
     //finished, found the position
@@ -534,8 +533,8 @@ void File::findPosition(int userId, std::vector<Symbol::Identifier> &v1,
 
   else if(digit2 == digit1) {
     //must go deeper
-    int userId1 = pos1.getUserId();
-    int userId2 = pos2.getUserId();
+    int userId1 = pos1.getSecond();
+    int userId2 = pos2.getSecond();
 
     if (userId1 < userId2) {
       position.push_back(pos1);
@@ -582,10 +581,10 @@ int File::remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it, int o
     });
 
   dirty = true;
-  _symbols.emplace(result, sym);
+  auto inserted = _symbols.emplace(result, sym);
 
-  if(it != nullptr) *it = result;
-  return oldPos + pos + 1;
+  if(it != nullptr) *it = inserted;
+  return oldPos + pos;
 }
 
 void File::localDelete(int pos, std::list<Symbol>::iterator *it) {
@@ -629,22 +628,55 @@ int File::remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it, int 
   }
 }
 
-int File::remoteUpdate(const Symbol &sym) {
+std::optional<std::list<Symbol>::iterator> File::localUpdate(const QTextCharFormat &fmt, int pos, bool ignoreBackground, std::list<Symbol>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+
+  if(pos < 0 || _symbols.size() <= pos) {
+    throw FileSymbolsException{"Invalid update position"};
+  }
+
+  auto target = it == nullptr ? iteratorAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  if(target->isDifferent(fmt, ignoreBackground)) {
+    target->localUpdate(fmt, ignoreBackground);
+    dirty = true;
+
+    return std::optional<std::list<Symbol>::iterator>(target);
+  }
+
+  return std::nullopt;
+}
+
+int File::remoteUpdate(const Symbol &sym, int userId, const QDateTime &timestamp, std::list<Symbol>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
 
   try {
-    auto pos = _symbolById(sym.getSymbolId());
-    auto &symbol = pos.second;
+    int pos = 0;
+    std::list<Symbol>::iterator target;
+    auto id = sym.getSymbolId();
+    if(it == nullptr || (*it)->getSymbolId() != id) {
+      auto res = _iteratorById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = target;
+    }
+    else {
+      target = *it;
+    }
 
-    symbol.update(sym);
-    dirty = true;
+    if(target->isOlder(timestamp, userId) && target->isDifferent(sym)) {
+      dirty = true;
 
-    return pos.first;
+      target->remoteUpdate(sym, timestamp, userId);
+      return oldPos + pos;
+    }
   }
   catch(FileSymbolsException& e) {
     //il simbolo non esiste più
-    return -1;
   }
+
+  return -1;
 }
 
 void File::remoteAddComment(const Comment &comment) {
@@ -704,4 +736,193 @@ bool operator==(const File::Comment & lhs, const File::Comment & rhs) {
 
 bool operator==(const File::UserInfo& lhs, const File::UserInfo& rhs) {
   return lhs.userId == rhs.userId && lhs.username == rhs.username;
+}
+
+void File::localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+  // (chi ha chiamato questo metodo poi si preoccuperà di mandare info al server)
+  auto size = _paragraphs.size();
+
+  if(pos < 0 || pos > size) {
+    throw FileParagraphsException{"Invalid insert position"};
+  }
+
+  //debug("Pos: " + QString::number(pos));
+
+  std::vector<Identifier> v1, v2;
+  std::list<Paragraph>::iterator insertPos;
+  if(it == nullptr) insertPos = paragraphAt(pos);
+  else insertPos = *it;
+
+  if(size == 0) {}
+  else if(pos == 0) {
+    //debug("Front insertion");
+    v2 = std::move(insertPos->getPos());
+  }
+  else if(pos == size) {
+    //debug("Back insertion");
+    v1 = std::move(std::prev(insertPos)->getPos());
+  }
+  else {
+    //debug("Middle insertion");
+    v1 = std::move(std::prev(insertPos)->getPos());
+    v2 = std::move(insertPos->getPos());
+  }
+
+  std::vector<Identifier> position;
+
+  findPosition(par.getParagraphId().getFirst(), v1, v2, position);
+
+  par.setPos(position);
+  dirty = true;
+  _paragraphs.emplace(insertPos, par);
+}
+
+int File::remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it, int oldPos) {
+  auto ul = std::unique_lock{this->_mutex};
+
+  auto start = it == nullptr ? _paragraphs.begin() : *it;
+  int pos = 0;
+  auto result = std::find_if(start, _paragraphs.end(), [&par, &pos](const Paragraph &cmp) {
+        bool val = par < cmp;
+        if(!val) pos++;
+        return val;
+    });
+
+  dirty = true;
+  auto inserted = _paragraphs.emplace(result, par);
+
+  if(it != nullptr) *it = inserted;
+  return oldPos + pos;
+}
+
+void File::localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+  if(pos < 0 || _paragraphs.size() <= pos) {
+    throw FileParagraphsException{"Invalid delete position"};
+  }
+
+  dirty = true;
+  auto target = it == nullptr ? paragraphAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  _paragraphs.erase(target);
+}
+
+int File::remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it, int oldPos) {
+  auto ul = std::unique_lock{this->_mutex};
+
+  try {
+    int pos = 0;
+    std::list<Paragraph>::iterator target;
+    if(it == nullptr || (*it)->getParagraphId() != id) {
+      auto res = paragraphById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = std::next(target);
+    }
+    else {
+      target = *it;
+      *it = std::next(*it);
+    }
+
+    _paragraphs.erase(target);
+    dirty = true;
+
+    return oldPos + pos;
+  }
+  catch(FileParagraphsException& e) {
+    //il simbolo non esiste più
+    return -1;
+  }
+}
+
+std::optional<std::list<Paragraph>::iterator> File::localUpdateParagraph(Qt::Alignment alignment, int pos, std::list<Paragraph>::iterator *it) {
+  auto ul = std::unique_lock{this->_mutex};
+  if(pos < 0 || _paragraphs.size() <= pos) {
+    throw FileParagraphsException{"Invalid update position"};
+  }
+
+  auto target = it == nullptr ? paragraphAt(pos) : *it;
+  if(it != nullptr) *it = std::next(*it);
+
+  if(target->isDifferent(alignment)) {
+    target->localUpdate(alignment);
+    dirty = true;
+
+    return std::optional<std::list<Paragraph>::iterator>(target);
+  }
+
+  return std::nullopt;
+}
+
+int File::remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTime &timestamp, std::list<Paragraph>::iterator *it, int oldPos) {
+  auto ul = std::unique_lock{this->_mutex};
+
+  try {
+    int pos = 0;
+    std::list<Paragraph>::iterator target;
+    auto id = par.getParagraphId();
+    if(it == nullptr || (*it)->getParagraphId() != id) {
+      auto res = paragraphById(id, it);
+      pos = res.first;
+      target = res.second;
+      if(it != nullptr) *it = target;
+    }
+    else {
+      target = *it;
+    }
+
+    if(target->isOlder(timestamp, userId) && target->isDifferent(par)) {
+      dirty = true;
+
+      target->remoteUpdate(par, timestamp, userId);
+      return oldPos + pos;
+    }
+  }
+  catch(FileParagraphsException& e) {
+    //il simbolo non esiste più
+  }
+
+  return -1;
+}
+
+std::list<Paragraph>::iterator File::paragraphAt(int pos) {
+  auto size = _paragraphs.size();
+
+  if(pos > size || pos < 0)
+    throw FileParagraphsException{"File::paragraphAt: bad pos"};
+
+  std::list<Paragraph>::iterator it;
+  int middle = size / 2;
+  if(pos <= middle) {
+    //debug("Closer to the start");
+    it = _paragraphs.begin();
+    std::advance(it, pos);
+  }
+  else {
+    //debug("Closer to the end");
+    it = _paragraphs.end();
+    std::advance(it, pos - size);
+  }
+
+  return it;
+}
+
+std::pair<int, std::list<Paragraph>::iterator> File::paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it) {
+  int pos = 0;
+  auto start = it == nullptr ? _paragraphs.begin() : *it;
+
+  auto result = std::find_if(start, _paragraphs.end(), [&id, &pos](const Paragraph &cmp) {
+        bool val = cmp.getParagraphId() == id;
+        if(!val) pos++;
+        return val;
+  });
+
+  if(result == std::end(_paragraphs)) {
+    throw FileParagraphsException{"Paragraph does not exist"};
+  }
+
+  if(it != nullptr) *it = result;
+  return {pos, result};
 }

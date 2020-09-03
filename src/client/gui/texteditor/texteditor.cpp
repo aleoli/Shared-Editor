@@ -22,7 +22,11 @@ TextEditor::TextEditor(QWidget *parent) :
     _blockSignals(false),
     _me(nullptr),
     _file(nullptr),
-    _cursorPosition(0)
+    _cursorPosition(0),
+    _nblocks(1),
+    _updateSyms(false),
+    _updateAlignment(false),
+    _undoredo(false)
 {
   ui->setupUi(this);
 
@@ -127,11 +131,11 @@ void TextEditor::initOptionsWidget() {
 }
 
 void TextEditor::initToolbarActions() {
-  connect(_widgetUndo, &QPushButton::clicked, _textEdit, &TextEdit::undo);
-  connect(_widgetRedo, &QPushButton::clicked, _textEdit, &TextEdit::redo);
   connect(_widgetCut, &QPushButton::clicked, _textEdit, &TextEdit::cut);
   connect(_widgetCopy, &QPushButton::clicked, _textEdit, &TextEdit::copy);
   connect(_widgetPaste, &QPushButton::clicked, _textEdit, &TextEdit::paste);
+  connect(_widgetUndo, &QPushButton::clicked, this, &TextEditor::_undo);
+  connect(_widgetRedo, &QPushButton::clicked, this, &TextEditor::_redo);
   connect(_widgetBold, &QPushButton::clicked, this, &TextEditor::_bold);
   connect(_widgetItalics, &QPushButton::clicked, this, &TextEditor::_italics);
   connect(_widgetStrike, &QPushButton::clicked, this, &TextEditor::_strike);
@@ -143,11 +147,11 @@ void TextEditor::initToolbarActions() {
   connect(_widgetPrint, &QPushButton::clicked, this, &TextEditor::_print);
   connect(_widgetHighlight, &QPushButton::clicked, this, &TextEditor::_highlight);
 
-  connect(_actionUndo, &QAction::triggered, _textEdit, &TextEdit::undo);
-  connect(_actionRedo, &QAction::triggered, _textEdit, &TextEdit::redo);
   connect(_actionCut, &QAction::triggered, _textEdit, &TextEdit::cut);
   connect(_actionCopy, &QAction::triggered, _textEdit, &TextEdit::copy);
   connect(_actionPaste, &QAction::triggered, _textEdit, &TextEdit::paste);
+  connect(_actionUndo, &QAction::triggered, this, &TextEditor::_undo);
+  connect(_actionRedo, &QAction::triggered, this, &TextEditor::_redo);
   connect(_actionBold, &QAction::triggered, this, &TextEditor::_bold);
   connect(_actionItalics, &QAction::triggered, this, &TextEditor::_italics);
   connect(_actionStrike, &QAction::triggered, this, &TextEditor::_strike);
@@ -213,6 +217,7 @@ void TextEditor::initTextEdit() {
   connect(_textEdit, &QTextEdit::textChanged, this, &TextEditor::_updateCursors);
   connect(_textEdit, &TextEdit::resized, this, &TextEditor::_updateCursors);
   connect(_textEdit, &TextEdit::scrolled, this, &TextEditor::_updateCursors);
+  connect(_textEdit, &TextEdit::undoredo, this, &TextEditor::_setUndoredo);
 }
 
 void TextEditor::setAlignmentGroups() {
@@ -316,7 +321,7 @@ void TextEditor::reloadComments() {
     [](const File::Comment &i, const File::Comment &j){return i.creationDate < j.creationDate;});
 
   for(auto &comment : comments) {
-    loadComment(comment.identifier.getUserId(), comment);
+    loadComment(comment.identifier.getFirst(), comment);
   }
 }
 
@@ -375,7 +380,7 @@ void TextEditor::refresh(bool changeFile) {
     auto format = sym.getFormat();
 
     if(_highlighted) {
-      auto userId = sym.getSymbolId().getUserId();
+      auto userId = sym.getSymbolId().getFirst();
       format.setBackground(getUserColorHighlight(userId));
     }
 
@@ -394,6 +399,13 @@ void TextEditor::refresh(bool changeFile) {
     cursor.insertText(text);
   }
 
+  // set alignment
+  int block = 0;
+  _file->forEachParagraph([&block, this](const Paragraph &par) {
+    debug("block: " + QString::number(block) + " alignment: " + QString::number(static_cast<int>(par.getAlignment())));
+    setAlignmentInBlock(block++, par.getAlignment());
+  });
+
   //ripristino posizione
   if(!changeFile) {
     cursor.setPosition(pos);
@@ -401,6 +413,7 @@ void TextEditor::refresh(bool changeFile) {
     _cursorPosition = pos;
   }
 
+  _nblocks = _textEdit->document()->blockCount();
   _blockSignals = false;
 }
 
@@ -520,7 +533,7 @@ void TextEditor::setUserIcon(int userId, bool found, const std::optional<QString
     user->setIcon(decoded);
 
     for(auto comment : _comments) {
-      if(comment.first.getUserId() == userId) comment.second->setIcon(decoded);
+      if(comment.first.getFirst() == userId) comment.second->setIcon(decoded);
     }
   } else if(!found) {
     user->setDeleted();
@@ -577,13 +590,30 @@ void TextEditor::_setFilename() {
   _menuOptions->setFileName(_user->getFileName());
 }
 
+void TextEditor::_setUndoredo() {
+  _undoredo = true;
+}
+
+void TextEditor::_undo(bool checked) {
+  debug("TextEditor::_undo");
+  _undoredo = true;
+  _textEdit->undo();
+}
+
+void TextEditor::_redo(bool checked) {
+  debug("TextEditor::_redo");
+  _undoredo = true;
+  _textEdit->redo();
+}
+
 void TextEditor::_bold(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_bold");
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetBold->setChecked(checked);
   _actionBold->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontWeight(checked ? QFont::Bold : QFont::Normal);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -592,11 +622,11 @@ void TextEditor::_bold(bool checked) {
 void TextEditor::_italics(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_italics");
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetItalics->setChecked(checked);
   _actionItalics->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontItalic(checked);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -605,11 +635,11 @@ void TextEditor::_italics(bool checked) {
 void TextEditor::_strike(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_strike");
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetStrike->setChecked(checked);
   _actionStrike->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontStrikeOut(checked);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -618,11 +648,11 @@ void TextEditor::_strike(bool checked) {
 void TextEditor::_underline(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_underline");
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   _widgetUnderline->setChecked(checked);
   _actionUnderline->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontUnderline(checked);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -636,14 +666,14 @@ void TextEditor::_mark(bool checked) {
     emit alert(Alert::ERROR, HIGHLIGHT_ON);
     return;
   }
-
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
   QColor col = QColorDialog::getColor(_textEdit->textBackgroundColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
   if (!col.isValid()) {
     return;
   }
 
   setBorderColor(_widgetMark, col, true);
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setBackground(col);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -652,6 +682,7 @@ void TextEditor::_mark(bool checked) {
 void TextEditor::_color(bool checked) {
   if(_blockSignals) return;
   debug("TextEditor::_color");
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
 
   QColor col = QColorDialog::getColor(_textEdit->textColor(), this, "Select color", QColorDialog::ShowAlphaChannel);
   if (!col.isValid()) {
@@ -659,7 +690,7 @@ void TextEditor::_color(bool checked) {
   }
 
   setBorderColor(_widgetColor, col, false);
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setForeground(col);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -723,6 +754,7 @@ void TextEditor::_alignL() {
   debug("TextEditor::_alignL");
   _widgetAlignL->setChecked(true);
   _actionAlignL->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignLeft);
   _textEdit->setFocus();
@@ -733,6 +765,7 @@ void TextEditor::_alignC() {
   debug("TextEditor::_alignC");
   _widgetAlignC->setChecked(true);
   _actionAlignC->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignHCenter);
   _textEdit->setFocus();
@@ -743,6 +776,7 @@ void TextEditor::_alignR() {
   debug("TextEditor::_alignR");
   _widgetAlignR->setChecked(true);
   _actionAlignR->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignRight);
   _textEdit->setFocus();
@@ -753,6 +787,7 @@ void TextEditor::_justify() {
   debug("TextEditor::_justify");
   _widgetJustify->setChecked(true);
   _actionJustify->setChecked(true);
+  _updateAlignment = true;
 
   _textEdit->setAlignment(Qt::AlignJustify);
   _textEdit->setFocus();
@@ -761,8 +796,9 @@ void TextEditor::_justify() {
 void TextEditor::_font(const QFont &font) {
   if(_blockSignals) return;
   debug("TextEditor::_font");
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontFamily(font.family());
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -779,7 +815,8 @@ void TextEditor::_size(int index) {
     return;
   }
 
-  auto fmt = _textEdit->currentCharFormat();
+  if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
+  QTextCharFormat fmt;
   fmt.setFontPointSize(size);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();

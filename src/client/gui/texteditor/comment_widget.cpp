@@ -47,7 +47,7 @@ CommentWidget::~CommentWidget()
 }
 
 int CommentWidget::getUserId() const {
-  return _comment.identifier.getUserId();
+  return _comment.identifier.getFirst();
 }
 
 File::CommentIdentifier CommentWidget::getCommentIdentifier() const {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "SymbolId.h"
-
 #include <string>
 #include <QChar>
 #include <vector>
@@ -9,13 +7,13 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QTextCharFormat>
+#include <QDateTime>
 
 #include "Identifier.h"
+typedef Identifier SymbolId;
 
 class Symbol {
 public:
-  typedef IdentifierBase Identifier;
-
   Symbol();
   Symbol(SymbolId id, QChar chr);
   Symbol(SymbolId id, QChar chr, QTextCharFormat fmt);
@@ -30,6 +28,9 @@ public:
   friend bool operator<(const Symbol& lhs, const Symbol& rhs);
   friend bool operator==(const Symbol& lhs, const Symbol& rhs);
   friend bool operator!=(const Symbol& lhs, const Symbol& rhs);
+
+  bool isDifferent(const Symbol &other, bool ignoreBackground = false);
+  bool isDifferent(const QTextCharFormat &fmt, bool ignoreBackground = false);
 
   static Symbol fromJsonObject(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
   static Symbol fromJsonObject(QJsonObject &&json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
@@ -51,9 +52,10 @@ public:
   [[nodiscard]] std::string getFontInfo() const;
 
   void update(const Symbol &s);
+  void localUpdate(const QTextCharFormat &fmt, bool ignoreBackground = false);
+  void remoteUpdate(const Symbol &other, const QDateTime &timestamp, int userId);
 
   static bool compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground = false);
-  [[nodiscard]] bool hasSameAttributes(const QChar &chr, const QTextCharFormat &fmt, bool ignoreBackground = false) const;
 
   void setFormat(const QTextCharFormat &fmt);
   [[nodiscard]] QTextCharFormat getFormat() const;
@@ -73,6 +75,9 @@ public:
   [[nodiscard]] QColor getColor() const;
   void setBackgroundColor(const QColor &color);
   [[nodiscard]] QColor getBackgroundColor() const;
+  [[nodiscard]] QDateTime getTimestamp() const;
+  void setTimestamp(const QDateTime &time);
+  bool isOlder(const QDateTime &time, int userId);
 
 private:
   void checkAndAssign(const QJsonObject &json, QFont *font = nullptr, QBrush *col = nullptr, QBrush *bac = nullptr);
@@ -90,4 +95,6 @@ private:
   QChar _char;
   std::vector<Identifier> _pos;
   QTextCharFormat _fmt;
+  QDateTime _timestamp;
+  int _lastUser;
 };

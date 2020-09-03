@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Symbol.h"
+#include "Identifier.h"
+#include "Paragraph.h"
 
 #include <list>
 #include <vector>
@@ -16,7 +18,7 @@
 
 class File {
 public:
-  typedef IdentifierBase CommentIdentifier;
+  typedef Identifier CommentIdentifier;
 
   typedef struct {
     int userId;
@@ -33,7 +35,7 @@ public:
   File();
   File(const File &file);
   File(File &&file) noexcept;
-  File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> _symbols, std::map<CommentIdentifier, Comment> comments);
+  File(std::unordered_map<int, File::UserInfo> users, std::list<Symbol> _symbols, std::list<Paragraph> paragraphs, std::map<CommentIdentifier, Comment> comments);
   explicit File(const QJsonObject &json);
   explicit File(QJsonObject &&json);
 
@@ -58,6 +60,7 @@ public:
   std::unordered_map<int, File::UserInfo> getUsers() const;
   std::list<Symbol> getSymbols() const;
   std::list<Symbol>::iterator getSymbolsStart();
+  std::list<Paragraph>::iterator getParagraphsStart();
   std::map<CommentIdentifier, Comment> getComments() const;
   Symbol& symbolAt(int pos, std::list<Symbol>::iterator *it = nullptr);
   std::list<Symbol>::iterator iteratorAt(int pos);
@@ -69,6 +72,7 @@ public:
   std::string text() const;
   void clear();
   void forEachSymbol(const std::function<void(const Symbol&) >& lambda);
+  void forEachParagraph(const std::function<void(const Paragraph&) >& lambda);
 
   void addUser(int userId, const QString &username);
   void removeUser(int userId);
@@ -87,35 +91,43 @@ public:
 
   //CRDT
   void localInsert(Symbol &sym, int pos, std::list<Symbol>::iterator *it = nullptr);
-  int remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position in which i inserted
+  int remoteInsert(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0); // returns the position in which i inserted
   void localDelete(int pos, std::list<Symbol>::iterator *it = nullptr);
-  int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = -1); // returns the position of the deleted element
-  int remoteUpdate(const Symbol &sym);
+  int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0); // returns the position of the deleted element
+  std::optional<std::list<Symbol>::iterator> localUpdate(const QTextCharFormat &fmt, int pos, bool ignoreBackground = false, std::list<Symbol>::iterator *it = nullptr);
+  int remoteUpdate(const Symbol &sym, int userId, const QDateTime &timestamp, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0);
+
+  // paragraphs
+  void localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it = nullptr);
+  int remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
+  void localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it = nullptr);
+  int remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
+  std::optional<std::list<Paragraph>::iterator> localUpdateParagraph(Qt::Alignment alignment, int pos, std::list<Paragraph>::iterator *it = nullptr);
+  int remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTime &timestamp, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
+  std::list<Paragraph>::iterator paragraphAt(int pos);
+  std::pair<int, std::list<Paragraph>::iterator> paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);
 
 private:
   Symbol& _symbolAt(int pos, std::list<Symbol>::iterator *it = nullptr);
   std::pair<int, Symbol&> _symbolById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   std::pair<int, std::list<Symbol>::iterator> _iteratorById(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
   int _getPosition(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr);
-
   void checkAndAssign(const QJsonObject &json);
 
-  static void findPosition(int userId, std::vector<Symbol::Identifier> &v1,
-    std::vector<Symbol::Identifier> &v2, std::vector<Symbol::Identifier> &position,
+  static void findPosition(int userId, std::vector<Identifier> &v1,
+    std::vector<Identifier> &v2, std::vector<Identifier> &position,
     int level = 0);
   static int generateDigit(int digit1, int digit2);
 
   QJsonArray usersToJsonArray() const;
   static std::unordered_map<int, File::UserInfo> jsonArrayToUsers(const QJsonArray &array);
 
-  static std::list<Symbol> jsonArrayToSymbols(const QJsonArray &array);
-  QJsonArray symbolsToJsonArray() const;
-
   QJsonArray commentsToJsonArray() const;
   static std::map<CommentIdentifier, Comment> jsonArrayToComments(const QJsonArray &array);
 
   std::unordered_map<int, UserInfo> _users;
   std::list<Symbol> _symbols;
+  std::list<Paragraph> _paragraphs;
   std::map<CommentIdentifier, Comment> _comments;
 
   bool dirty = false;

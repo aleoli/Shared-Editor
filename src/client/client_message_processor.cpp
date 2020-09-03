@@ -3,6 +3,8 @@
 #include "utils.h"
 #include "exceptions.h"
 
+#include <QDateTime>
+
 using namespace se_exceptions;
 
 ClientMessageProcessor::ClientMessageProcessor(const Message &m): MessageProcessor(m) {
@@ -449,8 +451,9 @@ void ClientMessageProcessor::remoteInsert() {
     auto fileId = _m.getInt("fileId");
     auto userId = _m.getInt("userId");
     auto symbols = _m.getArray("symbols");
+    auto paragraphs = _m.getArray("paragraphs");
 
-    emit _manager->remoteInsertQuery(fileId, userId, Symbol::jsonArrayToSymbols(symbols));
+    emit _manager->remoteInsertQuery(fileId, userId, Symbol::jsonArrayToSymbols(symbols), Paragraph::jsonArrayToParagraphs(paragraphs));
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
@@ -464,8 +467,9 @@ void ClientMessageProcessor::remoteDelete() {
     auto fileId = _m.getInt("fileId");
     auto userId = _m.getInt("userId");
     auto ids = _m.getArray("ids");
+    auto paragraphs = _m.getArray("paragraphs");
 
-    emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToVector<SymbolId>(ids));
+    emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToList<SymbolId>(ids), utils::jsonArrayToList<ParagraphId>(ids));
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
@@ -479,8 +483,10 @@ void ClientMessageProcessor::remoteUpdate() {
     auto fileId = _m.getInt("fileId");
     auto userId = _m.getInt("userId");
     auto symbols = _m.getArray("symbols");
+    auto paragraphs = _m.getArray("paragraphs");
+    auto timestamp = _m.getString("timestamp");
 
-    emit _manager->remoteUpdateQuery(fileId, userId, utils::jsonArrayToVector<Symbol>(symbols));
+    emit _manager->remoteUpdateQuery(fileId, userId, Symbol::jsonArrayToSymbols(symbols), Paragraph::jsonArrayToParagraphs(paragraphs), QDateTime::fromString(timestamp, "dd.MM.yyyy hh:mm:ss.zzz t"));
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
