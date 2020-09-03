@@ -61,7 +61,7 @@ signals:
   void localMove(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
 
 public slots:
-  virtual void clear();
+  void clear() override;
   void setIcon();
 
   // Messages from server

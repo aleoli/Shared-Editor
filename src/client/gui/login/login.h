@@ -20,7 +20,7 @@ public:
     ~Login();
 
 public slots:
-    virtual void clear();
+  void clear() override;
 
 signals:
   void login(const QString &username, const QString &password);

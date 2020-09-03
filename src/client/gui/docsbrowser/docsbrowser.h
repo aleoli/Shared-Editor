@@ -27,7 +27,7 @@ public:
   ~DocsBrowser() override;
 
 public slots:
-  virtual void clear();
+  void clear() override;
 
   void setIcon();
   void showDir(const std::vector<FSElement> &elements, const QString& name, int parentId);
