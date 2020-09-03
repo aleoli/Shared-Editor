@@ -25,7 +25,8 @@ TextEditor::TextEditor(QWidget *parent) :
     _cursorPosition(0),
     _nblocks(1),
     _updateSyms(false),
-    _updateAlignment(false)
+    _updateAlignment(false),
+    _undoredo(false)
 {
   ui->setupUi(this);
 
@@ -130,11 +131,11 @@ void TextEditor::initOptionsWidget() {
 }
 
 void TextEditor::initToolbarActions() {
-  connect(_widgetUndo, &QPushButton::clicked, _textEdit, &TextEdit::undo);
-  connect(_widgetRedo, &QPushButton::clicked, _textEdit, &TextEdit::redo);
   connect(_widgetCut, &QPushButton::clicked, _textEdit, &TextEdit::cut);
   connect(_widgetCopy, &QPushButton::clicked, _textEdit, &TextEdit::copy);
   connect(_widgetPaste, &QPushButton::clicked, _textEdit, &TextEdit::paste);
+  connect(_widgetUndo, &QPushButton::clicked, this, &TextEditor::_undo);
+  connect(_widgetRedo, &QPushButton::clicked, this, &TextEditor::_redo);
   connect(_widgetBold, &QPushButton::clicked, this, &TextEditor::_bold);
   connect(_widgetItalics, &QPushButton::clicked, this, &TextEditor::_italics);
   connect(_widgetStrike, &QPushButton::clicked, this, &TextEditor::_strike);
@@ -146,11 +147,11 @@ void TextEditor::initToolbarActions() {
   connect(_widgetPrint, &QPushButton::clicked, this, &TextEditor::_print);
   connect(_widgetHighlight, &QPushButton::clicked, this, &TextEditor::_highlight);
 
-  connect(_actionUndo, &QAction::triggered, _textEdit, &TextEdit::undo);
-  connect(_actionRedo, &QAction::triggered, _textEdit, &TextEdit::redo);
   connect(_actionCut, &QAction::triggered, _textEdit, &TextEdit::cut);
   connect(_actionCopy, &QAction::triggered, _textEdit, &TextEdit::copy);
   connect(_actionPaste, &QAction::triggered, _textEdit, &TextEdit::paste);
+  connect(_actionUndo, &QAction::triggered, this, &TextEditor::_undo);
+  connect(_actionRedo, &QAction::triggered, this, &TextEditor::_redo);
   connect(_actionBold, &QAction::triggered, this, &TextEditor::_bold);
   connect(_actionItalics, &QAction::triggered, this, &TextEditor::_italics);
   connect(_actionStrike, &QAction::triggered, this, &TextEditor::_strike);
@@ -216,6 +217,7 @@ void TextEditor::initTextEdit() {
   connect(_textEdit, &QTextEdit::textChanged, this, &TextEditor::_updateCursors);
   connect(_textEdit, &TextEdit::resized, this, &TextEditor::_updateCursors);
   connect(_textEdit, &TextEdit::scrolled, this, &TextEditor::_updateCursors);
+  connect(_textEdit, &TextEdit::undoredo, this, &TextEditor::_setUndoredo);
 }
 
 void TextEditor::setAlignmentGroups() {
@@ -575,6 +577,22 @@ void TextEditor::_rename(const QString &name) {
 
 void TextEditor::_setFilename() {
   _menuOptions->setFileName(_user->getFileName());
+}
+
+void TextEditor::_setUndoredo() {
+  _undoredo = true;
+}
+
+void TextEditor::_undo(bool checked) {
+  debug("TextEditor::_undo");
+  _undoredo = true;
+  _textEdit->undo();
+}
+
+void TextEditor::_redo(bool checked) {
+  debug("TextEditor::_redo");
+  _undoredo = true;
+  _textEdit->redo();
 }
 
 void TextEditor::_bold(bool checked) {

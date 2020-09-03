@@ -78,6 +78,9 @@ public slots:
   void remoteMove(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);
 
 private slots:
+  void _setUndoredo();
+  void _undo(bool checked);
+  void _redo(bool checked);
   void _bold(bool checked);
   void _italics(bool checked);
   void _strike(bool checked);
@@ -185,7 +188,7 @@ private:
   QButtonGroup *_alignmentButtons;
   QActionGroup *_alignmentActions;
 
-  bool _highlighted, _blockSignals, _updateSyms, _updateAlignment;
+  bool _highlighted, _blockSignals, _updateSyms, _updateAlignment, _undoredo;
   QBrush _defColor;
   std::unordered_map<int, RemoteUser*> _users;
   std::map<File::CommentIdentifier, CommentWidget*> _comments;

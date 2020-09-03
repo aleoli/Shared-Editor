@@ -58,7 +58,22 @@ int TextEditor::_checkOperation(int pos, int removed, int added, std::list<Symbo
     it = std::next(it);
   }
 
-  return update ? 2 : 0;
+  if(!update && _undoredo) {
+    //update alignment
+    _updateAlignment = true;
+    _undoredo = false;
+    return 2;
+  }
+
+  if(update && _undoredo) {
+    //update symbols
+    _updateSyms = true;
+    _undoredo = false;
+    return 2;
+  }
+
+  //phantom update
+  return 0;
 }
 
 void TextEditor::_handleDeleteInsert(int pos, int removed, int added, std::list<Symbol>::iterator &it) {
@@ -132,8 +147,10 @@ void TextEditor::_handleUpdate(int pos, int added, std::list<Symbol>::iterator &
     _updateAlignment = false;
   }
   else {
-    _handleSymbolUpdate(pos, added, it);
+    throw TextEditorException{"Don't know what to do"};
   }
+
+  updateActions();
 }
 
 void TextEditor::_handleSymbolUpdate(int pos, int added, std::list<Symbol>::iterator &it) {
