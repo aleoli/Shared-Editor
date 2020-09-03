@@ -391,17 +391,12 @@ std::pair<QString, int> FSElement_db::pwd(const Session &s) {
   }
   QStringList l;
   l.push_back(this->getName());
-  if(this->_parent_id <= 1) {
-    // root dir
-    return std::pair<QString, int>{l.join('/'), this->getId()};
-  }
-  auto el = FSElement_db::get(s, this->_parent_id);
-  do {
-    l.push_back(el.getName());
+  auto el = FSElement_db::get(s, this->id);
+  while(el._parent_id >= 0) {
     el = FSElement_db::get(s, el._parent_id);
-  } while(el._parent_id > 1);
-  std::reverse(l.begin(), l.end());
-  return std::pair<QString, int>{l.join('/'), this->getId()};
+    l.push_front(el.getName());
+  }
+  return std::pair<QString, int>{'/'+l.join('/'), this->getId()};
 }
 
 SharedLink FSElement_db::share(const Session &s) {
@@ -461,7 +456,7 @@ std::vector<FSElement_db> FSElement_db::getPathElements(const Session &s) {
     throw se_exceptions::IllegalAccessException{"Trying to access not your element"};
   }
   std::vector<FSElement_db> res{FSElement_db{*this}};
-  if(this->_parent_id != this->id && this->_parent_id > 1) {
+  if(this->_parent_id != this->id && this->_parent_id >= 0) {
     auto parent = FSElement_db::get(s, this->_parent_id);
     auto tmp = parent.getPathElements(s);
     res.insert(res.end(), tmp.begin(), tmp.end());
