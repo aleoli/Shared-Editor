@@ -62,6 +62,7 @@ public:
   std::list<Symbol> getSymbols() const;
   std::list<Symbol>::iterator getSymbolsStart();
   std::list<Paragraph>::iterator getParagraphsStart();
+  std::list<Paragraph>::iterator getParagraphsEnd();
   std::map<CommentIdentifier, Comment> getComments() const;
   Symbol& symbolAt(int pos, std::list<Symbol>::iterator *it = nullptr);
   std::list<Symbol>::iterator iteratorAt(int pos);
@@ -103,7 +104,7 @@ public:
   int remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   void localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it = nullptr);
   int remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
-  std::optional<std::list<Paragraph>::iterator> localUpdateParagraph(const QTextBlockFormat &fmt, int pos, std::list<Paragraph>::iterator *it = nullptr);
+  std::pair<std::list<Paragraph>::iterator, bool> localUpdateParagraph(const QTextBlockFormat &fmt, int pos, std::list<Paragraph>::iterator *it = nullptr);
   int remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTime &timestamp, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   std::list<Paragraph>::iterator paragraphAt(int pos);
   std::pair<int, std::list<Paragraph>::iterator> paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);

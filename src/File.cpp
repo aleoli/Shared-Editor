@@ -285,6 +285,10 @@ std::list<Paragraph>::iterator File::getParagraphsStart() {
   return _paragraphs.begin();
 }
 
+std::list<Paragraph>::iterator File::getParagraphsEnd() {
+  return _paragraphs.end();
+}
+
 void File::forEachSymbol(const std::function<void(const Symbol&) >& lambda) {
   auto sl = std::shared_lock{this->_mutex};
 
@@ -837,14 +841,14 @@ int File::remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::ite
   }
 }
 
-std::optional<std::list<Paragraph>::iterator> File::localUpdateParagraph(const QTextBlockFormat &fmt, int pos, std::list<Paragraph>::iterator *it) {
+std::pair<std::list<Paragraph>::iterator, bool> File::localUpdateParagraph(const QTextBlockFormat &fmt, int pos, std::list<Paragraph>::iterator *it) {
   auto ul = std::unique_lock{this->_mutex};
   auto size = _paragraphs.size();
   if(pos < 0 || size < pos) {
     throw FileParagraphsException{"Invalid update position"};
   }
 
-  if(size == pos) return std::nullopt; //FIX bug
+  if(size == pos) return {_paragraphs.end(), false}; //FIX bug
 
   auto target = it == nullptr ? paragraphAt(pos) : *it;
   if(it != nullptr) *it = std::next(*it);
@@ -853,10 +857,10 @@ std::optional<std::list<Paragraph>::iterator> File::localUpdateParagraph(const Q
     target->localUpdate(fmt);
     dirty = true;
 
-    return std::optional<std::list<Paragraph>::iterator>(target);
+    return {target, true};
   }
 
-  return std::nullopt;
+  return {target, false};
 }
 
 int File::remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTime &timestamp, std::list<Paragraph>::iterator *it, int oldPos) {

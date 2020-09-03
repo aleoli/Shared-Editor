@@ -47,6 +47,7 @@ public:
   [[nodiscard]] std::vector<Identifier> getPos() const;
   void setFormat(const QTextBlockFormat &fmt);
   [[nodiscard]] QTextBlockFormat getFormat() const;
+  [[nodiscard]] QTextBlockFormat getPartialFormat() const;
   [[nodiscard]] QDateTime getTimestamp() const;
   void setTimestamp(const QDateTime &time);
   bool isOlder(const QDateTime &time, int userId);
