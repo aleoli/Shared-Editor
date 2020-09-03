@@ -56,6 +56,7 @@ signals:
   void deleteDir(const QString &token, int dirId);
   void deleteFile(const QString &token, int fileId);
   void move(const QString &token, int elId, int dirId);
+  void fileInfo(const QString &token, int fileId);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;

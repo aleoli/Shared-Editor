@@ -173,7 +173,6 @@ void DocsBrowser::_openFile(int fileId) {
 }
 
 void DocsBrowser::changeDir(int dirId) {
-  // TODO: freeze window
   debug("go to dir " + QString::number(dirId));
   // get current index in history
   if(this->_currentDir) {
@@ -325,7 +324,6 @@ void DocsBrowser::_account(bool checked) {
 }
 
 void DocsBrowser::_newFile(bool checked) {
-  // TODO: freeze window
   auto name = Input::show(this, "Insert file name", "", "Cancel", "Create");
   if(name && !name->isEmpty()) {
     emit newFile(_user->getToken(), *name, _currentDir);
@@ -333,7 +331,6 @@ void DocsBrowser::_newFile(bool checked) {
 }
 
 void DocsBrowser::_newDir(bool checked) {
-  // TODO: freeze window
   auto name = Input::show(this, "Insert directory name", "", "Cancel", "Create");
   if(name && !name->isEmpty()) {
     emit newDir(_user->getToken(), *name, _currentDir);
@@ -436,6 +433,7 @@ int DocsBrowser::_getHSpacing() {
 void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
   debug(QString("Open menu ") + (isDir ? "DIR" : "FILE"));
 
+  auto actionInfo = new QAction{QIcon{":res/info.png"}, "Info"};
   auto actionMove = new QAction{QIcon(":res/move.png"), "Move"};
   QAction *actionShare = nullptr;
   if(!isDir) {
@@ -445,6 +443,7 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
   auto actionDelete = new QAction{QIcon(":res/delete.png"), "Delete"};
 
   QMenu menu;
+  menu.addAction(actionInfo);
   menu.addAction(actionMove);
   if(!isDir) {
     menu.addAction(actionShare);
@@ -455,7 +454,10 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
 
   if(!action) return;
 
-  if(action == actionMove) {
+  if(action == actionInfo) {
+    debug("Info");
+    emit this->fileInfo(_user->getToken(), element.getId());
+  } else if(action == actionMove) {
     debug("Move");
     this->_menuElement = FSElement{element};
     emit this->getAllDirs(_user->getToken());

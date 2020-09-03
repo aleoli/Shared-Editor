@@ -133,6 +133,7 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::deleteFile, this, &GuiManager::deleteFileQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::deleteDir, this, &GuiManager::deleteDirQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::move, this, &GuiManager::moveFileQuery);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::fileInfo, this, &GuiManager::textEditorFileInfo);
 
   QObject::connect(this, &GuiManager::serverGetDirResponse, _widgetDocsBrowser, &DocsBrowser::showDir);
   QObject::connect(this, &GuiManager::serverNewDirResponse, _widgetDocsBrowser, &DocsBrowser::changeDir);
