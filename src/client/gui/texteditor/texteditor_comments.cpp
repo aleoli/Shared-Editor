@@ -29,10 +29,8 @@ CommentWidget *TextEditor::getComment(const File::Comment &comment) {
 }
 
 void TextEditor::deleteComment(CommentWidget *widget) {
-  widget->remove();
   _comments.erase(widget->getCommentIdentifier());
-  delete widget->getItem();
-  delete widget;
+  widget->remove();
 }
 
 void TextEditor::commentRemoteInsert(int fileId, int userId, const File::Comment &comment) {
@@ -56,7 +54,7 @@ void TextEditor::_insertComment(bool checked) {
   auto text = Input::show(this, "New comment");
   if(!text) return;
 
-  auto comment = File::Comment{{_user->getCommentId(), _user->getUserId()}, *text, QDateTime::currentDateTimeUtc()};
+  auto comment = File::Comment{{_user->getUserId(), _user->getCommentId()}, *text, QDateTime::currentDateTimeUtc()};
   auto widget = loadComment(_user->getUserId(), comment);
   widget->setIcon(_user->getIcon());
 
