@@ -61,6 +61,7 @@ bool Paragraph::isDifferent(const Paragraph &other) const {
 }
 
 bool Paragraph::isDifferent(const QTextBlockFormat &fmt) const {
+  // to add new attributes, add a check here
   return _fmt.alignment() != fmt.alignment();
 }
 
@@ -176,6 +177,7 @@ QJsonObject Paragraph::serializeFormat(const QTextBlockFormat &fmt) {
   QJsonObject json;
 
   json["a"] = static_cast<int>(fmt.alignment());
+  //to add new attributes, serialize them here
 
   return json;
 }
@@ -183,6 +185,7 @@ QJsonObject Paragraph::serializeFormat(const QTextBlockFormat &fmt) {
 QTextBlockFormat Paragraph::deserializeFormat(const QJsonObject &obj) {
   QTextBlockFormat fmt;
   auto alignmentValue = obj["a"];
+  //to add new attributes, deserialize them here
 
   if(alignmentValue.isUndefined()) {
     throw ParagraphFromJsonException{"The QJsonObject has some fields missing"};
@@ -195,6 +198,5 @@ QTextBlockFormat Paragraph::deserializeFormat(const QJsonObject &obj) {
   }
 
   fmt.setAlignment(static_cast<Qt::Alignment>(alignment));
-
   return fmt;
 }
