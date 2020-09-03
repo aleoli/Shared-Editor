@@ -332,8 +332,8 @@ void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& s
     auto newfmt = it->getFormat();
     if(newpos == -1) continue;
 
-    if(newpos - pos != 0 || !Symbol::compareFormats(fmt, newfmt, _highlighted)) {
-      if(_highlighted) fmt.setBackground(backgroundColor);
+    if(newpos - pos != 0 || !Symbol::compareFormats(fmt, newfmt)) {
+      if(_highlighted) fmt.setBackground(getUserColorHighlight(it->getSymbolId().getFirst()));
       cursor->mergeCharFormat(fmt);
       cursor->clearSelection();
       cursor->goTo(newpos);

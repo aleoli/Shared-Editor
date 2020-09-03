@@ -584,7 +584,7 @@ void TextEditor::_bold(bool checked) {
   _widgetBold->setChecked(checked);
   _actionBold->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontWeight(checked ? QFont::Bold : QFont::Normal);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -597,7 +597,7 @@ void TextEditor::_italics(bool checked) {
   _widgetItalics->setChecked(checked);
   _actionItalics->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontItalic(checked);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -610,7 +610,7 @@ void TextEditor::_strike(bool checked) {
   _widgetStrike->setChecked(checked);
   _actionStrike->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontStrikeOut(checked);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -623,7 +623,7 @@ void TextEditor::_underline(bool checked) {
   _widgetUnderline->setChecked(checked);
   _actionUnderline->setChecked(checked);
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontUnderline(checked);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -644,7 +644,7 @@ void TextEditor::_mark(bool checked) {
   }
 
   setBorderColor(_widgetMark, col, true);
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setBackground(col);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -661,7 +661,7 @@ void TextEditor::_color(bool checked) {
   }
 
   setBorderColor(_widgetColor, col, false);
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setForeground(col);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -769,7 +769,7 @@ void TextEditor::_font(const QFont &font) {
   debug("TextEditor::_font");
   if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
 
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontFamily(font.family());
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
@@ -787,7 +787,7 @@ void TextEditor::_size(int index) {
   }
 
   if(_textEdit->textCursor().hasSelection()) _updateSyms = true;
-  auto fmt = _textEdit->currentCharFormat();
+  QTextCharFormat fmt;
   fmt.setFontPointSize(size);
   _textEdit->mergeCurrentCharFormat(fmt);
   _textEdit->setFocus();
