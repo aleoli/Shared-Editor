@@ -98,6 +98,7 @@ private slots:
   void docsBrowserLogout(const QString &token);
   void docsBrowserEditAccount();
   void docsBrowserActivateLink(const QString &token, const QString &link);
+  void docsBrowserGetFile(const QString &token, int fileId);
 
   void textEditorLogout(const QString &token);
   void textEditorShare(const QString &token, int fileId);

@@ -126,13 +126,14 @@ void GuiManager::connectWidgets() {
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::newDir, this, &GuiManager::newDirQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::getPath, this, &GuiManager::getPathQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::getAllDirs, this, &GuiManager::getAllDirsQuery);
-  QObject::connect(_widgetDocsBrowser, &DocsBrowser::openFile, this, &GuiManager::getFileQuery);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::openFile, this, &GuiManager::docsBrowserGetFile);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::search, this, &GuiManager::searchQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::share, this, &GuiManager::textEditorShare);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::edit, this, &GuiManager::textEditorEdit);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::deleteFile, this, &GuiManager::deleteFileQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::deleteDir, this, &GuiManager::deleteDirQuery);
   QObject::connect(_widgetDocsBrowser, &DocsBrowser::move, this, &GuiManager::moveFileQuery);
+  QObject::connect(_widgetDocsBrowser, &DocsBrowser::fileInfo, this, &GuiManager::textEditorFileInfo);
 
   QObject::connect(this, &GuiManager::serverGetDirResponse, _widgetDocsBrowser, &DocsBrowser::showDir);
   QObject::connect(this, &GuiManager::serverNewDirResponse, _widgetDocsBrowser, &DocsBrowser::changeDir);
@@ -360,6 +361,11 @@ void GuiManager::docsBrowserNewFile(const QString &token, const QString &name, c
 void GuiManager::docsBrowserActivateLink(const QString &token, const QString &link) {
   freezeWindow();
   emit activateLinkQuery(token, link);
+}
+
+void GuiManager::docsBrowserGetFile(const QString &token, int fileId) {
+  freezeWindow();
+  emit this->getFileQuery(token, fileId);
 }
 
 void GuiManager::textEditorLogout(const QString &token) {

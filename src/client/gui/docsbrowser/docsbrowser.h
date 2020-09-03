@@ -56,6 +56,7 @@ signals:
   void deleteDir(const QString &token, int dirId);
   void deleteFile(const QString &token, int fileId);
   void move(const QString &token, int elId, int dirId);
+  void fileInfo(const QString &token, int fileId);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;
@@ -124,4 +125,5 @@ private:
   int _get_n_cols();
   void _showDir(const std::vector<FSElement> &elements);
   int _getHSpacing();
+  static bool _checkName(const QString &name);
 };
