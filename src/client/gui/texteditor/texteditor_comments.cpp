@@ -13,6 +13,7 @@ CommentWidget *TextEditor::loadComment(int userId, const File::Comment &comment)
   if(showMenu) {
     connect(widget, &CommentWidget::editComment, this, &TextEditor::_editComment);
     connect(widget, &CommentWidget::deleteComment, this, &TextEditor::_deleteComment);
+    widget->setIcon(_user->getIcon());
   }
 
   widget->insert(0, _listComments);
