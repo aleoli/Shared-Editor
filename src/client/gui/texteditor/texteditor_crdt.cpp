@@ -154,7 +154,8 @@ void TextEditor::_handleSymbolUpdate(int pos, int added, std::list<Symbol>::iter
       symUpdated.push_back(**opt);
   }
 
-  emit localUpdate(_user->getToken(), _user->getFileId(), symUpdated, std::list<Paragraph>());
+  auto timestamp = QDateTime::currentDateTimeUtc();
+  emit localUpdate(_user->getToken(), _user->getFileId(), symUpdated, std::list<Paragraph>(), timestamp);
 }
 
 void TextEditor::_handleAlignmentUpdate(int pos, int added, std::list<Symbol>::iterator &it) {
@@ -311,7 +312,7 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::list<Identifier
   _blockSignals = false;
 }
 
-void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs) {
+void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp) {
   _blockSignals = true;
   int pos = 0;
   auto backgroundColor = getUserColorHighlight(userId);
@@ -328,7 +329,7 @@ void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& s
   QTextCharFormat fmt;
   cursor->goTo(0);
   for(auto &sym : symbols) {
-    int newpos = _file->remoteUpdate(sym, &it, pos); //pos of current char
+    int newpos = _file->remoteUpdate(sym, userId, timestamp, &it, pos); //pos of current char
     auto newfmt = it->getFormat();
     if(newpos == -1) continue;
 

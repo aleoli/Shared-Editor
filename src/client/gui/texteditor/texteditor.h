@@ -56,7 +56,7 @@ signals:
 
   void localInsert(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs);
   void localDelete(const QString &token, int fileId, const std::list<Identifier> &ids, const std::list<Identifier> &paragraphs);
-  void localUpdate(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs);
+  void localUpdate(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp);
   void localMove(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
 
 public slots:
@@ -74,7 +74,7 @@ public slots:
 
   void remoteInsert(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs);
   void remoteDelete(int fileId, int userId, const std::list<Identifier>& ids, const std::list<Identifier> &paragraphs);
-  void remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs);
+  void remoteUpdate(int fileId, int userId, const std::list<Symbol>& symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp);
   void remoteMove(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);
 
 private slots:

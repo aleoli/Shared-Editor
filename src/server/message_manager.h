@@ -42,7 +42,7 @@ public:
   void addSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars);
   void deleteSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars);
   // per la modifica di un simbolo
-  void updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars);
+  void updateSymbols(quint64 clientId, int fileId, const QJsonArray& syms, const QJsonArray& pars, const QDateTime &timestamp);
 
   /* gestione commenti */
   void addComment(quint64 clientId, int fileId, const QJsonObject& comment);

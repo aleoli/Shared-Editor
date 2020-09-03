@@ -53,7 +53,7 @@ public:
 
   void update(const Symbol &s);
   void localUpdate(const QTextCharFormat &fmt, bool ignoreBackground = false);
-  void remoteUpdate(const Symbol &other);
+  void remoteUpdate(const Symbol &other, const QDateTime &timestamp, int userId);
 
   static bool compareFormats(const QTextCharFormat &fmt1, const QTextCharFormat &fmt2, bool ignoreBackground = false);
 

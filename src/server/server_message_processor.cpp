@@ -801,7 +801,8 @@ void ServerMessageProcessor::localUpdate() {
 
   auto symbols = _m.getArray("symbols");
   auto paragraphs = _m.getArray("paragraphs");
-  this->_manager->updateSymbols(this->_clientId, fileId, symbols, paragraphs);
+  auto timestamp = _m.getString("timestamp");
+  this->_manager->updateSymbols(this->_clientId, fileId, symbols, paragraphs, QDateTime::fromString(timestamp, "dd.MM.yyyy hh:mm:ss.zzz t"));
 
   auto clients = this->_manager->getClientsInFile(fileId);
   for(auto &cl: clients) {
@@ -815,6 +816,7 @@ void ServerMessageProcessor::localUpdate() {
     data["symbols"] = symbols;
     data["paragraphs"] = paragraphs;
     data["userId"] = session.getUserId();
+    data["timestamp"] = timestamp;
 
     auto msg = Message{Message::Type::FILE_EDIT, (int) Message::FileEditAction::REMOTE_UPDATE, Message::Status::QUERY, data};
     this->_manager->send_data(cl, msg.toQByteArray());

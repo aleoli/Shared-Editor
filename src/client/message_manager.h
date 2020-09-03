@@ -44,7 +44,7 @@ signals:
 
   void remoteInsertQuery(int fileId, int userId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs);
   void remoteDeleteQuery(int fileId, int userId, const std::list<Identifier> &ids, const std::list<Identifier> &paragraphs);
-  void remoteUpdateQuery(int fileId, int userId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs);
+  void remoteUpdateQuery(int fileId, int userId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp);
   void userConnectedQuery(int fileId, int userId, const QString &username);
   void userDisconnectedQuery(int fileId, int userId);
   void remoteMoveQuery(int fileId, int userId, const SymbolId &symbolId, int cursorPosition);
@@ -84,7 +84,7 @@ public slots:
 
   void localInsertQuery(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs);
   void localDeleteQuery(const QString &token, int fileId, const std::list<Identifier> &ids, const std::list<Identifier> &paragraphs);
-  void localUpdateQuery(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs);
+  void localUpdateQuery(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp);
   void localMoveQuery(const QString &token, int fileId, const SymbolId &symbolId, int cursorPosition);
 
   // newDirQuery: se la dir è creata nella root, il parentId non è necessario

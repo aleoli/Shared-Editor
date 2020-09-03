@@ -70,10 +70,10 @@ void Paragraph::localUpdate(Qt::Alignment alignment) {
   _lastUser = _id.getFirst();
 }
 
-void Paragraph::remoteUpdate(const Paragraph &other) {
+void Paragraph::remoteUpdate(const Paragraph &other, const QDateTime &timestamp, int userId) {
   _alignment = other._alignment;
-  _timestamp = other._timestamp;
-  _lastUser = other._lastUser;
+  _timestamp = timestamp;
+  _lastUser = userId;
 }
 
 void Paragraph::checkAndAssign (const QJsonObject &json) {

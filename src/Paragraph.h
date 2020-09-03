@@ -31,7 +31,7 @@ public:
   bool isDifferent(Qt::Alignment alignment);
 
   void localUpdate(Qt::Alignment alignment);
-  void remoteUpdate(const Paragraph &other);
+  void remoteUpdate(const Paragraph &other, const QDateTime &timestamp, int userId);
 
   static Paragraph fromJsonObject(const QJsonObject &json);
   static Paragraph fromJsonObject(QJsonObject &&json);

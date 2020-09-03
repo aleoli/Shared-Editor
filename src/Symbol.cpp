@@ -350,15 +350,15 @@ void Symbol::localUpdate(const QTextCharFormat &fmt, bool ignoreBackground) {
   auto background = _fmt.background();
   _fmt = fmt;
   if(ignoreBackground) _fmt.setBackground(background);
-  
+
   _timestamp = QDateTime::currentDateTimeUtc();
   _lastUser = _id.getFirst();
 }
 
-void Symbol::remoteUpdate(const Symbol &other) {
+void Symbol::remoteUpdate(const Symbol &other, const QDateTime &timestamp, int userId) {
   _fmt = other._fmt;
-  _timestamp = other._timestamp;
-  _lastUser = other._lastUser;
+  _timestamp = timestamp;
+  _lastUser = userId;
 }
 
 void Symbol::setFormat(const QTextCharFormat &fmt) {

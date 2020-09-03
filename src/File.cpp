@@ -636,7 +636,7 @@ std::optional<std::list<Symbol>::iterator> File::localUpdate(const QTextCharForm
   return std::nullopt;
 }
 
-int File::remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it, int oldPos) {
+int File::remoteUpdate(const Symbol &sym, int userId, const QDateTime &timestamp, std::list<Symbol>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
 
   try {
@@ -653,10 +653,10 @@ int File::remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it, int o
       target = *it;
     }
 
-    if(target->isDifferent(sym)) {
+    if(target->isOlder(timestamp, userId) && target->isDifferent(sym)) {
       dirty = true;
 
-      target->remoteUpdate(sym);
+      target->remoteUpdate(sym, timestamp, userId);
       return oldPos + pos;
     }
   }
@@ -844,7 +844,7 @@ std::optional<std::list<Paragraph>::iterator> File::localUpdateParagraph(Qt::Ali
   return std::nullopt;
 }
 
-int File::remoteUpdateParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it, int oldPos) {
+int File::remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTime &timestamp, std::list<Paragraph>::iterator *it, int oldPos) {
   auto ul = std::unique_lock{this->_mutex};
 
   try {
@@ -862,10 +862,10 @@ int File::remoteUpdateParagraph(const Paragraph &par, std::list<Paragraph>::iter
       *it = std::next(*it);
     }
 
-    if(target->isDifferent(par)) {
+    if(target->isOlder(timestamp, userId) && target->isDifferent(par)) {
       dirty = true;
 
-      target->remoteUpdate(par);
+      target->remoteUpdate(par, timestamp, userId);
       return oldPos + pos;
     }
   }

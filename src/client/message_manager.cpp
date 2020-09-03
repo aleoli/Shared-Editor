@@ -228,7 +228,7 @@ void MessageManager::localDeleteQuery(const QString &token, int fileId, const st
     emit send_data(m.toQByteArray());
 }
 
-void MessageManager::localUpdateQuery(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs) {
+void MessageManager::localUpdateQuery(const QString &token, int fileId, const std::list<Symbol> &symbols, const std::list<Paragraph> &paragraphs, const QDateTime &timestamp) {
   Message m{Message::Type::FILE_EDIT, static_cast<int>(Message::FileEditAction::LOCAL_UPDATE),
     Message::Status::QUERY};
 
@@ -236,6 +236,7 @@ void MessageManager::localUpdateQuery(const QString &token, int fileId, const st
     m.setValue("fileId", fileId);
     m.setValue("symbols", Symbol::symbolsToJsonArray(symbols));
     m.setValue("paragraphs", Paragraph::paragraphsToJsonArray(paragraphs));
+    m.setValue("timestamp", timestamp.toString("dd.MM.yyyy hh:mm:ss.zzz t"));
 
     emit send_data(m.toQByteArray());
 }

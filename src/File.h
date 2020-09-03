@@ -94,7 +94,7 @@ public:
   void localDelete(int pos, std::list<Symbol>::iterator *it = nullptr);
   int remoteDelete(const SymbolId &id, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0); // returns the position of the deleted element
   std::optional<std::list<Symbol>::iterator> localUpdate(const QTextCharFormat &fmt, int pos, bool ignoreBackground = false, std::list<Symbol>::iterator *it = nullptr);
-  int remoteUpdate(const Symbol &sym, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0);
+  int remoteUpdate(const Symbol &sym, int userId, const QDateTime &timestamp, std::list<Symbol>::iterator *it = nullptr, int oldPos = 0);
 
   // paragraphs
   void localInsertParagraph(Paragraph &par, int pos, std::list<Paragraph>::iterator *it = nullptr);
@@ -102,7 +102,7 @@ public:
   void localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it = nullptr);
   int remoteDeleteParagraph(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   std::optional<std::list<Paragraph>::iterator> localUpdateParagraph(Qt::Alignment alignment, int pos, std::list<Paragraph>::iterator *it = nullptr);
-  int remoteUpdateParagraph(const Paragraph &par, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
+  int remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTime &timestamp, std::list<Paragraph>::iterator *it = nullptr, int oldPos = -1);
   std::list<Paragraph>::iterator paragraphAt(int pos);
   std::pair<int, std::list<Paragraph>::iterator> paragraphById(const ParagraphId &id, std::list<Paragraph>::iterator *it = nullptr);
 
