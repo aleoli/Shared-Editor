@@ -124,6 +124,7 @@ private slots:
   void serverGetLinkResponse(const QString &link);
 
   void serverGetFileResponse(const File &file, int charId, int commentId);
+  void serverDeletedFileResponse(int fileId);
 
 private:
   void showWindow(MainWindow *window, bool clear = false);
