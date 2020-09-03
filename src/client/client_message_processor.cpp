@@ -274,6 +274,13 @@ void ClientMessageProcessor::process_filesystem() {
         getAllDirs();
       break;
 
+    case Message::FileSystemAction::SEARCH:
+      if(!isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        search();
+      break;
+
     default:
       disconnect("Ricevuto messaggio con azione non valida");
   }
@@ -330,9 +337,10 @@ void ClientMessageProcessor::getUserIcon() {
 
   try {
     auto userId = _m.getInt("userId");
-    auto icon = _m.getString("icon");
+    auto found = _m.getBool("found");
+    auto icon = _m.getStringOpt("icon");
 
-    emit _manager->getIconResponse(userId, icon);
+    emit _manager->getIconResponse(userId, found, icon);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
@@ -604,6 +612,29 @@ void ClientMessageProcessor::getAllDirs() {
     }
 
     emit _manager->getAllDirsResponse(l);
+  }
+  catch(SE_Exception& e) {
+    disconnect(e.what());
+  }
+}
+
+void ClientMessageProcessor::search() {
+  info("FILESYSTEM::SEARCH response received");
+
+  try {
+    auto elements = _m.getArray("elements");
+
+    std::list<SearchResult> res;
+    for(const auto& el: elements) {
+      auto obj = el.toObject();
+      SearchResult sr;
+      sr.id = obj["id"].toInt();
+      sr.path = obj["path"].toString();
+      sr.isDir = obj["isDir"].toBool();
+      res.push_back(sr);
+    }
+
+    emit _manager->searchResponse(res);
   }
   catch(SE_Exception& e) {
     disconnect(e.what());

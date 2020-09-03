@@ -333,6 +333,16 @@ void MessageManager::getAllDirsQuery(const QString &token) {
   emit send_data(m.toQByteArray());
 }
 
+void MessageManager::searchQuery(const QString &token, const QString &query) {
+  Message m{Message::Type::FILESYSTEM, static_cast<int>(Message::FileSystemAction::SEARCH),
+            Message::Status::QUERY};
+
+  m.setValue("token", token);
+  m.setValue("query", query);
+
+  emit send_data(m.toQByteArray());
+}
+
 void MessageManager::commentLocalInsertQuery(const QString &token, int fileId, const File::Comment &comment) {
   Message m{Message::Type::COMMENT, static_cast<int>(Message::CommentAction::COMMENT_LOCAL_INSERT),
     Message::Status::QUERY};

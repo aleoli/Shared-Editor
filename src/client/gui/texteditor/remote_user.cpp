@@ -76,6 +76,10 @@ Cursor *RemoteUser::getCursor() const {
   return _cursor;
 }
 
+void RemoteUser::setDeleted() {
+  this->setName("[deleted]");
+}
+
 void RemoteUser::setName(const QString &name) {
   if(name.length() > MAX_SIZE_NAME) {
     auto substr = name.mid(0, MAX_SIZE_NAME);

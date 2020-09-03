@@ -67,7 +67,7 @@ public slots:
   // Messages from server
   void userConnected(int fileId, int userId, const QString &username);
   void userDisconnected(int fileId, int userId);
-  void setUserIcon(int userId, const QString &icon);
+  void setUserIcon(int userId, bool found, const std::optional<QString> &icon);
 
   void commentRemoteInsert(int fileId, int userId, const File::Comment &comment);
   void commentRemoteUpdate(int fileId, int userId, const File::Comment &comment);

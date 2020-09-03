@@ -60,12 +60,14 @@ signals:
   void getDirQuery(const QString &token, const std::optional<int> &dirId = std::nullopt);
   void moveFileQuery(const QString &token, int fileId, int dirId);
   void getPathQuery(const QString &token, int elementId);
+  void searchQuery(const QString &token, const QString &query);
   void getAllDirsQuery(const QString &token);
 
   void serverGetDirResponse(const std::vector<FSElement> &elements, const QString &name, int parentId);
   void serverNewDirResponse(int id);
   void serverGetPathResponse(const std::vector<FSElement> &elements);
   void serverGetAllDirsResponse(const std::list<std::pair<QString, int>>& items);
+  void serverSearchResponse(const std::list<SearchResult>& results);
 
   void docBrowserNeedsRefresh();
 
@@ -96,6 +98,7 @@ private slots:
   void docsBrowserLogout(const QString &token);
   void docsBrowserEditAccount();
   void docsBrowserActivateLink(const QString &token, const QString &link);
+  void docsBrowserGetFile(const QString &token, int fileId);
 
   void textEditorLogout(const QString &token);
   void textEditorShare(const QString &token, int fileId);

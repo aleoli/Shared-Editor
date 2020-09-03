@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QListWidget>
 
 #include <optional>
 
@@ -32,6 +33,7 @@ public slots:
   void showDir(const std::vector<FSElement> &elements, const QString& name, int parentId);
   void changeDir(int dirId);
   void showPath(const std::vector<FSElement> &elements);
+  void searchResponse(const std::list<SearchResult>& results);
   void refresh();
 
   void getAllDirsResponse(std::list<std::pair<QString, int>> items);
@@ -46,6 +48,7 @@ signals:
   void getDir(const QString &token, std::optional<int> dirId = std::nullopt);
   void openFile(const QString &token, int fileId);
   void getPath(const QString &token, int dirId);
+  void search(const QString &token, const QString &query);
   void getAllDirs(const QString &token);
 
   void share(const QString &token, int fileId);
@@ -53,6 +56,7 @@ signals:
   void deleteDir(const QString &token, int dirId);
   void deleteFile(const QString &token, int fileId);
   void move(const QString &token, int elId, int dirId);
+  void fileInfo(const QString &token, int fileId);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;
@@ -62,6 +66,7 @@ private slots:
   void _newFile(bool checked);
   void _newDir(bool checked);
   void _logout(bool checked);
+  void _search(const QString& text);
   void _goToHome(bool checked);
   void _goBack(bool checked);
   void _goFwd(bool checked);
@@ -73,6 +78,8 @@ private slots:
   void _openFile(int fileId);
 
   void _openMenu(bool isDir, const FSElement& element);
+  void _clickedSearch(QListWidgetItem *item);
+  void _closeSearch();
 
 private:
   typedef enum {
@@ -96,6 +103,8 @@ private:
   QGridLayout *_layout;
   QWidget *_widgetPath;
 
+  QListWidget *_listWidget = nullptr;
+
   FSElement _menuElement;
 
   std::optional<int> _currentParent = std::nullopt;
@@ -107,6 +116,7 @@ private:
 
   std::list<DocWidget *> _currentWidgets{};
   std::list<DocWidgetFolder *> _currentWidgetsFolder{};
+  std::list<SearchResult> _searchResults{};
 
   SortType _currentSortType = TITLE;
 
@@ -115,4 +125,5 @@ private:
   int _get_n_cols();
   void _showDir(const std::vector<FSElement> &elements);
   int _getHSpacing();
+  static bool _checkName(const QString &name);
 };

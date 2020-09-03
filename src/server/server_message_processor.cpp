@@ -274,6 +274,13 @@ void ServerMessageProcessor::process_filesystem() {
         getPath();
       break;
 
+    case Message::FileSystemAction::SEARCH:
+      if(isResponse)
+        disconnect("Ricevuto messaggio con status non valido");
+      else
+        search();
+      break;
+
     case Message::FileSystemAction::GET_ALL_DIRS:
       if(isResponse)
         disconnect("Ricevuto messaggio con status non valido");
@@ -489,20 +496,26 @@ void ServerMessageProcessor::deleteUser() {
 void ServerMessageProcessor::getUserIcon() {
   info("GetUserIcon query received");
 
+  auto userId = _m.getInt("userId");
+  auto user = Lazy<User>(userId);
+
+  QJsonObject data;
+  data["userId"] = userId;
   try {
-    auto userId = _m.getInt("userId");
-    auto user = Lazy<User>(userId);
+    user.getValue();
+    data["found"] = true;
 
-    QJsonObject data;
-    data["userId"] = userId;
-    data["icon"] = user.getValue().getIcon();
-
-    this->_res = Message{Message::Type::USER, (int) Message::UserAction::GET_USER_ICON, Message::Status::RESPONSE, data};
-    this->_has_resp = true;
-  } catch(SQLNoElementException&) {
-    error(ERROR_6);
-    this->sendErrorMsg(ERROR_6);
+    auto icon = user.getValue().getIcon();
+    if(!icon.isEmpty()) {
+      data["icon"] = icon;
+    }
+  } catch(SQLNoElementSelectException& ex) {
+    // user does not exist
+    data["found"] = false;
   }
+
+  this->_res = Message{Message::Type::USER, (int) Message::UserAction::GET_USER_ICON, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
 }
 
 
@@ -1095,6 +1108,34 @@ void ServerMessageProcessor::getPath() {
   data["elements"] = arr;
 
   this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::GET_PATH, Message::Status::RESPONSE, data};
+  this->_has_resp = true;
+}
+
+void ServerMessageProcessor::search() {
+  info("Search query received");
+
+  auto token = _m.getString("token");
+  auto session = Session::get(token);
+
+  auto query = _m.getString("query");
+
+  auto l = DB::get()->get<FSElement_db>("owner_id = '"+QString::number(session.getUserId())+"'");
+
+  QJsonArray arr;
+  for(auto& f: l) {
+    if(f.getName().contains(query)) {
+      QJsonObject obj;
+      obj["id"] = f.getId();
+      obj["path"] = f.pwd(session).first;
+      obj["isDir"] = f.isDir();
+      arr.append(obj);
+    }
+  }
+
+  QJsonObject data;
+  data["elements"] = arr;
+
+  this->_res = Message{Message::Type::FILESYSTEM, (int) Message::FileSystemAction::SEARCH, Message::Status::RESPONSE, data};
   this->_has_resp = true;
 }
 

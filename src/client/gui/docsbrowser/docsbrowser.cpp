@@ -4,12 +4,15 @@
 #include <QAction>
 #include <list>
 #include <QGridLayout>
+#include <QListWidget>
 #include <cmath>
 #include <QMenu>
+#include <QTimer>
 
 #include "dialogs/input.h"
 #include "dialogs/confirm.h"
 #include "dialogs/move.h"
+#include "dialogs/info.h"
 
 #include "utils.h"
 #include "docwidget.h"
@@ -17,6 +20,8 @@
 
 #define DOC_WIDTH 200
 #define DOC_HEIGHT 120
+
+#define ALLOWED_CHARS " _-?!()"
 
 DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBrowser) {
   ui->setupUi(this);
@@ -56,6 +61,8 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
 
   connect(_widgetAccount, &QPushButton::clicked, this, &DocsBrowser::_account);
   connect(_widgetNewFile, &QPushButton::clicked, this, &DocsBrowser::_newFile);
+  connect(_widgetSearch, &QLineEdit::textChanged, this, &DocsBrowser::_search);
+  connect(_widgetSearch, &QLineEdit::editingFinished, this, &DocsBrowser::_closeSearch);
 
   connect(_actionLogout, &QAction::triggered, this, &DocsBrowser::_logout);
 
@@ -127,8 +134,6 @@ void DocsBrowser::_showDir(const std::vector<FSElement> &elements) {
 
   int i = 0;
   for(auto element = listPointers.begin(); element != listPointers.end(); ++element, i++) {
-    //debug(QString(element.getType() == FSElement::Type::FILE ? "FILE" : "DIR") + "\t" + element.getName());
-
     if((*element)->getType() == FSElement::Type::FILE) {
       auto widget = new DocWidget{**element, this->_scrollArea};
       widget->setFixedSize(DOC_WIDTH, DOC_HEIGHT);
@@ -169,7 +174,6 @@ void DocsBrowser::_openFile(int fileId) {
 }
 
 void DocsBrowser::changeDir(int dirId) {
-  // TODO: freeze window
   debug("go to dir " + QString::number(dirId));
   // get current index in history
   if(this->_currentDir) {
@@ -214,6 +218,62 @@ void DocsBrowser::showPath(const std::vector<FSElement> &elements) {
   }
 
   _widgetPath->setLayout(layout);
+}
+
+void DocsBrowser::searchResponse(const std::list<SearchResult> &results) {
+  debug("Search: " + QString::number(results.size()) + " items found");
+
+  if(this->_listWidget == nullptr) {
+    this->_listWidget = new QListWidget{this};
+    this->_listWidget->setStyleSheet("QListView{ border: 1px solid #333333; border-radius: 15px; background: #4e596f; padding: 10px 0px 0px 10px; min-width: 6em; font: 14px; color: #ffffff;}"
+      "QListView::item {height: 40px; border-style: solid; border-width: 0px; border-bottom-width: 1px; border-color: white;}"
+      "QListView::item::hover {background-color: #f65964;}");
+    this->_listWidget->setCursor(Qt::PointingHandCursor);
+    auto pos = this->_widgetSearch->mapToGlobal(this->rect().topLeft());
+    auto mainPos = this->mapToGlobal(this->rect().topLeft());
+    pos -= mainPos;
+    pos.setY(pos.y() + this->_widgetSearch->height());
+    this->_listWidget->move(pos);
+    this->_listWidget->setMaximumWidth(this->_widgetSearch->width());
+    this->_listWidget->setMinimumWidth(this->_widgetSearch->width());
+    this->_listWidget->setMinimumHeight(300);
+    this->_listWidget->setMaximumHeight(400);
+
+    QObject::connect(this->_listWidget, &QListWidget::itemClicked, this, &DocsBrowser::_clickedSearch);
+  }
+
+  this->_listWidget->clear();
+  for(const auto& res: results) {
+    this->_listWidget->addItem(res.path);
+  }
+  this->_listWidget->show();
+
+  this->_searchResults = results;
+}
+
+void DocsBrowser::_clickedSearch(QListWidgetItem *item) {
+  SearchResult sr;
+  for(const auto& i: this->_searchResults) {
+    if(i.path == item->text()) {
+      sr = i;
+      break;
+    }
+  }
+
+  debug(QString::number(sr.id) + " " + (sr.isDir ? "DIR" : "FILE"));
+  this->_widgetSearch->setText("");
+
+  if(sr.isDir) {
+    this->changeDir(sr.id);
+  } else {
+    this->_openFile(sr.id);
+  }
+}
+
+void DocsBrowser::_closeSearch() {
+  QTimer::singleShot(100, [this]() {
+    emit this->_widgetSearch->setText("");
+  });
 }
 
 void DocsBrowser::_clickedPath(bool checked) {
@@ -265,23 +325,42 @@ void DocsBrowser::_account(bool checked) {
 }
 
 void DocsBrowser::_newFile(bool checked) {
-  // TODO: freeze window
   auto name = Input::show(this, "Insert file name", "", "Cancel", "Create");
   if(name && !name->isEmpty()) {
-    emit newFile(_user->getToken(), *name, _currentDir);
+    if(!DocsBrowser::_checkName(*name)) {
+      Info::show(this, "Name not allowed", "Name not allowed", QString{"This name is not allowed, you can use alphanumerical chars and '"}+ALLOWED_CHARS+"' only");
+    } else {
+      emit newFile(_user->getToken(), *name, _currentDir);
+    }
   }
 }
 
 void DocsBrowser::_newDir(bool checked) {
-  // TODO: freeze window
   auto name = Input::show(this, "Insert directory name", "", "Cancel", "Create");
   if(name && !name->isEmpty()) {
-    emit newDir(_user->getToken(), *name, _currentDir);
+    if(!DocsBrowser::_checkName(*name)) {
+      Info::show(this, "Name not allowed", "Name not allowed", QString{"This name is not allowed, you can use alphanumerical chars and '"}+ALLOWED_CHARS+"' only");
+    } else {
+      emit newDir(_user->getToken(), *name, _currentDir);
+    }
   }
 }
 
 void DocsBrowser::_logout(bool checked) {
   emit logout(_user->getToken());
+}
+
+void DocsBrowser::_search(const QString& text) {
+  debug(text);
+  if(text.size() >= 3) {
+    emit this->search(_user->getToken(), text);
+  } else if(this->_listWidget != nullptr) {
+    this->_listWidget->hide();
+    this->_listWidget->deleteLater();
+    this->_listWidget->setParent(nullptr);
+    this->_listWidget = nullptr;
+    this->_searchResults.clear();
+  }
 }
 
 void DocsBrowser::_goToHome(bool checked) {
@@ -363,6 +442,7 @@ int DocsBrowser::_getHSpacing() {
 void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
   debug(QString("Open menu ") + (isDir ? "DIR" : "FILE"));
 
+  auto actionInfo = new QAction{QIcon{":res/info.png"}, "Info"};
   auto actionMove = new QAction{QIcon(":res/move.png"), "Move"};
   QAction *actionShare = nullptr;
   if(!isDir) {
@@ -372,6 +452,7 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
   auto actionDelete = new QAction{QIcon(":res/delete.png"), "Delete"};
 
   QMenu menu;
+  menu.addAction(actionInfo);
   menu.addAction(actionMove);
   if(!isDir) {
     menu.addAction(actionShare);
@@ -382,7 +463,10 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
 
   if(!action) return;
 
-  if(action == actionMove) {
+  if(action == actionInfo) {
+    debug("Info");
+    emit this->fileInfo(_user->getToken(), element.getId());
+  } else if(action == actionMove) {
     debug("Move");
     this->_menuElement = FSElement{element};
     emit this->getAllDirs(_user->getToken());
@@ -393,7 +477,11 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
     debug("Rename");
     auto name = Input::show(this, "Insert new name", element.getName(), "Cancel", "Rename");
     if(name && !name->isEmpty() && element.getName() != *name) {
-      emit this->edit(_user->getToken(), element.getId(), name);
+      if(!DocsBrowser::_checkName(*name)) {
+        Info::show(this, "Name not allowed", "Name not allowed", QString{"This name is not allowed, you can use alphanumerical chars and '"}+ALLOWED_CHARS+"' only");
+      } else {
+        emit this->edit(_user->getToken(), element.getId(), name);
+      }
     }
   } else if(action == actionDelete) {
     debug("Delete");
@@ -405,4 +493,16 @@ void DocsBrowser::_openMenu(bool isDir, const FSElement& element) {
       }
     }
   }
+}
+
+bool DocsBrowser::_checkName(const QString &name) {
+  auto isAllowed = [](const QChar& c) {
+    auto allowed = QString(ALLOWED_CHARS);
+    return std::any_of(allowed.begin(), allowed.end(), [c](const auto& allowedC) {
+      return c == allowedC;
+    });
+  };
+  return std::all_of(name.begin(), name.end(), [isAllowed](const auto& c) {
+    return c.isLower() || c.isUpper() || c.isNumber() || isAllowed(c);
+  });
 }
