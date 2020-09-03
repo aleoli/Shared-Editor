@@ -76,13 +76,14 @@ public:
 
   std::list<FSElement_db> recursive_ls(const Session &s);
 
+    static FSElement_db get(int userId, int id);
+
 private:
   static FSElement_db create(int user_id, int parent_id, QString name, bool is_file = false);
   FSElement_db clone(const Session &s);
   std::vector<FSElement_db*> getChildren();
 
-  static FSElement_db get(int userId, int id);
-  std::vector<FSElement_db*> ls(int userId);
+    std::vector<FSElement_db*> ls(int userId);
 
   static void checkName(int user_id, std::optional<int> file_id, int parent_it, QString& name, std::optional<QString> append = std::nullopt);
   bool availableForUser(int user_id);
