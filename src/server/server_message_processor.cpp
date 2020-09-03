@@ -1175,6 +1175,7 @@ void ServerMessageProcessor::delete_lambda(int link_id, int owner_id) {
   auto byte_data = msg.toQByteArray();
 
   auto manager = MessageManager::get();
+  manager->fileDeleted(link_id, owner_id);
   auto client = manager->getClient(owner_id);
   if(client) {
     manager->send_data(*client, byte_data);

@@ -34,6 +34,7 @@ public:
   std::optional<quint64> getClient(int userId);             // il client in cui è connesso l'utente
   std::list<quint64> getClientsInFile(int fileId);      // tutti i client che stanno lavorando su un file
   int getUserId(quint64 client_id);
+  void fileDeleted(int file_id, int user_id);
 
   /* gestione file */
   // richiesta di un file da parte di un client

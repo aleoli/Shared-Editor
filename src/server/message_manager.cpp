@@ -104,6 +104,15 @@ int MessageManager::getUserId(quint64 client_id) {
   return this->_clients[client_id].session->getUserId();
 }
 
+void MessageManager::fileDeleted(int file_id, int user_id) {
+  auto el = FSElement_db::get(user_id, file_id);
+  for(const auto& cl: this->_fileClients[el.getPhysicalId()]) {
+    if(this->_clients.count(cl) != 0) {
+      this->_clients[cl].fileIsOpen = false;
+    }
+  }
+}
+
 void MessageManager::clientDisconnected(quint64 clientId) {
   if(_clients.count(clientId) == 0) return; //no exception here
 
