@@ -13,7 +13,7 @@ void MainWindow::closeEvent(QCloseEvent *bar) {
 }
 
 void MainWindow::initLoading() {
-  _movie = std::make_shared<QMovie>(":/imgs/loading");
+  _movie = std::make_shared<QMovie>(":/res/logo_gif.gif");
 
   _loading = new QLabel(this);
   _loading->setMovie(_movie.get());

@@ -68,5 +68,6 @@
     <file>search.png</file>
     <file>share.png</file>
     <file>logo_gif.gif</file>
+    <file>loading.gif</file>
   </qresource>
 </RCC>
