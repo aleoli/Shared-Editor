@@ -469,7 +469,7 @@ void ClientMessageProcessor::remoteDelete() {
     auto ids = _m.getArray("ids");
     auto paragraphs = _m.getArray("paragraphs");
 
-    emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToList<SymbolId>(ids), utils::jsonArrayToList<ParagraphId>(ids));
+    emit _manager->remoteDeleteQuery(fileId, userId, utils::jsonArrayToList<SymbolId>(ids), utils::jsonArrayToList<ParagraphId>(paragraphs));
   }
   catch(SE_Exception& e) {
     disconnect(e.what());
