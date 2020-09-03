@@ -90,7 +90,7 @@ void TextEditor::_handleDeleteInsert(int pos, int removed, int added, std::list<
 }
 
 void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator &it) {
-  std::list<Identifier> symRemoved;
+  std::list<Identifier> symRemoved, parRemoved;
   auto doc = _textEdit->document();
 
   for(int i=0; i<removed; i++) {
@@ -104,15 +104,37 @@ void TextEditor::_handleDelete(int pos, int removed, std::list<Symbol>::iterator
       }
   }
 
-  emit localDelete(_user->getToken(), _user->getFileId(), symRemoved, std::list<Identifier>());
+  // check alignment
+  auto numPars = numParagraphs();
+  if(numPars < _nblocks) {
+    auto deleted = _nblocks - numPars;
+    _nblocks = numPars;
+    auto par = paragraphByPos(pos) + 1;
+    auto it = _file->paragraphAt(par);
+
+    for(int i=0; i<deleted; i++) {
+      try {
+        auto id = it->getParagraphId();
+        _file->localDeleteParagraph(par, &it); //it is incremented by one
+        parRemoved.push_back(id);
+      }
+      catch(...) {
+        throw TextEditorException("handleDelete: try to delete a paragraph at an invalid position in File");
+      }
+    }
+  }
+
+  emit localDelete(_user->getToken(), _user->getFileId(), symRemoved, parRemoved);
 }
 
 void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &it) {
   auto doc = _textEdit->document();
   QTextCursor cursor(doc);
   std::list<Symbol> symAdded;
+  std::list<Paragraph> parAdded, parUpdated;
 
   cursor.setPosition(pos);
+  //TODO check update alignment!
   for(int i=0; i<added; i++) {
     cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
 
@@ -134,7 +156,31 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
     _partialRefresh(pos, added);
   }
 
-  emit localInsert(_user->getToken(), _user->getFileId(), symAdded, std::list<Paragraph>()); //TODO
+  // check alignment
+  auto numPars = numParagraphs();
+  if(_nblocks < numPars) {
+    auto added = numPars - _nblocks;
+    _nblocks = numPars;
+    auto parPos = paragraphByPos(pos) + 1;
+    auto it = _file->paragraphAt(parPos);
+
+    for(int i=0; i<added; i++) {
+      try {
+        Paragraph p{{_user->getUserId(), _user->getCharId()}, alignmentByBlock(parPos+i)}; //TODO new counter: paragraphId
+        _file->localInsertParagraph(p, parPos+i, &it);
+        parAdded.push_back(p);
+      }
+      catch(...) {
+        throw TextEditorException("handleDelete: try to delete a paragraph at an invalid position in File");
+      }
+    }
+  }
+
+  emit localInsert(_user->getToken(), _user->getFileId(), symAdded, parAdded);
+  if(!parUpdated.empty()) {
+    auto timestamp = QDateTime::currentDateTimeUtc();
+    emit localUpdate(_user->getToken(), _user->getFileId(), std::list<Symbol>(), parUpdated, timestamp);
+  }
 }
 
 void TextEditor::_handleUpdate(int pos, int added, std::list<Symbol>::iterator &it) {
@@ -143,7 +189,7 @@ void TextEditor::_handleUpdate(int pos, int added, std::list<Symbol>::iterator &
     _updateSyms = false;
   }
   else if(_updateAlignment) {
-    _handleAlignmentUpdate(pos, added, it);
+    _handleAlignmentUpdate(pos, added);
     _updateAlignment = false;
   }
   else {
@@ -164,19 +210,36 @@ void TextEditor::_handleSymbolUpdate(int pos, int added, std::list<Symbol>::iter
     cursor.movePosition(QTextCursor::NextCharacter); // must be moved BEFORE catching the correct format
 
     auto fmt = cursor.charFormat();
-
     auto opt = _file->localUpdate(fmt, pos+i, _highlighted, &it);
 
-    if(opt)
-      symUpdated.push_back(**opt);
+    if(opt) symUpdated.push_back(**opt);
   }
 
-  auto timestamp = QDateTime::currentDateTimeUtc();
-  emit localUpdate(_user->getToken(), _user->getFileId(), symUpdated, std::list<Paragraph>(), timestamp);
+  if(!symUpdated.empty()) {
+    auto timestamp = QDateTime::currentDateTimeUtc();
+    emit localUpdate(_user->getToken(), _user->getFileId(), symUpdated, std::list<Paragraph>(), timestamp);
+  }
 }
 
-void TextEditor::_handleAlignmentUpdate(int pos, int added, std::list<Symbol>::iterator &it) {
+void TextEditor::_handleAlignmentUpdate(int pos, int added) {
   debug("Alignment update");
+  std::list<Paragraph> parUpdated;
+
+  int startPar = paragraphByPos(pos);
+  int endPar = paragraphByPos(pos + added);
+  auto it = _file->paragraphAt(startPar);
+
+  for(int i = startPar; i<endPar; i++) {
+    auto alignment = alignmentByBlock(startPar);
+    auto opt = _file->localUpdateParagraph(alignment, i, &it);
+
+    if(opt) parUpdated.push_back(**opt);
+  }
+
+  if(!parUpdated.empty()) {
+    auto timestamp = QDateTime::currentDateTimeUtc();
+    emit localUpdate(_user->getToken(), _user->getFileId(), std::list<Symbol>(), parUpdated, timestamp);
+  }
 }
 
 void TextEditor::_partialRefresh(int pos, int added) {
@@ -289,6 +352,8 @@ void TextEditor::remoteInsert(int fileId, int userId, const std::list<Symbol>& s
     cursor->insert(text, fmt, backgroundColor);
   }
 
+  _remoteInsertParagraphs(paragraphs);
+
   cursor->updateCursorView();
   cursor->show();
   _blockSignals = false;
@@ -311,7 +376,7 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::list<Identifier
   int tempPos = 0;
   cursor->goTo(0);
   for(auto &id : ids) {
-    pos = _file->remoteDelete(id, &it, pos);
+    pos = _file->remoteDelete(id, &it, tempPos);
     if(pos == -1) continue;
 
     if(pos != tempPos) {
@@ -322,8 +387,9 @@ void TextEditor::remoteDelete(int fileId, int userId, const std::list<Identifier
 
     cursor->selectNext();
   }
-
   cursor->removeSelected();
+
+  _remoteDeleteParagraphs(paragraphs);
   cursor->updateCursorView();
   cursor->show();
   _blockSignals = false;
@@ -369,6 +435,7 @@ void TextEditor::remoteUpdate(int fileId, int userId, const std::list<Symbol>& s
     cursor->clearSelection();
   }
 
+  _remoteUpdateParagraphs(paragraphs, userId, timestamp);
   cursor->updateCursorView();
   cursor->show();
   _blockSignals = false;
@@ -384,4 +451,62 @@ void TextEditor::remoteMove(int fileId, int userId, const SymbolId &symbolId, in
   auto cursor = _users[userId]->getCursor();
   cursor->updateCursorPosition(getCursorPosition(symbolId, cursorPosition));
   cursor->show();
+}
+
+// paragraphs
+
+int TextEditor::paragraphByPos(int pos) {
+  return _textEdit->document()->findBlock(pos).blockNumber();
+}
+
+int TextEditor::numParagraphs() {
+  return _textEdit->document()->blockCount();
+}
+
+Qt::Alignment TextEditor::alignmentByPos(int pos) {
+  return _textEdit->document()->findBlock(pos).blockFormat().alignment();
+}
+
+Qt::Alignment TextEditor::alignmentByBlock(int blockNumber) {
+  return _textEdit->document()->findBlockByNumber(blockNumber).blockFormat().alignment();
+}
+
+void TextEditor::setAlignmentInBlock(int blockNumber, Qt::Alignment alignment) {
+  auto cursor = QTextCursor(_textEdit->document());
+  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor, blockNumber);
+  QTextBlockFormat fmt;
+  fmt.setAlignment(alignment);
+  cursor.mergeBlockFormat(fmt);
+}
+
+void TextEditor::_remoteInsertParagraphs(const std::list<Paragraph> &paragraphs) {
+  int pos = 0;
+  auto it = _file->getParagraphsStart();
+
+  for(auto &par : paragraphs) {
+    pos = _file->remoteInsertParagraph(par, &it, pos);
+    setAlignmentInBlock(pos, par.getAlignment());
+  }
+}
+
+void TextEditor::_remoteDeleteParagraphs(const std::list<ParagraphId> &paragraphs) {
+  auto it = _file->getParagraphsStart();
+
+  for(auto &par : paragraphs) {
+    _file->remoteDeleteParagraph(par, &it, 0);
+  }
+}
+
+void TextEditor::_remoteUpdateParagraphs(const std::list<Paragraph> &paragraphs, int userId, const QDateTime &timestamp) {
+  int pos = 0;
+  auto it = _file->getParagraphsStart();
+
+  for(auto &par : paragraphs) {
+    int newpos = _file->remoteUpdateParagraph(par, userId, timestamp, &it, pos);
+    if(newpos == -1) continue;
+
+    setAlignmentInBlock(newpos, par.getAlignment());
+    pos = newpos + 1;
+    std::advance(it, 1);
+  }
 }

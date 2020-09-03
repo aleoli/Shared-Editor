@@ -14,7 +14,11 @@ using namespace se_exceptions;
 #include <QFile>
 #include <utility>
 
-File::File() = default;
+File::File() {
+  //add first paragraph
+  auto par = Paragraph{};
+  localInsertParagraph(par, 0);
+}
 
 File::File(const File &file) {
   this->_users = file._users;
@@ -286,6 +290,14 @@ void File::forEachSymbol(const std::function<void(const Symbol&) >& lambda) {
 
   for(auto &sym : _symbols) {
     lambda(sym);
+  }
+}
+
+void File::forEachParagraph(const std::function<void(const Paragraph&) >& lambda) {
+  auto sl = std::shared_lock{this->_mutex};
+
+  for(auto &par : _paragraphs) {
+    lambda(par);
   }
 }
 
@@ -778,10 +790,10 @@ int File::remoteInsertParagraph(const Paragraph &par, std::list<Paragraph>::iter
     });
 
   dirty = true;
-  _paragraphs.emplace(result, par);
+  auto inserted = _paragraphs.emplace(result, par);
 
-  if(it != nullptr) *it = result;
-  return oldPos + pos + 1;
+  if(it != nullptr) *it = inserted;
+  return oldPos + pos;
 }
 
 void File::localDeleteParagraph(int pos, std::list<Paragraph>::iterator *it) {
@@ -855,11 +867,10 @@ int File::remoteUpdateParagraph(const Paragraph &par, int userId, const QDateTim
       auto res = paragraphById(id, it);
       pos = res.first;
       target = res.second;
-      if(it != nullptr) *it = std::next(target);
+      if(it != nullptr) *it = target;
     }
     else {
       target = *it;
-      *it = std::next(*it);
     }
 
     if(target->isOlder(timestamp, userId) && target->isDifferent(par)) {

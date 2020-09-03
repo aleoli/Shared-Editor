@@ -72,6 +72,7 @@ public:
   std::string text() const;
   void clear();
   void forEachSymbol(const std::function<void(const Symbol&) >& lambda);
+  void forEachParagraph(const std::function<void(const Paragraph&) >& lambda);
 
   void addUser(int userId, const QString &username);
   void removeUser(int userId);

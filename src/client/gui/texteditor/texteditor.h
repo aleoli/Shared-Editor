@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <list>
 #include <QTextBlock>
+#include <QTextBlockFormat>
 
 #include "main_window.h"
 #include "alert_messages.h"
@@ -125,10 +126,13 @@ private slots:
   void _handleInsert(int pos, int added, std::list<Symbol>::iterator &it);
   void _handleUpdate(int pos, int added, std::list<Symbol>::iterator &it);
   void _handleSymbolUpdate(int pos, int added, std::list<Symbol>::iterator &it);
-  void _handleAlignmentUpdate(int pos, int added, std::list<Symbol>::iterator &it);
+  void _handleAlignmentUpdate(int pos, int added);
   void _cursorChanged();
   void _updateCursors();
   void _partialRefresh(int pos, int added);
+  void _remoteInsertParagraphs(const std::list<Paragraph> &paragraphs);
+  void _remoteDeleteParagraphs(const std::list<ParagraphId> &paragraphs);
+  void _remoteUpdateParagraphs(const std::list<Paragraph> &paragraphs, int userId, const QDateTime &timestamp);
 
 private:
   void initOptionsWidget();
@@ -154,6 +158,12 @@ private:
   CommentWidget *loadComment(int userId, const File::Comment &comment);
   CommentWidget *getComment(const File::Comment &comment);
   void deleteComment(CommentWidget *widget);
+
+  int paragraphByPos(int pos);
+  int numParagraphs();
+  Qt::Alignment alignmentByPos(int pos);
+  Qt::Alignment alignmentByBlock(int blockNumber);
+  void setAlignmentInBlock(int blockNumber, Qt::Alignment alignment);
 
   Ui::TextEditor *ui;
 

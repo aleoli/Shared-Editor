@@ -79,6 +79,10 @@ int Identifier::getSecond() const {
   return _second;
 }
 
+QString Identifier::toString() const {
+  return QString::number(_first) + "-" + QString::number(_second);
+}
+
 std::string Identifier::to_string() const {
   std::stringstream ss;
   ss << _first << "-" << _second;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QJsonObject>
+#include <QString>
 
 class Identifier {
 public:
@@ -25,6 +26,7 @@ public:
     [[nodiscard]] int getFirst() const;
     [[nodiscard]] int getSecond() const;
     [[nodiscard]] std::string to_string() const;
+    [[nodiscard]] QString toString() const;
 
 private:
     void checkAndAssign(const QJsonObject &json);
