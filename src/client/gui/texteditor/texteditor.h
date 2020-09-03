@@ -154,6 +154,7 @@ private:
   QColor getUserColor(int userId);
   QColor getUserColorHighlight(int userId);
   QIcon getUserLoadedIcon(int userId);
+  void resetHighlight();
 
   CommentWidget *loadComment(int userId, const File::Comment &comment);
   CommentWidget *getComment(const File::Comment &comment);

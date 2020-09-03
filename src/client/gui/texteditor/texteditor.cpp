@@ -100,6 +100,7 @@ TextEditor::~TextEditor()
 }
 
 void TextEditor::clear() {
+  resetHighlight();
   reloadFile();
   updateActions();
   _gen.reset();
@@ -489,6 +490,14 @@ QIcon TextEditor::getUserLoadedIcon(int userId) {
   }
 
   return _users[userId]->getIcon();
+}
+
+void TextEditor::resetHighlight() {
+  _highlighted = false;
+  _widgetHighlight->setChecked(false);
+  _actionHighlight->setChecked(false);
+  _showConnected(true);
+  _showComments(true);
 }
 
 /* ### SLOTS server->editor ### */
