@@ -304,6 +304,9 @@ void TextEditor::reloadFile() {
   _textEdit->clear();
   _file = _user->getFile();
   refresh(true);
+  QTextCharFormat fmt;
+  fmt.setForeground(QBrush("black"));
+  _textEdit->mergeCurrentCharFormat(fmt);
 
   _blockSignals = false;
 }
