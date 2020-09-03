@@ -78,6 +78,7 @@ private slots:
 
   void _openMenu(bool isDir, const FSElement& element);
   void _clickedSearch(QListWidgetItem *item);
+  void _closeSearch();
 
 private:
   typedef enum {

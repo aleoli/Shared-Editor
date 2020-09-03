@@ -7,6 +7,7 @@
 #include <QListWidget>
 #include <cmath>
 #include <QMenu>
+#include <QTimer>
 
 #include "dialogs/input.h"
 #include "dialogs/confirm.h"
@@ -58,6 +59,7 @@ DocsBrowser::DocsBrowser(QWidget *parent): MainWindow(parent), ui(new Ui::DocsBr
   connect(_widgetAccount, &QPushButton::clicked, this, &DocsBrowser::_account);
   connect(_widgetNewFile, &QPushButton::clicked, this, &DocsBrowser::_newFile);
   connect(_widgetSearch, &QLineEdit::textChanged, this, &DocsBrowser::_search);
+  connect(_widgetSearch, &QLineEdit::editingFinished, this, &DocsBrowser::_closeSearch);
 
   connect(_actionLogout, &QAction::triggered, this, &DocsBrowser::_logout);
 
@@ -266,6 +268,12 @@ void DocsBrowser::_clickedSearch(QListWidgetItem *item) {
   } else {
     this->_openFile(sr.id);
   }
+}
+
+void DocsBrowser::_closeSearch() {
+  QTimer::singleShot(100, [this]() {
+    emit this->_widgetSearch->setText("");
+  });
 }
 
 void DocsBrowser::_clickedPath(bool checked) {
