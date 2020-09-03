@@ -214,6 +214,8 @@ void GuiManager::connectServerToClient() {
   QObject::connect(_manager.get(), &MessageManager::moveFileResponse, this, &GuiManager::docBrowserNeedsRefresh);
   QObject::connect(_manager.get(), &MessageManager::editFileResponse, this, &GuiManager::docBrowserNeedsRefresh);
 
+  QObject::connect(_manager.get(), &MessageManager::fileDeletedQuery, this, &GuiManager::serverDeletedFileResponse);
+
   //Signals to send directly to text editor
   QObject::connect(_manager.get(), &MessageManager::userConnectedQuery, _widgetTextEditor, &TextEditor::userConnected);
   QObject::connect(_manager.get(), &MessageManager::userDisconnectedQuery, _widgetTextEditor, &TextEditor::userDisconnected);
@@ -448,6 +450,14 @@ void GuiManager::serverGetFileResponse(const File &file, int charId, int comment
   _user->openFile(file, charId, commentId);
   unfreezeWindow();
   showWindow(_widgetTextEditor, true);
+}
+
+void GuiManager::serverDeletedFileResponse(int fileId) {
+  debug("GuiManager::serverDeletedFileResponse");
+  _user->closeFile();
+  showWindow(_widgetDocsBrowser);
+  emit this->docBrowserNeedsRefresh();
+  alert(Alert::INFO, "File was deleted by owner", "File Deleted");
 }
 
 void GuiManager::serverActivateLinkResponse(const FSElement &element, const File &file) {
