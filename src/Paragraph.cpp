@@ -157,6 +157,13 @@ QTextBlockFormat Paragraph::getFormat() const {
   return _fmt;
 }
 
+QTextBlockFormat Paragraph::getPartialFormat() const {
+  QTextBlockFormat fmt;
+  fmt.setAlignment(_fmt.alignment());
+
+  return fmt;
+}
+
 QDateTime Paragraph::getTimestamp() const {
   return _timestamp;
 }

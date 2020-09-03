@@ -178,8 +178,15 @@ void TextEditor::_handleInsert(int pos, int added, std::list<Symbol>::iterator &
     // check if update paragraph happened
     auto curPar = paragraphByPos(pos + i);
     if(curPar != lastPar) {
-      auto opt = _file->localUpdateParagraph(formatByBlock(curPar), curPar, &parIt);
-      if(opt) parUpdated.push_back(**opt);
+      auto format = formatByBlock(curPar);
+      auto res = _file->localUpdateParagraph(format, curPar, &parIt);
+      if(res.second) parUpdated.push_back(*res.first);
+
+      if(res.first != _file->getParagraphsEnd()) {
+        _blockSignals = true;
+        cursor.setBlockFormat(res.first->getPartialFormat());
+        _blockSignals = false;
+      }
       lastPar = curPar;
     }
   }
@@ -244,11 +251,11 @@ void TextEditor::_handleAlignmentUpdate(int pos, int added) {
 
   //debug("Start par: " + QString::number(startPar) + " end: " + QString::number(endPar));
 
-  for(int i = startPar; i<=endPar; i++) {
-    auto blockFmt = formatByBlock(startPar);
-    auto opt = _file->localUpdateParagraph(blockFmt, i, &it);
+  for(int i=startPar; i<=endPar; i++) {
+    auto blockFmt = formatByBlock(i);
+    auto res = _file->localUpdateParagraph(blockFmt, i, &it);
 
-    if(opt) parUpdated.push_back(**opt);
+    if(res.second) parUpdated.push_back(*res.first);
   }
 
   //debug("Size: " + QString::number(parUpdated.size()));
