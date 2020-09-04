@@ -5,6 +5,9 @@ on:
     branches:
       - master
   pull_request:
+  schedule:
+    # this will run at 4 AM the 1st for each month
+    - cron: '0 4 1 * *'
 jobs:
   build:
     runs-on: ubuntu-latest
