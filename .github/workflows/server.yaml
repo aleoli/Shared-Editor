@@ -17,9 +17,9 @@ jobs:
       - name: Set the commit to build
         run: |
           if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-             echo "::set-env name=commit_ref::${{ github.event.pull_request.head.sha }}"
+             echo "name=commit_ref::${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
           else
-             echo "::set-env name=commit_ref::${{ github.sha }}"
+             echo "name=commit_ref::${{ github.sha }}" >> $GITHUB_ENV
           fi
       - name: Check out code
         uses: actions/checkout@v2
